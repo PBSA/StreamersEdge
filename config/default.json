@@ -8,5 +8,6 @@
     "database": "streamers-edge"
   },
   "session_secret": "session_secret",
-  "config": false
+  "cors": false,
+  "port": 3000
 }

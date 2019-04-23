@@ -6,7 +6,7 @@ test:
   image: node:10.15-alpine
   stage: test
   variables:
-    DATABASE_TEST_URL: "mongodb://mongo/dbname"
+    DATABASE_TEST_URL: "mongodb://mongo/streamersedge-test"
   services:
     - mongo
   cache:
@@ -17,9 +17,9 @@ test:
     - apk --no-cache add make gcc g++ python git
     - npm config set unsafe-perm true
     - npm i
-    - npm run audit
-    - npm run lint
-    - npm run test
+    - npm run test:audit
+    - npm run test:lint
+    - npm run test:mocha
   tags:
     - docker
   only:

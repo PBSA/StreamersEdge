@@ -13,7 +13,7 @@
   },
   "scripts": {
     "serve": "NODE_ENV=development nodemon src/server.js",
-    "start": "node server.js",
+    "start": "node src/server.js",
     "migrate": "migrate-mongo up --file config/migrate-mongo-config.js",
     "test:audit": "audit-ci --config audit-ci.json",
     "test:lint": "eslint . --quiet",

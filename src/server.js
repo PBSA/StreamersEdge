@@ -53,5 +53,6 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} logLevel
  * @property {{host:String, port:String|Number, database:String, user:String, password:String}} db
  * @property {String} session_secret
- * @property {Boolean} config
+ * @property {Boolean} cors
+ * @property {Number} port
  */

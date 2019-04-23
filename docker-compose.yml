@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+
+  # 1
+  mongodb:
+    image: mongo:latest
+    container_name: "streamersedge.mongodb"
+    environment:
+      - MONGO_DATA_DIR=/data/mongo-db
+    command: mongod --smallfiles
+#    ports:
+#      - 27018:27017
+
+  # 2
+  backend.api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["./wait-for-it/wait-for-it.sh", "mongodb:27017", "--", "npm", "run", "start"]
+    environment:
+      - MODULE=api
+      - NODE_ENV=production
+    env_file:
+      - .env
+    container_name: "streamersedge.backend.api"
+    ports:
+      - 16761:3000
+    restart: always
+    depends_on:
+      - mongodb

@@ -23,3 +23,12 @@ If you want to check the coverage of code tests, just run `npm run test:coverage
 ## Migrations
 
 <!--TODO: Should be described-->
+
+## Docker
+
+You can run the application with docker-compose:
+
+```bash
+docker-compose up --build
+```
+ 
