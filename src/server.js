@@ -8,7 +8,7 @@ const currentModule = process.env.MODULE || 'api';
 
 (async () => {
 	try {
-		const connections = listModules(['connections/*.js']);
+		const connections = listModules(['src/connections/*.js']);
 		await Promise.all(connections.map(async ({ name }) => {
 			try {
 				await container.resolve(name.replace(/\.([a-z])/, (a) => a[1].toUpperCase())).connect();
@@ -38,12 +38,6 @@ const currentModule = process.env.MODULE || 'api';
  */
 
 /**
- * @typedef {Object} RequestObject
- * @property {{body: Object, query: Object}} pure
- * @property {UserObject} user
- */
-
-/**
  * @typedef {Object} MongooseCollection
  * @property {function():Promise<Object.<[[*]]>>} getIndexes
  * @property {function(name:String)} dropIndex
@@ -56,18 +50,8 @@ const currentModule = process.env.MODULE || 'api';
 
 /**
  * @typedef {Object} AppConfig
- * @property {Boolean} cors
- * @property {Boolean} isDevelopment
+ * @property {String} logLevel
  * @property {{host:String, port:String|Number, database:String, user:String, password:String}} db
- * @property {{username:String, password:String, url:String}} jira
- * @property {{level:String}} logger
- * @property {String} port
- * @property {String} adminPort
- * @property {{enabled:Boolean, config:String}} raven
- * @property {{service:String, user:String, pass:String}} mailer
  * @property {String} session_secret
- * @property {{frontend:String,backend:String}} urls
- * @property {{clientId:String,clientSecret:String}} instagram
- * @property {{stripeSecretKey:String,stripePlanId:String}} stripe
- * @property {String} encryptSalt
+ * @property {Boolean} config
  */

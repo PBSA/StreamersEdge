@@ -7,7 +7,7 @@
 		"withGenerator": true
 	},
   "header": {
-    "title": "",
+    "title": "Api Explanation",
     "filename": "docs/api-explanation.md"
   }
 }

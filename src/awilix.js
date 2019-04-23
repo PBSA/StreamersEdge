@@ -8,7 +8,7 @@ const {
 } = awilix;
 
 const logger = getLogger();
-logger.level = CONFIG.logger.level || 'info';
+logger.level = CONFIG.logLevel || 'info';
 
 // create awilix container
 const container = awilix.createContainer({
@@ -17,11 +17,11 @@ const container = awilix.createContainer({
 
 // load modules
 container.loadModules([
-	['services/*.js', { register: asClass }],
-	['helpers/*.js', { register: asClass }],
-	['connections/*.js', { register: asClass }],
-	['repositories/*.js', { register: asClass }],
-	['modules/*/*.js', { register: asClass }],
+	['src/services/*.js', { register: asClass }],
+	['src/helpers/*.js', { register: asClass }],
+	['src/connections/*.js', { register: asClass }],
+	['src/repositories/*.js', { register: asClass }],
+	['src/modules/*/*.js', { register: asClass }],
 ], {
 	formatName: 'camelCase',
 	resolverOptions: {
@@ -48,10 +48,10 @@ container.register({
 	basePath: asValue(__dirname),
 });
 
-listModules(['modules/*/*.js']).forEach(({ name }) => {
+listModules(['src/modules/*/*.js']).forEach(({ name }) => {
 	const scope = container.createScope();
 	scope.loadModules([
-		[`modules/${name.replace(/\.[a-z]+$/, '')}/*/*.js`, { register: asClass }],
+		[`src/modules/${name.replace(/\.[a-z]+$/, '')}/*/*.js`, { register: asClass }],
 	], {
 		formatName: 'camelCase',
 		resolverOptions: {
@@ -64,7 +64,7 @@ listModules(['modules/*/*.js']).forEach(({ name }) => {
 async function initModule(name, mode) {
 	const scope = container.createScope();
 	scope.loadModules([
-		[`modules/${name.replace(/\.[a-z]+$/, '')}/*/*.js`, { register: asClass }],
+		[`src/modules/${name.replace(/\.[a-z]+$/, '')}/*/*.js`, { register: asClass }],
 	], {
 		formatName: 'camelCase',
 		resolverOptions: {
@@ -73,16 +73,9 @@ async function initModule(name, mode) {
 		},
 	});
 	const module = scope.resolve(name.replace(/\.([a-z])/, (a) => a[1].toUpperCase()));
-	if (typeof module.initModule !== 'function') {
-		logger.warn(`module ${name} not contain a method 'initModule'`);
-		return null;
-	}
-	logger.info(`Init ${name.replace(/\.[a-z]+$/, '')} module`);
-	try {
+	if (typeof module.initModule === 'function') {
+		logger.info(`Init ${name.replace(/\.[a-z]+$/, '')} module`);
 		await module.initModule(mode);
-	} catch (err) {
-		logger.error(`init ${name} module error`);
-		logger.error(err);
 	}
 	return module;
 }

@@ -11,24 +11,41 @@
     "name": "PBSA",
     "url": "https://github.com/PBSA"
   },
+  "scripts": {
+    "serve": "NODE_ENV=development nodemon src/server.js",
+    "start": "node server.js",
+    "migrate": "migrate-mongo up --file config/migrate-mongo-config.js",
+    "test:audit": "audit-ci --config audit-ci.json",
+    "test:lint": "eslint . --quiet",
+    "test:mocha": "NODE_ENV=test NODE_APP_INSTANCE=test mocha --exit --timeout 15000",
+    "test:coverage": "NODE_ENV=test NODE_APP_INSTANCE=test nyc node_modules/.bin/mocha --exit --timeout 15000 && nyc report --reporter=text-summary",
+    "build:doc": "apidoc -i modules/api/controllers/ -o apidoc/"
+  },
   "dependencies": {
     "awilix": "^4.2.1",
+    "body-parser": "^1.18.3",
     "config": "^3.1.0",
+    "connect-mongo": "^2.0.3",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "joi": "^14.3.1",
     "log4js": "^4.1.0",
-    "moment": "^2.24.0"
+    "migrate-mongo": "^5.0.1",
+    "moment": "^2.24.0",
+    "mongoose": "^5.5.3"
   },
   "devDependencies": {
     "apidoc": "^0.17.7",
     "audit-ci": "^1.6.0",
     "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.17.2",
     "mocha": "^6.1.4",
     "nodemon": "^1.18.11",
-    "nyc": "^14.0.0"
+    "nyc": "^14.0.0",
+    "supertest": "^4.0.2"
   }
 }
