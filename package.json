@@ -1,0 +1,34 @@
+{
+  "name": "streamers-edge",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "repository": {
+    "url": "https://github.com/PBSA/StreamersEdge",
+    "type": "git"
+  },
+  "description": "Backend module for StreamersEdge application",
+  "author": {
+    "name": "PBSA",
+    "url": "https://github.com/PBSA"
+  },
+  "dependencies": {
+    "awilix": "^4.2.1",
+    "config": "^3.1.0",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "joi": "^14.3.1",
+    "log4js": "^4.1.0",
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {
+    "apidoc": "^0.17.7",
+    "audit-ci": "^1.6.0",
+    "chai": "^4.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.2",
+    "mocha": "^6.1.4",
+    "nodemon": "^1.18.11",
+    "nyc": "^14.0.0"
+  }
+}

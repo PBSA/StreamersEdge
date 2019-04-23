@@ -1,0 +1,14 @@
+{
+  "name": "streamers-edge",
+  "description": "Backend module for StreamersEdge application",
+	"template": {
+		"forceLanguage": "en",
+		"withCompare": true,
+		"withGenerator": true
+	},
+  "header": {
+    "title": "",
+    "filename": "docs/api-explanation.md"
+  }
+}
+

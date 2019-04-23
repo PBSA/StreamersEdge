@@ -1,0 +1,28 @@
+stages:
+  - test
+  - build
+
+test:
+  image: node:10.15-alpine
+  stage: test
+  variables:
+    DATABASE_TEST_URL: "mongodb://mongo/dbname"
+  services:
+    - mongo
+  cache:
+    key: $CI_COMMIT_REF_NAME
+    paths:
+      - node_modules
+  script:
+    - apk --no-cache add make gcc g++ python git
+    - npm config set unsafe-perm true
+    - npm i
+    - npm run audit
+    - npm run lint
+    - npm run test
+  tags:
+    - docker
+  only:
+    - merge_requests
+    - develop
+    - master
