@@ -16,8 +16,8 @@ test:
     paths:
       - node_modules
   script:
-    - apk --update-cache add make gcc g++ python git
-    - npm config set unsafe-perm true
+#    - apk --update-cache add make gcc g++ python git
+#    - npm config set unsafe-perm true
     - npm i
     - npm run test:audit
     - npm run test:lint

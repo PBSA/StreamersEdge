@@ -1,13 +1,28 @@
 const { listModules } = require('awilix');
 const { getLogger } = require('log4js');
+const config = require('config');
+const Raven = require('raven');
+
+const logger = getLogger();
+
+if (config.raven.enabled) {
+	logger.info('Configure raven');
+	Raven.config(config.raven.url).install((e, d) => {
+		logger.error(d);
+		process.exit(1);
+	});
+} else {
+	logger.warn('Raven is disabled');
+}
 
 const { container, initModule } = require('./awilix');
 
-const logger = getLogger();
 const currentModule = process.env.MODULE || 'api';
 
 (async () => {
+	const ravenHelper = container.resolve('ravenHelper');
 	try {
+		await ravenHelper.init();
 		const connections = listModules(['src/connections/*.js']);
 		await Promise.all(connections.map(async ({ name }) => {
 			try {
@@ -20,8 +35,8 @@ const currentModule = process.env.MODULE || 'api';
 		}));
 		await initModule(`${currentModule}.module`);
 	} catch (err) {
-		logger.warn('Start error');
-		logger.warn(err);
+		logger.error('Start error');
+		ravenHelper.error(err);
 	} finally {
 		logger.info(`${currentModule || 'server'} has been started`);
 	}
@@ -55,4 +70,5 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} session_secret
  * @property {Boolean} cors
  * @property {Number} port
+ * @property {{enabled: Boolean, url: String}} raven
  */

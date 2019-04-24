@@ -33,7 +33,6 @@ class ApiModule {
 	initModule() {
 		return new Promise((resolve) => {
 			logger.trace('Start HTTP server initialization');
-
 			const sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
 
 			this.app = express();
