@@ -7,9 +7,14 @@
     "port": "27017",
     "database": "streamers-edge"
   },
-  "session_secret": "session_secret",
+  "sessionSecret": "sessionSecret",
   "cors": false,
   "port": 3000,
+  "twitch": {
+    "clientId": "",
+    "clientSecret": "",
+    "callbackUrl": ""
+  },
   "raven": {
     "enabled": true,
     "url": ""

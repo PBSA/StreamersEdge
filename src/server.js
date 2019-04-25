@@ -67,8 +67,11 @@ const currentModule = process.env.MODULE || 'api';
  * @typedef {Object} AppConfig
  * @property {String} logLevel
  * @property {{host:String, port:String|Number, database:String, user:String, password:String}} db
- * @property {String} session_secret
+ * @property {String} sessionSecret
  * @property {Boolean} cors
  * @property {Number} port
+ * @property {String} twitch.clientId
+ * @property {String} twitch.clientSecret
+ * @property {String} twitch.callbackUrl
  * @property {{enabled: Boolean, url: String}} raven
  */

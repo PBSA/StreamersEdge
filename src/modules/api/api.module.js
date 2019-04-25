@@ -19,11 +19,14 @@ class ApiModule {
 	/**
 	 *
 	 * @param {AppConfig} opts.config
+	 * @param {AuthController} opts.authController
 	 */
 	constructor(opts) {
 		this.config = opts.config;
 		this.app = null;
 		this.server = null;
+
+		this.authController = opts.authController;
 	}
 
 	/**
@@ -55,7 +58,7 @@ class ApiModule {
 
 			this.app.use(session({
 				name: 'crypto.sid',
-				secret: this.config.session_secret,
+				secret: this.config.sessionSecret,
 				cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }, // 7 days
 				resave: false,
 				saveUninitialized: false,
@@ -75,11 +78,10 @@ class ApiModule {
 	 * Bind routers
 	 */
 	_initRestRoutes() {
-		[].forEach((controller) => controller.init(this.addRestHandler.bind(this)));
+		[
+			this.authController,
+		].forEach((controller) => controller.getRoutes().forEach((route) => this.addRestHandler(...route)));
 
-		if (process.env.NODE_ENV === 'development') {
-			this.app.use('/apidoc', express.static('apidoc'));
-		}
 		this.addRestHandler('use', '*', () => {
 			throw new MethodNotAllowedError();
 		});
