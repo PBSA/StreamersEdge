@@ -5,7 +5,7 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 describe('REST API', () => {
-	describe('first.controller', () => {
-		require('./controllers/first.controller.test');
+	describe('auth.controller', () => {
+		require('./controllers/auth.controller.test');
 	});
 });

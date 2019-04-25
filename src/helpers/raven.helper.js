@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 const Raven = require('raven');
 const logger = require('log4js').getLogger('raven.helper');
 

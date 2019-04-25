@@ -18,8 +18,7 @@
     "test:audit": "audit-ci --config audit-ci.json",
     "test:lint": "eslint . --quiet",
     "test:mocha": "NODE_ENV=test NODE_APP_INSTANCE=test mocha --exit --timeout 15000",
-    "test:coverage": "NODE_ENV=test NODE_APP_INSTANCE=test nyc node_modules/.bin/mocha --exit --timeout 15000 && nyc report --reporter=text-summary",
-    "build:doc": "apidoc -i modules/api/controllers/ -o apidoc/"
+    "test:coverage": "NODE_ENV=test NODE_APP_INSTANCE=test nyc node_modules/.bin/mocha --exit --timeout 15000 && nyc report --reporter=text-summary"
   },
   "dependencies": {
     "awilix": "^4.2.1",
@@ -34,13 +33,15 @@
     "migrate-mongo": "^5.0.1",
     "moment": "^2.24.0",
     "mongoose": "^5.5.3",
+    "url": "^0.11.0",
+    "utils-merge": "^1.0.1",
     "raven": "^2.6.4"
   },
   "devDependencies": {
-    "apidoc": "^0.17.7",
     "audit-ci": "^1.6.0",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
+    "chai-url": "^1.0.4",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.17.2",
