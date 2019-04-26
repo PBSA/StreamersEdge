@@ -1,5 +1,12 @@
 # StreamersEdge
 
+## API Documentation
+
+You can find API documentation here - [/docs/api.md](/docs/api.md)
+
+Also you can build the HTML version of documentation. Just run npm run `build:apidoc`
+and documentation will be built into `apidoc` folder.
+
 ## Development
 
 For development you can use nodemon. Clone this project into your folder and run the following commands to run the backend:
