@@ -1,18 +1,14 @@
-const url = require('url');
-const merge = require('utils-merge');
-
-const TWITCH_OAUTH_URL = 'https://id.twitch.tv/oauth2/authorize';
-const TWITCH_SCOPE = 'user_read';
-
 class AuthController {
 
 	/**
 	 * @param {AuthValidator} opts.authValidator
-	 * @param {AppConfig} opts.config
+	 * @param {TwitchService} opts.twitchService
+	 * @param {UserService} opts.userService
 	 */
 	constructor(opts) {
-		this.config = opts.config;
 		this.authValidator = opts.authValidator;
+		this.twitchService = opts.twitchService;
+		this.userService = opts.userService;
 	}
 
 	/**
@@ -22,6 +18,8 @@ class AuthController {
 	getRoutes() {
 		return [
 			['get', '/api/v1/auth/redirect-url', this.getRedirectUrl.bind(this)],
+			['post', '/api/v1/auth/code', this.authValidator.validateAuthCode, this.authWithCode.bind(this)],
+			['post', '/api/v1/auth/logout', this.authValidator.loggedOnly, this.logout.bind(this)],
 		];
 	}
 
@@ -32,19 +30,19 @@ class AuthController {
 	 * @returns {Promise<string>}
 	 */
 	async getRedirectUrl() {
-		const twitchConfig = this.config.twitch;
-		const params = {
-			response_type: 'code',
-			redirect_uri: twitchConfig.callbackUrl,
-			scope: TWITCH_SCOPE,
-			state: true,
-			client_id: twitchConfig.clientId,
-		};
+		return this.twitchService.getAuthRedirectURL();
+	}
 
-		const parsed = url.parse(TWITCH_OAUTH_URL, true);
-		merge(parsed.query, params);
-		delete parsed.search;
-		return url.format(parsed);
+	async authWithCode(user, code, req) {
+		const twitchUser = await this.twitchService.getUserByCode(code);
+		const User = await this.userService.getUserByTwitchAccount(twitchUser);
+		await new Promise((success) => req.login(User, () => success()));
+		return this.userService.getCleanUser(User);
+	}
+
+	async logout(user, data, req) {
+		req.logout();
+		return true;
 	}
 
 }

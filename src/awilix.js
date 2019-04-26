@@ -8,7 +8,7 @@ const {
 } = awilix;
 
 const logger = getLogger();
-logger.level = CONFIG.logLevel || 'info';
+logger.level = CONFIG.logLevel;
 
 // create awilix container
 const container = awilix.createContainer({

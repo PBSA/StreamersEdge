@@ -5,6 +5,7 @@ const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
+const passport = require('passport');
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
@@ -66,6 +67,12 @@ class ApiModule {
 				store: sessionStore,
 			}));
 
+			this.app.use(passport.initialize());
+			this.app.use(passport.session());
+
+			passport.serializeUser((user, done) => done(null, user));
+			passport.deserializeUser((user, done) => done(null, user));
+
 			this.server = this.app.listen(this.config.port, () => {
 				logger.info(`API APP REST listen ${this.config.port} Port`);
 				this._initRestRoutes();
@@ -103,13 +110,7 @@ class ApiModule {
 					return handler()(req, res);
 				}, Promise.resolve());
 
-				const result = await action({
-					form: req.form,
-					user: req.user,
-					targetUser: req.targetUser,
-					req,
-				});
-
+				const result = await action(req.user, req.pure, req);
 				return res.status(200).json({
 					result: result || null,
 					status: 200,

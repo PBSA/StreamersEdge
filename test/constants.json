@@ -1,0 +1,13 @@
+{
+  "modules": {
+    "api": {
+      "auth": {
+        "twitchValidCode": "111111",
+        "twitchValidAuth": "222222",
+        "twitchTestUsername": "test",
+        "twitchTestEmail": "test@test.com",
+        "twitchTestId": "1"
+      }
+    }
+  }
+}
