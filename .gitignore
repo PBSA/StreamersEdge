@@ -61,5 +61,4 @@ typings/
 package-lock.json
 config/local.json
 
-config/local.json
-
+apidoc

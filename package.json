@@ -18,7 +18,8 @@
     "test:audit": "audit-ci --config audit-ci.json",
     "test:lint": "eslint . --quiet",
     "test:mocha": "NODE_ENV=test NODE_APP_INSTANCE=test mocha --exit --timeout 15000",
-    "test:coverage": "NODE_ENV=test NODE_APP_INSTANCE=test nyc node_modules/.bin/mocha --exit --timeout 15000 && nyc report --reporter=text-summary"
+    "test:coverage": "NODE_ENV=test NODE_APP_INSTANCE=test nyc node_modules/.bin/mocha --exit --timeout 15000 && nyc report --reporter=text-summary",
+    "build:apidoc": "apidoc -i src/modules/api/controllers/ -o apidoc/ && apidoc-markdown -p apidoc -o docs/api.md"
   },
   "dependencies": {
     "awilix": "^4.2.1",
@@ -36,10 +37,13 @@
     "passport": "^0.4.0",
     "raven": "^2.6.4",
     "request": "^2.88.0",
+    "un": "0.0.0",
     "url": "^0.11.0",
     "utils-merge": "^1.0.1"
   },
   "devDependencies": {
+    "apidoc": "^0.17.7",
+    "apidoc-markdown": "^0.2.1",
     "audit-ci": "^1.6.0",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
