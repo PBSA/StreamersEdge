@@ -33,9 +33,11 @@
     "migrate-mongo": "^5.0.1",
     "moment": "^2.24.0",
     "mongoose": "^5.5.3",
+    "passport": "^0.4.0",
+    "raven": "^2.6.4",
+    "request": "^2.88.0",
     "url": "^0.11.0",
-    "utils-merge": "^1.0.1",
-    "raven": "^2.6.4"
+    "utils-merge": "^1.0.1"
   },
   "devDependencies": {
     "audit-ci": "^1.6.0",

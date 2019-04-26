@@ -1,5 +1,6 @@
 {
   "db": {
     "database": "streamers-edge-test"
-  }
+  },
+  "cors": true
 }

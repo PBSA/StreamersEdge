@@ -1,10 +1,15 @@
 /* eslint-disable global-require,no-undef,import/no-dynamic-require */
 const fs = require('fs');
 
-const { listModules } = require('awilix');
+const { listModules, asClass } = require('awilix');
 const { getLogger } = require('log4js');
 // const { assert } = require('chai');
 const { container } = require('./../src/awilix');
+const TwitchConnection = require('./mock/connections/twitch.connection.mock');
+
+container.register({
+	twitchConnection: asClass(TwitchConnection),
+});
 
 describe('ALL TESTS', () => {
 	if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'local-test') {
