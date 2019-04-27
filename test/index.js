@@ -6,9 +6,11 @@ const { getLogger } = require('log4js');
 // const { assert } = require('chai');
 const { container } = require('./../src/awilix');
 const TwitchConnection = require('./mock/connections/twitch.connection.mock');
+const PeerplaysConnection = require('./mock/connections/peerplays.connection.mock');
 
 container.register({
 	twitchConnection: asClass(TwitchConnection),
+	peerplaysConnection: asClass(PeerplaysConnection),
 });
 
 describe('ALL TESTS', () => {

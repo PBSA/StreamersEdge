@@ -19,5 +19,6 @@
     "enabled": true,
     "url": ""
   },
-  "bitcoinNetwork": "prod"
+  "bitcoinNetwork": "prod",
+  "peerplaysFaucetURL": "https://pbsa.tools/accounts/create"
 }

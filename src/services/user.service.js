@@ -2,9 +2,11 @@ class UserService {
 
 	/**
 	 * @param {UserRepository} opts.userRepository
+	 * @param {PeerplaysRepository} opts.peerplaysRepository
 	 */
 	constructor(opts) {
 		this.userRepository = opts.userRepository;
+		this.peerplaysRepository = opts.peerplaysRepository;
 	}
 
 	/**
@@ -60,6 +62,24 @@ class UserService {
 		if (!User) {
 			throw new Error('User not found');
 		}
+		return this.getCleanUser(User);
+	}
+
+	/**
+	 * @param {UserDocument} User
+	 * @param name
+	 * @param activeKey
+	 * @param ownerKey
+	 * @returns {Promise<UserObject>}
+	 */
+	async createPeerplaysAccount(User, { name, activeKey, ownerKey }) {
+		try {
+			await this.peerplaysRepository.createPeerplaysAccount(name, ownerKey, activeKey);
+		} catch (e) {
+			throw new Error(e.message);
+		}
+		User.peerplaysAccountName = name;
+		await User.save();
 		return this.getCleanUser(User);
 	}
 

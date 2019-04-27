@@ -12,7 +12,9 @@
         "facebookLink": "https://www.facebook.com/profile.php?id=100407434133285",
         "youtubeLink": "https://www.youtube.com/channel/UCr2334MwTiAUGw29ptBVbkw",
         "peerplaysAccount": "testAccount",
-        "validBitcoinAddress": "1Nh7uHdvY6fNwtQtM1G5EZAFPLC33B59rB"
+        "validBitcoinAddress": "1Nh7uHdvY6fNwtQtM1G5EZAFPLC33B59rB",
+        "validPeerplaysName": "test123",
+        "validPeerplaysKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4"
       }
     }
   }

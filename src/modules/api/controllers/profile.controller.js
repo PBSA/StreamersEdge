@@ -1,3 +1,5 @@
+const RestError = require('../../../errors/rest.error');
+
 class ProfileController {
 
 	/**
@@ -47,7 +49,7 @@ class ProfileController {
 			 * @apiName ProfilePatch
 			 * @apiGroup Profile
 			 * @apiVersion 0.1.0
-			 * @apiParamExample {json} Request-Example:
+			 * @apiExample {json} Request-Example:
 			 * {
 			 *   "youtube": "",
 			 *   "facebook": "",
@@ -74,6 +76,37 @@ class ProfileController {
 				this.profileValidator.patchProfile,
 				this.patchProfile.bind(this),
 			],
+			/**
+			 * @api {post} /api/v1/profile/peerplays/create-account Create peerplays account for authorized user
+			 * @apiName ProfileCreatePPAccount
+			 * @apiGroup Profile
+			 * @apiVersion 0.1.0
+			 * @apiExample {json} Request-Example:
+			 * {
+			 *   "name": "testaccount",
+			 *   "activeKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
+			 *   "ownerKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
+			 * }
+			 * @apiSuccessExample {json} Success-Response:
+			 * HTTP/1.1 200 OK
+			 * {
+			 *   "status": 200,
+			 *   "result": {
+			 *     "id": "5cc315041ec568398b99d7ca",
+			 *     "twitchUsername": "test",
+			 *     "youtube": "",
+			 *     "facebook": "",
+			 *     "peerplaysAccountName": "testaccount",
+			 *     "bitcoinAddress": ""
+			 *  }
+			 * }
+			 */
+			[
+				'post', '/api/v1/profile/peerplays/create-account',
+				this.authValidator.loggedOnly,
+				this.profileValidator.createPeerplaysAccount,
+				this.createPeerplaysAccount.bind(this),
+			],
 		];
 	}
 
@@ -83,6 +116,14 @@ class ProfileController {
 
 	async patchProfile(user, updateData) {
 		return this.userService.patchProfile(user, updateData);
+	}
+
+	async createPeerplaysAccount(user, data) {
+		try {
+			return await this.userService.createPeerplaysAccount(user, data);
+		} catch (e) {
+			throw new RestError(e.message, 400);
+		}
 	}
 
 }

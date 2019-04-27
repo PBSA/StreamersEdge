@@ -129,7 +129,9 @@ class ApiModule {
 			} catch (error) {
 				let restError = error;
 				if (!(error instanceof RestError)) {
+					/* istanbul ignore next */
 					logger.error(error);
+					/* istanbul ignore next */
 					restError = {
 						status: 500,
 						message: 'server side error',

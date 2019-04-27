@@ -36,7 +36,7 @@ class UserController {
 			 *     "facebook": "",
 			 *     "peerplaysAccountName": "",
 			 *     "bitcoinAddress": ""
-			 *  }
+			 *   }
 			 * }
 			 */
 			[

@@ -27,8 +27,8 @@ class AuthController {
 			 * @apiSuccessExample {json} Success-Response:
 			 * HTTP/1.1 200 OK
 			 * {
-			 *  "result": "https://id.twitch.tv/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost&scope=user_read&state=true&client_id=5uyyouelk9a2d5rt0i1uuvntel2mb5",
-			 *  "status": 200
+			 *   "result": "https://id.twitch.tv/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost&scope=user_read&state=true&client_id=5uyyouelk9a2d5rt0i1uuvntel2mb5",
+			 *   "status": 200
 			 * }
 			 */
 			['get', '/api/v1/auth/redirect-url', this.getRedirectUrl.bind(this)],
@@ -39,22 +39,22 @@ class AuthController {
 			 * you should send this code to backend for finishing authentication process
 			 * @apiGroup Auth
 			 * @apiVersion 0.1.0
-			 * @apiParamExample {json} Request-Example:
+			 * @apiExample {json} Request-Example:
 			 * {
-			 *  "code": "334442ikjds--s0dff"
+			 *   "code": "334442ikjds--s0dff"
 			 * }
 			 * @apiSuccessExample {json} Success-Response:
 			 * HTTP/1.1 200 OK
 			 * {
-			 *  "status": 200,
-			 *  "result": {
-			 *    "id": "5cc315041ec568398b99d7ca",
-			 *    "twitchUsername": "test",
-			 *    "youtube": "",
-			 *    "facebook": "",
-			 *    "peerplaysAccountName": "",
-			 *    "bitcoinAddress": ""
-			 *  }
+			 *   "status": 200,
+			 *   "result": {
+			 *     "id": "5cc315041ec568398b99d7ca",
+			 *     "twitchUsername": "test",
+			 *     "youtube": "",
+			 *     "facebook": "",
+			 *     "peerplaysAccountName": "",
+			 *     "bitcoinAddress": ""
+			 *   }
 			 * }
 			 */
 			['post', '/api/v1/auth/code', this.authValidator.validateAuthCode, this.authWithCode.bind(this)],
@@ -65,13 +65,13 @@ class AuthController {
 			 *
 			 * @apiGroup Auth
 			 * @apiVersion 0.1.0
-			 * @apiParamExample {json} Request-Example:
+			 * @apiExample {json} Request-Example:
 			 * {}
 			 * @apiSuccessExample {json} Success-Response:
 			 * HTTP/1.1 200 OK
 			 * {
-			 *  "status": 200,
-			 *  "result": true
+			 *   "status": 200,
+			 *   "result": true
 			 * }
 			 */
 			['post', '/api/v1/auth/logout', this.authValidator.loggedOnly, this.logout.bind(this)],
