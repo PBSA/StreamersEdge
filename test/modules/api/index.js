@@ -11,4 +11,10 @@ describe('REST API', () => {
 	describe('auth.controller', () => {
 		require('./controllers/auth.controller.test');
 	});
+	describe('profile.controller', () => {
+		require('./controllers/profile.controller.test');
+	});
+	describe('user.controller', () => {
+		require('./controllers/user.controller.test');
+	});
 });

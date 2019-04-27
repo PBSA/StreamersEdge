@@ -74,4 +74,5 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} twitch.clientSecret
  * @property {String} twitch.callbackUrl
  * @property {{enabled: Boolean, url: String}} raven
+ * @property {String<prod|testnet>} bitcoinNetwork
  */
