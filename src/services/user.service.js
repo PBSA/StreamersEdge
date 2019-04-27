@@ -29,7 +29,7 @@ class UserService {
 
 	/**
 	 * @param {UserDocument} User
-	 * @returns {Promise<{}>}
+	 * @returns {Promise<UserObject>}
 	 */
 	async getCleanUser(User) {
 		return {
@@ -40,6 +40,27 @@ class UserService {
 			peerplaysAccountName: User.peerplaysAccountName,
 			bitcoinAddress: User.bitcoinAddress,
 		};
+	}
+
+	/**
+	 * @param {UserDocument} User
+	 * @param updateObject
+	 * @returns {Promise<UserObject>}
+	 */
+	async patchProfile(User, updateObject) {
+		Object.keys(updateObject).forEach((field) => {
+			User[field] = updateObject[field];
+		});
+		await User.save();
+		return this.getCleanUser(User);
+	}
+
+	async getUser(id) {
+		const User = await this.userRepository.findById(id);
+		if (!User) {
+			throw new Error('User not found');
+		}
+		return this.getCleanUser(User);
 	}
 
 }

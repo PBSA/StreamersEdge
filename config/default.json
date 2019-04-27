@@ -18,5 +18,6 @@
   "raven": {
     "enabled": true,
     "url": ""
-  }
+  },
+  "bitcoinNetwork": "prod"
 }

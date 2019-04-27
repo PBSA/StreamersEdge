@@ -21,6 +21,9 @@ class ApiModule {
 	 *
 	 * @param {AppConfig} opts.config
 	 * @param {AuthController} opts.authController
+	 * @param {ProfileController} opts.profileController
+	 * @param {UserController} opts.userController
+	 * @param {UserRepository} opts.userRepository
 	 */
 	constructor(opts) {
 		this.config = opts.config;
@@ -28,6 +31,10 @@ class ApiModule {
 		this.server = null;
 
 		this.authController = opts.authController;
+		this.profileController = opts.profileController;
+		this.userController = opts.userController;
+
+		this.userRepository = opts.userRepository;
 	}
 
 	/**
@@ -70,8 +77,10 @@ class ApiModule {
 			this.app.use(passport.initialize());
 			this.app.use(passport.session());
 
-			passport.serializeUser((user, done) => done(null, user));
-			passport.deserializeUser((user, done) => done(null, user));
+			passport.serializeUser((user, done) => done(null, user._id));
+			passport.deserializeUser((user, done) => {
+				this.userRepository.findById(user).then((_user) => done(null, _user));
+			});
 
 			this.server = this.app.listen(this.config.port, () => {
 				logger.info(`API APP REST listen ${this.config.port} Port`);
@@ -87,6 +96,8 @@ class ApiModule {
 	_initRestRoutes() {
 		[
 			this.authController,
+			this.profileController,
+			this.userController,
 		].forEach((controller) => controller.getRoutes().forEach((route) => this.addRestHandler(...route)));
 
 		this.addRestHandler('use', '*', () => {
