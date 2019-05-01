@@ -1,0 +1,3 @@
+Contact: devs@pbsa.info
+Encryption: https://keybase.pub/pbsadevs/pgp_key.asc
+Canonical: https://github.com/pbsa/streamersedge/.well-known/security.txt
