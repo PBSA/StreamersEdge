@@ -5,11 +5,14 @@ const chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 describe('REST API', () => {
+	describe('auth.controller', () => {
+		require('./controllers/auth.controller.test');
+	});
 	describe('base.controller', () => {
 		require('./controllers/base.controller.test');
 	});
-	describe('auth.controller', () => {
-		require('./controllers/auth.controller.test');
+	describe('google.controller', () => {
+		require('./controllers/google.controller.test');
 	});
 	describe('twitch.controller', () => {
 		require('./controllers/twitch.controller.test');

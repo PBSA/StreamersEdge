@@ -15,6 +15,11 @@
     "clientSecret": "",
     "callbackUrl": ""
   },
+  "google": {
+    "clientId": "",
+    "clientSecret": "",
+    "callbackUrl": ""
+  },
   "raven": {
     "enabled": true,
     "url": ""

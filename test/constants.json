@@ -6,7 +6,13 @@
         "twitchValidAuth": "222222",
         "twitchTestUsername": "test",
         "twitchTestEmail": "test@test.com",
-        "twitchTestId": "1"
+        "twitchTestId": "1",
+        "googleValidCode": "111111",
+        "googleValidAuth": "222222",
+        "googleTestUsername": "test",
+        "googleTestEmail": "test@test.com",
+        "googleTestId": "1",
+        "googleTestPicture": "https://google.com/imgage.png"
       },
       "profile": {
         "facebookLink": "https://www.facebook.com/profile.php?id=100407434133285",

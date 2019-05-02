@@ -31,7 +31,7 @@ class UserController {
 			 *   "status": 200,
 			 *   "result": {
 			 *     "id": "5cc315041ec568398b99d7ca",
-			 *     "twitchUsername": "test",
+			 *     "username": "test",
 			 *     "youtube": "",
 			 *     "facebook": "",
 			 *     "peerplaysAccountName": "",

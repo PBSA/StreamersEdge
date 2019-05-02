@@ -1,14 +1,16 @@
+const RestError = require('../../../errors/rest.error');
+
 /* eslint-disable max-len */
-class TwitchController {
+class GoogleController {
 
 	/**
 	 * @param {AuthValidator} opts.authValidator
-	 * @param {TwitchService} opts.twitchService
+	 * @param {GoogleService} opts.googleService
 	 * @param {UserService} opts.userService
 	 */
 	constructor(opts) {
 		this.authValidator = opts.authValidator;
-		this.twitchService = opts.twitchService;
+		this.googleService = opts.googleService;
 		this.userService = opts.userService;
 	}
 
@@ -19,7 +21,7 @@ class TwitchController {
 	getRoutes() {
 		return [
 			/**
-			 * @api {get} /api/v1/auth/twitch/redirect-url Get redirect url
+			 * @api {get} /api/v1/auth/google/redirect-url Get redirect url
 			 * @apiName GetRedirectURL
 			 * @apiDescription You should use this method for receiving urls for redirect.
 			 * @apiGroup Auth
@@ -31,9 +33,9 @@ class TwitchController {
 			 *   "status": 200
 			 * }
 			 */
-			['get', '/api/v1/auth/twitch/redirect-url', this.getRedirectUrl.bind(this)],
+			['get', '/api/v1/auth/google/redirect-url', this.getRedirectUrl.bind(this)],
 			/**
-			 * @api {post} /api/v1/auth/twitch/code Auth with twitch code
+			 * @api {post} /api/v1/auth/google/code Auth with twitch code
 			 * @apiName AuthWithCode
 			 * @apiDescription After getting a code from twitch (twitch returns user to the redirect url with code),
 			 * you should send this code to backend for finishing authentication process
@@ -57,27 +59,26 @@ class TwitchController {
 			 *   }
 			 * }
 			 */
-			['post', '/api/v1/auth/twitch/code', this.authValidator.validateAuthCode, this.authWithCode.bind(this)],
+			['post', '/api/v1/auth/google/code', this.authValidator.validateAuthCode, this.authWithCode.bind(this)],
 		];
 	}
 
-	/**
-	 * @route GET /api/v1/auth/twitch/redirect-url
-	 * @description Receive url string for redirection user to twirch auth page and receive
-	 *              auth code for further processing
-	 * @returns {Promise<string>}
-	 */
 	async getRedirectUrl() {
-		return this.twitchService.getAuthRedirectURL();
+		return this.googleService.getAuthRedirectURL();
 	}
 
 	async authWithCode(user, code, req) {
-		const twitchUser = await this.twitchService.getUserByCode(code);
-		const User = await this.userService.getUserByTwitchAccount(twitchUser);
+		let twitchUser;
+		try {
+			twitchUser = await this.googleService.getUserByCode(code);
+		} catch (e) {
+			throw new RestError(e.message, 400);
+		}
+		const User = await this.userService.getUserByGoogleAccount(twitchUser);
 		await new Promise((success) => req.login(User, () => success()));
 		return this.userService.getCleanUser(User);
 	}
 
 }
 
-module.exports = TwitchController;
+module.exports = GoogleController;

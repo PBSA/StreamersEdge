@@ -47,7 +47,7 @@ HTTP/1.1 200 OK
 
 <p>After getting a code from twitch (twitch returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>
 
-	POST /api/v1/auth/code
+	POST /api/v1/auth/google/code
 
 
 ### Examples
@@ -70,7 +70,7 @@ HTTP/1.1 200 OK
   "status": 200,
   "result": {
     "id": "5cc315041ec568398b99d7ca",
-    "twitchUsername": "test",
+    "username": "test",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
@@ -82,7 +82,7 @@ HTTP/1.1 200 OK
 
 <p>You should use this method for receiving urls for redirect.</p>
 
-	GET /api/v1/auth/redirect-url
+	GET /api/v1/auth/google/redirect-url
 
 
 ### Success Response
@@ -127,7 +127,7 @@ HTTP/1.1 200 OK
   "status": 200,
   "result": {
     "id": "5cc315041ec568398b99d7ca",
-    "twitchUsername": "test",
+    "username": "test",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "testaccount",
@@ -152,7 +152,7 @@ HTTP/1.1 200 OK
   "status": 200,
   "result": {
     "id": "5cc315041ec568398b99d7ca",
-    "twitchUsername": "test",
+    "username": "test",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
@@ -190,7 +190,7 @@ HTTP/1.1 200 OK
   "status": 200,
   "result": {
     "id": "5cc315041ec568398b99d7ca",
-    "twitchUsername": "test",
+    "username": "test",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
@@ -221,7 +221,7 @@ HTTP/1.1 200 OK
   "status": 200,
   "result": {
     "id": "5cc315041ec568398b99d7ca",
-    "twitchUsername": "test",
+    "username": "test",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
