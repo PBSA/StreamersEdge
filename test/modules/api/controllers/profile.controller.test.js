@@ -31,7 +31,7 @@ describe('GET /api/v1/profile', () => {
 	});
 
 	it('should success. User logged', async () => {
-		await agent.post('/api/v1/auth/code').send({
+		await agent.post('/api/v1/auth/twitch/code').send({
 			code: constants.modules.api.auth.twitchValidCode,
 		});
 		const response = await agent.get('/api/v1/profile');
@@ -52,7 +52,7 @@ describe('GET /api/v1/profile', () => {
 describe('PATCH /api/v1/profile', () => {
 
 	beforeEach(async () => {
-		await agent.post('/api/v1/auth/code').send({ code: constants.modules.api.auth.twitchValidCode });
+		await agent.post('/api/v1/auth/twitch/code').send({ code: constants.modules.api.auth.twitchValidCode });
 	});
 
 	it('should forbid, user not logged', async () => {
@@ -132,7 +132,7 @@ describe('PATCH /api/v1/profile', () => {
 describe('POST /api/v1/profile/peerplays/create-account', () => {
 
 	beforeEach(async () => {
-		await agent.post('/api/v1/auth/code').send({ code: constants.modules.api.auth.twitchValidCode });
+		await agent.post('/api/v1/auth/twitch/code').send({ code: constants.modules.api.auth.twitchValidCode });
 	});
 
 	it('should forbid, user not logged', async () => {

@@ -22,7 +22,7 @@ before(async () => {
 describe('GET /api/v1/user/:id', () => {
 
 	beforeEach(async () => {
-		await agent.post('/api/v1/auth/code').send({ code: constants.modules.api.auth.twitchValidCode });
+		await agent.post('/api/v1/auth/twitch/code').send({ code: constants.modules.api.auth.twitchValidCode });
 	});
 
 	it('should forbid, user not logged', async () => {
