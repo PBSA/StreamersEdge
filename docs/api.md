@@ -4,8 +4,10 @@ Backend module for StreamersEdge application
 
 - [Auth](#auth)
 	- [Logout](#logout)
+	- [Auth with google code](#auth-with-google-code)
 	- [Auth with twitch code](#auth-with-twitch-code)
-	- [Get redirect url](#get-redirect-url)
+	- [Get redirect url for auth with Google](#get-redirect-url-for-auth-with-google)
+	- [Get redirect url for auth with Twitch](#get-redirect-url-for-auth-with-twitch)
 	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
@@ -43,9 +45,9 @@ HTTP/1.1 200 OK
   "result": true
 }
 ```
-## Auth with twitch code
+## Auth with google code
 
-<p>After getting a code from twitch (twitch returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>
+<p>After getting a code from google (google returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>
 
 	POST /api/v1/auth/google/code
 
@@ -78,11 +80,64 @@ HTTP/1.1 200 OK
   }
 }
 ```
-## Get redirect url
+## Auth with twitch code
+
+<p>After getting a code from twitch (twitch returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>
+
+	POST /api/v1/auth/twitch/code
+
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "code": "334442ikjds--s0dff"
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": ""
+  }
+}
+```
+## Get redirect url for auth with Google
 
 <p>You should use this method for receiving urls for redirect.</p>
 
 	GET /api/v1/auth/google/redirect-url
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": "https://accounts.google.com/o/oauth2/auth?approval_prompt=...",
+  "status": 200
+}
+```
+## Get redirect url for auth with Twitch
+
+<p>You should use this method for receiving urls for redirect.</p>
+
+	GET /api/v1/auth/twitch/redirect-url
 
 
 ### Success Response

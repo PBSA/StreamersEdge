@@ -21,23 +21,23 @@ class GoogleController {
 	getRoutes() {
 		return [
 			/**
-			 * @api {get} /api/v1/auth/google/redirect-url Get redirect url
-			 * @apiName GetRedirectURL
+			 * @api {get} /api/v1/auth/google/redirect-url Get redirect url for auth with Google
+			 * @apiName GetGoogleRedirectURL
 			 * @apiDescription You should use this method for receiving urls for redirect.
 			 * @apiGroup Auth
 			 * @apiVersion 0.1.0
 			 * @apiSuccessExample {json} Success-Response:
 			 * HTTP/1.1 200 OK
 			 * {
-			 *   "result": "https://id.twitch.tv/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost&scope=user_read&state=true&client_id=5uyyouelk9a2d5rt0i1uuvntel2mb5",
+			 *   "result": "https://accounts.google.com/o/oauth2/auth?approval_prompt=...",
 			 *   "status": 200
 			 * }
 			 */
 			['get', '/api/v1/auth/google/redirect-url', this.getRedirectUrl.bind(this)],
 			/**
-			 * @api {post} /api/v1/auth/google/code Auth with twitch code
-			 * @apiName AuthWithCode
-			 * @apiDescription After getting a code from twitch (twitch returns user to the redirect url with code),
+			 * @api {post} /api/v1/auth/google/code Auth with google code
+			 * @apiName AuthWithGoogleCode
+			 * @apiDescription After getting a code from google (google returns user to the redirect url with code),
 			 * you should send this code to backend for finishing authentication process
 			 * @apiGroup Auth
 			 * @apiVersion 0.1.0
@@ -68,13 +68,13 @@ class GoogleController {
 	}
 
 	async authWithCode(user, code, req) {
-		let twitchUser;
+		let User;
 		try {
-			twitchUser = await this.googleService.getUserByCode(code);
+			User = await this.googleService.getUserByCode(code);
 		} catch (e) {
 			throw new RestError(e.message, 400);
 		}
-		const User = await this.userService.getUserByGoogleAccount(twitchUser);
+		User = await this.userService.getUserByGoogleAccount(User);
 		await new Promise((success) => req.login(User, () => success()));
 		return this.userService.getCleanUser(User);
 	}

@@ -19,8 +19,8 @@ class TwitchController {
 	getRoutes() {
 		return [
 			/**
-			 * @api {get} /api/v1/auth/twitch/redirect-url Get redirect url
-			 * @apiName GetRedirectURL
+			 * @api {get} /api/v1/auth/twitch/redirect-url Get redirect url for auth with Twitch
+			 * @apiName GetTwitchRedirectURL
 			 * @apiDescription You should use this method for receiving urls for redirect.
 			 * @apiGroup Auth
 			 * @apiVersion 0.1.0
@@ -34,7 +34,7 @@ class TwitchController {
 			['get', '/api/v1/auth/twitch/redirect-url', this.getRedirectUrl.bind(this)],
 			/**
 			 * @api {post} /api/v1/auth/twitch/code Auth with twitch code
-			 * @apiName AuthWithCode
+			 * @apiName AuthWithTwitchCode
 			 * @apiDescription After getting a code from twitch (twitch returns user to the redirect url with code),
 			 * you should send this code to backend for finishing authentication process
 			 * @apiGroup Auth
