@@ -20,6 +20,11 @@
     "clientSecret": "",
     "callbackUrl": ""
   },
+  "facebook": {
+    "clientId": "",
+    "clientSecret": "",
+    "callbackUrl": ""
+  },
   "raven": {
     "enabled": true,
     "url": ""

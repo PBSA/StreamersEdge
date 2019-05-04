@@ -76,6 +76,9 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} google.clientId
  * @property {String} google.clientSecret
  * @property {String} google.callbackUrl
+ * @property {String} facebook.clientId
+ * @property {String} facebook.clientSecret
+ * @property {String} facebook.callbackUrl
  * @property {{enabled: Boolean, url: String}} raven
  * @property {String<prod|testnet>} bitcoinNetwork
  * @property {String} peerplaysFaucetURL

@@ -17,6 +17,11 @@
     "clientSecret": "GOOGLE_CLIENT_SECRET",
     "callbackUrl": "GOOGLE_CALLBACK_URL"
   },
+  "facebook": {
+    "clientId": "FACEBOOK_CLIENT_ID",
+    "clientSecret": "FACEBOOK_CLIENT_SECRET",
+    "callbackUrl": "FACEBOOK_CALLBACK_URL"
+  },
   "raven": {
     "url": "RAVEN_URL"
   }
