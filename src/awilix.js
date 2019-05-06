@@ -1,6 +1,7 @@
 const awilix = require('awilix');
 /** @type AppConfig */
 const CONFIG = require('config');
+const path = require('path');
 const { getLogger } = require('log4js');
 
 const {
@@ -45,7 +46,7 @@ CONFIG.isDevelopment = process.env.NODE_ENV === 'development';
 
 container.register({
 	config: asValue(CONFIG),
-	basePath: asValue(__dirname),
+	basePath: asValue(path.resolve(__dirname, '../')),
 });
 
 listModules(['src/modules/*/*.js']).forEach(({ name }) => {

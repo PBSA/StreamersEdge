@@ -6,11 +6,13 @@ class ProfileController {
 	 * @param {AuthValidator} opts.authValidator
 	 * @param {ProfileValidator} opts.profileValidator
 	 * @param {UserService} opts.userService
+	 * @param {FileService} opts.fileService
 	 */
 	constructor(opts) {
 		this.authValidator = opts.authValidator;
 		this.profileValidator = opts.profileValidator;
 		this.userService = opts.userService;
+		this.fileService = opts.fileService;
 	}
 
 	/**
@@ -107,7 +109,22 @@ class ProfileController {
 				this.profileValidator.createPeerplaysAccount,
 				this.createPeerplaysAccount.bind(this),
 			],
+			[
+				'post', '/api/v1/profile/avatar',
+				() => this._uploadAvatarMiddleware(),
+				this.uploadAvatar.bind(this),
+			],
 		];
+	}
+
+	_uploadAvatarMiddleware() {
+		return async (req) => {
+			try {
+				return await this.fileService.saveImage(req, 'avatar');
+			} catch (e) {
+				throw new RestError(e.message, 400);
+			}
+		};
 	}
 
 	async getProfile(user) {
@@ -124,6 +141,16 @@ class ProfileController {
 		} catch (e) {
 			throw new RestError(e.message, 400);
 		}
+	}
+
+	async uploadAvatar(user, data, req) {
+		console.log(req.file);
+		// try {
+		// 	await this.fileService.saveImage(req, 'avatar');
+		// 	console.log(req.file.filename);
+		// } catch (e) {
+		// 	throw new RestError(e.message, 404);
+		// }
 	}
 
 }
