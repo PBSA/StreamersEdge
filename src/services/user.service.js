@@ -30,21 +30,22 @@ class UserService {
 	}
 
 	/**
-	 * Find user by google account and create row if not exists
+	 * Find user by network account id and create row if not exists
+	 * @param {String} network
 	 * @param account
 	 * @returns {Promise<UserDocument>}
 	 */
-	async getUserByGoogleAccount(account) {
+	async getUserBySocialNetworkAccount(network, account) {
 		const {
 			name, id, picture, email,
 		} = account;
 		let User = await this.userRepository.findOne({
-			googleId: id,
+			[`${network}Id`]: id,
 		});
 		if (!User) {
 			User = await this.userRepository.create({
 				username: name,
-				googleId: id,
+				[`${network}Id`]: id,
 				avatar: picture,
 				email,
 			});

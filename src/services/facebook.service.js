@@ -1,21 +1,26 @@
+const RestError = require('../errors/rest.error');
 
 class FacebookService {
 
 	/**
 	 * @param {AppConfig} opts.config
-	 * @param {GoogleRepository} opts.googleRepository
+	 * @param {FacebookRepository} opts.facebookRepository
 	 */
 	constructor(opts) {
 		this.config = opts.config;
-		this.googleRepository = opts.googleRepository;
+		this.facebookRepository = opts.facebookRepository;
 	}
 
 	async getAuthRedirectURL() {
-		return this.googleRepository.getAuthUrl();
+		return this.facebookRepository.getAuthUrl();
 	}
 
 	async getUserByCode(code) {
-		return this.googleRepository.getProfileByCode(code);
+		try {
+			return await this.facebookRepository.getProfileByCode(code);
+		} catch (e) {
+			throw new RestError(e.message, 400);
+		}
 	}
 
 }

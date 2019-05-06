@@ -1,40 +1,36 @@
+const graph = require('fbgraph');
+
 class FacebookRepository {
 
 	/**
-	 * @param {TwitchConnection} opts.twitchConnection
+	 * @param {FacebookConnection} opts.facebookConnection
 	 * @param {AppConfig} opts.config
 	 */
 	constructor(opts) {
-		this.tokenUrl = 'https://id.twitch.tv/oauth2/token';
-		this.userUrl = 'https://api.twitch.tv/kraken/user';
-
-		this.twitchConnection = opts.twitchConnection;
+		this.facebookConnection = opts.facebookConnection;
 		this.config = opts.config;
-		// this.getAccessToken()
 	}
 
-	async getAccessToken(code) {
-		return this.twitchConnection.request(
-			'POST',
-			this.tokenUrl,
-			{
-				client_id: this.config.twitch.clientId,
-				client_secret: this.config.twitch.clientSecret,
-				grant_type: 'authorization_code',
-				redirect_uri: this.config.twitch.callbackUrl,
-				code,
-				state: true,
-			},
-		);
+	getAuthUrl() {
+		return graph.getOauthUrl({
+			client_id: this.config.facebook.clientId,
+			redirect_uri: this.config.facebook.callbackUrl,
+			scope: 'email',
+		});
 	}
 
-	async getUser(accessToken) {
-		return this.twitchConnection.request(
-			'GET',
-			this.userUrl,
-			{},
-			accessToken,
-		);
+	async getProfileByCode(code) {
+		const data = await this.facebookConnection.userInfo(code);
+		let picture = null;
+		if (data.picture.data && data.picture.data.url) {
+			picture = data.picture.data.url;
+		}
+		return {
+			id: data.id,
+			name: data.name,
+			email: data.email,
+			picture,
+		};
 	}
 
 }

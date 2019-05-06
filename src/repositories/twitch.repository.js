@@ -10,7 +10,6 @@ class TwitchRepository {
 
 		this.twitchConnection = opts.twitchConnection;
 		this.config = opts.config;
-		// this.getAccessToken()
 	}
 
 	async getAccessToken(code) {

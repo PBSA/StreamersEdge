@@ -1,6 +1,5 @@
 /* istanbul ignore file */
-const request = require('request');
-
+const graph = require('fbgraph');
 const BaseConnection = require('./abstracts/base.connection');
 
 class FacebookConnection extends BaseConnection {
@@ -16,43 +15,26 @@ class FacebookConnection extends BaseConnection {
 
 	connect() {}
 
-	async request(method, url, form, auth) {
-		const options = {
-			method,
-			url,
-			form,
-			headers: {
-				'Client-ID': this.config.facebook.clientId,
-				Accept: 'application/vnd.twitchtv.v5+json',
-				'Content-Type': 'application/json',
-				Authorization: auth || '',
-			},
-		};
-
-		if (options.headers.Authorization !== '' && options.headers.Authorization.indexOf('OAuth') === -1) {
-			options.headers.Authorization = `OAuth ${auth}`;
-		}
-
+	async userInfo(code) {
 		return new Promise((success, fail) => {
-			request(options, (err, res, body) => {
+			graph.authorize({
+				client_id: this.config.facebook.clientId,
+				redirect_uri: this.config.facebook.callbackUrl,
+				client_secret: this.config.facebook.clientSecret,
+				code,
+			}, (err, facebookRes) => {
 				if (err) {
 					fail(err);
 					return;
 				}
-				if (res.statusCode !== 200) {
-					fail(JSON.parse(body));
-					return;
-				}
-				try {
-					if (body.length === 0) {
-						success(null);
+				graph.setAccessToken(facebookRes.access_token);
+				graph.get('me?locale=en_US&fields=name,email,picture', (subErr, res) => {
+					if (subErr) {
+						fail(subErr);
 						return;
 					}
-					success(JSON.parse(body));
-				} catch (_err) {
-					_err.statusCode = res.statusCode;
-					fail(_err);
-				}
+					success(res);
+				});
 			});
 		});
 	}

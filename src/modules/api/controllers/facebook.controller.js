@@ -29,7 +29,7 @@ class FacebookController {
 			 * @apiSuccessExample {json} Success-Response:
 			 * HTTP/1.1 200 OK
 			 * {
-			 *   "result": "https://accounts.google.com/o/oauth2/auth?approval_prompt=...",
+			 *   "result": "https://www.facebook.com/v2.0/dialog/oauth?client_id=...&redirect_uri=...&scope=email",
 			 *   "status": 200
 			 * }
 			 */
@@ -70,11 +70,11 @@ class FacebookController {
 	async authWithCode(user, code, req) {
 		let User;
 		try {
-			User = await this.googleService.getUserByCode(code);
+			User = await this.facebookService.getUserByCode(code);
 		} catch (e) {
 			throw new RestError(e.message, 400);
 		}
-		User = await this.userService.getUserByGoogleAccount(User);
+		User = await this.userService.getUserBySocialNetworkAccount('facebook', User);
 		await new Promise((success) => req.login(User, () => success()));
 		return this.userService.getCleanUser(User);
 	}

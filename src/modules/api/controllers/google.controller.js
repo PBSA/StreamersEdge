@@ -74,7 +74,7 @@ class GoogleController {
 		} catch (e) {
 			throw new RestError(e.message, 400);
 		}
-		User = await this.userService.getUserByGoogleAccount(User);
+		User = await this.userService.getUserBySocialNetworkAccount('google', User);
 		await new Promise((success) => req.login(User, () => success()));
 		return this.userService.getCleanUser(User);
 	}

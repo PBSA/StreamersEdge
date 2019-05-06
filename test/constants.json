@@ -12,7 +12,13 @@
         "googleTestUsername": "test",
         "googleTestEmail": "test@test.com",
         "googleTestId": "1",
-        "googleTestPicture": "https://google.com/imgage.png"
+        "googleTestPicture": "https://google.com/imgage.png",
+        "facebookValidCode": "111111",
+        "facebookValidAuth": "222222",
+        "facebookTestUsername": "test",
+        "facebookTestEmail": "test@test.com",
+        "facebookTestId": "1",
+        "facebookTestPicture": "https://facebook.com/imgage.png"
       },
       "profile": {
         "facebookLink": "https://www.facebook.com/profile.php?id=100407434133285",

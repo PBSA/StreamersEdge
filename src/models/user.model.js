@@ -39,6 +39,12 @@ const userSchema = new Schema({
 		unique: true,
 		sparse: true,
 	},
+	facebookId: {
+		type: String,
+		index: true,
+		unique: true,
+		sparse: true,
+	},
 	youtube: {
 		type: String,
 		default: '',
