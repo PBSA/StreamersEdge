@@ -44,6 +44,7 @@ describe('POST /api/v1/auth/google/code', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.googleTestPicture,
 		});
 	});
 
@@ -59,6 +60,7 @@ describe('POST /api/v1/auth/google/code', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.googleTestPicture,
 		});
 	});
 
@@ -75,6 +77,7 @@ describe('POST /api/v1/auth/google/code', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.googleTestPicture,
 		});
 	});
 

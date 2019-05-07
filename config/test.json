@@ -2,5 +2,9 @@
   "db": {
     "database": "streamers-edge-test"
   },
-  "cors": true
+  "cors": true,
+  "port": 3005,
+  "urls": {
+    "backend": "http://localhost:3005"
+  }
 }

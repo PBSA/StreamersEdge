@@ -3,10 +3,12 @@ class UserService {
 	/**
 	 * @param {UserRepository} opts.userRepository
 	 * @param {PeerplaysRepository} opts.peerplaysRepository
+	 * @param {FileService} opts.fileService
 	 */
 	constructor(opts) {
 		this.userRepository = opts.userRepository;
 		this.peerplaysRepository = opts.peerplaysRepository;
+		this.fileService = opts.fileService;
 	}
 
 	/**
@@ -65,6 +67,7 @@ class UserService {
 			facebook: User.facebook,
 			peerplaysAccountName: User.peerplaysAccountName,
 			bitcoinAddress: User.bitcoinAddress,
+			avatar: (User.avatar && !User.avatar.match(/^http/)) ? this.fileService.getImage(User.avatar, 'avatar') : User.avatar,
 		};
 	}
 
@@ -105,6 +108,12 @@ class UserService {
 		User.peerplaysAccountName = name;
 		await User.save();
 		return this.getCleanUser(User);
+	}
+
+	async updateAvatar(User, filename) {
+		User.avatar = filename;
+		await User.save();
+		return User;
 	}
 
 }

@@ -24,5 +24,8 @@
   },
   "raven": {
     "url": "RAVEN_URL"
+  },
+  "urls": {
+    "backend": "URLS_BACKEND"
   }
 }

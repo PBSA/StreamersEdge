@@ -22,11 +22,7 @@ class ProfileController {
 	getRoutes() {
 		return [
 			/**
-			 * @api {get} /api/v1/profile Get authorized user profile
-			 * @apiName ProfileGet
-			 * @apiDescription Get profile of authorized user
-			 * @apiGroup Profile
-			 * @apiVersion 0.1.0
+			 * @apiDefine AccountObjectResponse
 			 * @apiSuccessExample {json} Success-Response:
 			 * HTTP/1.1 200 OK
 			 * {
@@ -37,9 +33,19 @@ class ProfileController {
 			 *     "youtube": "",
 			 *     "facebook": "",
 			 *     "peerplaysAccountName": "",
-			 *     "bitcoinAddress": ""
+			 *     "bitcoinAddress": "",
+			 *     "avatar": "https://site.com/image/avatar....",
 			 *   }
 			 * }
+			 */
+
+			/**
+			 * @api {get} /api/v1/profile Get authorized user profile
+			 * @apiName ProfileGet
+			 * @apiDescription Get profile of authorized user
+			 * @apiGroup Profile
+			 * @apiVersion 0.1.0
+			 * @apiUse AccountObjectResponse
 			 */
 			[
 				'get', '/api/v1/profile',
@@ -58,19 +64,7 @@ class ProfileController {
 			 *   "peerplaysAccountName": "",
 			 *   "bitcoinAddress": ""
 			 * }
-			 * @apiSuccessExample {json} Success-Response:
-			 * HTTP/1.1 200 OK
-			 * {
-			 *   "status": 200,
-			 *   "result": {
-			 *     "id": "5cc315041ec568398b99d7ca",
-			 *     "username": "test",
-			 *     "youtube": "",
-			 *     "facebook": "",
-			 *     "peerplaysAccountName": "",
-			 *     "bitcoinAddress": ""
-			 *  }
-			 * }
+			 * @apiUse AccountObjectResponse
 			 */
 			[
 				'patch', '/api/v1/profile',
@@ -89,19 +83,7 @@ class ProfileController {
 			 *   "activeKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
 			 *   "ownerKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
 			 * }
-			 * @apiSuccessExample {json} Success-Response:
-			 * HTTP/1.1 200 OK
-			 * {
-			 *   "status": 200,
-			 *   "result": {
-			 *     "id": "5cc315041ec568398b99d7ca",
-			 *     "username": "test",
-			 *     "youtube": "",
-			 *     "facebook": "",
-			 *     "peerplaysAccountName": "testaccount",
-			 *     "bitcoinAddress": ""
-			 *  }
-			 * }
+			 * @apiUse AccountObjectResponse
 			 */
 			[
 				'post', '/api/v1/profile/peerplays/create-account',
@@ -109,8 +91,18 @@ class ProfileController {
 				this.profileValidator.createPeerplaysAccount,
 				this.createPeerplaysAccount.bind(this),
 			],
+			/**
+			 * @api {post} /api/v1/profile/avatar Add or change account avatar
+			 * @apiName ProfileUploadAvatar
+			 * @apiGroup Profile
+			 * @apiVersion 0.1.0
+			 * @apiExample {form-data} Request-Example:
+			 * "file": ...file...
+			 * @apiUse AccountObjectResponse
+			 */
 			[
 				'post', '/api/v1/profile/avatar',
+				this.authValidator.loggedOnly,
 				() => this._uploadAvatarMiddleware(),
 				this.uploadAvatar.bind(this),
 			],
@@ -144,13 +136,8 @@ class ProfileController {
 	}
 
 	async uploadAvatar(user, data, req) {
-		console.log(req.file);
-		// try {
-		// 	await this.fileService.saveImage(req, 'avatar');
-		// 	console.log(req.file.filename);
-		// } catch (e) {
-		// 	throw new RestError(e.message, 404);
-		// }
+		user = await this.userService.updateAvatar(user, req.file.filename);
+		return this.userService.getCleanUser(user);
 	}
 
 }

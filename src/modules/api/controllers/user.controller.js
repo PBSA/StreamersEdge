@@ -25,19 +25,7 @@ class UserController {
 			 * @apiGroup Profile
 			 * @apiVersion 0.1.0
 			 * @apiParam {String} id  User id
-			 * @apiSuccessExample {json} Success-Response:
-			 * HTTP/1.1 200 OK
-			 * {
-			 *   "status": 200,
-			 *   "result": {
-			 *     "id": "5cc315041ec568398b99d7ca",
-			 *     "username": "test",
-			 *     "youtube": "",
-			 *     "facebook": "",
-			 *     "peerplaysAccountName": "",
-			 *     "bitcoinAddress": ""
-			 *   }
-			 * }
+			 * @apiUse AccountObjectResponse
 			 */
 			[
 				'get', '/api/v1/user/:id',

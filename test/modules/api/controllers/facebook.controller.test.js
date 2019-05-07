@@ -44,6 +44,7 @@ describe('POST /api/v1/auth/facebook/code', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.facebookTestPicture,
 		});
 	});
 
@@ -59,6 +60,7 @@ describe('POST /api/v1/auth/facebook/code', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.facebookTestPicture,
 		});
 	});
 
@@ -75,6 +77,7 @@ describe('POST /api/v1/auth/facebook/code', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.facebookTestPicture,
 		});
 	});
 

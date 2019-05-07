@@ -43,19 +43,7 @@ class TwitchController {
 			 * {
 			 *   "code": "334442ikjds--s0dff"
 			 * }
-			 * @apiSuccessExample {json} Success-Response:
-			 * HTTP/1.1 200 OK
-			 * {
-			 *   "status": 200,
-			 *   "result": {
-			 *     "id": "5cc315041ec568398b99d7ca",
-			 *     "username": "test",
-			 *     "youtube": "",
-			 *     "facebook": "",
-			 *     "peerplaysAccountName": "",
-			 *     "bitcoinAddress": ""
-			 *   }
-			 * }
+			 * @apiUse AccountObjectResponse
 			 */
 			['post', '/api/v1/auth/twitch/code', this.authValidator.validateAuthCode, this.authWithCode.bind(this)],
 		];

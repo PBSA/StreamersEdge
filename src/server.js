@@ -82,4 +82,5 @@ const currentModule = process.env.MODULE || 'api';
  * @property {{enabled: Boolean, url: String}} raven
  * @property {String<prod|testnet>} bitcoinNetwork
  * @property {String} peerplaysFaucetURL
+ * @property {{backend: String}} urls
  */

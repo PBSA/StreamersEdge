@@ -37,7 +37,7 @@ class FileService {
 	 * @returns {string}
 	 */
 	getImage(filename, key) {
-		return `${this.config.urls.backend}/images/`
+		return `${this.config.urls.backend}/api/images/`
 			+ `${key}/${this.IMAGES_SIZE.x}x${this.IMAGES_SIZE.y}/${filename}`;
 	}
 
