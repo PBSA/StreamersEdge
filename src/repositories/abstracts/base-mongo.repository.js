@@ -1,17 +1,17 @@
 /* istanbul ignore file */
 class BaseMongoRepository {
 
-	/**
+  /**
 	 * @param {RavenHelper} ravenHelper
 	 * @param {Mongoose.Model} model
 	 */
-	constructor(ravenHelper, model = null) {
-		this.ravenHelper = ravenHelper;
-		/** @type Mongoose.Model */
-		this.model = model;
-	}
+  constructor(ravenHelper, model = null) {
+    this.ravenHelper = ravenHelper;
+    /** @type Mongoose.Model */
+    this.model = model;
+  }
 
-	/**
+  /**
 	 * Finds a single document by its _id field. `findById(id)` is almost*
 	 * equivalent to `findOne({ _id: id })`. If you want to query by a document's
 	 * `_id`, use `findById()` instead of `findOne()`.
@@ -46,14 +46,15 @@ class BaseMongoRepository {
 	 * @param {Object} [options] optional
 	 * @return {Promise.<MongooseDocument>}
 	 */
-	findById(id, projection, options) {
-		if (typeof id === 'undefined') {
-			id = null;
-		}
-		return this.findOne({ _id: id }, projection, options);
-	}
+  findById(id, projection, options) {
+    if (typeof id === 'undefined') {
+      id = null;
+    }
 
-	/**
+    return this.findOne({_id: id}, projection, options);
+  }
+
+  /**
 	 * Finds one document.
 	 *
 	 * The `conditions` are cast to their respective SchemaTypes before the command is sent.
@@ -79,15 +80,15 @@ class BaseMongoRepository {
 	 * @param {Object} [options] optional
 	 * @return {Promise.<MongooseDocument>}
 	 */
-	async findOne(conditions, projection, options) {
-		try {
-			return await this.model.findOne(conditions, projection, options);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model findOne');
-		}
-	}
+  async findOne(conditions, projection, options) {
+    try {
+      return await this.model.findOne(conditions, projection, options);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model findOne');
+    }
+  }
 
-	/**
+  /**
 	 * Finds documents
 	 *
 	 * The `conditions` are cast to their respective SchemaTypes before the command is sent.
@@ -109,15 +110,15 @@ class BaseMongoRepository {
 	 * @param {Object} [options] optional
 	 * @return {Promise.<[MongooseDocument]>}
 	 */
-	async find(conditions, projection, options) {
-		try {
-			return await this.model.find(conditions, projection, options);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model find');
-		}
-	}
+  async find(conditions, projection, options) {
+    try {
+      return await this.model.find(conditions, projection, options);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model find');
+    }
+  }
 
-	/**
+  /**
 	 * Shortcut for saving one or more documents to the database.
 	 * `MyModel.create(docs)` does `new MyModel(doc).save()` for every doc in
 	 * docs.
@@ -142,15 +143,15 @@ class BaseMongoRepository {
 	 * @param {Object|[Object]} doc document to create (or several docs as array)
 	 * @return {Promise.<MongooseDocument|[MongooseDocument]>}
 	 */
-	async create(doc) {
-		try {
-			return await this.model.create(doc);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model create');
-		}
-	}
+  async create(doc) {
+    try {
+      return await this.model.create(doc);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model create');
+    }
+  }
 
-	/**
+  /**
 	 * Updates one document in the database.
 	 * Returns number of updated documents
 	 *
@@ -229,15 +230,15 @@ class BaseMongoRepository {
 	 * @param {Object} [options]
 	 * @return {Promise.<Number>}
 	 */
-	async update(conditions, doc, options) {
-		try {
-			return await this.model.update(conditions, doc, options);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model update');
-		}
-	}
+  async update(conditions, doc, options) {
+    try {
+      return await this.model.update(conditions, doc, options);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model update');
+    }
+  }
 
-	/**
+  /**
 	 *  * Issues a mongodb findAndModify update command by a document's _id field.
 	 * `findByIdAndUpdate(id, ...)` is equivalent to `findOneAndUpdate({ _id: id }, ...)`.
 	 *
@@ -315,15 +316,15 @@ class BaseMongoRepository {
 	 * @param {Boolean} [options.new]
 	 * @return {Promise<MongooseDocument>}
 	 */
-	async findByIdAndUpdate(id, update, options) {
-		try {
-			return await this.model.findByIdAndUpdate(id, update, options);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model findByIdAndUpdate');
-		}
-	}
+  async findByIdAndUpdate(id, update, options) {
+    try {
+      return await this.model.findByIdAndUpdate(id, update, options);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model findByIdAndUpdate');
+    }
+  }
 
-	/**
+  /**
 	 * Issues a mongodb findAndModify update command.
 	 *
 	 * Finds a matching document, updates it according to the `update` arg,
@@ -416,15 +417,15 @@ class BaseMongoRepository {
 	 * @param {boolean} [options.new] if true: returns updated object (default - false)
 	 * @return {Promise<MongooseDocument>}
 	 */
-	async findOneAndUpdate(conditions, update, options) {
-		try {
-			return await this.model.findOneAndUpdate(conditions, update, options);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model findOneAndUpdate');
-		}
-	}
+  async findOneAndUpdate(conditions, update, options) {
+    try {
+      return await this.model.findOneAndUpdate(conditions, update, options);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model findOneAndUpdate');
+    }
+  }
 
-	/**
+  /**
 	 * Removes all documents that match `conditions` from the collection.
 	 * To remove just the first document that matches `conditions`, set the `single`
 	 * option to true.
@@ -442,15 +443,15 @@ class BaseMongoRepository {
 	 * @protected
 	 * @param {Object} conditions
 	 */
-	async remove(conditions) {
-		try {
-			return await this.model.remove(conditions);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model remove');
-		}
-	}
+  async remove(conditions) {
+    try {
+      return await this.model.remove(conditions);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model remove');
+    }
+  }
 
-	/**
+  /**
 	 * Deletes all of the documents that match `conditions` from the collection.
 	 * Behaves like `remove()`, but deletes all documents that match `conditions`
 	 * regardless of the `single` option.
@@ -470,15 +471,15 @@ class BaseMongoRepository {
 	 * @return {Query}
 	 * @api public
 	 */
-	async deleteMany(conditions) {
-		try {
-			return await this.model.deleteMany(conditions);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model deleteMany');
-		}
-	}
+  async deleteMany(conditions) {
+    try {
+      return await this.model.deleteMany(conditions);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model deleteMany');
+    }
+  }
 
-	/**
+  /**
 	 * Counts number of matching documents in a database collection.
 	 *
 	 * ####Example:
@@ -490,15 +491,15 @@ class BaseMongoRepository {
 	 * @param {Object?} conditions
 	 * @return {Number}
 	 */
-	async count(conditions) {
-		try {
-			return await this.model.count(conditions || {});
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model count');
-		}
-	}
+  async count(conditions) {
+    try {
+      return await this.model.count(conditions || {});
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model count');
+    }
+  }
 
-	/**
+  /**
 	 * Performs [aggregations](http://docs.mongodb.org/manual/applications/aggregation/) on the models collection.
 	 *
 	 * The `aggregate` is executed and a `Promise` is returned.
@@ -543,15 +544,15 @@ class BaseMongoRepository {
 	 * @param {Object|Array} aggregation pipeline operator(s) or operator array
 	 * @return {Promise}
 	 */
-	async aggregate(aggregation) {
-		try {
-			return await this.model.aggregate(aggregation);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'model aggregate');
-		}
-	}
+  async aggregate(aggregation) {
+    try {
+      return await this.model.aggregate(aggregation);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'model aggregate');
+    }
+  }
 
-	/**
+  /**
 	 * Declare and/or execute this query as an updateOne() operation. Same as
 	 * `update()`, except it does not support the `multi` or `overwrite` options.
 	 *
@@ -578,13 +579,13 @@ class BaseMongoRepository {
 	 * @see writeOpResult http://mongodb.github.io/node-mongodb-native/2.2/api/Collection.html#~WriteOpResult
 	 * @api public
 	 */
-	async updateOne(conditions, doc, options, callback) {
-		try {
-			return await this.model.updateOne(conditions, doc, options, callback);
-		} catch (error) {
-			throw this.ravenHelper.error(error, 'update one');
-		}
-	}
+  async updateOne(conditions, doc, options, callback) {
+    try {
+      return await this.model.updateOne(conditions, doc, options, callback);
+    } catch (error) {
+      throw this.ravenHelper.error(error, 'update one');
+    }
+  }
 
 }
 

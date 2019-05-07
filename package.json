@@ -12,8 +12,12 @@
     "url": "https://github.com/PBSA"
   },
   "scripts": {
-    "serve": "NODE_ENV=development nodemon src/server.js",
-    "start": "node src/server.js",
+    "lint": "eslint src/",
+    "release": "standard-version",
+    "release:pre": "npm run release -- --prerelease alpha",
+    "release:minor": "npm run release – --release-as minor",
+    "serve": "npm run lint && NODE_ENV=development nodemon src/server.js",
+    "start": "npm run lint && node src/server.js",
     "migrate": "migrate-mongo up --file config/migrate-mongo-config.js",
     "test:audit": "audit-ci --config audit-ci.json",
     "test:lint": "eslint . --quiet",
@@ -43,18 +47,50 @@
     "wallet-address-validator": "^0.2.4"
   },
   "devDependencies": {
+    "@commitlint/cli": "^7.6.0",
+    "@commitlint/config-conventional": "^7.6.0",
     "apidoc": "^0.17.7",
     "apidoc-markdown": "^0.2.1",
     "audit-ci": "^1.6.0",
+    "babel-eslint": "^10.0.1",
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
     "chai-url": "^1.0.4",
+    "commitizen": "^3.1.1",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "husky": "^2.2.0",
+    "lint-staged": "^8.1.6",
     "mocha": "^6.1.4",
     "nodemon": "^1.18.11",
     "nyc": "^14.0.0",
+    "prettier": "^1.17.0",
+    "standard-version": "^6.0.1",
     "supertest": "^4.0.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "lint-staged": {
+    "linters": {
+      "*.js": [
+        "eslint --fix",
+        "git add"
+      ]
+    },
+    "ignore": [
+      "**/dist/*.min.js"
+    ]
   }
 }

@@ -1,14 +1,14 @@
 class BaseConnection {
 
-	/** @abstract */
-	connect() {
+  /** @abstract */
+  connect() {
 
-	}
+  }
 
-	/** @abstract */
-	disconnect() {
+  /** @abstract */
+  disconnect() {
 
-	}
+  }
 
 }
 
