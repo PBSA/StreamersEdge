@@ -12,8 +12,8 @@ class TwitchConnection extends BaseConnection {
     super();
 
     this.config = opts.config;
-		console.log();
   }
+
   connect() {}
 
   async request(method, url, form, auth) {
