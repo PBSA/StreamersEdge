@@ -1,21 +1,15 @@
 {
   "plugins": [
-    "prettier",
-    "react"
+    "prettier"
   ],
   "extends": [
-    "react-app"
+    "eslint:recommended",
+    "plugin:node/recommended"
   ],
   "env": {
     "browser": true
   },
   "rules": {
-    "jsx-quotes": [2, "prefer-single"],
-    "react/jsx-curly-spacing": [2, "always"],
-    "react/prefer-stateless-function": "off",
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "react/no-deprecated": "off",
-    "jsx-a11y/href-no-hash": "off",
     "no-throw-literal": "off",
     "operator-assignment": "off",
     "no-unused-vars": ["error", { 
@@ -46,7 +40,7 @@
         { "blankLine": "always", "prev": "*", "next": "block-like" },
         { "blankLine": "always", "prev": "block-like", "next": "*" }
     ],
-    "max-len": ["error", {"code": 100}],
+    "max-len": ["error", {"code": 150}],
     "implicit-arrow-linebreak": ["error", "beside"],
     "no-control-regex": "off",
     "arrow-parens": ["error", "always"]

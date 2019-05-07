@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const {Schema, model} = require('mongoose');
 
 /**
  * @typedef {Object} UserObject
@@ -15,37 +15,37 @@ const { Schema, model } = require('mongoose');
  */
 
 const userSchema = new Schema({
-	twitchUsername: {
-		type: String,
-		required: true,
-	},
-	twitchId: {
-		type: String,
-		required: true,
-		index: true,
-		unique: true,
-	},
-	twitchEmail: {
-		type: String,
-		required: true,
-		index: true,
-	},
-	youtube: {
-		type: String,
-		default: '',
-	},
-	facebook: {
-		type: String,
-		default: '',
-	},
-	peerplaysAccountName: {
-		type: String,
-		default: '',
-	},
-	bitcoinAddress: {
-		type: String,
-		default: '',
-	},
-}, { timestamps: true });
+  twitchUsername: {
+    type: String,
+    required: true
+  },
+  twitchId: {
+    type: String,
+    required: true,
+    index: true,
+    unique: true
+  },
+  twitchEmail: {
+    type: String,
+    required: true,
+    index: true
+  },
+  youtube: {
+    type: String,
+    default: ''
+  },
+  facebook: {
+    type: String,
+    default: ''
+  },
+  peerplaysAccountName: {
+    type: String,
+    default: ''
+  },
+  bitcoinAddress: {
+    type: String,
+    default: ''
+  }
+}, {timestamps: true});
 
 module.exports = model('user', userSchema);

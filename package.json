@@ -59,6 +59,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.16.0",
     "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
     "eslint-plugin-prettier": "^3.0.1",
     "husky": "^2.2.0",
     "lint-staged": "^8.1.6",
@@ -82,7 +83,7 @@
   },
   "lint-staged": {
     "linters": {
-      "src/**/*.{js}": [
+      "src/": [
         "eslint --fix",
         "git add"
       ]
