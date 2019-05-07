@@ -44,6 +44,7 @@ describe('POST /api/v1/auth/twitch/code', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.twitchTestPicture,
 		});
 	});
 
@@ -59,6 +60,7 @@ describe('POST /api/v1/auth/twitch/code', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.twitchTestPicture,
 		});
 	});
 
@@ -75,6 +77,7 @@ describe('POST /api/v1/auth/twitch/code', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.twitchTestPicture,
 		});
 	});
 

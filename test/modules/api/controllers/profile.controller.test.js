@@ -4,6 +4,7 @@ const { assert } = require('chai');
 const request = require('supertest');
 const chai = require('chai');
 const path = require('path');
+const fs = require('fs');
 const config = require('config');
 chai.use(require('chai-url'));
 const chaiHttp = require('chai-http');
@@ -45,6 +46,7 @@ describe('GET /api/v1/profile', () => {
 			facebook: '',
 			peerplaysAccountName: '',
 			bitcoinAddress: '',
+			avatar: constants.modules.api.auth.twitchTestPicture,
 		});
 	});
 
@@ -215,6 +217,43 @@ describe('POST /api/v1/profile/avatar', () => {
 		);
 		const image = await agent.get(result.avatar.replace(new RegExp(config.urls.backend), ''));
 		image.should.have.status(200);
+	});
+
+});
+
+describe('DELETE /api/v1/profile/avatar', () => {
+
+	const testImage = path.resolve(__dirname, 'files/test.png');
+
+	beforeEach(async () => {
+		await agent.post('/api/v1/auth/twitch/code').send({ code: constants.modules.api.auth.twitchValidCode });
+	});
+
+	it('should forbid, user not logged', async () => {
+		await agent.post('/api/v1/auth/logout');
+		const response = await agent.delete('/api/v1/profile/avatar');
+		isError(response, 401);
+	});
+
+	it('should success delete twitch avatar', async () => {
+		const response = await agent.delete('/api/v1/profile/avatar');
+		assert.isNull(response.body.result.avatar);
+	});
+
+	it('should success delete uploaded avatar', async () => {
+		await agent.post('/api/v1/profile/avatar').attach('file', testImage);
+		const response = await agent.delete('/api/v1/profile/avatar');
+		assert.isNull(response.body.result.avatar);
+	});
+
+	it('should success even if file does not exists', async () => {
+		const { body } = await agent.post('/api/v1/profile/avatar').attach('file', testImage);
+		const { avatar } = body.result;
+		const avatarFilename = avatar.match(/[A-z0-9]+-[A-z0-9]+-[A-z0-9]+\.png/)[0];
+		const file = path.resolve(config.basePath, 'public/images/avatar/original/', avatarFilename);
+		fs.unlinkSync(file);
+		const response = await agent.delete('/api/v1/profile/avatar');
+		assert.isNull(response.body.result.avatar);
 	});
 
 });

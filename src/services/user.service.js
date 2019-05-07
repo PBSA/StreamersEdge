@@ -17,7 +17,9 @@ class UserService {
 	 * @returns {Promise<UserDocument>}
 	 */
 	async getUserByTwitchAccount(account) {
-		const { name, _id, email } = account;
+		const {
+			name, _id, email, logo,
+		} = account;
 		let User = await this.userRepository.findOne({
 			twitchId: _id,
 		});
@@ -26,6 +28,7 @@ class UserService {
 				username: name,
 				twitchId: _id,
 				email,
+				avatar: logo,
 			});
 		}
 		return User;
@@ -60,6 +63,8 @@ class UserService {
 	 * @returns {Promise<UserObject>}
 	 */
 	async getCleanUser(User) {
+		const avatar = User.avatar ? User.avatar : null;
+
 		return {
 			id: User._id,
 			username: User.username,
@@ -67,7 +72,9 @@ class UserService {
 			facebook: User.facebook,
 			peerplaysAccountName: User.peerplaysAccountName,
 			bitcoinAddress: User.bitcoinAddress,
-			avatar: (User.avatar && !User.avatar.match(/^http/)) ? this.fileService.getImage(User.avatar, 'avatar') : User.avatar,
+			avatar: avatar && !avatar.match(/^http/)
+				? this.fileService.getImage(User.avatar, 'avatar')
+				: avatar,
 		};
 	}
 

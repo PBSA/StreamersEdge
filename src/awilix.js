@@ -44,9 +44,10 @@ container.loadModules([
 
 CONFIG.isDevelopment = process.env.NODE_ENV === 'development';
 
+CONFIG.basePath = path.resolve(__dirname, '../');
+
 container.register({
 	config: asValue(CONFIG),
-	basePath: asValue(path.resolve(__dirname, '../')),
 });
 
 listModules(['src/modules/*/*.js']).forEach(({ name }) => {

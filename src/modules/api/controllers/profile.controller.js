@@ -106,6 +106,18 @@ class ProfileController {
 				() => this._uploadAvatarMiddleware(),
 				this.uploadAvatar.bind(this),
 			],
+			/**
+			 * @api {delete} /api/v1/profile/avatar Delete profile avatar
+			 * @apiName ProfileDeleteAvatar
+			 * @apiGroup Profile
+			 * @apiVersion 0.1.0
+			 * @apiUse AccountObjectResponse
+			 */
+			[
+				'delete', '/api/v1/profile/avatar',
+				this.authValidator.loggedOnly,
+				this.deleteAvatar.bind(this),
+			],
 		];
 	}
 
@@ -137,6 +149,14 @@ class ProfileController {
 
 	async uploadAvatar(user, data, req) {
 		user = await this.userService.updateAvatar(user, req.file.filename);
+		return this.userService.getCleanUser(user);
+	}
+
+	async deleteAvatar(user) {
+		if (!user.avatar.match(/^http/)) {
+			await this.fileService.deleteImage(user.avatar, 'avatar');
+		}
+		user = await this.userService.updateAvatar(user, null);
 		return this.userService.getCleanUser(user);
 	}
 

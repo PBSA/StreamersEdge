@@ -13,8 +13,10 @@ Backend module for StreamersEdge application
 	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
+	- [Delete profile avatar](#delete-profile-avatar)
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
+	- [Add or change account avatar](#add-or-change-account-avatar)
 	- [Get user by id](#get-user-by-id)
 	
 
@@ -78,7 +80,8 @@ HTTP/1.1 200 OK
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "avatar": "https://site.com/image/avatar....",
   }
 }
 ```
@@ -113,7 +116,8 @@ HTTP/1.1 200 OK
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "avatar": "https://site.com/image/avatar....",
   }
 }
 ```
@@ -148,7 +152,8 @@ HTTP/1.1 200 OK
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "avatar": "https://site.com/image/avatar....",
   }
 }
 ```
@@ -240,9 +245,36 @@ HTTP/1.1 200 OK
     "username": "test",
     "youtube": "",
     "facebook": "",
-    "peerplaysAccountName": "testaccount",
-    "bitcoinAddress": ""
- }
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "avatar": "https://site.com/image/avatar....",
+  }
+}
+```
+## Delete profile avatar
+
+
+
+	DELETE /api/v1/profile/avatar
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "avatar": "https://site.com/image/avatar....",
+  }
 }
 ```
 ## Get authorized user profile
@@ -266,7 +298,8 @@ HTTP/1.1 200 OK
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "avatar": "https://site.com/image/avatar....",
   }
 }
 ```
@@ -304,8 +337,43 @@ HTTP/1.1 200 OK
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
- }
+    "bitcoinAddress": "",
+    "avatar": "https://site.com/image/avatar....",
+  }
+}
+```
+## Add or change account avatar
+
+
+
+	POST /api/v1/profile/avatar
+
+
+### Examples
+
+Request-Example:
+
+```
+"file": ...file...
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "avatar": "https://site.com/image/avatar....",
+  }
 }
 ```
 ## Get user by id
@@ -335,7 +403,8 @@ HTTP/1.1 200 OK
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "avatar": "https://site.com/image/avatar....",
   }
 }
 ```

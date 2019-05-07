@@ -8,8 +8,8 @@ const mkdirp = require('mkdirp');
 
 class FileService {
 
-	constructor({ basePath, config }) {
-		this.basePath = `${basePath}/public`;
+	constructor({ config }) {
+		this.basePath = `${config.basePath}/public`;
 		this.config = config;
 
 		this.IMAGE_FORMATS = ['jpeg', 'png', 'gif'];

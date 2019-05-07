@@ -24,6 +24,7 @@ class TwitchConnectionMock {
 						_id: constants.modules.api.auth.twitchTestId,
 						email: constants.modules.api.auth.twitchTestEmail,
 						name: constants.modules.api.auth.twitchTestUsername,
+						logo: constants.modules.api.auth.twitchTestPicture,
 					};
 				}
 				throw new Error('Invalid code');

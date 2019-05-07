@@ -7,6 +7,7 @@
         "twitchTestUsername": "test",
         "twitchTestEmail": "test@test.com",
         "twitchTestId": "1",
+        "twitchTestPicture": "https://twitch.com/imgage.png",
         "googleValidCode": "111111",
         "googleValidAuth": "222222",
         "googleTestUsername": "test",
