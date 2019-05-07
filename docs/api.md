@@ -4,8 +4,10 @@ Backend module for StreamersEdge application
 
 - [Auth](#auth)
 	- [Logout](#logout)
+	- [Auth with facebook code](#auth-with-facebook-code)
 	- [Auth with google code](#auth-with-google-code)
 	- [Auth with twitch code](#auth-with-twitch-code)
+	- [Get redirect url for auth with Facebook](#get-redirect-url-for-auth-with-facebook)
 	- [Get redirect url for auth with Google](#get-redirect-url-for-auth-with-google)
 	- [Get redirect url for auth with Twitch](#get-redirect-url-for-auth-with-twitch)
 	
@@ -43,6 +45,41 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": true
+}
+```
+## Auth with facebook code
+
+<p>After getting a code from facebook (facebook returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>
+
+	POST /api/v1/auth/facebook/code
+
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "code": "334442ikjds--s0dff"
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": ""
+  }
 }
 ```
 ## Auth with google code
@@ -113,6 +150,24 @@ HTTP/1.1 200 OK
     "peerplaysAccountName": "",
     "bitcoinAddress": ""
   }
+}
+```
+## Get redirect url for auth with Facebook
+
+<p>You should use this method for receiving urls for redirect.</p>
+
+	GET /api/v1/auth/facebook/redirect-url
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": "https://www.facebook.com/v2.0/dialog/oauth?client_id=...&redirect_uri=...&scope=email",
+  "status": 200
 }
 ```
 ## Get redirect url for auth with Google
