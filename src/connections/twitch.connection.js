@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 const request = require('request');
 
-const BaseConnection = require('./abstracts/base.connection');
+const BaseConnection = require("./abstracts/base.connection");
 
 class TwitchConnection extends BaseConnection {
 
