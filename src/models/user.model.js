@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const {Schema, model} = require('mongoose');
 
 /**
  * @typedef {Object} UserObject
@@ -18,49 +18,49 @@ const { Schema, model } = require('mongoose');
  */
 
 const userSchema = new Schema({
-	username: {
-		type: String,
-	},
-	email: {
-		type: String,
-	},
-	avatar: {
-		type: String,
-	},
-	twitchId: {
-		type: String,
-		index: true,
-		unique: true,
-		sparse: true,
-	},
-	googleId: {
-		type: String,
-		index: true,
-		unique: true,
-		sparse: true,
-	},
-	facebookId: {
-		type: String,
-		index: true,
-		unique: true,
-		sparse: true,
-	},
-	youtube: {
-		type: String,
-		default: '',
-	},
-	facebook: {
-		type: String,
-		default: '',
-	},
-	peerplaysAccountName: {
-		type: String,
-		default: '',
-	},
-	bitcoinAddress: {
-		type: String,
-		default: '',
-	},
-}, { timestamps: true });
+  username: {
+    type: String
+  },
+  email: {
+    type: String
+  },
+  avatar: {
+    type: String
+  },
+  twitchId: {
+    type: String,
+    index: true,
+    unique: true,
+    sparse: true
+  },
+  googleId: {
+    type: String,
+    index: true,
+    unique: true,
+    sparse: true
+  },
+  facebookId: {
+    type: String,
+    index: true,
+    unique: true,
+    sparse: true
+  },
+  youtube: {
+    type: String,
+    default: ''
+  },
+  facebook: {
+    type: String,
+    default: ''
+  },
+  peerplaysAccountName: {
+    type: String,
+    default: ''
+  },
+  bitcoinAddress: {
+    type: String,
+    default: ''
+  }
+}, {timestamps: true});
 
 module.exports = model('user', userSchema);
