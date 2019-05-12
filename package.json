@@ -12,10 +12,12 @@
     "url": "https://github.com/PBSA"
   },
   "scripts": {
+    "sonar": "node scripts/sonar.js",
     "lint": "eslint src/",
     "release": "standard-version",
     "release:pre": "npm run release -- --prerelease alpha",
     "release:minor": "npm run release – --release-as minor",
+    "commit": "git-cz",
     "serve": "npm run lint && NODE_ENV=development nodemon src/server.js",
     "start": "npm run lint && node src/server.js",
     "migrate": "migrate-mongo up --file config/migrate-mongo-config.js",
@@ -34,6 +36,7 @@
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "googleapis": "^39.2.0",
+    "inquirer": "^6.3.1",
     "joi": "^14.3.1",
     "log4js": "^4.1.0",
     "migrate-mongo": "^5.0.1",
