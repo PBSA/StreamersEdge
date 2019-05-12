@@ -1,20 +1,20 @@
 /* eslint-disable max-len */
 class AuthController {
 
-	/**
+  /**
 	 * @param {AuthValidator} opts.authValidator
 	 */
-	constructor(opts) {
-		this.authValidator = opts.authValidator;
-	}
+  constructor(opts) {
+    this.authValidator = opts.authValidator;
+  }
 
-	/**
+  /**
 	 * Array of routes processed by this controller
 	 * @returns {*[]}
 	 */
-	getRoutes() {
-		return [
-			/**
+  getRoutes() {
+    return [
+      /**
 			 * @api {post} /api/v1/auth/logout Logout
 			 * @apiName AuthLogout
 			 *
@@ -29,14 +29,14 @@ class AuthController {
 			 *   "result": true
 			 * }
 			 */
-			['post', '/api/v1/auth/logout', this.authValidator.loggedOnly, this.logout.bind(this)],
-		];
-	}
+      ['post', '/api/v1/auth/logout', this.authValidator.loggedOnly, this.logout.bind(this)]
+    ];
+  }
 
-	async logout(user, data, req) {
-		req.logout();
-		return true;
-	}
+  async logout(user, data, req) {
+    req.logout();
+    return true;
+  }
 
 }
 

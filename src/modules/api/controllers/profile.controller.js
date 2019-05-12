@@ -2,26 +2,26 @@ const RestError = require('../../../errors/rest.error');
 
 class ProfileController {
 
-	/**
+  /**
 	 * @param {AuthValidator} opts.authValidator
 	 * @param {ProfileValidator} opts.profileValidator
 	 * @param {UserService} opts.userService
 	 * @param {FileService} opts.fileService
 	 */
-	constructor(opts) {
-		this.authValidator = opts.authValidator;
-		this.profileValidator = opts.profileValidator;
-		this.userService = opts.userService;
-		this.fileService = opts.fileService;
-	}
+  constructor(opts) {
+    this.authValidator = opts.authValidator;
+    this.profileValidator = opts.profileValidator;
+    this.userService = opts.userService;
+    this.fileService = opts.fileService;
+  }
 
-	/**
+  /**
 	 * Array of routes processed by this controller
 	 * @returns {*[]}
 	 */
-	getRoutes() {
-		return [
-			/**
+  getRoutes() {
+    return [
+      /**
 			 * @apiDefine AccountObjectResponse
 			 * @apiSuccessExample {json} Success-Response:
 			 * HTTP/1.1 200 OK
@@ -39,7 +39,7 @@ class ProfileController {
 			 * }
 			 */
 
-			/**
+      /**
 			 * @api {get} /api/v1/profile Get authorized user profile
 			 * @apiName ProfileGet
 			 * @apiDescription Get profile of authorized user
@@ -47,12 +47,12 @@ class ProfileController {
 			 * @apiVersion 0.1.0
 			 * @apiUse AccountObjectResponse
 			 */
-			[
-				'get', '/api/v1/profile',
-				this.authValidator.loggedOnly,
-				this.getProfile.bind(this),
-			],
-			/**
+      [
+        'get', '/api/v1/profile',
+        this.authValidator.loggedOnly,
+        this.getProfile.bind(this)
+      ],
+      /**
 			 * @api {patch} /api/v1/profile Update authorized user profile
 			 * @apiName ProfilePatch
 			 * @apiGroup Profile
@@ -66,13 +66,13 @@ class ProfileController {
 			 * }
 			 * @apiUse AccountObjectResponse
 			 */
-			[
-				'patch', '/api/v1/profile',
-				this.authValidator.loggedOnly,
-				this.profileValidator.patchProfile,
-				this.patchProfile.bind(this),
-			],
-			/**
+      [
+        'patch', '/api/v1/profile',
+        this.authValidator.loggedOnly,
+        this.profileValidator.patchProfile,
+        this.patchProfile.bind(this)
+      ],
+      /**
 			 * @api {post} /api/v1/profile/peerplays/create-account Create peerplays account for authorized user
 			 * @apiName ProfileCreatePPAccount
 			 * @apiGroup Profile
@@ -85,13 +85,13 @@ class ProfileController {
 			 * }
 			 * @apiUse AccountObjectResponse
 			 */
-			[
-				'post', '/api/v1/profile/peerplays/create-account',
-				this.authValidator.loggedOnly,
-				this.profileValidator.createPeerplaysAccount,
-				this.createPeerplaysAccount.bind(this),
-			],
-			/**
+      [
+        'post', '/api/v1/profile/peerplays/create-account',
+        this.authValidator.loggedOnly,
+        this.profileValidator.createPeerplaysAccount,
+        this.createPeerplaysAccount.bind(this)
+      ],
+      /**
 			 * @api {post} /api/v1/profile/avatar Add or change account avatar
 			 * @apiName ProfileUploadAvatar
 			 * @apiGroup Profile
@@ -100,65 +100,66 @@ class ProfileController {
 			 * "file": ...file...
 			 * @apiUse AccountObjectResponse
 			 */
-			[
-				'post', '/api/v1/profile/avatar',
-				this.authValidator.loggedOnly,
-				() => this._uploadAvatarMiddleware(),
-				this.uploadAvatar.bind(this),
-			],
-			/**
+      [
+        'post', '/api/v1/profile/avatar',
+        this.authValidator.loggedOnly,
+        () => this._uploadAvatarMiddleware(),
+        this.uploadAvatar.bind(this)
+      ],
+      /**
 			 * @api {delete} /api/v1/profile/avatar Delete profile avatar
 			 * @apiName ProfileDeleteAvatar
 			 * @apiGroup Profile
 			 * @apiVersion 0.1.0
 			 * @apiUse AccountObjectResponse
 			 */
-			[
-				'delete', '/api/v1/profile/avatar',
-				this.authValidator.loggedOnly,
-				this.deleteAvatar.bind(this),
-			],
-		];
-	}
+      [
+        'delete', '/api/v1/profile/avatar',
+        this.authValidator.loggedOnly,
+        this.deleteAvatar.bind(this)
+      ]
+    ];
+  }
 
-	_uploadAvatarMiddleware() {
-		return async (req) => {
-			try {
-				return await this.fileService.saveImage(req, 'avatar');
-			} catch (e) {
-				throw new RestError(e.message, 400);
-			}
-		};
-	}
+  _uploadAvatarMiddleware() {
+    return async (req) => {
+      try {
+        return await this.fileService.saveImage(req, 'avatar');
+      } catch (e) {
+        throw new RestError(e.message, 400);
+      }
+    };
+  }
 
-	async getProfile(user) {
-		return this.userService.getCleanUser(user);
-	}
+  async getProfile(user) {
+    return this.userService.getCleanUser(user);
+  }
 
-	async patchProfile(user, updateData) {
-		return this.userService.patchProfile(user, updateData);
-	}
+  async patchProfile(user, updateData) {
+    return this.userService.patchProfile(user, updateData);
+  }
 
-	async createPeerplaysAccount(user, data) {
-		try {
-			return await this.userService.createPeerplaysAccount(user, data);
-		} catch (e) {
-			throw new RestError(e.message, 400);
-		}
-	}
+  async createPeerplaysAccount(user, data) {
+    try {
+      return await this.userService.createPeerplaysAccount(user, data);
+    } catch (e) {
+      throw new RestError(e.message, 400);
+    }
+  }
 
-	async uploadAvatar(user, data, req) {
-		user = await this.userService.updateAvatar(user, req.file.filename);
-		return this.userService.getCleanUser(user);
-	}
+  async uploadAvatar(user, data, req) {
+    user = await this.userService.updateAvatar(user, req.file.filename);
+    return this.userService.getCleanUser(user);
+  }
 
-	async deleteAvatar(user) {
-		if (!user.avatar.match(/^http/)) {
-			await this.fileService.deleteImage(user.avatar, 'avatar');
-		}
-		user = await this.userService.updateAvatar(user, null);
-		return this.userService.getCleanUser(user);
-	}
+  async deleteAvatar(user) {
+    if (!user.avatar.match(/^http/)) {
+      await this.fileService.deleteImage(user.avatar, 'avatar');
+    }
+
+    user = await this.userService.updateAvatar(user, null);
+    return this.userService.getCleanUser(user);
+  }
 
 }
 

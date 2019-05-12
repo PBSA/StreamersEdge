@@ -4,29 +4,30 @@ const ValidateError = require('./../../../errors/validate.error');
 
 class AuthValidator extends BaseValidator {
 
-	constructor() {
-		super();
+  constructor() {
+    super();
 
-		this.validateAuthCode = this.validateAuthCode.bind(this);
-		this.loggedOnly = this.loggedOnly.bind(this);
-	}
+    this.validateAuthCode = this.validateAuthCode.bind(this);
+    this.loggedOnly = this.loggedOnly.bind(this);
+  }
 
-	loggedOnly() {
-		return this.validate(null, null, async (req) => {
-			if (!req.isAuthenticated()) {
-				throw new ValidateError(401, 'Unauthorized');
-			}
-			return null;
-		});
-	}
+  loggedOnly() {
+    return this.validate(null, null, async (req) => {
+      if (!req.isAuthenticated()) {
+        throw new ValidateError(401, 'Unauthorized');
+      }
 
-	validateAuthCode() {
-		const bodySchema = {
-			code: Joi.string().required(),
-		};
+      return null;
+    });
+  }
 
-		return this.validate(null, bodySchema, (req, query, body) => body.code);
-	}
+  validateAuthCode() {
+    const bodySchema = {
+      code: Joi.string().required()
+    };
+
+    return this.validate(null, bodySchema, (req, query, body) => body.code);
+  }
 
 }
 

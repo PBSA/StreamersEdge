@@ -3,20 +3,20 @@ const BaseValidator = require('./abstract/base.validator');
 
 class UserValidator extends BaseValidator {
 
-	constructor(opts) {
-		super();
+  constructor(opts) {
+    super();
 
-		this.config = opts.config;
-		this.getUser = this.getUser.bind(this);
-	}
+    this.config = opts.config;
+    this.getUser = this.getUser.bind(this);
+  }
 
-	getUser() {
-		const querySchema = {
-			id: Joi.string().objectId().required(),
-		};
+  getUser() {
+    const querySchema = {
+      id: Joi.string().objectId().required()
+    };
 
-		return this.validate(querySchema, null, (req, query) => query.id);
-	}
+    return this.validate(querySchema, null, (req, query) => query.id);
+  }
 
 }
 
