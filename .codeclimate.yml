@@ -1,0 +1,5 @@
+plguins:
+  stylelint:
+    enabled: true
+  eslint:
+    enabled: true
