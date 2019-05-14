@@ -16,6 +16,8 @@ class TwitchConnection extends BaseConnection {
 
   connect() {}
 
+  conf() {}
+
   async request(method, url, form, auth) {
     const options = {
       method,
