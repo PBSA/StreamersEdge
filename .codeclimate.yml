@@ -1,0 +1,3 @@
+plguins:
+  eslint:
+    enabled: true
