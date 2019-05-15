@@ -11,6 +11,9 @@
     "name": "PBSA",
     "url": "https://github.com/PBSA"
   },
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "scripts": {
     "sonar": "node scripts/sonar.js",
     "lint": "eslint src/",
