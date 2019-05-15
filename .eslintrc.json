@@ -43,7 +43,8 @@
     "max-len": ["error", {"code": 150}],
     "implicit-arrow-linebreak": ["error", "beside"],
     "no-control-regex": "off",
-    "arrow-parens": ["error", "always"]
+    "arrow-parens": ["error", "always"],
+    "node/no-unpublished-require": "off"
   },
   "settings": {
     "import/resolver": "webpack"
