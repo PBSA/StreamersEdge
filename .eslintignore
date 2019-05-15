@@ -1,4 +1,10 @@
-node_modules/*
-apidoc
-utils/simple-tests/*
-coverage/*
+coverage/
+.scannerwork/
+.sonarlint/
+.well-known/
+apidoc/
+config/
+docs/
+migrations/
+node_modules/
+sonar-scanner/
