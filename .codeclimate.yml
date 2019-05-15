@@ -3,3 +3,6 @@ plugins:
     enabled: true
     exclude_patterns:
     - "/commitlint.config.js"
+    channel: "eslint-5"
+    config:
+      config: /.eslintrc.json
