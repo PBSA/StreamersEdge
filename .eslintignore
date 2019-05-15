@@ -8,4 +8,4 @@ docs/
 migrations/
 node_modules/
 sonar-scanner/
-/
+test/
