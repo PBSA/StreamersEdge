@@ -1,4 +1,3 @@
-/* eslint-disable global-require,import/no-extraneous-dependencies,node/no-unpublished-require */
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 

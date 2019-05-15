@@ -1,6 +1,5 @@
 const RestError = require('../../../errors/rest.error');
 
-/* eslint-disable max-len */
 class GoogleController {
 
   /**
