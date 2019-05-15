@@ -1,5 +1,3 @@
-plguins:
+plugins:
   stylelint:
-    enabled: true
-  eslint:
     enabled: true
