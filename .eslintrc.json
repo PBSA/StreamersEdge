@@ -7,8 +7,10 @@
     "plugin:node/recommended"
   ],
   "env": {
-    "browser": true
+    "browser": true,
+    "es6": true
   },
+  "parserOptions": {"ecmaVersion": 2018},
   "rules": {
     "no-throw-literal": "off",
     "operator-assignment": "off",
