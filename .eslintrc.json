@@ -8,7 +8,8 @@
   ],
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "mocha": true
   },
   "parserOptions": {"ecmaVersion": 2018},
   "rules": {
@@ -50,5 +51,10 @@
   },
   "settings": {
     "import/resolver": "webpack"
-  }
+  },
+  "overrides": [
+    {
+      "files": [ "src/**/*.js", "test/**/*.js" ]
+    }
+  ]
 }
