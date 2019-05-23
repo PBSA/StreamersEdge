@@ -6,8 +6,8 @@ const BaseConnection = require('./abstracts/base.connection');
 class PeerplaysConnection extends BaseConnection {
 
   /**
-	 * @param {AppConfig} opts.config
-	 */
+   * @param {AppConfig} opts.config
+   */
   constructor(opts) {
     super();
 

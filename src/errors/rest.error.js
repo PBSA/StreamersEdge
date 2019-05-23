@@ -3,10 +3,10 @@ const CustomError = require('./abstracts/custom.error');
 class RestError extends CustomError {
 
   /**
-	 * @param {String} message
-	 * @param {Number} status
-	 * @param {*} [details=null]
-	 */
+   * @param {String} message
+   * @param {Number} status
+   * @param {*} [details=null]
+   */
   constructor(message, status, details = null) {
     super(message);
     this._status = status;

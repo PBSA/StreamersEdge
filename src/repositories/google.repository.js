@@ -8,9 +8,9 @@ const DEFAULT_SCOPE = [
 class GoogleRepository {
 
   /**
-	 * @param {GoogleConnection} opts.googleConnection
-	 * @param {AppConfig} opts.config
-	 */
+   * @param {GoogleConnection} opts.googleConnection
+   * @param {AppConfig} opts.config
+   */
   constructor(opts) {
     this.googleConnection = opts.googleConnection;
     this.config = opts.config;
