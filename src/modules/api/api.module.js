@@ -23,6 +23,8 @@ class ApiModule {
 	 * @param {AuthController} opts.authController
 	 * @param {ProfileController} opts.profileController
 	 * @param {UserController} opts.userController
+	 * @param {TwitchController} opts.twitchController
+	 * @param {GoogleController} opts.googleController
 	 * @param {UserRepository} opts.userRepository
 	 */
   constructor(opts) {
@@ -33,6 +35,8 @@ class ApiModule {
     this.authController = opts.authController;
     this.profileController = opts.profileController;
     this.userController = opts.userController;
+    this.twitchController = opts.twitchController;
+    this.googleController = opts.googleController;
 
     this.userRepository = opts.userRepository;
   }
@@ -97,7 +101,9 @@ class ApiModule {
     [
       this.authController,
       this.profileController,
-      this.userController
+      this.userController,
+      this.twitchController,
+      this.googleController
     ].forEach((controller) => controller.getRoutes().forEach((route) => this.addRestHandler(...route)));
 
     this.addRestHandler('use', '*', () => {

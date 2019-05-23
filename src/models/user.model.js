@@ -2,8 +2,11 @@ const {Schema, model} = require('mongoose');
 
 /**
  * @typedef {Object} UserObject
- * @property {String} twitchUsername
+ * @property {String} username
+ * @property {String} email
  * @property {String} twitchId
+ * @property {String} googleId
+ * @property {String} avatar
  * @property {String} youtube
  * @property {String} facebook
  * @property {String} peerplaysAccountName
@@ -15,20 +18,26 @@ const {Schema, model} = require('mongoose');
  */
 
 const userSchema = new Schema({
-  twitchUsername: {
-    type: String,
-    required: true
+  username: {
+    type: String
+  },
+  email: {
+    type: String
+  },
+  avatar: {
+    type: String
   },
   twitchId: {
     type: String,
-    required: true,
     index: true,
-    unique: true
+    unique: true,
+    sparse: true
   },
-  twitchEmail: {
+  googleId: {
     type: String,
-    required: true,
-    index: true
+    index: true,
+    unique: true,
+    sparse: true
   },
   youtube: {
     type: String,

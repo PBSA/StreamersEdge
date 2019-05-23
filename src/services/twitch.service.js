@@ -1,4 +1,4 @@
-const url = require('url');
+const {URL,format} = require('url');
 const merge = require('utils-merge');
 
 const RestError = require('../errors/rest.error');
@@ -27,10 +27,10 @@ class TwitchService {
       client_id: twitchConfig.clientId
     };
 
-    const parsed = url.parse(TWITCH_OAUTH_URL, true);
+    const parsed = new URL(TWITCH_OAUTH_URL);
     merge(parsed.query, params);
     delete parsed.search;
-    return url.format(parsed);
+    return format(parsed);
   }
 
   async getUserByCode(code) {
