@@ -25,5 +25,8 @@
     "url": ""
   },
   "bitcoinNetwork": "prod",
-  "peerplaysFaucetURL": "https://pbsa.tools/accounts/create"
+  "peerplays": {
+    "peerplaysFaucetURL": "https://pbsa.tools/accounts/create",
+    "referrer": "1.2.0"
+  }
 }

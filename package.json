@@ -50,11 +50,10 @@
     "request": "^2.88.0",
     "un": "0.0.0",
     "url": "^0.11.0",
-    "utils-merge": "^1.0.1",
     "wallet-address-validator": "^0.2.4"
   },
   "devDependencies": {
-    "@commitlint/cli": "^7.6.0",
+    "@commitlint/cli": "^7.6.1",
     "@commitlint/config-conventional": "^7.6.0",
     "apidoc": "^0.17.7",
     "apidoc-markdown": "^0.2.1",

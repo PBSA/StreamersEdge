@@ -1,3 +1,5 @@
+const RestError = require('../errors/rest.error');
+
 class UserService {
 
   /**
@@ -104,8 +106,8 @@ class UserService {
   async createPeerplaysAccount(User, {name, activeKey, ownerKey}) {
     try {
       await this.peerplaysRepository.createPeerplaysAccount(name, ownerKey, activeKey);
-    } catch (e) {
-      throw new Error(e.message);
+    } catch (details) {
+      throw new RestError('Request error', 400, details);
     }
 
     User.peerplaysAccountName = name;

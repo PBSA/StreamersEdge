@@ -1,5 +1,5 @@
 const {URL,format} = require('url');
-const merge = require('utils-merge');
+const querystring = require('querystring');
 
 const RestError = require('../errors/rest.error');
 
@@ -28,8 +28,7 @@ class TwitchService {
     };
 
     const parsed = new URL(TWITCH_OAUTH_URL);
-    merge(parsed.query, params);
-    delete parsed.search;
+    parsed.search = querystring.stringify(params);
     return format(parsed);
   }
 

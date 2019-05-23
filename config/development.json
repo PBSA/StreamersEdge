@@ -1,3 +1,8 @@
 {
+  "twitch": {
+    "clientId": "5uyyouelk9a2d5rt0i1uuvntel2mb5",
+    "clientSecret": "u0dwmdqi45l43swvftf59eqposm2b4",
+    "callbackUrl": "http://localhost"
+  },
   "logLevel": "info"
 }
