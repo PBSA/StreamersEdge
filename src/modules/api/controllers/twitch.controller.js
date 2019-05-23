@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 class TwitchController {
 
   /**
@@ -27,7 +26,7 @@ class TwitchController {
 			 * @apiSuccessExample {json} Success-Response:
 			 * HTTP/1.1 200 OK
 			 * {
-			 *   "result": "https://id.twitch.tv/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost&scope=user_read&state=true&client_id=5uyyouelk9a2d5rt0i1uuvntel2mb5",
+			 *   "result": "https://id.twitch.tv/oauth2/authorize?...",
 			 *   "status": 200
 			 * }
 			 */

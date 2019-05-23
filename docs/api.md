@@ -4,10 +4,15 @@ Backend module for StreamersEdge application
 
 - [Auth](#auth)
 	- [Logout](#logout)
+<<<<<<< HEAD
 	- [Auth with facebook code](#auth-with-facebook-code)
 	- [Auth with google code](#auth-with-google-code)
 	- [Auth with twitch code](#auth-with-twitch-code)
 	- [Get redirect url for auth with Facebook](#get-redirect-url-for-auth-with-facebook)
+=======
+	- [Auth with google code](#auth-with-google-code)
+	- [Auth with twitch code](#auth-with-twitch-code)
+>>>>>>> develop
 	- [Get redirect url for auth with Google](#get-redirect-url-for-auth-with-google)
 	- [Get redirect url for auth with Twitch](#get-redirect-url-for-auth-with-twitch)
 	
@@ -47,6 +52,7 @@ HTTP/1.1 200 OK
   "result": true
 }
 ```
+<<<<<<< HEAD
 ## Auth with facebook code
 
 <p>After getting a code from facebook (facebook returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>
@@ -82,6 +88,8 @@ HTTP/1.1 200 OK
   }
 }
 ```
+=======
+>>>>>>> develop
 ## Auth with google code
 
 <p>After getting a code from google (google returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>
@@ -152,6 +160,7 @@ HTTP/1.1 200 OK
   }
 }
 ```
+<<<<<<< HEAD
 ## Get redirect url for auth with Facebook
 
 <p>You should use this method for receiving urls for redirect.</p>
@@ -170,6 +179,8 @@ HTTP/1.1 200 OK
   "status": 200
 }
 ```
+=======
+>>>>>>> develop
 ## Get redirect url for auth with Google
 
 <p>You should use this method for receiving urls for redirect.</p>

@@ -1,0 +1,10 @@
+plugins:
+  eslint:
+    enabled: true
+    exclude_patterns:
+    - "/commitlint.config.js"
+    - "!src/**/*.js"
+    - "!test/**/*.js"
+    channel: "eslint-5"
+    config:
+      config: /.eslintrc.json

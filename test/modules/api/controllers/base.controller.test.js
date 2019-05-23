@@ -1,4 +1,3 @@
-/* eslint-disable no-undef,global-require,node/no-unpublished-require */
 process.env.NODE_ENV = 'test';
 const request = require('supertest');
 const chai = require('chai');
