@@ -3,9 +3,9 @@ const graph = require('fbgraph');
 class FacebookRepository {
 
   /**
-	 * @param {FacebookConnection} opts.facebookConnection
-	 * @param {AppConfig} opts.config
-	 */
+   * @param {FacebookConnection} opts.facebookConnection
+   * @param {AppConfig} opts.config
+   */
   constructor(opts) {
     this.facebookConnection = opts.facebookConnection;
     this.config = opts.config;
