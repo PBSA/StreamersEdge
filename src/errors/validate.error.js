@@ -7,15 +7,15 @@ class ValidateError extends RestError {
   }
 
   // add(key, error) {
-  // 	if (!error || !error.length) return this;
-  // 	if (!this.details || typeof this.details !== 'object') this.details = {};
-  // 	if (!this.details[key]) this.details[key] = [];
-  // 	this.details[key].push(...(Array.isArray(error) ? error : [error]));
-  // 	return this;
+  //  if (!error || !error.length) return this;
+  //  if (!this.details || typeof this.details !== 'object') this.details = {};
+  //  if (!this.details[key]) this.details[key] = [];
+  //  this.details[key].push(...(Array.isArray(error) ? error : [error]));
+  //  return this;
   // }
   //
   // isEmpty() {
-  // 	return !this.details;
+  //  return !this.details;
   // }
 
 }

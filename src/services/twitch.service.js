@@ -9,9 +9,9 @@ const TWITCH_SCOPE = 'user_read';
 class TwitchService {
 
   /**
-	 * @param {AppConfig} opts.config
-	 * @param {TwitchRepository} opts.twitchRepository
-	 */
+   * @param {AppConfig} opts.config
+   * @param {TwitchRepository} opts.twitchRepository
+   */
   constructor(opts) {
     this.config = opts.config;
     this.twitchRepository = opts.twitchRepository;

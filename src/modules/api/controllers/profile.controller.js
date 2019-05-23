@@ -3,10 +3,10 @@ const RestError = require('../../../errors/rest.error');
 class ProfileController {
 
   /**
-	 * @param {AuthValidator} opts.authValidator
-	 * @param {ProfileValidator} opts.profileValidator
-	 * @param {UserService} opts.userService
-	 */
+   * @param {AuthValidator} opts.authValidator
+   * @param {ProfileValidator} opts.profileValidator
+   * @param {UserService} opts.userService
+   */
   constructor(opts) {
     this.authValidator = opts.authValidator;
     this.profileValidator = opts.profileValidator;
@@ -14,31 +14,31 @@ class ProfileController {
   }
 
   /**
-	 * Array of routes processed by this controller
-	 * @returns {*[]}
-	 */
+   * Array of routes processed by this controller
+   * @returns {*[]}
+   */
   getRoutes() {
     return [
       /**
-			 * @api {get} /api/v1/profile Get authorized user profile
-			 * @apiName ProfileGet
-			 * @apiDescription Get profile of authorized user
-			 * @apiGroup Profile
-			 * @apiVersion 0.1.0
-			 * @apiSuccessExample {json} Success-Response:
-			 * HTTP/1.1 200 OK
-			 * {
-			 *   "status": 200,
-			 *   "result": {
-			 *     "id": "5cc315041ec568398b99d7ca",
-			 *     "username": "test",
-			 *     "youtube": "",
-			 *     "facebook": "",
-			 *     "peerplaysAccountName": "",
-			 *     "bitcoinAddress": ""
-			 *   }
-			 * }
-			 */
+       * @api {get} /api/v1/profile Get authorized user profile
+       * @apiName ProfileGet
+       * @apiDescription Get profile of authorized user
+       * @apiGroup Profile
+       * @apiVersion 0.1.0
+       * @apiSuccessExample {json} Success-Response:
+       * HTTP/1.1 200 OK
+       * {
+       *   "status": 200,
+       *   "result": {
+       *     "id": "5cc315041ec568398b99d7ca",
+       *     "username": "test",
+       *     "youtube": "",
+       *     "facebook": "",
+       *     "peerplaysAccountName": "",
+       *     "bitcoinAddress": ""
+       *   }
+       * }
+       */
       [
         'get', '/api/v1/profile',
         this.authValidator.loggedOnly,

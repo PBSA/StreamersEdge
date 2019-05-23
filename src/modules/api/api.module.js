@@ -44,9 +44,9 @@ class ApiModule {
   }
 
   /**
-	 * Start HTTP server listener
-	 * @return {Promise<void>}
-	 */
+   * Start HTTP server listener
+   * @return {Promise<void>}
+   */
   initModule() {
     return new Promise((resolve) => {
       logger.trace('Start HTTP server initialization');
@@ -97,8 +97,8 @@ class ApiModule {
   }
 
   /**
-	 * Bind routers
-	 */
+   * Bind routers
+   */
   _initRestRoutes() {
     [
       this.authController,
@@ -117,10 +117,10 @@ class ApiModule {
   /** @typedef {('get','post','patch','use')} Method */
 
   /**
-	 * @param {Method} method
-	 * @param {String} route
-	 * @param args
-	 */
+   * @param {Method} method
+   * @param {String} route
+   * @param args
+   */
   addRestHandler(method, route, ...args) {
     const action = args.pop();
     this.app[method](route, async (req, res) => {
