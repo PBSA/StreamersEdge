@@ -12,6 +12,11 @@
     "clientSecret": "TWITCH_CLIENT_SECRET",
     "callbackUrl": "TWITCH_CALLBACK_URL"
   },
+  "google": {
+    "clientId": "GOOGLE_CLIENT_ID",
+    "clientSecret": "GOOGLE_CLIENT_SECRET",
+    "callbackUrl": "GOOGLE_CALLBACK_URL"
+  },
   "raven": {
     "url": "RAVEN_URL"
   }

@@ -9,7 +9,7 @@ if (config.raven.enabled) {
   logger.info('Configure raven');
   Raven.config(config.raven.url).install((e, d) => {
     logger.error(d);
-    process.exit(1);
+    // process.exit(1);
   });
 } else {
   logger.warn('Raven is disabled');
@@ -31,7 +31,7 @@ const currentModule = process.env.MODULE || 'api';
       } catch (error) {
         logger.error(`${name} connect error`);
         logger.error(error);
-        process.exit(1);
+        // process.exit(1);
       }
     }));
     await initModule(`${currentModule}.module`);
@@ -74,6 +74,9 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} twitch.clientId
  * @property {String} twitch.clientSecret
  * @property {String} twitch.callbackUrl
+ * @property {String} google.clientId
+ * @property {String} google.clientSecret
+ * @property {String} google.callbackUrl
  * @property {{enabled: Boolean, url: String}} raven
  * @property {String<prod|testnet>} bitcoinNetwork
  * @property {String} peerplaysFaucetURL

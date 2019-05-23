@@ -22,9 +22,34 @@ class UserService {
 
     if (!User) {
       User = await this.userRepository.create({
-        twitchUsername: name,
+        username: name,
         twitchId: _id,
-        twitchEmail: email
+        email
+      });
+    }
+
+    return User;
+  }
+
+  /**
+	 * Find user by google account and create row if not exists
+	 * @param account
+	 * @returns {Promise<UserDocument>}
+	 */
+  async getUserByGoogleAccount(account) {
+    const {
+      name, id, picture, email
+    } = account;
+    let User = await this.userRepository.findOne({
+      googleId: id
+    });
+
+    if (!User) {
+      User = await this.userRepository.create({
+        username: name,
+        googleId: id,
+        avatar: picture,
+        email
       });
     }
 
@@ -38,7 +63,7 @@ class UserService {
   async getCleanUser(User) {
     return {
       id: User._id,
-      twitchUsername: User.twitchUsername,
+      username: User.username,
       youtube: User.youtube,
       facebook: User.facebook,
       peerplaysAccountName: User.peerplaysAccountName,

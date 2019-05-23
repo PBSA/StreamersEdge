@@ -31,7 +31,7 @@ class ProfileController {
 			 *   "status": 200,
 			 *   "result": {
 			 *     "id": "5cc315041ec568398b99d7ca",
-			 *     "twitchUsername": "test",
+			 *     "username": "test",
 			 *     "youtube": "",
 			 *     "facebook": "",
 			 *     "peerplaysAccountName": "",
@@ -45,31 +45,31 @@ class ProfileController {
         this.getProfile.bind(this)
       ],
       /**
-			 * @api {patch} /api/v1/profile Update authorized user profile
-			 * @apiName ProfilePatch
-			 * @apiGroup Profile
-			 * @apiVersion 0.1.0
-			 * @apiExample {json} Request-Example:
-			 * {
-			 *   "youtube": "",
-			 *   "facebook": "",
-			 *   "peerplaysAccountName": "",
-			 *   "bitcoinAddress": ""
-			 * }
-			 * @apiSuccessExample {json} Success-Response:
-			 * HTTP/1.1 200 OK
-			 * {
-			 *   "status": 200,
-			 *   "result": {
-			 *     "id": "5cc315041ec568398b99d7ca",
-			 *     "twitchUsername": "test",
-			 *     "youtube": "",
-			 *     "facebook": "",
-			 *     "peerplaysAccountName": "",
-			 *     "bitcoinAddress": ""
-			 *  }
-			 * }
-			 */
+       * @api {patch} /api/v1/profile Update authorized user profile
+       * @apiName ProfilePatch
+       * @apiGroup Profile
+       * @apiVersion 0.1.0
+       * @apiExample {json} Request-Example:
+       * {
+       *   "youtube": "",
+       *   "facebook": "",
+       *   "peerplaysAccountName": "",
+       *   "bitcoinAddress": ""
+       * }
+       * @apiSuccessExample {json} Success-Response:
+       * HTTP/1.1 200 OK
+       * {
+       *   "status": 200,
+       *   "result": {
+       *     "id": "5cc315041ec568398b99d7ca",
+       *     "username": "test",
+       *     "youtube": "",
+       *     "facebook": "",
+       *     "peerplaysAccountName": "",
+       *     "bitcoinAddress": ""
+       *  }
+       * }
+       */
       [
         'patch', '/api/v1/profile',
         this.authValidator.loggedOnly,
@@ -77,30 +77,30 @@ class ProfileController {
         this.patchProfile.bind(this)
       ],
       /**
-			 * @api {post} /api/v1/profile/peerplays/create-account Create peerplays account for authorized user
-			 * @apiName ProfileCreatePPAccount
-			 * @apiGroup Profile
-			 * @apiVersion 0.1.0
-			 * @apiExample {json} Request-Example:
-			 * {
-			 *   "name": "testaccount",
-			 *   "activeKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
-			 *   "ownerKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
-			 * }
-			 * @apiSuccessExample {json} Success-Response:
-			 * HTTP/1.1 200 OK
-			 * {
-			 *   "status": 200,
-			 *   "result": {
-			 *     "id": "5cc315041ec568398b99d7ca",
-			 *     "twitchUsername": "test",
-			 *     "youtube": "",
-			 *     "facebook": "",
-			 *     "peerplaysAccountName": "testaccount",
-			 *     "bitcoinAddress": ""
-			 *  }
-			 * }
-			 */
+       * @api {post} /api/v1/profile/peerplays/create-account Create peerplays account for authorized user
+       * @apiName ProfileCreatePPAccount
+       * @apiGroup Profile
+       * @apiVersion 0.1.0
+       * @apiExample {json} Request-Example:
+       * {
+       *   "name": "testaccount",
+       *   "activeKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
+       *   "ownerKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
+       * }
+       * @apiSuccessExample {json} Success-Response:
+       * HTTP/1.1 200 OK
+       * {
+       *   "status": 200,
+       *   "result": {
+       *     "id": "5cc315041ec568398b99d7ca",
+       *     "username": "test",
+       *     "youtube": "",
+       *     "facebook": "",
+       *     "peerplaysAccountName": "testaccount",
+       *     "bitcoinAddress": ""
+       *  }
+       * }
+       */
       [
         'post', '/api/v1/profile/peerplays/create-account',
         this.authValidator.loggedOnly,
