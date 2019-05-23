@@ -18,15 +18,15 @@ const RestError = require('../../errors/rest.error');
 class ApiModule {
 
   /**
-	 *
-	 * @param {AppConfig} opts.config
-	 * @param {AuthController} opts.authController
-	 * @param {ProfileController} opts.profileController
-	 * @param {UserController} opts.userController
-	 * @param {TwitchController} opts.twitchController
-	 * @param {GoogleController} opts.googleController
-	 * @param {UserRepository} opts.userRepository
-	 */
+   *
+   * @param {AppConfig} opts.config
+   * @param {AuthController} opts.authController
+   * @param {ProfileController} opts.profileController
+   * @param {UserController} opts.userController
+   * @param {TwitchController} opts.twitchController
+   * @param {GoogleController} opts.googleController
+   * @param {UserRepository} opts.userRepository
+   */
   constructor(opts) {
     this.config = opts.config;
     this.app = null;
@@ -42,9 +42,9 @@ class ApiModule {
   }
 
   /**
-	 * Start HTTP server listener
-	 * @return {Promise<void>}
-	 */
+   * Start HTTP server listener
+   * @return {Promise<void>}
+   */
   initModule() {
     return new Promise((resolve) => {
       logger.trace('Start HTTP server initialization');
@@ -95,8 +95,8 @@ class ApiModule {
   }
 
   /**
-	 * Bind routers
-	 */
+   * Bind routers
+   */
   _initRestRoutes() {
     [
       this.authController,
@@ -114,10 +114,10 @@ class ApiModule {
   /** @typedef {('get','post','patch','use')} Method */
 
   /**
-	 * @param {Method} method
-	 * @param {String} route
-	 * @param args
-	 */
+   * @param {Method} method
+   * @param {String} route
+   * @param args
+   */
   addRestHandler(method, route, ...args) {
     const action = args.pop();
     this.app[method](route, async (req, res) => {

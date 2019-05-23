@@ -5,8 +5,8 @@ const logger = require('log4js').getLogger('raven.helper');
 class RavenHelper {
 
   /**
-	 * @param {AppConfig} opts.config
-	 */
+   * @param {AppConfig} opts.config
+   */
   constructor(opts) {
     this.config = opts.config;
   }

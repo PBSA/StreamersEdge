@@ -1,8 +1,8 @@
 class PeerplaysRepository {
 
   /**
-	 * @param {PeerplaysConnection} opts.peerplaysConnection
-	 */
+   * @param {PeerplaysConnection} opts.peerplaysConnection
+   */
   constructor(opts) {
     this.peerplaysConnection = opts.peerplaysConnection;
   }

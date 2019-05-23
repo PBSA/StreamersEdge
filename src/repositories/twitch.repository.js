@@ -1,9 +1,9 @@
 class TwitchRepository {
 
   /**
-	 * @param {TwitchConnection} opts.twitchConnection
-	 * @param {AppConfig} opts.config
-	 */
+   * @param {TwitchConnection} opts.twitchConnection
+   * @param {AppConfig} opts.config
+   */
   constructor(opts) {
     this.tokenUrl = 'https://id.twitch.tv/oauth2/token';
     this.userUrl = 'https://api.twitch.tv/kraken/user';
