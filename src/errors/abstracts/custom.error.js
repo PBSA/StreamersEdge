@@ -11,7 +11,7 @@ class CustomError {
   }
 
   // get name() {
-  // 	return this.constructor.name;
+  //   return this.constructor.name;
   // }
 
 }

@@ -4,23 +4,23 @@ const ValidateError = require('../../../../errors/validate.error');
 class BaseValidator {
 
   /**
-	 * This method has two steps - at first it validate and clear body and query object
-	 * and after prepare req.pure object if prepare method does not empty
-	 * @param {Object|null} queryJoiSchema  Object, where key is key in query object and value is Joi scheme
-	 * Example:
-	 *  {
-	 *      title: Joi.string().required(),
-			position: Joi.number().integer().min(0).max(1000),
-	 *  }
-	 * @param {Object|null} bodyJoiSchema   The same as queryJoiSchema but for body object
-	 * @param {Function} prepare            Function that returns Promise. Should expect 3 parameters:
-	 *      - req - a request object
-	 *      - query - a pure object from query, based on queryJoiSchema validation
-	 *      - body - a pure object from body, based on bodyJoiSchema validation
-	 *      The promise should return an pure object witch will be sent into controller as req.pure
-	 *      also you can throw error inside pure function
-	 * @returns {Function}
-	 */
+   * This method has two steps - at first it validate and clear body and query object
+   * and after prepare req.pure object if prepare method does not empty
+   * @param {Object|null} queryJoiSchema  Object, where key is key in query object and value is Joi scheme
+   * Example:
+   *  {
+   *      title: Joi.string().required(),
+      position: Joi.number().integer().min(0).max(1000),
+   *  }
+   * @param {Object|null} bodyJoiSchema   The same as queryJoiSchema but for body object
+   * @param {Function} prepare            Function that returns Promise. Should expect 3 parameters:
+   *      - req - a request object
+   *      - query - a pure object from query, based on queryJoiSchema validation
+   *      - body - a pure object from body, based on bodyJoiSchema validation
+   *      The promise should return an pure object witch will be sent into controller as req.pure
+   *      also you can throw error inside pure function
+   * @returns {Function}
+   */
   validate(queryJoiSchema, bodyJoiSchema, prepare) {
     const schemas = {
       query: queryJoiSchema,
