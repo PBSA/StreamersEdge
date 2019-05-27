@@ -34,3 +34,11 @@ deployToDev:
   stage: deploy
   script:
     - bash deploy/deployToDev.sh
+  only:
+    - develop
+
+deployToStaging:
+  stage: deploy
+  script:
+    - bash deploy/deployToStaging.sh
+  when: manual
