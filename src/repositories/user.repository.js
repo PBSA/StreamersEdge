@@ -1,13 +1,14 @@
 const model = require('../models/user.model');
-const BaseMongoRepository = require('./abstracts/base-mongo.repository');
+const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
-class UserRepository extends BaseMongoRepository {
+class UserRepository extends BasePostgresRepository {
 
   /**
    * @param {RavenHelper} opts.ravenHelper
+   * @param {DbConnection} opts.dbConnection
    */
   constructor(opts) {
-    super(opts.ravenHelper, model);
+    super(model(opts.dbConnection.sequelize));
   }
 
   /**

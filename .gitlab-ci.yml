@@ -6,18 +6,21 @@ test:
   image: node:10.15-alpine
   stage: test
   variables:
-    DB_HOST: "mongo"
-    DB_PORT: "27017"
-    DB_DATABASE: "streamers-edge-test"
+    DB_USER: postgres
+    DB_PASSWORD: ""
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_DATABASE: streamers-edge-test
+    POSTGRES_DB: streamers-edge-test
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: ""
   services:
-    - mongo
+    - postgres:latest
   cache:
     key: $CI_COMMIT_REF_NAME
     paths:
       - node_modules
   script:
-#    - apk --update-cache add make gcc g++ python git
-#    - npm config set unsafe-perm true
     - npm i
     - npm run test:audit
     - npm run test:lint
@@ -28,3 +31,4 @@ test:
     - merge_requests
     - develop
     - master
+    - web
