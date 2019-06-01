@@ -16,7 +16,7 @@ const Sequelize = require('sequelize');
 /**
  * @typedef {UserObject} UserDocument
  */
-module.exports = (sequelize) => {
+const User = (sequelize) => {
   return sequelize.define('user', {
     username: {
       type: Sequelize.STRING
@@ -55,3 +55,5 @@ module.exports = (sequelize) => {
     }
   }, {});
 };
+
+module.exports = User;
