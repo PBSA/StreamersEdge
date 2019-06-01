@@ -1,6 +1,7 @@
 stages:
   - test
   - build
+  - deploy
 
 test:
   image: node:10.15-alpine
@@ -32,3 +33,17 @@ test:
     - develop
     - master
     - web
+
+deployToDev:
+  stage: deploy
+  script:
+    - bash deploy/deployToDev.sh
+  only:
+    - develop
+
+deployToStaging:
+  stage: deploy
+  script:
+    - bash deploy/deployToStaging.sh
+  when: manual
+
