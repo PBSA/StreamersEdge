@@ -22,12 +22,19 @@ describe('ALL TESTS', () => {
   const logger = getLogger();
 
   describe('global', () => {
+    let dbConnection;
 
     it('init connections', async () => {
       const connections = listModules(['src/connections/*.js']);
       await Promise.all(connections.map(({name}) => new Promise(async (resolve) => {
         try {
-          await container.resolve(name.replace(/\.([a-z])/, (a) => a[1].toUpperCase())).connect();
+          const connection = container.resolve(name.replace(/\.([a-z])/, (a) => a[1].toUpperCase()));
+          await connection.connect();
+
+          if (name === 'db.connection') {
+            dbConnection = connection;
+          }
+
           resolve();
         } catch (error) {
           logger.error(`${name} connect error`);
@@ -38,8 +45,9 @@ describe('ALL TESTS', () => {
 
     it('clear database', async () => {
       await Promise.all(fs.readdirSync('./src/models').map(async (file) => {
-        const Model = require(`../src/models/${file}`);
-        await Model.deleteMany({});
+        const Model = require(`../src/models/${file}`)(dbConnection.sequelize);
+        await Model.sync();
+        await Model.destroy({where: {}});
       }));
     });
   });

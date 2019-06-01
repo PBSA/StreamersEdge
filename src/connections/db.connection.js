@@ -1,6 +1,5 @@
 const logger = require('log4js').getLogger('db.connection');
-const mongoose = require('mongoose');
-
+const Sequelize = require('sequelize');
 const BaseConnection = require('./abstracts/base.connection');
 
 /**
@@ -16,22 +15,24 @@ class DbConnection extends BaseConnection {
     const {
       user, password, host, port, database
     } = opts.config.db;
-    this._url = `mongodb://${(user) ? (`${user}:${password}@`) : ''}${host}:${port}/${database}`;
-    mongoose.Promise = global.Promise;
+    this._url = `postgres://${(user) ? (`${user}:${password}@`) : ''}${host}:${port}/${database}`;
+    this.sequelize = null;
   }
 
-  /** @returns {Promise<Mongoose.Connection>} */
+  /** @returns {Promise<*>} */
   async connect() {
     logger.trace('Start connect to db');
-    mongoose.set('useCreateIndex', true);
-    const connection = await mongoose.connect(this._url, {useNewUrlParser: true});
+
+    this.sequelize = new Sequelize(this._url, {
+      logging: false
+    });
     logger.info('DB is connected');
-    return connection;
+    return this.sequelize;
   }
 
   /** @returns {Promise<void>} */
   disconnect() {
-    return mongoose.connection.close();
+    return this.sequelize.close();
   }
 
 }

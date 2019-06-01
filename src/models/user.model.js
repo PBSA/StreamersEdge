@@ -1,4 +1,4 @@
-const {Schema, model} = require('mongoose');
+const Sequelize = require('sequelize');
 
 /**
  * @typedef {Object} UserObject
@@ -14,47 +14,46 @@ const {Schema, model} = require('mongoose');
  */
 
 /**
- * @typedef {MongooseDocument & UserObject} UserDocument
+ * @typedef {UserObject} UserDocument
  */
+const User = (sequelize) => {
+  return sequelize.define('user', {
+    username: {
+      type: Sequelize.STRING
+    },
+    email: {
+      type: Sequelize.STRING
+    },
+    avatar: {
+      type: Sequelize.STRING
+    },
+    twitchId: {
+      type: Sequelize.STRING,
+      unique: true,
+      allowNull: true
+    },
+    googleId: {
+      type: Sequelize.STRING,
+      unique: true,
+      allowNull: true
+    },
+    youtube: {
+      type: Sequelize.STRING,
+      defaultValue: ''
+    },
+    facebook: {
+      type: Sequelize.STRING,
+      defaultValue: ''
+    },
+    peerplaysAccountName: {
+      type: Sequelize.STRING,
+      defaultValue: ''
+    },
+    bitcoinAddress: {
+      type: Sequelize.STRING,
+      defaultValue: ''
+    }
+  }, {});
+};
 
-const userSchema = new Schema({
-  username: {
-    type: String
-  },
-  email: {
-    type: String
-  },
-  avatar: {
-    type: String
-  },
-  twitchId: {
-    type: String,
-    index: true,
-    unique: true,
-    sparse: true
-  },
-  googleId: {
-    type: String,
-    index: true,
-    unique: true,
-    sparse: true
-  },
-  youtube: {
-    type: String,
-    default: ''
-  },
-  facebook: {
-    type: String,
-    default: ''
-  },
-  peerplaysAccountName: {
-    type: String,
-    default: ''
-  },
-  bitcoinAddress: {
-    type: String,
-    default: ''
-  }
-}, {timestamps: true});
-
-module.exports = model('user', userSchema);
+module.exports = User;
