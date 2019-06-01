@@ -21,7 +21,21 @@ class GoogleConnection extends BaseConnection {
     const {tokens} = await auth.getToken(code);
     auth.setCredentials(tokens);
     const oauth2 = google.oauth2({version: 'v1', auth});
-    return oauth2.userinfo.get();
+    const profile = await oauth2.userinfo.get();
+    profile.data.youtube = '';
+
+    const youtubeService = google.youtube('v3');
+    const youtubeProfile = await youtubeService.channels.list({
+      auth: auth,
+      part: 'snippet',
+      mine: true
+    });
+
+    if (youtubeProfile.data.items.length === 1) {
+      profile.data.youtube = `https://www.youtube.com/channel/${youtubeProfile.data.items[0].id}`;
+    }
+
+    return profile;
   }
 
   disconnect() {}

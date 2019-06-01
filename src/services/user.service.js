@@ -38,7 +38,7 @@ class UserService {
    */
   async getUserByGoogleAccount(account) {
     const {
-      name, id, picture, email
+      name, id, picture, email, youtube
     } = account;
     let User = await this.userRepository.findOne({
       googleId: id
@@ -49,7 +49,8 @@ class UserService {
         username: name,
         googleId: id,
         avatar: picture,
-        email
+        email,
+        youtube
       });
     }
 

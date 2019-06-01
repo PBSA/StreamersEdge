@@ -2,7 +2,8 @@ const {google} = require('googleapis');
 
 const DEFAULT_SCOPE = [
   'https://www.googleapis.com/auth/userinfo.profile',
-  'https://www.googleapis.com/auth/userinfo.email'
+  'https://www.googleapis.com/auth/userinfo.email',
+  'https://www.googleapis.com/auth/youtube.readonly'
 ];
 
 class GoogleRepository {
@@ -34,11 +35,13 @@ class GoogleRepository {
 
   async getProfileByCode(code) {
     const {data} = await this.googleConnection.userInfo(this.getAuth(), code);
+
     return {
       id: data.id,
       picture: data.picture,
       name: data.name,
-      email: data.email
+      email: data.email,
+      youtube: data.youtube
     };
   }
 
