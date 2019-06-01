@@ -46,13 +46,13 @@ class UsersController {
         this.getUser.bind(this)
       ],
       /**
-       * @api {get} /api/v1/users
+       * @api {get} /api/v1/users Get users list
        * @apiName UsersGet
        * @apiGroup Users
        * @apiVersion 0.1.0
        * @apiParam {String} [search] Filter by PeerPlays Account Name
        * @apiParam {Number} limit Limit of rows
-       * @apiParam {Number} skip Number of rows to skip
+       * @apiParam {Number} [skip] Number of rows to skip
        * @apiSuccessExample {json} Success-Response:
        * HTTP/1.1 200 OK
        * {

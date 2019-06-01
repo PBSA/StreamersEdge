@@ -13,7 +13,10 @@ Backend module for StreamersEdge application
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
+	
+- [Users](#users)
 	- [Get user by id](#get-user-by-id)
+	- [Get users list](#get-users-list)
 	
 
 
@@ -147,7 +150,7 @@ Success-Response:
 ```
 HTTP/1.1 200 OK
 {
-  "result": "https://id.twitch.tv/oauth2/authorize?response_type=code&redirect_uri=http%3A%2F%2Flocalhost&scope=user_read&state=true&client_id=5uyyouelk9a2d5rt0i1uuvntel2mb5",
+  "result": "https://id.twitch.tv/oauth2/authorize?...",
   "status": 200
 }
 ```
@@ -253,11 +256,13 @@ HTTP/1.1 200 OK
  }
 }
 ```
+# Users
+
 ## Get user by id
 
 
 
-	GET /api/v1/user/:id
+	GET /api/v1/users/:id
 
 
 ### Parameters
@@ -282,6 +287,39 @@ HTTP/1.1 200 OK
     "peerplaysAccountName": "",
     "bitcoinAddress": ""
   }
+}
+```
+## Get users list
+
+
+
+	GET /api/v1/users
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| search			| String			| **optional** <p>Filter by PeerPlays Account Name</p>							|
+| limit			| Number			|  <p>Limit of rows</p>							|
+| skip			| Number			| **optional** <p>Number of rows to skip</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": [{
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": ""
+  }]
 }
 ```
 

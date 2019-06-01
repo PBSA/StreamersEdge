@@ -18,7 +18,7 @@ before(async () => {
   agent = request.agent(apiModule.app);
 });
 
-describe('GET /api/v1/user/:id', () => {
+describe('GET /api/v1/users/:id', () => {
 
   beforeEach(async () => {
     await agent.post('/api/v1/auth/twitch/code').send({code: constants.modules.api.auth.twitchValidCode});
@@ -26,26 +26,46 @@ describe('GET /api/v1/user/:id', () => {
 
   it('should forbid, user not logged', async () => {
     await agent.post('/api/v1/auth/logout');
-    const response = await agent.get('/api/v1/user/5cc315041ec568398b99d7ca');
+    const response = await agent.get('/api/v1/users/5cc315041ec568398b99d7ca');
     isError(response, 401);
   });
 
   it('should forbid, invalid id', async () => {
-    const response = await agent.get('/api/v1/user/test');
+    const response = await agent.get('/api/v1/users/test');
     isError(response, 400);
   });
 
   it('should forbid, user not found', async () => {
-    const response = await agent.get('/api/v1/user/5cc315041ec568398b99d7ca');
+    const response = await agent.get('/api/v1/users/5cc315041ec568398b99d7ca');
     isError(response, 404);
   });
 
   it('should success', async () => {
     const profileResponse = await agent.get('/api/v1/profile');
     const profile = profileResponse.body.result;
-    const response = await agent.get(`/api/v1/user/${profile.id}`);
+    const response = await agent.get(`/api/v1/users/${profile.id}`);
     isSuccess(response);
     assert.deepEqual(response.body.result, profile);
+  });
+
+});
+
+describe('GET /api/v1/users', () => {
+
+  beforeEach(async () => {
+    await agent.post('/api/v1/auth/twitch/code').send({code: constants.modules.api.auth.twitchValidCode});
+  });
+
+  it('should forbid, user not logged', async () => {
+    await agent.post('/api/v1/auth/logout');
+    const response = await agent.get('/api/v1/users');
+    isError(response, 401);
+  });
+
+  it('should success return list', async () => {
+    const response = await agent.get('/api/v1/users?limit=100');
+    isSuccess(response);
+    assert.ok(response.body.result.length > 0);
   });
 
 });
