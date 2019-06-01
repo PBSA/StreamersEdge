@@ -51,6 +51,18 @@ class FileService {
     const dirPath = `${this.basePath}/images/${key}/${this.IMAGES_SIZE.x}x${this.IMAGES_SIZE.y}`;
     await this.checkPath(dirPath);
     const image = await Jimp.read(`${this.basePath}/images/${key}/original/${filename}`);
+    const {w, h} = this.getImageSize(image);
+
+    image.resize(w, h)
+      .crop(
+        (image.bitmap.width / 2) - (this.IMAGES_SIZE.x / 2),
+        (image.bitmap.height / 2) - (this.IMAGES_SIZE.y / 2),
+        this.IMAGES_SIZE.x,
+        this.IMAGES_SIZE.y,
+      ).write(path.join(dirPath, filename));
+  }
+
+  getImageSize(image) {
     let w = this.IMAGES_SIZE.x;
     let h = this.IMAGES_SIZE.y;
 
@@ -65,13 +77,7 @@ class FileService {
       h = h > w ? h : Jimp.AUTO;
     }
 
-    image.resize(w, h)
-      .crop(
-        (image.bitmap.width / 2) - (this.IMAGES_SIZE.x / 2),
-        (image.bitmap.height / 2) - (this.IMAGES_SIZE.y / 2),
-        this.IMAGES_SIZE.x,
-        this.IMAGES_SIZE.y,
-      ).write(path.join(dirPath, filename));
+    return {w, h};
   }
 
   /**
