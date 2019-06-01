@@ -113,6 +113,24 @@ class UserService {
     return this.getCleanUser(User);
   }
 
+  /**
+   * Get a list of users corresponding to the specified parameters
+   *
+   * @param search
+   * @param limit
+   * @param skip
+   * @returns {Promise<[UserObject]>}
+   */
+  async searchUsers(search, limit, skip) {
+    const filter = search ? {
+      peerplaysAccountName: {
+        $regex: new RegExp(search.replace(/[.]/g, '\\$&'))
+      }
+    } : null;
+    const users = await this.userRepository.find(filter, null, {limit, skip});
+    return Promise.all(users.map(async (User) => this.getCleanUser(User)));
+  }
+
 }
 
 module.exports = UserService;
