@@ -1,4 +1,3 @@
-/* eslint-disable global-require,no-undef,no-process-exit,import/no-dynamic-require */
 const fs = require('fs');
 
 const {listModules, asClass} = require('awilix');
@@ -19,8 +18,7 @@ container.register({
 
 describe('ALL TESTS', () => {
   if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'local-test') {
-    console.error('Invalid NODE_ENV. Require NODE_ENV=test');
-    process.exit(1);
+    throw new Error('Invalid NODE_ENV. Require NODE_ENV=test');
   }
 
   const logger = getLogger();
@@ -35,8 +33,7 @@ describe('ALL TESTS', () => {
           resolve();
         } catch (error) {
           logger.error(`${name} connect error`);
-          logger.error(error);
-          process.exit(1);
+          throw new Error(error);
         }
       })));
     });
@@ -59,8 +56,7 @@ describe('ALL TESTS', () => {
         resolve();
       } catch (error) {
         logger.error(`${name} disconnect error`);
-        logger.error(error);
-        process.exit(1);
+        throw new Error(error);
       }
     })));
   });

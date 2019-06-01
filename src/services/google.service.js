@@ -2,9 +2,9 @@
 class GoogleService {
 
   /**
-	 * @param {AppConfig} opts.config
-	 * @param {GoogleRepository} opts.googleRepository
-	 */
+   * @param {AppConfig} opts.config
+   * @param {GoogleRepository} opts.googleRepository
+   */
   constructor(opts) {
     this.config = opts.config;
     this.googleRepository = opts.googleRepository;

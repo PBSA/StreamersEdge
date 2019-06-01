@@ -1,10 +1,10 @@
 class UserService {
 
   /**
-	 * @param {UserRepository} opts.userRepository
-	 * @param {PeerplaysRepository} opts.peerplaysRepository
-	 * @param {FileService} opts.fileService
-	 */
+   * @param {UserRepository} opts.userRepository
+   * @param {PeerplaysRepository} opts.peerplaysRepository
+   * @param {FileService} opts.fileService
+   */
   constructor(opts) {
     this.userRepository = opts.userRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
@@ -12,10 +12,10 @@ class UserService {
   }
 
   /**
-	 * Find user by twitch account and create row if not exists
-	 * @param account
-	 * @returns {Promise<UserDocument>}
-	 */
+   * Find user by twitch account and create row if not exists
+   * @param account
+   * @returns {Promise<UserDocument>}
+   */
   async getUserByTwitchAccount(account) {
     const {
       name, _id, email, logo
@@ -37,11 +37,11 @@ class UserService {
   }
 
   /**
-	 * Find user by network account id and create row if not exists
-	 * @param {String} network
-	 * @param account
-	 * @returns {Promise<UserDocument>}
-	 */
+   * Find user by network account id and create row if not exists
+   * @param {String} network
+   * @param account
+   * @returns {Promise<UserDocument>}
+   */
   async getUserBySocialNetworkAccount(network, account) {
     const {
       name, id, picture, email
@@ -63,9 +63,9 @@ class UserService {
   }
 
   /**
-	 * @param {UserDocument} User
-	 * @returns {Promise<UserObject>}
-	 */
+   * @param {UserDocument} User
+   * @returns {Promise<UserObject>}
+   */
   async getCleanUser(User) {
     const avatar = User.avatar ? User.avatar : null;
 
@@ -83,10 +83,10 @@ class UserService {
   }
 
   /**
-	 * @param {UserDocument} User
-	 * @param updateObject
-	 * @returns {Promise<UserObject>}
-	 */
+   * @param {UserDocument} User
+   * @param updateObject
+   * @returns {Promise<UserObject>}
+   */
   async patchProfile(User, updateObject) {
     Object.keys(updateObject).forEach((field) => {
       User[field] = updateObject[field];
@@ -106,12 +106,12 @@ class UserService {
   }
 
   /**
-	 * @param {UserDocument} User
-	 * @param name
-	 * @param activeKey
-	 * @param ownerKey
-	 * @returns {Promise<UserObject>}
-	 */
+   * @param {UserDocument} User
+   * @param name
+   * @param activeKey
+   * @param ownerKey
+   * @returns {Promise<UserObject>}
+   */
   async createPeerplaysAccount(User, {name, activeKey, ownerKey}) {
     try {
       await this.peerplaysRepository.createPeerplaysAccount(name, ownerKey, activeKey);
