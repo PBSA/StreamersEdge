@@ -26,7 +26,7 @@ describe('GET /api/v1/users/:id', () => {
 
   it('should forbid, user not logged', async () => {
     await agent.post('/api/v1/auth/logout');
-    const response = await agent.get('/api/v1/users/5cc315041ec568398b99d7ca');
+    const response = await agent.get('/api/v1/users/1');
     isError(response, 401);
   });
 
@@ -36,7 +36,7 @@ describe('GET /api/v1/users/:id', () => {
   });
 
   it('should forbid, user not found', async () => {
-    const response = await agent.get('/api/v1/users/5cc315041ec568398b99d7ca');
+    const response = await agent.get('/api/v1/users/1000');
     isError(response, 404);
   });
 
@@ -66,6 +66,18 @@ describe('GET /api/v1/users', () => {
     const response = await agent.get('/api/v1/users?limit=100');
     isSuccess(response);
     assert.ok(response.body.result.length > 0);
+  });
+
+  it('should success return one user', async () => {
+    const response = await agent.get('/api/v1/users?limit=1&search=test');
+    isSuccess(response);
+    assert.ok(response.body.result.length === 1);
+  });
+
+  it('should success return empty list', async () => {
+    const response = await agent.get('/api/v1/users?limit=1&search=not-exists-user');
+    isSuccess(response);
+    assert.ok(response.body.result.length === 0);
   });
 
 });

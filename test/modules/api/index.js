@@ -12,6 +12,9 @@ describe('REST API', () => {
   describe('base.controller', () => {
     require('./controllers/base.controller.test');
   });
+  describe('challenges.controller', () => {
+    require('./controllers/challenges.controller.test');
+  });
   describe('google.controller', () => {
     require('./controllers/google.controller.test');
   });

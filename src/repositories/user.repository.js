@@ -1,31 +1,36 @@
-const model = require('../models/user.model');
-const BaseMongoRepository = require('./abstracts/base-mongo.repository');
+const Sequelize = require('sequelize');
+const {model} = require('../models/user.model');
+const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
-class UserRepository extends BaseMongoRepository {
+class UserRepository extends BasePostgresRepository {
 
-  /**
-   * @param {RavenHelper} opts.ravenHelper
-   */
-  constructor(opts) {
-    super(opts.ravenHelper, model);
+  constructor() {
+    super(model);
   }
 
   /**
-   * @param {Object} [conditions]
-   * @param {Object} [projection] optional fields to return (http://bit.ly/1HotzBo)
-   * @param {Object} [options] optional
-   * @return {Promise.<UserDocument>}
+   * @param ids
+   * @returns {Promise<UserModel[]>}
    */
-  async findOne(conditions, projection, options) {
-    return super.findOne(conditions, projection, options);
+  async findByPkList(ids) {
+    return this.model.findAll({
+      where: {
+        id: {[Sequelize.Op.in]: ids}
+      }
+    });
   }
 
-  /**
-   * @param {Object|[Object]} doc document to create (or several docs as array)
-   * @return {Promise.<UserDocument|[UserDocument]>}
-   */
-  async create(doc) {
-    return super.create(doc);
+  async searchUsers(search, limit, offset) {
+    const filter = search ? {
+      peerplaysAccountName: {
+        [Sequelize.Op.like]: `%${search}%`
+      }
+    } : null;
+    return this.model.findAll({
+      where: filter,
+      offset,
+      limit
+    });
   }
 
 }

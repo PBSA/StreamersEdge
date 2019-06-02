@@ -1,7 +1,19 @@
-const {Schema, model} = require('mongoose');
+const Sequelize = require('sequelize');
+const {Model} = Sequelize;
 
 /**
- * @typedef {Object} UserObject
+ * @typedef {Object} UserPublicObject
+ * @property {Number} id
+ * @property {String} username
+ * @property {String} youtube
+ * @property {String} facebook
+ * @property {String} peerplaysAccountName
+ * @property {String} bitcoinAddress
+ */
+
+/**
+ * @typedef {Class} UserModel
+ * @property {Number} id
  * @property {String} username
  * @property {String} email
  * @property {String} twitchId
@@ -12,49 +24,64 @@ const {Schema, model} = require('mongoose');
  * @property {String} peerplaysAccountName
  * @property {String} bitcoinAddress
  */
-
-/**
- * @typedef {MongooseDocument & UserObject} UserDocument
- */
-
-const userSchema = new Schema({
-  username: {
-    type: String
-  },
-  email: {
-    type: String
-  },
-  avatar: {
-    type: String
-  },
-  twitchId: {
-    type: String,
-    index: true,
-    unique: true,
-    sparse: true
-  },
-  googleId: {
-    type: String,
-    index: true,
-    unique: true,
-    sparse: true
-  },
-  youtube: {
-    type: String,
-    default: ''
-  },
-  facebook: {
-    type: String,
-    default: ''
-  },
-  peerplaysAccountName: {
-    type: String,
-    default: ''
-  },
-  bitcoinAddress: {
-    type: String,
-    default: ''
+class UserModel extends Model {
+  /**
+   * @returns {UserPublicObject}
+   */
+  getPublic() {
+    return {
+      id: this.id,
+      username: this.username,
+      youtube: this.youtube,
+      facebook: this.facebook,
+      peerplaysAccountName: this.peerplaysAccountName,
+      bitcoinAddress: this.bitcoinAddress
+    };
   }
-}, {timestamps: true});
+}
 
-module.exports = model('user', userSchema);
+module.exports = {
+  init: (sequelize) => {
+    UserModel.init({
+      username: {type: Sequelize.STRING},
+      email: {type: Sequelize.STRING},
+      avatar: {type: Sequelize.STRING},
+      twitchId: {
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: true
+      },
+      googleId: {
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: true
+      },
+      youtube: {
+        type: Sequelize.STRING,
+        defaultValue: ''
+      },
+      facebook: {
+        type: Sequelize.STRING,
+        defaultValue: ''
+      },
+      peerplaysAccountName: {
+        type: Sequelize.STRING,
+        defaultValue: ''
+      },
+      bitcoinAddress: {
+        type: Sequelize.STRING,
+        defaultValue: ''
+      }
+    }, {
+      sequelize,
+      modelName: 'user'
+    });
+  },
+  associate: (models) => {
+    UserModel.hasMany(models.Challenge.model);
+    UserModel.hasMany(models.ChallengeInvitedUsers.model);
+  },
+  get model() {
+    return UserModel;
+  }
+};

@@ -62,3 +62,4 @@ package-lock.json
 config/local.json
 
 apidoc
+config/local-test.json

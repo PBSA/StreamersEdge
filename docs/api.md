@@ -9,6 +9,9 @@ Backend module for StreamersEdge application
 	- [Get redirect url for auth with Google](#get-redirect-url-for-auth-with-google)
 	- [Get redirect url for auth with Twitch](#get-redirect-url-for-auth-with-twitch)
 	
+- [Challenges](#challenges)
+	- [Create new challenge](#create-new-challenge)
+	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
 	- [Get authorized user profile](#get-authorized-user-profile)
@@ -152,6 +155,91 @@ HTTP/1.1 200 OK
 {
   "result": "https://id.twitch.tv/oauth2/authorize?...",
   "status": 200
+}
+```
+# Challenges
+
+## Create new challenge
+
+
+
+	POST /api/v1/challenges
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| name			| String			|  <p>Name of challenge</p>							|
+| startDate			| Date			| **optional** <p>Date of start challenge in ISO format</p>							|
+| endDate			| Date			| **optional** <p>Date of end challenge in ISO format</p>							|
+| game			| String			|  <p>Type of challenge game. Now can be 'pubg' only</p>							|
+| accessRule			| String			|  <p>Type of access - anyone or invite</p>							|
+| ppyAmount			| Number			|  <p>PPY Amount for challenge in &quot;satoshis&quot;</p>							|
+| param.shouldLead			| Boolean			| **optional** <p>Criteria. User should win to pass the challenge</p>							|
+| param.shouldKill			| Number			| **optional** <p>Criteria. User should kill specifies count of frags to pass the challenge</p>							|
+| param.shouldWinPerTime			| Number			| **optional** <p>Criteria. User should win per specified count of minutes</p>							|
+| param.minPlace			| Number			| **optional** <p>Criteria. Should end game on the specified place or higher</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "name": "Test name",
+  "startDate": "2019-04-04T08:32:19.818Z",
+  "endDate": "2019-04-04T08:32:19.818Z",
+  "game": "pubg",
+  "accessRule": "anyone",
+  "ppyAmount": 100,
+  "invitedAccounts": [],
+  "params": {
+    "shouldLead": true,
+    "shouldKill": 1,
+    "shouldWinPerTime": 3,
+    "minPlace": 3
+  }
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 2,
+   "name": "Test name",
+   "createdAt": "2019-04-04T08:32:19.818Z",
+   "startDate": null,
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "user": {
+     "id": 1,
+     "username": "User Name",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
+   },
+   "criteria": {
+     "id": 2,
+     "shouldLead": true,
+     "shouldKill": null,
+     "shouldWinPerTime": null,
+     "minPlace": null,
+     "createdAt": "2019-04-04T08:32:19.831Z",
+     "updatedAt": "2019-04-04T08:32:19.831Z",
+     "challengeId": 2
+   },
+   "invitedUsers": []
+ },
+ "status": 200
 }
 ```
 # Profile

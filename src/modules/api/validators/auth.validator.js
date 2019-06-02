@@ -13,8 +13,9 @@ class AuthValidator extends BaseValidator {
 
   loggedOnly() {
     return this.validate(null, null, async (req) => {
+
       if (!req.isAuthenticated()) {
-        throw new ValidateError(401);
+        throw new ValidateError(401, 'unauthorized');
       }
 
       return null;
