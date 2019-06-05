@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 const {listModules, asClass} = require('awilix');
 const {getLogger} = require('log4js');
 // const { assert } = require('chai');
@@ -44,11 +42,9 @@ describe('ALL TESTS', () => {
     });
 
     it('clear database', async () => {
-      await Promise.all(fs.readdirSync('./src/models').map(async (file) => {
-        const Model = require(`../src/models/${file}`)(dbConnection.sequelize);
-        await Model.sync();
-        await Model.destroy({where: {}});
-      }));
+      await dbConnection.sequelize.sync({
+        force: true
+      });
     });
   });
 

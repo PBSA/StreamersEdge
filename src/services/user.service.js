@@ -12,7 +12,7 @@ class UserService {
   /**
    * Find user by twitch account and create row if not exists
    * @param account
-   * @returns {Promise<UserDocument>}
+   * @returns {Promise<UserModel>}
    */
   async getUserByTwitchAccount(account) {
     const {name, id, email} = account;
@@ -32,7 +32,7 @@ class UserService {
   /**
    * Find user by google account and create row if not exists
    * @param account
-   * @returns {Promise<UserDocument>}
+   * @returns {Promise<UserModel>}
    */
   async getUserByGoogleAccount(account) {
     const {
@@ -54,24 +54,17 @@ class UserService {
   }
 
   /**
-   * @param {UserDocument} User
-   * @returns {Promise<UserObject>}
+   * @param {UserModel} User
+   * @returns {Promise<UserPublicObject>}
    */
   async getCleanUser(User) {
-    return {
-      id: User.id,
-      username: User.username,
-      youtube: User.youtube,
-      facebook: User.facebook,
-      peerplaysAccountName: User.peerplaysAccountName,
-      bitcoinAddress: User.bitcoinAddress
-    };
+    return User.getPublic();
   }
 
   /**
-   * @param {UserDocument} User
+   * @param {UserModel} User
    * @param updateObject
-   * @returns {Promise<UserObject>}
+   * @returns {Promise<UserModel>}
    */
   async patchProfile(User, updateObject) {
     Object.keys(updateObject).forEach((field) => {
@@ -92,11 +85,11 @@ class UserService {
   }
 
   /**
-   * @param {UserDocument} User
+   * @param {UserModel} User
    * @param name
    * @param activeKey
    * @param ownerKey
-   * @returns {Promise<UserObject>}
+   * @returns {Promise<UserModel>}
    */
   async createPeerplaysAccount(User, {name, activeKey, ownerKey}) {
     try {
