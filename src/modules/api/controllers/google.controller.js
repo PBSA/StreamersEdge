@@ -71,11 +71,11 @@ class GoogleController {
 
     try {
       User = await this.googleService.getUserByCode(code);
+      User = await this.userService.getUserByGoogleAccount(User);
     } catch (e) {
       throw new RestError(e.message, 400);
     }
 
-    User = await this.userService.getUserByGoogleAccount(User);
     await new Promise((success) => req.login(User, () => success()));
     return this.userService.getCleanUser(User);
   }

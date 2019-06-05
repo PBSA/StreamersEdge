@@ -1,12 +1,18 @@
+const bcrypt = require('bcrypt');
+
 class UserService {
 
   /**
    * @param {UserRepository} opts.userRepository
    * @param {PeerplaysRepository} opts.peerplaysRepository
+   * @param {VerificationTokenRepository} opts.verificationTokenRepository
+   * @param {MailService} opts.mailService
    */
   constructor(opts) {
     this.userRepository = opts.userRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
+    this.verificationTokenRepository = opts.verificationTokenRepository;
+    this.mailService = opts.mailService;
   }
 
   /**
@@ -15,16 +21,30 @@ class UserService {
    * @returns {Promise<UserModel>}
    */
   async getUserByTwitchAccount(account) {
-    const {name, id, email} = account;
-    const [User] = await this.userRepository.findOrCreate({
+    const {id, email} = account;
+
+    let User = await this.userRepository.model.findOne({
       where: {
         twitchId: id
-      },
-      defaults: {
-        username: name,
-        email
       }
     });
+
+    if (!User) {
+      let emailIsUsed = await this.userRepository.model.findOne({where: {email}});
+
+      if (emailIsUsed) {
+        throw new Error('This email already is used');
+      }
+
+      User = await this.userRepository.create({
+        where: {
+          twitchId: id
+        },
+        defaults: {
+          email
+        }
+      });
+    }
 
     return User;
   }
@@ -36,19 +56,32 @@ class UserService {
    */
   async getUserByGoogleAccount(account) {
     const {
-      name, id, picture, email
+      id, picture, email
     } = account;
 
-    const [User] = await this.userRepository.findOrCreate({
+    let User = await this.userRepository.model.findOne({
       where: {
         googleId: id
-      },
-      defaults: {
-        username: name,
-        avatar: picture,
-        email
       }
     });
+
+    if (!User) {
+      let emailIsUsed = await this.userRepository.model.findOne({where: {email}});
+
+      if (emailIsUsed) {
+        throw new Error('This email already is used');
+      }
+
+      User = await this.userRepository.create({
+        where: {
+          googleId: id
+        },
+        defaults: {
+          avatar: picture,
+          email
+        }
+      });
+    }
 
     return User;
   }
@@ -100,6 +133,40 @@ class UserService {
 
     User.peerplaysAccountName = name;
     await User.save();
+    return this.getCleanUser(User);
+  }
+
+  async signUpWithPassword(email, username, password) {
+    password = await bcrypt.hash(password, 10);
+    const User = await this.userRepository.model.create({
+      email, username, password
+    });
+    const {token} = await this.verificationTokenRepository.createToken(User.id);
+
+    await this.mailService.sendMailAfterRegistration(email, token);
+
+    return this.getCleanUser(User);
+  }
+
+  async confirmEmail(ActiveToken) {
+    const User = await this.userRepository.findByPk(ActiveToken.userId);
+    User.isEmailVerified = true;
+    await User.save();
+    ActiveToken.isActive = false;
+    await ActiveToken.save();
+  }
+
+  async getSignInUser(login, password) {
+    const User = await this.userRepository.getByLogin(login);
+
+    if (!User) {
+      throw new Error('User not found');
+    }
+
+    if (!await bcrypt.compare(password, User.password)) {
+      throw new Error('Invalid password');
+    }
+
     return this.getCleanUser(User);
   }
 

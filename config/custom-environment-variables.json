@@ -19,5 +19,10 @@
   },
   "raven": {
     "url": "RAVEN_URL"
+  },
+  "mailer": {
+    "service": "MAILER_SERVICE",
+    "user": "MAILER_USER",
+    "pass": "MAILER_PASS"
   }
 }

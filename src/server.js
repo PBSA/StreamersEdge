@@ -59,4 +59,11 @@ const currentModule = process.env.MODULE || 'api';
  * @property {{enabled: Boolean, url: String}} raven
  * @property {String<prod|testnet>} bitcoinNetwork
  * @property {String} peerplaysFaucetURL
+ * @property {Object} mailer
+ * @property {String} mailer.sender
+ * @property {Number} mailer.port
+ * @property {Boolean} mailer.secure
+ * @property {{user:String, pass:String}} mailer.auth
+ * @property {String} mailer.sender
+ * @property {String} frontUrl
  */

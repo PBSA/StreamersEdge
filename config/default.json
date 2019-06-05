@@ -25,5 +25,16 @@
     "url": ""
   },
   "bitcoinNetwork": "prod",
-  "peerplaysFaucetURL": "https://pbsa.tools/accounts/create"
+  "peerplaysFaucetURL": "https://pbsa.tools/accounts/create",
+  "mailer": {
+    "host": "",
+    "port": 587,
+    "secure": false,
+    "auth": {
+      "user": "",
+      "pass": ""
+    },
+    "sender": ""
+  },
+  "frontUrl": ""
 }
