@@ -1,5 +1,6 @@
 const logger = require('log4js').getLogger('db.connection');
 const Sequelize = require('sequelize');
+const fs = require('fs');
 const BaseConnection = require('./abstracts/base.connection');
 
 /**
@@ -27,7 +28,25 @@ class DbConnection extends BaseConnection {
       logging: false
     });
     logger.info('DB is connected');
+    await this.initModels();
     return this.sequelize;
+  }
+
+  async initModels() {
+    const models = {};
+    await Promise.all(fs.readdirSync('src/models').map(async (file) => {
+      const Model = require(`../models/${file}`);
+      Model.init(this.sequelize);
+      const name = file.replace(/\.model\.js/, '').toLowerCase()
+        .split('.')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join('');
+      models[name] = Model;
+    }));
+    Object.keys(models).forEach((name) => {
+      models[name].associate(models);
+    });
+    await this.sequelize.sync();
   }
 
   /** @returns {Promise<void>} */
