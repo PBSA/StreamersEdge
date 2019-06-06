@@ -22,7 +22,7 @@ class TwitchConnectionMock {
       case this.userUrl:
         if (auth === constants.modules.api.auth.twitchValidAuth) {
           return {
-            _id: constants.modules.api.auth.twitchTestId,
+            id: constants.modules.api.auth.twitchTestId,
             email: constants.modules.api.auth.twitchTestEmail,
             name: constants.modules.api.auth.twitchTestUsername
           };

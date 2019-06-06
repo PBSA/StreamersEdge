@@ -3,9 +3,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const mongoose = require('mongoose');
 const passport = require('passport');
+var SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
@@ -20,6 +19,7 @@ class ApiModule {
   /**
    *
    * @param {AppConfig} opts.config
+   * @param {DbConnection} opts.dbConnection
    * @param {AuthController} opts.authController
    * @param {ProfileController} opts.profileController
    * @param {UserController} opts.userController
@@ -29,6 +29,7 @@ class ApiModule {
    */
   constructor(opts) {
     this.config = opts.config;
+    this.dbConnection = opts.dbConnection;
     this.app = null;
     this.server = null;
 
@@ -48,7 +49,6 @@ class ApiModule {
   initModule() {
     return new Promise((resolve) => {
       logger.trace('Start HTTP server initialization');
-      const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
 
       this.app = express();
       this.app.use(bodyParser.urlencoded({extended: true}));
@@ -68,6 +68,10 @@ class ApiModule {
         this.app.options('*', cors());
       }
 
+      const SessionStore = new SequelizeStore({
+        db: this.dbConnection.sequelize
+      });
+
       this.app.use(session({
         name: 'crypto.sid',
         secret: this.config.sessionSecret,
@@ -75,15 +79,17 @@ class ApiModule {
         resave: false,
         saveUninitialized: false,
         rolling: true,
-        store: sessionStore
+        store: SessionStore
       }));
+
+      SessionStore.sync();
 
       this.app.use(passport.initialize());
       this.app.use(passport.session());
 
-      passport.serializeUser((user, done) => done(null, user._id));
+      passport.serializeUser((user, done) => done(null, user.id));
       passport.deserializeUser((user, done) => {
-        this.userRepository.findById(user).then((_user) => done(null, _user));
+        this.userRepository.findByPk(user).then((_user) => done(null, _user));
       });
 
       this.server = this.app.listen(this.config.port, () => {

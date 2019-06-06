@@ -43,27 +43,6 @@ const currentModule = process.env.MODULE || 'api';
   }
 })();
 
-
-/**
- * @typedef {Object} MongooseDocument
- * @property {String} _id
- * @property {Date} createdAt
- * @property {Date} updatedAt
- * @property {function():Promise<void>} save
- * @property {function():Promise<void>} remove
- */
-
-/**
- * @typedef {Object} MongooseCollection
- * @property {function():Promise<Object.<[[*]]>>} getIndexes
- * @property {function(name:String)} dropIndex
- */
-
-/**
- * @typedef {Object} MongooseModel
- * @property {MongooseCollection} collection
- */
-
 /**
  * @typedef {Object} AppConfig
  * @property {String} logLevel
