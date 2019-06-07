@@ -25,5 +25,6 @@
       "user": "MAILER_AUTH_USER",
       "pass": "MAILER_AUTH_PASS"
     }
-  }
+  },
+  "frontUrl": "FRONT_URL"
 }
