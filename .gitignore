@@ -60,6 +60,7 @@ typings/
 .next
 package-lock.json
 config/local.json
+config/local-test.json
 
 apidoc
 config/local-test.json
