@@ -11,6 +11,7 @@ Backend module for StreamersEdge application
 	
 - [Challenges](#challenges)
 	- [Create new challenge](#create-new-challenge)
+	- [Get challenge by id](#get-challenge-by-id)
 	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
@@ -176,10 +177,12 @@ HTTP/1.1 200 OK
 | game			| String			|  <p>Type of challenge game. Now can be 'pubg' only</p>							|
 | accessRule			| String			|  <p>Type of access - anyone or invite</p>							|
 | ppyAmount			| Number			|  <p>PPY Amount for challenge in &quot;satoshis&quot;</p>							|
-| param.shouldLead			| Boolean			| **optional** <p>Criteria. User should win to pass the challenge</p>							|
-| param.shouldKill			| Number			| **optional** <p>Criteria. User should kill specifies count of frags to pass the challenge</p>							|
-| param.shouldWinPerTime			| Number			| **optional** <p>Criteria. User should win per specified count of minutes</p>							|
-| param.minPlace			| Number			| **optional** <p>Criteria. Should end game on the specified place or higher</p>							|
+| conditionsText			| String			| **optional** <p>Required only if conditions is empty</p>							|
+| conditions			| Object[]			| **optional** <p>Conditions array</p>							|
+| conditions.param			| String			| **optional** <p>result_place, win_time, frags</p>							|
+| conditions.operator			| String			| **optional** <p>&gt;, &lt;, =, &gt;=, &lt;=</p>							|
+| conditions.value			| Number			| **optional** <p>Can be integer number</p>							|
+| conditions.join			| String			| **optional** <p>AND, OR or END. END can be used once</p>							|
 
 ### Examples
 
@@ -194,12 +197,13 @@ Request-Example:
   "accessRule": "anyone",
   "ppyAmount": 100,
   "invitedAccounts": [],
-  "params": {
-    "shouldLead": true,
-    "shouldKill": 1,
-    "shouldWinPerTime": 3,
-    "minPlace": 3
-  }
+  "conditionsText": [],
+  "conditions": [{
+    "param": "resultPlace",
+    "operator": ">",
+    "value": 1,
+    "join": "END"
+  }]
 }
 ```
 
@@ -211,32 +215,98 @@ Success-Response:
 HTTP/1.1 200 OK
 {
  "result": {
-   "id": 2,
-   "name": "Test name",
-   "createdAt": "2019-04-04T08:32:19.818Z",
-   "startDate": null,
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
    "endDate": null,
    "game": "pubg",
    "accessRule": "anyone",
    "ppyAmount": "1",
+   "conditionsText": "test",
    "user": {
      "id": 1,
-     "username": "User Name",
+     "username": "username",
      "youtube": "",
      "facebook": "",
      "peerplaysAccountName": "",
      "bitcoinAddress": ""
    },
-   "criteria": {
-     "id": 2,
-     "shouldLead": true,
-     "shouldKill": null,
-     "shouldWinPerTime": null,
-     "minPlace": null,
-     "createdAt": "2019-04-04T08:32:19.831Z",
-     "updatedAt": "2019-04-04T08:32:19.831Z",
-     "challengeId": 2
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
+   "invitedUsers": []
+ },
+ "status": 200
+}
+```
+## Get challenge by id
+
+
+
+	GET /api/v1/challenges/:id
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "conditionsText": "test",
+   "user": {
+     "id": 1,
+     "username": "username",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
    },
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
    "invitedUsers": []
  },
  "status": 200

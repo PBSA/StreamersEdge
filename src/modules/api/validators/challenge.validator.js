@@ -16,6 +16,7 @@ class ChallengeValidator extends BaseValidator {
 
     this.config = opts.config;
     this.createChallenge = this.createChallenge.bind(this);
+    this.validateGetChallenge = this.validateGetChallenge.bind(this);
   }
 
   createChallenge() {
@@ -27,12 +28,13 @@ class ChallengeValidator extends BaseValidator {
       accessRule: Joi.string().valid(Object.keys(challengeConstants.accessRules)).required(),
       ppyAmount: Joi.number().min(1).required(),
       invitedAccounts: Joi.array().items(Joi.number()).default([], 'empty array'),
-      params: Joi.object().keys({
-        shouldLead: Joi.boolean(),
-        shouldKill: Joi.number().min(1),
-        shouldWinPerTime: Joi.number().min(1),
-        minPlace: Joi.number().min(1)
-      }).default({}, 'empty object')
+      conditionsText: Joi.string().max(254).allow('').default('', 'empty string'),
+      conditions: Joi.array().items(Joi.object().keys({
+        param: Joi.string().valid(Object.keys(challengeConstants.paramTypes)).required(),
+        operator: Joi.string().valid(challengeConstants.operators).required(),
+        value: Joi.number().integer().required(),
+        join: Joi.string().valid(challengeConstants.joinTypes).required()
+      })).default([], 'empty array')
     };
 
     return this.validate(null, bodySchema, async (req, query, body) => {
@@ -61,19 +63,30 @@ class ChallengeValidator extends BaseValidator {
         }
       }
 
-      if (
-        !body.params.shouldLead &&
-        !body.params.shouldKill &&
-        !body.params.shouldWinPerTime &&
-        !body.params.minPlace
-      ) {
+      const endCriteria = body.conditions.filter((row) => row.join === 'END');
+
+      if (endCriteria.length > 1) {
         throw new ValidateError(400, 'Validate error', {
-          params: 'You must specify the criteria for challenge'
+          conditions: '\'end\' criteria cannot be used more than once'
+        });
+      }
+
+      if (!body.conditions.length && body.conditionsText === '') {
+        throw new ValidateError(400, 'Validate error', {
+          conditions: 'You must specify the criteria or conditions description'
         });
       }
 
       return body;
     });
+  }
+
+  validateGetChallenge() {
+    const querySchema = {
+      id: Joi.number().integer().required()
+    };
+
+    return this.validate(querySchema, null, (req, query) => query.id);
   }
 
 }

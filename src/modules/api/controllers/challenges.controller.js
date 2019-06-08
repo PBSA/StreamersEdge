@@ -25,32 +25,42 @@ class ChallengesController {
        * HTTP/1.1 200 OK
        * {
        *  "result": {
-       *    "id": 2,
-       *    "name": "Test name",
-       *    "createdAt": "2019-04-04T08:32:19.818Z",
-       *    "startDate": null,
+       *    "id": 11,
+       *    "name": "test",
+       *    "createdAt": "2019-06-02T06:11:44.866Z",
+       *    "startDate": "2019-07-04T08:32:19.818Z",
        *    "endDate": null,
        *    "game": "pubg",
        *    "accessRule": "anyone",
        *    "ppyAmount": "1",
+       *    "conditionsText": "test",
        *    "user": {
        *      "id": 1,
-       *      "username": "User Name",
+       *      "username": "username",
        *      "youtube": "",
        *      "facebook": "",
        *      "peerplaysAccountName": "",
        *      "bitcoinAddress": ""
        *    },
-       *    "criteria": {
-       *      "id": 2,
-       *      "shouldLead": true,
-       *      "shouldKill": null,
-       *      "shouldWinPerTime": null,
-       *      "minPlace": null,
-       *      "createdAt": "2019-04-04T08:32:19.831Z",
-       *      "updatedAt": "2019-04-04T08:32:19.831Z",
-       *      "challengeId": 2
-       *    },
+       *    "conditions": [{
+       *      "id": 4,
+       *      "param": "resultPlace",
+       *      "operator": ">",
+       *      "value": 1,
+       *      "join": "OR",
+       *      "createdAt": "2019-06-02T06:11:44.874Z",
+       *      "updatedAt": "2019-06-02T06:11:44.874Z",
+       *      "challengeId": 11
+       *    }, {
+       *      "id": 5,
+       *      "param": "resultPlace",
+       *      "operator": ">",
+       *      "value": 1,
+       *      "join": "END",
+       *      "createdAt": "2019-06-02T06:11:44.875Z",
+       *      "updatedAt": "2019-06-02T06:11:44.875Z",
+       *      "challengeId": 11
+       *    }],
        *    "invitedUsers": []
        *  },
        *  "status": 200
@@ -71,12 +81,13 @@ class ChallengesController {
        *   "accessRule": "anyone",
        *   "ppyAmount": 100,
        *   "invitedAccounts": [],
-       *   "params": {
-       *     "shouldLead": true,
-       *     "shouldKill": 1,
-       *     "shouldWinPerTime": 3,
-       *     "minPlace": 3
-       *   }
+       *   "conditionsText": [],
+       *   "conditions": [{
+       *     "param": "resultPlace",
+       *     "operator": ">",
+       *     "value": 1,
+       *     "join": "END"
+       *   }]
        * }
        * @apiParam {String} name Name of challenge
        * @apiParam {Date} [startDate] Date of start challenge in ISO format
@@ -84,10 +95,12 @@ class ChallengesController {
        * @apiParam {String} game Type of challenge game. Now can be 'pubg' only
        * @apiParam {String} accessRule Type of access - anyone or invite
        * @apiParam {Number} ppyAmount PPY Amount for challenge in "satoshis"
-       * @apiParam {Boolean} [param.shouldLead] Criteria. User should win to pass the challenge
-       * @apiParam {Number} [param.shouldKill] Criteria. User should kill specifies count of frags to pass the challenge
-       * @apiParam {Number} [param.shouldWinPerTime] Criteria. User should win per specified count of minutes
-       * @apiParam {Number} [param.minPlace] Criteria. Should end game on the specified place or higher
+       * @apiParam {String} [conditionsText] Required only if conditions is empty
+       * @apiParam {Object[]} [conditions] Conditions array
+       * @apiParam {String} [conditions.param] result_place, win_time, frags
+       * @apiParam {String} [conditions.operator] \>, <, =, >=, <=
+       * @apiParam {Number} [conditions.value] Can be integer number
+       * @apiParam {String} [conditions.join] AND, OR or END. END can be used once
        * @apiUse ChallengeObjectResponse
        */
       [
@@ -95,6 +108,19 @@ class ChallengesController {
         this.authValidator.loggedOnly,
         this.challengeValidator.createChallenge,
         this.createChallenge.bind(this)
+      ],
+      /**
+       * @api {get} /api/v1/challenges/:id Get challenge by id
+       * @apiName GetChallenge
+       * @apiGroup Challenges
+       * @apiVersion 0.1.0
+       * @apiUse ChallengeObjectResponse
+       */
+      [
+        'get', '/api/v1/challenges/:id',
+        this.authValidator.loggedOnly,
+        this.challengeValidator.validateGetChallenge,
+        this.getChallenge.bind(this)
       ]
     ];
   }
@@ -105,6 +131,16 @@ class ChallengesController {
     } catch (e) {
       throw new RestError(e.message, 404);
     }
+  }
+
+  async getChallenge(user, id) {
+    const challenge = await this.challengeService.getCleanObject(id);
+
+    if (!challenge) {
+      throw new RestError('Challenge not found', 404);
+    }
+
+    return challenge;
   }
 
 }

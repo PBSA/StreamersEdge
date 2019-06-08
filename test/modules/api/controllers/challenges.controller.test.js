@@ -28,13 +28,14 @@ describe('POST /api/v1/challenges', () => {
     game: 'pubg',
     accessRule: 'anyone',
     ppyAmount: 100,
+    conditionsText: '',
     invitedAccounts: [],
-    params: {
-      shouldLead: true,
-      shouldKill: 1,
-      shouldWinPerTime: 3,
-      minPlace: 3
-    }
+    conditions: [{
+      param: 'resultPlace',
+      operator: '>',
+      value: 1,
+      join: 'END'
+    }]
   };
 
   beforeEach(async () => {
@@ -52,12 +53,13 @@ describe('POST /api/v1/challenges', () => {
     isError(response, 400);
   });
 
-  it('should forbid, empty criteria params', async () => {
+  it('should forbid, empty conditions and conditionsText', async () => {
     const body = {...validRequest};
-    body.params = {};
+    body.conditions = [];
+    body.conditionsText = '';
     const response = await agent.post('/api/v1/challenges').send(body);
     isError(response, 400);
-    assert.hasAllKeys(response.body.error, ['params']);
+    assert.hasAllKeys(response.body.error, ['conditions']);
   });
 
   it('should forbid create invite challenge without users', async () => {

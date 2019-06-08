@@ -4,13 +4,13 @@ class ChallengeService {
 
   /**
    * @param {ChallengeRepository} opts.challengeRepository
-   * @param {ChallengePubgRepository} opts.challengePubgRepository
+   * @param {ChallengeConditionRepository} opts.challengeConditionRepository
    * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
    * @param {UserRepository} opts.userRepository
    */
   constructor(opts) {
     this.challengeRepository = opts.challengeRepository;
-    this.pubgRepository = opts.challengePubgRepository;
+    this.challengeConditionRepository = opts.challengeConditionRepository;
     this.userRepository = opts.userRepository;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
   }
@@ -29,17 +29,20 @@ class ChallengeService {
       endDate: challengeObject.endDate,
       game: challengeObject.game,
       accessRule: challengeObject.accessRule,
-      ppyAmount: challengeObject.ppyAmount
+      ppyAmount: challengeObject.ppyAmount,
+      conditionsText: challengeObject.conditionsText
     });
 
-    await this[`${challengeObject.game}Repository`].create({
-      challengeId: Challenge.id,
-      ...challengeObject.params
-    });
+    await Promise.all(challengeObject.conditions.map(async (criteria) => {
+      return await this.challengeConditionRepository.create({
+        ...criteria,
+        challengeId: Challenge.id
+      });
+    }));
 
     if (challengeObject.accessRule === challengeConstants.accessRules.invite) {
       await Promise.all(challengeObject.invitedAccounts.map(async (id) => {
-        return this.challengeInvitedUsersRepository.create({
+        return await this.challengeInvitedUsersRepository.create({
           challengeId: Challenge.id,
           userId: id
         });
@@ -59,7 +62,7 @@ class ChallengeService {
         model: this.userRepository.model,
         required: true
       }, {
-        model: this.pubgRepository.model
+        model: this.challengeConditionRepository.model
       }, {
         model: this.challengeInvitedUsersRepository.model
       }]

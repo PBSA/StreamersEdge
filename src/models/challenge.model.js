@@ -11,6 +11,7 @@ const challengeConstants = require('../constants/challenge');
  * @property {String} game
  * @property {String} accessRule
  * @property {Number} ppyAmount
+ * @property {String} conditionsText
  */
 
 /**
@@ -24,8 +25,9 @@ const challengeConstants = require('../constants/challenge');
  * @property {String} accessRule
  * @property {Number} ppyAmount
  * @property {[Number]} invitedUsers
+ * @property {String} conditionsText
  * @property {UserPublicObject} user
- * @property {ChallengePubgPublicObject} criteria
+ * @property {[ChallengeConditionModel]} conditions
  */
 
 class ChallengeModel extends Model {
@@ -38,15 +40,16 @@ class ChallengeModel extends Model {
       endDate: this.endDate,
       game: this.game,
       accessRule: this.accessRule,
-      ppyAmount: this.ppyAmount
+      ppyAmount: this.ppyAmount,
+      conditionsText: this.conditionsText
     };
 
     if (this.user) {
       result.user = this.user.getPublic();
     }
 
-    if (this[`challenge-${this.game}`]) {
-      result.criteria = this[`challenge-${this.game}`].getPublic();
+    if (this['challenge-conditions']) {
+      result.conditions = this['challenge-conditions'];
     }
 
     if (this['challenge-invited-users']) {
@@ -83,6 +86,10 @@ module.exports = {
       ppyAmount: {
         type: Sequelize.BIGINT,
         allowNull: false
+      },
+      conditionsText: {
+        type: Sequelize.TEXT,
+        allowNull: true
       }
     }, {
       sequelize,
@@ -91,7 +98,7 @@ module.exports = {
   },
   associate: (models) => {
     ChallengeModel.belongsTo(models.User.model);
-    ChallengeModel.hasOne(models.ChallengePubg.model);
+    ChallengeModel.hasMany(models.ChallengeCondition.model);
     ChallengeModel.hasMany(models.ChallengeInvitedUsers.model);
   },
   get model() {
