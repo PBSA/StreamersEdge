@@ -14,7 +14,6 @@ class SmtpConnection extends BaseConnection {
   }
 
   connect() {
-    console.log(this.config.mailer);
     this.transporter = nodemailer.createTransport(this.config.mailer);
   }
 

@@ -92,7 +92,9 @@ module.exports = {
       modelName: 'user'
     });
   },
-  associate: () => {},
+  associate: (models) => {
+    UserModel.hasMany(models.ResetToken.model);
+  },
   get model() {
     return UserModel;
   }
