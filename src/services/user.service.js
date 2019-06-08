@@ -17,10 +17,10 @@ class UserService {
    * @returns {Promise<UserModel>}
    */
   async getUserByTwitchAccount(account) {
-    const {name, id, email} = account;
+    const {name, _id, email} = account;
     const [User] = await this.userRepository.findOrCreate({
       where: {
-        twitchId: id
+        twitchId: _id
       },
       defaults: {
         username: name,
