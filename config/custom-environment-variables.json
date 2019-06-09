@@ -9,20 +9,19 @@
   "sessionSecret": "SESSION_SECRET",
   "twitch": {
     "clientId": "TWITCH_CLIENT_ID",
-    "clientSecret": "TWITCH_CLIENT_SECRET",
-    "callbackUrl": "TWITCH_CALLBACK_URL"
+    "clientSecret": "TWITCH_CLIENT_SECRET"
   },
   "google": {
     "clientId": "GOOGLE_CLIENT_ID",
-    "clientSecret": "GOOGLE_CLIENT_SECRET",
-    "callbackUrl": "GOOGLE_CALLBACK_URL"
+    "clientSecret": "GOOGLE_CLIENT_SECRET"
   },
   "facebook": {
     "clientId": "FACEBOOK_CLIENT_ID",
-    "clientSecret": "FACEBOOK_CLIENT_SECRET",
-    "callbackUrl": "FACEBOOK_CALLBACK_URL"
+    "clientSecret": "FACEBOOK_CLIENT_SECRET"
   },
   "raven": {
     "url": "RAVEN_URL"
-  }
+  },
+  "backendUrl": "BACKEND_URL",
+  "frontendUrl": "FRONTEND_URL"
 }

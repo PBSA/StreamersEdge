@@ -43,27 +43,6 @@ const currentModule = process.env.MODULE || 'api';
   }
 })();
 
-
-/**
- * @typedef {Object} MongooseDocument
- * @property {String} _id
- * @property {Date} createdAt
- * @property {Date} updatedAt
- * @property {function():Promise<void>} save
- * @property {function():Promise<void>} remove
- */
-
-/**
- * @typedef {Object} MongooseCollection
- * @property {function():Promise<Object.<[[*]]>>} getIndexes
- * @property {function(name:String)} dropIndex
- */
-
-/**
- * @typedef {Object} MongooseModel
- * @property {MongooseCollection} collection
- */
-
 /**
  * @typedef {Object} AppConfig
  * @property {String} logLevel
@@ -76,11 +55,11 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} twitch.callbackUrl
  * @property {String} google.clientId
  * @property {String} google.clientSecret
- * @property {String} google.callbackUrl
  * @property {String} facebook.clientId
  * @property {String} facebook.clientSecret
- * @property {String} facebook.callbackUrl
  * @property {{enabled: Boolean, url: String}} raven
  * @property {String<prod|testnet>} bitcoinNetwork
  * @property {String} peerplaysFaucetURL
+ * @property {String} backendUrl
+ * @property {String} frontendUrl
  */

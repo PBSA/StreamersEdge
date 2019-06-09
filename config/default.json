@@ -1,10 +1,10 @@
 {
   "logLevel": "trace",
   "db": {
-    "user": "",
+    "user": "postgres",
     "password": "",
     "host": "127.0.0.1",
-    "port": "27017",
+    "port": "5432",
     "database": "streamers-edge"
   },
   "sessionSecret": "sessionSecret",
@@ -12,23 +12,22 @@
   "port": 3000,
   "twitch": {
     "clientId": "",
-    "clientSecret": "",
-    "callbackUrl": ""
+    "clientSecret": ""
   },
   "google": {
     "clientId": "",
-    "clientSecret": "",
-    "callbackUrl": ""
+    "clientSecret": ""
   },
   "facebook": {
     "clientId": "",
-    "clientSecret": "",
-    "callbackUrl": ""
+    "clientSecret": ""
   },
   "raven": {
     "enabled": true,
     "url": ""
   },
   "bitcoinNetwork": "prod",
-  "peerplaysFaucetURL": "https://pbsa.tools/accounts/create"
+  "peerplaysFaucetURL": "https://pbsa.tools/accounts/create",
+  "frontendUrl": "",
+  "backendUrl": ""
 }

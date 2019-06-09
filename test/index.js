@@ -1,19 +1,11 @@
-const fs = require('fs');
-
 const {listModules, asClass} = require('awilix');
 const {getLogger} = require('log4js');
 // const { assert } = require('chai');
 const {container} = require('./../src/awilix');
-const TwitchConnection = require('./mock/connections/twitch.connection.mock');
 const PeerplaysConnection = require('./mock/connections/peerplays.connection.mock');
-const GoogleConnection = require('./mock/connections/google.connection.mock');
-const FacebookConnection = require('./mock/connections/facebook.connection.mock');
 
 container.register({
-  twitchConnection: asClass(TwitchConnection),
-  peerplaysConnection: asClass(PeerplaysConnection),
-  googleConnection: asClass(GoogleConnection),
-  facebookConnection: asClass(FacebookConnection)
+  peerplaysConnection: asClass(PeerplaysConnection)
 });
 
 describe('ALL TESTS', () => {
@@ -24,12 +16,19 @@ describe('ALL TESTS', () => {
   const logger = getLogger();
 
   describe('global', () => {
+    let dbConnection;
 
     it('init connections', async () => {
       const connections = listModules(['src/connections/*.js']);
       await Promise.all(connections.map(({name}) => new Promise(async (resolve) => {
         try {
-          await container.resolve(name.replace(/\.([a-z])/, (a) => a[1].toUpperCase())).connect();
+          const connection = container.resolve(name.replace(/\.([a-z])/, (a) => a[1].toUpperCase()));
+          await connection.connect();
+
+          if (name === 'db.connection') {
+            dbConnection = connection;
+          }
+
           resolve();
         } catch (error) {
           logger.error(`${name} connect error`);
@@ -39,10 +38,9 @@ describe('ALL TESTS', () => {
     });
 
     it('clear database', async () => {
-      await Promise.all(fs.readdirSync('./src/models').map(async (file) => {
-        const Model = require(`../src/models/${file}`);
-        await Model.deleteMany({});
-      }));
+      await dbConnection.sequelize.sync({
+        force: true
+      });
     });
   });
 

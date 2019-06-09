@@ -1,84 +1,61 @@
-const RestError = require('../../../errors/rest.error');
+const passport = require('passport');
+const FacebookStrategy = require('passport-facebook');
 
 class FacebookController {
 
   /**
-   * @param {AuthValidator} opts.authValidator
-   * @param {FacebookService} opts.facebookService
    * @param {UserService} opts.userService
+   * @param {AppConfig} opts.config
    */
   constructor(opts) {
-    this.authValidator = opts.authValidator;
-    this.facebookService = opts.facebookService;
     this.userService = opts.userService;
+    this.config = opts.config;
   }
 
   /**
    * Array of routes processed by this controller
    * @returns {*[]}
-   *
    */
-  getRoutes() {
-    return [
-      /**
-       * @api {get} /api/v1/auth/facebook/redirect-url Get redirect url for auth with Facebook
-       * @apiName GetFacebookRedirectURL
-       * @apiDescription You should use this method for receiving urls for redirect.
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "result": "https://www.facebook.com/v2.0/dialog/oauth?client_id=...&redirect_uri=...&scope=email",
-       *   "status": 200
-       * }
-       */
-      ['get', '/api/v1/auth/facebook/redirect-url', this.getRedirectUrl.bind(this)],
-      /**
-       * @api {post} /api/v1/auth/facebook/code Auth with facebook code
-       * @apiName AuthWithFacebookCode
-       * @apiDescription After getting a code from facebook (facebook returns user to the redirect url with code),
-       * you should send this code to backend for finishing authentication process
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "code": "334442ikjds--s0dff"
-       * }
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": ""
-       *   }
-       * }
-       */
-      ['post', '/api/v1/auth/facebook/code', this.authValidator.validateAuthCode, this.authWithCode.bind(this)]
-    ];
+  getRoutes(app) {
+    this.initializePassport();
+    app.get('/api/v1/auth/facebook', passport.authenticate('facebook'));
+
+    app.get('/api/v1/auth/facebook/callback', (req, res) => {
+      passport.authenticate(
+        'facebook',
+        {failureRedirect: `${this.config.frontendUrl}?facebook-auth-error=restrict`}
+      )(req, res, (err) => {
+
+        if (err) {
+          res.redirect(`${this.config.frontendUrl}?facebook-auth-error=${err.message}`);
+          return;
+        }
+
+        res.redirect(this.config.frontendUrl);
+
+      });
+
+    });
+
+    return [];
   }
 
-  async getRedirectUrl() {
-    return this.facebookService.getAuthRedirectURL();
-  }
-
-  async authWithCode(user, code, req) {
-    let User;
-
-    try {
-      User = await this.facebookService.getUserByCode(code);
-    } catch (e) {
-      throw new RestError(e.message, 400);
-    }
-
-    User = await this.userService.getUserBySocialNetworkAccount('facebook', User);
-    await new Promise((success) => req.login(User, () => success()));
-    return this.userService.getCleanUser(User);
+  initializePassport() {
+    passport.use(new FacebookStrategy({
+      clientID: this.config.facebook.clientId,
+      clientSecret: this.config.facebook.clientSecret,
+      callbackURL: `${this.config.backendUrl}/api/v1/auth/facebook/callback`,
+      profileFields: ['id', 'name', 'picture', 'email']
+    }, (token, tokenSecret, profile, done) => {
+      this.userService.getUserBySocialNetworkAccount('facebook', {
+        ...profile._json,
+        picture: profile._json.picture.data.url
+      }).then((User) => {
+        this.userService.getCleanUser(User).then((user) => done(null, user));
+      }).catch((error) => {
+        done(error);
+      });
+    }));
   }
 
 }
