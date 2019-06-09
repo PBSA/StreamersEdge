@@ -1,3 +1,5 @@
+const RestError = require('../errors/rest.error');
+
 class UserService {
 
   /**
@@ -15,10 +17,10 @@ class UserService {
    * @returns {Promise<UserModel>}
    */
   async getUserByTwitchAccount(account) {
-    const {name, id, email} = account;
+    const {name, _id, email} = account;
     const [User] = await this.userRepository.findOrCreate({
       where: {
-        twitchId: id
+        twitchId: _id
       },
       defaults: {
         username: name,
@@ -94,8 +96,8 @@ class UserService {
   async createPeerplaysAccount(User, {name, activeKey, ownerKey}) {
     try {
       await this.peerplaysRepository.createPeerplaysAccount(name, ownerKey, activeKey);
-    } catch (e) {
-      throw new Error(e.message);
+    } catch (details) {
+      throw new RestError('Request error', 400, details);
     }
 
     User.peerplaysAccountName = name;
