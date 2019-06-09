@@ -22,6 +22,12 @@ class GoogleController {
    * @returns {*[]}
    */
   getRoutes(app) {
+    /**
+     * @api {get} /api/v1/auth/google Auth by google
+     * @apiName GoogleAuth
+     * @apiGroup Google
+     * @apiVersion 0.1.0
+     */
     this.initializePassport();
     app.get('/api/v1/auth/google', passport.authenticate('google', {scope: this.DEFAULT_SCOPE}));
 
@@ -57,11 +63,6 @@ class GoogleController {
         done(error);
       });
     }));
-  }
-
-  redirectAfterAuth(req, res) {
-    let redirectUrl = this.config.frontendUrl;
-    res.redirect(redirectUrl);
   }
 
 }
