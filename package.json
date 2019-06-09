@@ -12,7 +12,7 @@
     "url": "https://github.com/PBSA"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=8.3.0"
   },
   "scripts": {
     "sonar": "node scripts/sonar.js",
@@ -43,6 +43,8 @@
     "log4js": "^4.1.0",
     "moment": "^2.24.0",
     "passport": "^0.4.0",
+    "passport-google-oauth": "^2.0.0",
+    "passport-twitch": "^1.0.3",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.2",
     "raven": "^2.6.4",

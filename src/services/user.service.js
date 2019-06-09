@@ -15,16 +15,30 @@ class UserService {
    * @returns {Promise<UserModel>}
    */
   async getUserByTwitchAccount(account) {
-    const {name, id, email} = account;
-    const [User] = await this.userRepository.findOrCreate({
+    const {id, email} = account;
+
+    let User = await this.userRepository.model.findOne({
       where: {
         twitchId: id
-      },
-      defaults: {
-        username: name,
-        email
       }
     });
+
+    if (!User) {
+      let emailIsUsed = await this.userRepository.model.findOne({where: {email}});
+
+      if (emailIsUsed) {
+        throw new Error('This email already is used');
+      }
+
+      User = await this.userRepository.create({
+        where: {
+          twitchId: id
+        },
+        defaults: {
+          email
+        }
+      });
+    }
 
     return User;
   }
@@ -36,19 +50,32 @@ class UserService {
    */
   async getUserByGoogleAccount(account) {
     const {
-      name, id, picture, email
+      id, picture, email
     } = account;
 
-    const [User] = await this.userRepository.findOrCreate({
+    let User = await this.userRepository.model.findOne({
       where: {
         googleId: id
-      },
-      defaults: {
-        username: name,
-        avatar: picture,
-        email
       }
     });
+
+    if (!User) {
+      let emailIsUsed = await this.userRepository.model.findOne({where: {email}});
+
+      if (emailIsUsed) {
+        throw new Error('This email already is used');
+      }
+
+      User = await this.userRepository.create({
+        where: {
+          googleId: id
+        },
+        defaults: {
+          avatar: picture,
+          email
+        }
+      });
+    }
 
     return User;
   }

@@ -110,7 +110,7 @@ class ApiModule {
       this.userController,
       this.twitchController,
       this.googleController
-    ].forEach((controller) => controller.getRoutes().forEach((route) => this.addRestHandler(...route)));
+    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => this.addRestHandler(...route)));
 
     this.addRestHandler('use', '*', () => {
       throw new MethodNotAllowedError();
