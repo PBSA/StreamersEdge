@@ -4,7 +4,6 @@ const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 class GoogleController {
 
   /**
-   * @param {AuthValidator} opts.authValidator
    * @param {UserService} opts.userService
    * @param {AppConfig} opts.config
    */
@@ -23,6 +22,12 @@ class GoogleController {
    * @returns {*[]}
    */
   getRoutes(app) {
+    /**
+     * @api {get} /api/v1/auth/google Auth by google
+     * @apiName GoogleAuth
+     * @apiGroup Google
+     * @apiVersion 0.1.0
+     */
     this.initializePassport();
     app.get('/api/v1/auth/google', passport.authenticate('google', {scope: this.DEFAULT_SCOPE}));
 
@@ -52,17 +57,12 @@ class GoogleController {
       clientSecret: this.config.google.clientSecret,
       callbackURL: `${this.config.backendUrl}/api/v1/auth/google/callback`
     }, (token, tokenSecret, profile, done) => {
-      this.userService.getUserByGoogleAccount({id: profile.id, ...profile._json}).then((User) => {
+      this.userService.getUserBySocialNetworkAccount('google', {id: profile.id, ...profile._json}).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {
         done(error);
       });
     }));
-  }
-
-  redirectAfterAuth(req, res) {
-    let redirectUrl = this.config.frontendUrl;
-    res.redirect(redirectUrl);
   }
 
 }

@@ -17,6 +17,12 @@ class TwitchController {
    * @returns {*[]}
    */
   getRoutes(app) {
+    /**
+     * @api {get} /api/v1/auth/twitch Auth by twitch
+     * @apiName TwitchAuth
+     * @apiGroup Twitch
+     * @apiVersion 0.1.0
+     */
     this.initializePassword();
     app.get('/api/v1/auth/twitch', passport.authenticate('twitch'));
 
@@ -47,7 +53,7 @@ class TwitchController {
       callbackURL: `${this.config.backendUrl}/api/v1/auth/twitch/callback`,
       scope: 'user_read'
     }, (accessToken, refreshToken, profile, done) => {
-      this.userService.getUserByTwitchAccount({
+      this.userService.getUserBySocialNetworkAccount('twitch', {
         id: profile.id.toString(),
         name: profile.username,
         email: profile.email,

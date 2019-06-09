@@ -10,16 +10,17 @@ class UserService {
   }
 
   /**
-   * Find user by twitch account and create row if not exists
+   * Find user by network account id and create row if not exists
+   * @param {String} network
    * @param account
    * @returns {Promise<UserModel>}
    */
-  async getUserByTwitchAccount(account) {
-    const {id, email} = account;
+  async getUserBySocialNetworkAccount(network, account) {
+    const {id, email, picture} = account;
 
     let User = await this.userRepository.model.findOne({
       where: {
-        twitchId: id
+        [`${network}Id`]: id
       }
     });
 
@@ -31,49 +32,9 @@ class UserService {
       }
 
       User = await this.userRepository.create({
-        where: {
-          twitchId: id
-        },
-        defaults: {
-          email
-        }
-      });
-    }
-
-    return User;
-  }
-
-  /**
-   * Find user by google account and create row if not exists
-   * @param account
-   * @returns {Promise<UserModel>}
-   */
-  async getUserByGoogleAccount(account) {
-    const {
-      id, picture, email
-    } = account;
-
-    let User = await this.userRepository.model.findOne({
-      where: {
-        googleId: id
-      }
-    });
-
-    if (!User) {
-      let emailIsUsed = await this.userRepository.model.findOne({where: {email}});
-
-      if (emailIsUsed) {
-        throw new Error('This email already is used');
-      }
-
-      User = await this.userRepository.create({
-        where: {
-          googleId: id
-        },
-        defaults: {
-          avatar: picture,
-          email
-        }
+        [`${network}Id`]: id,
+        avatar: picture,
+        email
       });
     }
 
