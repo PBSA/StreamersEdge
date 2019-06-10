@@ -1,10 +1,12 @@
 class PeerplaysRepository {
 
   /**
-   * @param {PeerplaysConnection} opts.peerplaysConnection
-   */
+	 * @param {PeerplaysConnection} opts.peerplaysConnection
+	 * @param {AppConfig} opts.config
+	 */
   constructor(opts) {
     this.peerplaysConnection = opts.peerplaysConnection;
+    this.config = opts.config;
   }
 
   async createPeerplaysAccount(name, ownerKey, activeKey) {
@@ -13,7 +15,9 @@ class PeerplaysRepository {
         name,
         active_key: activeKey,
         memo_key: activeKey,
-        owner_key: ownerKey
+        owner_key: ownerKey,
+        refcode: '',
+        referrer: this.config.peerplays.referrer
       }
     });
     return account;

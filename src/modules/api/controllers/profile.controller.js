@@ -122,7 +122,7 @@ class ProfileController {
     try {
       return await this.userService.createPeerplaysAccount(user, data);
     } catch (e) {
-      throw new RestError(e.message, 400);
+      throw new RestError(e.message, 400, e.details);
     }
   }
 

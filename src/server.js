@@ -57,7 +57,8 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} google.clientSecret
  * @property {{enabled: Boolean, url: String}} raven
  * @property {String<prod|testnet>} bitcoinNetwork
- * @property {String} peerplaysFaucetURL
  * @property {String} backendUrl
  * @property {String} frontendUrl
+ * @property {String} peerplays.peerplaysFaucetURL
+ * @property {String} peerplays.referrer
  */
