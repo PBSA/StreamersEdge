@@ -19,32 +19,36 @@ class PeerplaysConnection extends BaseConnection {
   async request(form) {
     const options = {
       method: 'POST',
-      url: this.config.peerplaysFaucetURL,
-      form
+      uri: this.config.peerplays.peerplaysFaucetURL,
+      json: form
     };
 
     return new Promise((success, fail) => {
       request(options, (err, res, body) => {
         if (err) {
-          fail(err);
+          fail(err.message);
           return;
         }
 
         if (res.statusCode !== 200) {
-          fail(JSON.parse(body));
+          fail('Unknown error');
+          return;
+        }
+
+        if (body.error) {
+          fail(body.error);
+          return;
+        }
+
+        if (body.length === 0) {
+          success(null);
           return;
         }
 
         try {
-          if (body.length === 0) {
-            success(null);
-            return;
-          }
-
-          success(JSON.parse(body));
+          success(body);
         } catch (_err) {
-          _err.statusCode = res.statusCode;
-          fail(_err);
+          fail(_err.message);
         }
       });
     });

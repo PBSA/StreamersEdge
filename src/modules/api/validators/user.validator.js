@@ -12,7 +12,7 @@ class UserValidator extends BaseValidator {
 
   getUser() {
     const querySchema = {
-      id: Joi.string().objectId().required()
+      id: Joi.number().integer().required()
     };
 
     return this.validate(querySchema, null, (req, query) => query.id);

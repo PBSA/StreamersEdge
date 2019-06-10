@@ -1,3 +1,5 @@
+const RestError = require('../errors/rest.error');
+
 class UserService {
 
   /**
@@ -12,21 +14,19 @@ class UserService {
   /**
    * Find user by twitch account and create row if not exists
    * @param account
-   * @returns {Promise<UserDocument>}
+   * @returns {Promise<UserModel>}
    */
   async getUserByTwitchAccount(account) {
     const {name, _id, email} = account;
-    let User = await this.userRepository.findOne({
-      twitchId: _id
-    });
-
-    if (!User) {
-      User = await this.userRepository.create({
+    const [User] = await this.userRepository.findOrCreate({
+      where: {
+        twitchId: _id
+      },
+      defaults: {
         username: name,
-        twitchId: _id,
         email
-      });
-    }
+      }
+    });
 
     return User;
   }
@@ -34,48 +34,40 @@ class UserService {
   /**
    * Find user by google account and create row if not exists
    * @param account
-   * @returns {Promise<UserDocument>}
+   * @returns {Promise<UserModel>}
    */
   async getUserByGoogleAccount(account) {
     const {
       name, id, picture, email, youtube
     } = account;
-    let User = await this.userRepository.findOne({
-      googleId: id
-    });
 
-    if (!User) {
-      User = await this.userRepository.create({
+    const [User] = await this.userRepository.findOrCreate({
+      where: {
+        googleId: id
+      },
+      defaults: {
         username: name,
-        googleId: id,
         avatar: picture,
         email,
         youtube
-      });
-    }
+      }
+    });
 
     return User;
   }
 
   /**
-   * @param {UserDocument} User
-   * @returns {Promise<UserObject>}
+   * @param {UserModel} User
+   * @returns {Promise<UserPublicObject>}
    */
   async getCleanUser(User) {
-    return {
-      id: User._id,
-      username: User.username,
-      youtube: User.youtube,
-      facebook: User.facebook,
-      peerplaysAccountName: User.peerplaysAccountName,
-      bitcoinAddress: User.bitcoinAddress
-    };
+    return User.getPublic();
   }
 
   /**
-   * @param {UserDocument} User
+   * @param {UserModel} User
    * @param updateObject
-   * @returns {Promise<UserObject>}
+   * @returns {Promise<UserModel>}
    */
   async patchProfile(User, updateObject) {
     Object.keys(updateObject).forEach((field) => {
@@ -86,7 +78,7 @@ class UserService {
   }
 
   async getUser(id) {
-    const User = await this.userRepository.findById(id);
+    const User = await this.userRepository.findByPk(id);
 
     if (!User) {
       throw new Error('User not found');
@@ -96,17 +88,17 @@ class UserService {
   }
 
   /**
-   * @param {UserDocument} User
+   * @param {UserModel} User
    * @param name
    * @param activeKey
    * @param ownerKey
-   * @returns {Promise<UserObject>}
+   * @returns {Promise<UserModel>}
    */
   async createPeerplaysAccount(User, {name, activeKey, ownerKey}) {
     try {
       await this.peerplaysRepository.createPeerplaysAccount(name, ownerKey, activeKey);
-    } catch (e) {
-      throw new Error(e.message);
+    } catch (details) {
+      throw new RestError('Request error', 400, details);
     }
 
     User.peerplaysAccountName = name;

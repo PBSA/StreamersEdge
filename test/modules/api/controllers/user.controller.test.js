@@ -26,7 +26,7 @@ describe('GET /api/v1/user/:id', () => {
 
   it('should forbid, user not logged', async () => {
     await agent.post('/api/v1/auth/logout');
-    const response = await agent.get('/api/v1/user/5cc315041ec568398b99d7ca');
+    const response = await agent.get('/api/v1/user/1');
     isError(response, 401);
   });
 
@@ -36,7 +36,7 @@ describe('GET /api/v1/user/:id', () => {
   });
 
   it('should forbid, user not found', async () => {
-    const response = await agent.get('/api/v1/user/5cc315041ec568398b99d7ca');
+    const response = await agent.get('/api/v1/user/1000');
     isError(response, 404);
   });
 
