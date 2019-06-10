@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
-var SequelizeStore = require('connect-session-sequelize')(session.Store);
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
@@ -20,6 +20,7 @@ class ApiModule {
    *
    * @param {AppConfig} opts.config
    * @param {DbConnection} opts.dbConnection
+   * @param {SmtpConnection} opts.smtpConnection
    * @param {AuthController} opts.authController
    * @param {ProfileController} opts.profileController
    * @param {UsersController} opts.usersController
@@ -31,6 +32,7 @@ class ApiModule {
   constructor(opts) {
     this.config = opts.config;
     this.dbConnection = opts.dbConnection;
+    this.smtpConnection = opts.smtpConnection;
     this.app = null;
     this.server = null;
 

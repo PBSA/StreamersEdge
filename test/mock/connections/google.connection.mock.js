@@ -11,7 +11,7 @@ class GoogleConnectionMock {
           id: constants.modules.api.auth.googleTestId,
           picture: constants.modules.api.auth.googleTestPicture,
           name: constants.modules.api.auth.googleTestUsername,
-          email: constants.modules.api.auth.googleTestEmail
+          email: `${Math.random()}${constants.modules.api.auth.googleTestEmail}`
         }
       };
     }

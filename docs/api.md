@@ -3,7 +3,10 @@
 Backend module for StreamersEdge application
 
 - [Auth](#auth)
+	- [Confirm email](#confirm-email)
 	- [Logout](#logout)
+	- [Sign in](#sign-in)
+	- [Sign up](#sign-up)
 	- [Auth with google code](#auth-with-google-code)
 	- [Auth with twitch code](#auth-with-twitch-code)
 	- [Get redirect url for auth with Google](#get-redirect-url-for-auth-with-google)
@@ -25,6 +28,13 @@ Backend module for StreamersEdge application
 
 
 # Auth
+
+## Confirm email
+
+
+
+	GET /api/v1/auth/confirm-email/:token
+
 
 ## Logout
 
@@ -52,6 +62,44 @@ HTTP/1.1 200 OK
   "result": true
 }
 ```
+## Sign in
+
+
+
+	POST /api/v1/auth/sign-in
+
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "login": "test@test.com",
+  "password": "testtest"
+}
+```
+
+## Sign up
+
+
+
+	POST /api/v1/auth/sign-up
+
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "email": "test@test.com",
+  "username": "test",
+  "password": "testtest"
+  "repeatPassword": "testtest"
+}
+```
+
 ## Auth with google code
 
 <p>After getting a code from google (google returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>

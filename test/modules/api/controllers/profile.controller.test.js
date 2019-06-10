@@ -37,7 +37,8 @@ describe('GET /api/v1/profile', () => {
     isSuccess(response);
     assert.deepEqual(response.body.result, {
       id: response.body.result.id,
-      username: constants.modules.api.auth.twitchTestUsername,
+      username: '',
+      email: '',
       youtube: '',
       facebook: '',
       peerplaysAccountName: '',

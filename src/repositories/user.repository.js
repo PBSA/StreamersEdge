@@ -20,6 +20,19 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
+  async getByLogin(login) {
+    return this.model.findOne({
+      where: {
+        [Sequelize.Op.or]: [{
+          email: login
+        }, {
+          username: login
+        }],
+        isEmailVerified: true
+      }
+    });
+  }
+
   async searchUsers(search, limit, offset) {
     const filter = search ? {
       peerplaysAccountName: {
@@ -30,6 +43,12 @@ class UserRepository extends BasePostgresRepository {
       where: filter,
       offset,
       limit
+    });
+  }
+
+  async getByEmailOrUsername(email, username) {
+    return this.model.findOne({
+      where: {[Sequelize.Op.or]: [{email}, {username}]}
     });
   }
 
