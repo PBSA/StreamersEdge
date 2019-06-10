@@ -25,7 +25,6 @@
     "url": ""
   },
   "bitcoinNetwork": "prod",
-  "peerplaysFaucetURL": "https://pbsa.tools/accounts/create",
   "mailer": {
     "host": "",
     "port": 587,
@@ -36,5 +35,9 @@
     },
     "sender": ""
   },
-  "frontUrl": ""
+  "frontUrl": "",
+  "peerplays": {
+    "peerplaysFaucetURL": "https://beatrice-faucet.peerplays.download/faucet",
+    "referrer": "1.2.0"
+  }
 }

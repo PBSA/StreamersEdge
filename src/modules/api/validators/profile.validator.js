@@ -25,8 +25,8 @@ class ProfileValidator extends BaseValidator {
   createPeerplaysAccount() {
     const bodySchema = {
       name: Joi.string().required().min(3).max(254),
-      ownerKey: Joi.string().required().length(53),
-      activeKey: Joi.string().required().length(53)
+      ownerKey: Joi.string().required().min(53).max(54),
+      activeKey: Joi.string().required().min(53).max(54)
     };
 
     return this.validate(null, bodySchema, (req, query, body) => body);

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const moment = require('moment');
+const RestError = require('../errors/rest.error');
 
 class UserService {
 
@@ -31,7 +32,7 @@ class UserService {
    * @returns {Promise<UserModel>}
    */
   async getUserByTwitchAccount(account) {
-    const {id, email} = account;
+    const {_id: id, email} = account;
 
     let User = await this.userRepository.model.findOne({
       where: {
@@ -137,8 +138,8 @@ class UserService {
   async createPeerplaysAccount(User, {name, activeKey, ownerKey}) {
     try {
       await this.peerplaysRepository.createPeerplaysAccount(name, ownerKey, activeKey);
-    } catch (e) {
-      throw new Error(e.message);
+    } catch (details) {
+      throw new RestError('Request error', 400, details);
     }
 
     User.peerplaysAccountName = name;
