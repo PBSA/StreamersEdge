@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const RestError = require('../errors/rest.error');
 
 class UserService {
@@ -5,10 +6,14 @@ class UserService {
   /**
    * @param {UserRepository} opts.userRepository
    * @param {PeerplaysRepository} opts.peerplaysRepository
+   * @param {VerificationTokenRepository} opts.verificationTokenRepository
+   * @param {MailService} opts.mailService
    */
   constructor(opts) {
     this.userRepository = opts.userRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
+    this.verificationTokenRepository = opts.verificationTokenRepository;
+    this.mailService = opts.mailService;
   }
 
   /**
@@ -90,6 +95,40 @@ class UserService {
 
     User.peerplaysAccountName = name;
     await User.save();
+    return this.getCleanUser(User);
+  }
+
+  async signUpWithPassword(email, username, password) {
+    password = await bcrypt.hash(password, 10);
+    const User = await this.userRepository.model.create({
+      email, username, password
+    });
+    const {token} = await this.verificationTokenRepository.createToken(User.id);
+
+    await this.mailService.sendMailAfterRegistration(email, token);
+
+    return this.getCleanUser(User);
+  }
+
+  async confirmEmail(ActiveToken) {
+    const User = await this.userRepository.findByPk(ActiveToken.userId);
+    User.isEmailVerified = true;
+    await User.save();
+    ActiveToken.isActive = false;
+    await ActiveToken.save();
+  }
+
+  async getSignInUser(login, password) {
+    const User = await this.userRepository.getByLogin(login);
+
+    if (!User) {
+      throw new Error('User not found');
+    }
+
+    if (!await bcrypt.compare(password, User.password)) {
+      throw new Error('Invalid password');
+    }
+
     return this.getCleanUser(User);
   }
 

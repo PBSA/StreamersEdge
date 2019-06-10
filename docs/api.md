@@ -3,7 +3,10 @@
 Backend module for StreamersEdge application
 
 - [Auth](#auth)
+	- [Confirm email](#confirm-email)
 	- [Logout](#logout)
+	- [Sign in](#sign-in)
+	- [Sign up](#sign-up)
 	
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
@@ -20,6 +23,13 @@ Backend module for StreamersEdge application
 
 
 # Auth
+
+## Confirm email
+
+
+
+	GET /api/v1/auth/confirm-email/:token
+
 
 ## Logout
 
@@ -47,6 +57,44 @@ HTTP/1.1 200 OK
   "result": true
 }
 ```
+## Sign in
+
+
+
+	POST /api/v1/auth/sign-in
+
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "login": "test@test.com",
+  "password": "testtest"
+}
+```
+
+## Sign up
+
+
+
+	POST /api/v1/auth/sign-up
+
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "email": "test@test.com",
+  "username": "test",
+  "password": "testtest"
+  "repeatPassword": "testtest"
+}
+```
+
 # Google
 
 ## Auth by google
