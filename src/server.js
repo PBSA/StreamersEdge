@@ -57,7 +57,14 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} google.clientSecret
  * @property {String} google.callbackUrl
  * @property {{enabled: Boolean, url: String}} raven
- * @property {String<prod|testnet>} bitcoinNetwork
+ * @property {String<prod|testnet>} bitcoinNetworkL
+ * @property {Object} mailer
+ * @property {String} mailer.sender
+ * @property {Number} mailer.port
+ * @property {Boolean} mailer.secure
+ * @property {{user:String, pass:String}} mailer.auth
+ * @property {String} mailer.sender
+ * @property {String} frontUrl
  * @property {String} peerplays.peerplaysFaucetURL
  * @property {String} peerplays.referrer
  */
