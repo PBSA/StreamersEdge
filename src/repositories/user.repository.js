@@ -8,6 +8,18 @@ class UserRepository extends BasePostgresRepository {
     super(model);
   }
 
+  /**
+   * @param ids
+   * @returns {Promise<UserModel[]>}
+   */
+  async findByPkList(ids) {
+    return this.model.findAll({
+      where: {
+        id: {[Sequelize.Op.in]: ids}
+      }
+    });
+  }
+
   async getByLogin(login) {
     return this.model.findOne({
       where: {
@@ -18,6 +30,19 @@ class UserRepository extends BasePostgresRepository {
         }],
         isEmailVerified: true
       }
+    });
+  }
+
+  async searchUsers(search, limit, offset) {
+    const filter = search ? {
+      peerplaysAccountName: {
+        [Sequelize.Op.like]: `%${search}%`
+      }
+    } : null;
+    return this.model.findAll({
+      where: filter,
+      offset,
+      limit
     });
   }
 

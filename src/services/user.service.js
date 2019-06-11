@@ -22,7 +22,7 @@ class UserService {
    * @returns {Promise<UserModel>}
    */
   async getUserByTwitchAccount(account) {
-    const {id, email} = account;
+    const {_id: id, email} = account;
 
     let User = await this.userRepository.model.findOne({
       where: {
@@ -135,6 +135,19 @@ class UserService {
     User.peerplaysAccountName = name;
     await User.save();
     return this.getCleanUser(User);
+  }
+
+  /**
+   * Get a list of users corresponding to the specified parameters
+   *
+   * @param search
+   * @param limit
+   * @param skip
+   * @returns {Promise<[UserModel]>}
+   */
+  async searchUsers(search, limit, skip) {
+    const users = await this.userRepository.searchUsers(search, limit, skip);
+    return Promise.all(users.map(async (User) => this.getCleanUser(User)));
   }
 
   async signUpWithPassword(email, username, password) {

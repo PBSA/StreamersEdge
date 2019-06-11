@@ -67,7 +67,7 @@ class BaseValidator {
       if (error) {
         /* eslint-disable-next-line prefer-destructuring */
         errors[key] = error.message.match(/\[(.+)\]/) ? error.message.match(/\[(.+)\]/)[1] : error.message;
-      } else if (Object.keys(object).includes(key)) {
+      } else if (typeof value !== 'undefined') {
         result[key] = value;
       }
     });
