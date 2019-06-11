@@ -38,7 +38,8 @@ describe('POST /api/v1/auth/twitch/code', () => {
     isSuccess(response);
     assert.deepEqual(response.body.result, {
       id: response.body.result.id,
-      username: constants.modules.api.auth.twitchTestUsername,
+      username: '',
+      email: '',
       youtube: '',
       facebook: '',
       peerplaysAccountName: '',
@@ -53,7 +54,8 @@ describe('POST /api/v1/auth/twitch/code', () => {
     isSuccess(response);
     assert.deepEqual(response.body.result, {
       id: response.body.result.id,
-      username: constants.modules.api.auth.twitchTestUsername,
+      username: '',
+      email: '',
       youtube: '',
       facebook: '',
       peerplaysAccountName: '',
@@ -69,7 +71,8 @@ describe('POST /api/v1/auth/twitch/code', () => {
     isSuccess(response);
     assert.deepEqual(response.body.result, {
       id: response.body.result.id,
-      username: constants.modules.api.auth.twitchTestUsername,
+      username: '',
+      email: '',
       youtube: '',
       facebook: '',
       peerplaysAccountName: '',

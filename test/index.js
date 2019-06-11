@@ -5,11 +5,13 @@ const {container} = require('./../src/awilix');
 const TwitchConnection = require('./mock/connections/twitch.connection.mock');
 const PeerplaysConnection = require('./mock/connections/peerplays.connection.mock');
 const GoogleConnection = require('./mock/connections/google.connection.mock');
+const SmtpConnection = require('./mock/connections/smtp.connection.mock');
 
 container.register({
   twitchConnection: asClass(TwitchConnection),
   peerplaysConnection: asClass(PeerplaysConnection),
-  googleConnection: asClass(GoogleConnection)
+  googleConnection: asClass(GoogleConnection),
+  smtpConnection: asClass(SmtpConnection)
 });
 
 describe('ALL TESTS', () => {
