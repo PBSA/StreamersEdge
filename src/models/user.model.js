@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
+const profileConstants = require('../constants/profile');
 
 /**
  * @typedef {Object} UserPublicObject
@@ -108,11 +109,11 @@ module.exports = {
       },
       userType: {
         type:Sequelize.ENUM,
-        values: ['gamer','viewer','sponsor','whitelist','admin']
+        values: profileConstants.userType
       },
       applicationType: {
         type:Sequelize.ENUM,
-        values: ['mac','windows','web','electron','mobile','ios']
+        values: profileConstants.applicationType
       },
       pushNotificationId: {
         type: Sequelize.STRING
