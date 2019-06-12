@@ -147,6 +147,19 @@ class UserService {
     return this.getCleanUser(User);
   }
 
+  /**
+   * Get a list of users corresponding to the specified parameters
+   *
+   * @param search
+   * @param limit
+   * @param skip
+   * @returns {Promise<[UserModel]>}
+   */
+  async searchUsers(search, limit, skip) {
+    const users = await this.userRepository.searchUsers(search, limit, skip);
+    return Promise.all(users.map(async (User) => this.getCleanUser(User)));
+  }
+
   async signUpWithPassword(email, username, password) {
     password = await bcrypt.hash(password, 10);
     const User = await this.userRepository.model.create({

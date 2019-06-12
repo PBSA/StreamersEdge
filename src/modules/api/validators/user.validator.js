@@ -8,6 +8,7 @@ class UserValidator extends BaseValidator {
 
     this.config = opts.config;
     this.getUser = this.getUser.bind(this);
+    this.getUsers = this.getUsers.bind(this);
   }
 
   getUser() {
@@ -16,6 +17,16 @@ class UserValidator extends BaseValidator {
     };
 
     return this.validate(querySchema, null, (req, query) => query.id);
+  }
+
+  getUsers() {
+    const querySchema = {
+      search: Joi.string().regex(/^[a-zA-Z0-9.-]+$/).allow('').max(254),
+      limit: Joi.number().required().max(100),
+      skip: Joi.number()
+    };
+
+    return this.validate(querySchema, null, (req, query) => query);
   }
 
 }
