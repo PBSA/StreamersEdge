@@ -55,7 +55,7 @@ class TwitchController {
     }, (accessToken, refreshToken, profile, done) => {
       this.userService.getUserBySocialNetworkAccount('twitch', {
         id: profile.id.toString(),
-        name: profile.username,
+        username: profile.username,
         email: profile.email,
         picture: profile._json.logo
       }).then((User) => {

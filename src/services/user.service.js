@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const Sequelize = require('sequelize');
 const RestError = require('../errors/rest.error');
 
 class UserService {
@@ -23,7 +24,7 @@ class UserService {
    * @returns {Promise<UserModel>}
    */
   async getUserBySocialNetworkAccount(network, account) {
-    const {id, email, picture} = account;
+    const {id, email, picture, username} = account;
 
     let User = await this.userRepository.model.findOne({
       where: {
@@ -32,16 +33,19 @@ class UserService {
     });
 
     if (!User) {
-      let emailIsUsed = await this.userRepository.model.findOne({where: {email}});
+      const usedLogin = await this.userRepository.model.findAll({
+        where: {[Sequelize.Op.or]: [{email}, {username}]}
+      });
 
-      if (emailIsUsed) {
-        throw new Error('This email already is used');
-      }
+      const emailIsUsed = usedLogin.find((row) => row.email === email);
+      const usernameIsUsed = usedLogin.find((row) => row.username === username);
 
       User = await this.userRepository.create({
         [`${network}Id`]: id,
         avatar: picture,
-        email
+        email: emailIsUsed ? null : email,
+        isEmailVerified: emailIsUsed ? null : true,
+        username: usernameIsUsed ? null : username
       });
     }
 
@@ -96,6 +100,19 @@ class UserService {
     User.peerplaysAccountName = name;
     await User.save();
     return this.getCleanUser(User);
+  }
+
+  /**
+   * Get a list of users corresponding to the specified parameters
+   *
+   * @param search
+   * @param limit
+   * @param skip
+   * @returns {Promise<[UserModel]>}
+   */
+  async searchUsers(search, limit, skip) {
+    const users = await this.userRepository.searchUsers(search, limit, skip);
+    return Promise.all(users.map(async (User) => this.getCleanUser(User)));
   }
 
   async signUpWithPassword(email, username, password) {

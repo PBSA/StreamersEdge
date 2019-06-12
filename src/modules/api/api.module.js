@@ -23,10 +23,11 @@ class ApiModule {
    * @param {SmtpConnection} opts.smtpConnection
    * @param {AuthController} opts.authController
    * @param {ProfileController} opts.profileController
-   * @param {UserController} opts.userController
+   * @param {UsersController} opts.usersController
    * @param {TwitchController} opts.twitchController
    * @param {GoogleController} opts.googleController
    * @param {UserRepository} opts.userRepository
+   * @param {ChallengesController} opts.challengesController
    */
   constructor(opts) {
     this.config = opts.config;
@@ -37,9 +38,10 @@ class ApiModule {
 
     this.authController = opts.authController;
     this.profileController = opts.profileController;
-    this.userController = opts.userController;
+    this.usersController = opts.usersController;
     this.twitchController = opts.twitchController;
     this.googleController = opts.googleController;
+    this.challengesController = opts.challengesController;
 
     this.userRepository = opts.userRepository;
   }
@@ -89,9 +91,13 @@ class ApiModule {
       this.app.use(passport.initialize());
       this.app.use(passport.session());
 
-      passport.serializeUser((user, done) => done(null, user.id));
+      passport.serializeUser((user, done) => {
+        done(null, user.id);
+      });
       passport.deserializeUser((user, done) => {
-        this.userRepository.findByPk(user).then((_user) => done(null, _user));
+        this.userRepository.findByPk(user).then((_user) => {
+          done(null, _user);
+        });
       });
 
       this.server = this.app.listen(this.config.port, () => {
@@ -109,9 +115,10 @@ class ApiModule {
     [
       this.authController,
       this.profileController,
-      this.userController,
+      this.usersController,
       this.twitchController,
-      this.googleController
+      this.googleController,
+      this.challengesController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => this.addRestHandler(...route)));
 
     this.addRestHandler('use', '*', () => {

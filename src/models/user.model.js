@@ -92,7 +92,10 @@ module.exports = {
       modelName: 'user'
     });
   },
-  associate: () => {},
+  associate: (models) => {
+    UserModel.hasMany(models.Challenge.model);
+    UserModel.hasMany(models.ChallengeInvitedUsers.model);
+  },
   get model() {
     return UserModel;
   }
