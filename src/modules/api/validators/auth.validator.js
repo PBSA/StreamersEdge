@@ -8,17 +8,21 @@ class AuthValidator extends BaseValidator {
   /**
    * @param {UserRepository} opts.userRepository
    * @param {VerificationTokenRepository} opts.verificationTokenRepository
+   * @param {ResetTokenRepository} opts.resetTokenRepository
    */
   constructor(opts) {
     super();
 
     this.userRepository = opts.userRepository;
     this.verificationTokenRepository = opts.verificationTokenRepository;
+    this.resetTokenRepository = opts.resetTokenRepository;
 
     this.validateAuthCode = this.validateAuthCode.bind(this);
     this.validateSignUp = this.validateSignUp.bind(this);
     this.validateConfirmEmail = this.validateConfirmEmail.bind(this);
     this.validateSignIn = this.validateSignIn.bind(this);
+    this.validateForgotPassword = this.validateForgotPassword.bind(this);
+    this.validateResetPassword = this.validateResetPassword.bind(this);
     this.loggedOnly = this.loggedOnly.bind(this);
   }
 
@@ -114,6 +118,38 @@ class AuthValidator extends BaseValidator {
       password: Joi.string().required()
     };
     return this.validate(null, bodySchema, (req, query, body) => body);
+  }
+
+  validateForgotPassword() {
+    const bodySchema = {
+      email: Joi.string().email().required()
+    };
+    return this.validate(null, bodySchema, (req, query, body) => body.email);
+  }
+
+  validateResetPassword() {
+    const bodySchema = {
+      token: Joi.string().required(),
+      password: Joi.string().regex(/^[A-Za-z0-9.@!#$%^*]+$/).min(6).max(60).required(),
+      repeatPassword: Joi.string().required()
+    };
+    return this.validate(null, bodySchema, async (req, query, body) => {
+      const {password, repeatPassword, token} = body;
+
+      if (password !== repeatPassword) {
+        throw new ValidateError(400, 'Validate error', {
+          repeatPassword: 'Should be the same as the password'
+        });
+      }
+
+      const ResetToken = await this.resetTokenRepository.findActive(token);
+
+      if (!ResetToken) {
+        throw new ValidateError(404, 'Token not found');
+      }
+
+      return {ResetToken, password};
+    });
   }
 
 }
