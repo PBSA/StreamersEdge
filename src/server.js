@@ -59,7 +59,14 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} facebook.clientSecret
  * @property {{enabled: Boolean, url: String}} raven
  * @property {String<prod|testnet>} bitcoinNetwork
- * @property {String} peerplaysFaucetURL
  * @property {String} backendUrl
  * @property {String} frontendUrl
+ * @property {Object} mailer
+ * @property {String} mailer.sender
+ * @property {Number} mailer.port
+ * @property {Boolean} mailer.secure
+ * @property {{user:String, pass:String}} mailer.auth
+ * @property {String} mailer.sender
+ * @property {String} peerplays.peerplaysFaucetURL
+ * @property {String} peerplays.referrer
  */

@@ -29,7 +29,10 @@ class GoogleController {
      * @apiVersion 0.1.0
      */
     this.initializePassport();
-    app.get('/api/v1/auth/google', passport.authenticate('google', {scope: this.DEFAULT_SCOPE}));
+    app.get('/api/v1/auth/google', passport.authenticate('google', {
+      scope: this.DEFAULT_SCOPE,
+      access_type: 'offline'
+    }));
 
     app.get('/api/v1/auth/google/callback', (req, res) => {
       passport.authenticate(
@@ -56,8 +59,12 @@ class GoogleController {
       clientID: this.config.google.clientId,
       clientSecret: this.config.google.clientSecret,
       callbackURL: `${this.config.backendUrl}/api/v1/auth/google/callback`
-    }, (token, tokenSecret, profile, done) => {
-      this.userService.getUserBySocialNetworkAccount('google', {id: profile.id, ...profile._json}).then((User) => {
+    }, (accessToken, refreshToken, profile, done) => {
+      this.userService.getUserBySocialNetworkAccount('google', {
+        id: profile.id,
+        ...profile._json,
+        username: profile._json.email.replace(/@.+/, '')
+      }).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {
         done(error);

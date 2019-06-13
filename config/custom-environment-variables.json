@@ -23,5 +23,11 @@
     "url": "RAVEN_URL"
   },
   "backendUrl": "BACKEND_URL",
-  "frontendUrl": "FRONTEND_URL"
+  "frontendUrl": "FRONTEND_URL",
+  "mailer": {
+    "auth": {
+      "user": "MAILER_AUTH_USER",
+      "pass": "MAILER_AUTH_PASS"
+    }
+  }
 }
