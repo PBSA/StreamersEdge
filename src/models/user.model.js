@@ -93,6 +93,7 @@ module.exports = {
     });
   },
   associate: (models) => {
+    UserModel.hasMany(models.ResetToken.model);
     UserModel.hasMany(models.Challenge.model);
     UserModel.hasMany(models.ChallengeInvitedUsers.model);
   },
