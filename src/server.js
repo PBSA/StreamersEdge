@@ -57,7 +57,7 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} google.clientSecret
  * @property {String} google.callbackUrl
  * @property {{enabled: Boolean, url: String}} raven
- * @property {String<prod|testnet>} bitcoinNetworkL
+ * @property {String<prod|testnet>} bitcoinNetwork
  * @property {Object} mailer
  * @property {String} mailer.sender
  * @property {Number} mailer.port

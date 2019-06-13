@@ -1,4 +1,5 @@
 const ValidateError = require('../../../errors/validate.error');
+const RestError = require('../../../errors/rest.error');
 
 class AuthController {
 
@@ -55,7 +56,12 @@ class AuthController {
        * @apiGroup Auth
        * @apiVersion 0.1.0
        */
-      ['get', '/api/v1/auth/confirm-email/:token', this.authValidator.validateConfirmEmail, this.confirmEmail.bind(this)],
+      [
+        'get',
+        '/api/v1/auth/confirm-email/:token',
+        this.authValidator.validateConfirmEmail,
+        this.confirmEmail.bind(this)
+      ],
       /**
        * @api {post} /api/v1/auth/sign-in Sign in
        * @apiName AuthSignIn
@@ -68,7 +74,43 @@ class AuthController {
        *   "password": "testtest"
        * }
        */
-      ['post', '/api/v1/auth/sign-in', this.authValidator.validateSignIn, this.signIn.bind(this)]
+      ['post', '/api/v1/auth/sign-in', this.authValidator.validateSignIn, this.signIn.bind(this)],
+      /**
+       * @api {post} /api/v1/auth/forgot-password Forgot password
+       * @apiName ForgotPassword
+       *
+       * @apiGroup Auth
+       * @apiVersion 0.1.0
+       * @apiExample {json} Request-Example:
+       * {
+       *   "email": "test@test.com"
+       * }
+       */
+      [
+        'post',
+        '/api/v1/auth/forgot-password',
+        this.authValidator.validateForgotPassword,
+        this.forgotPassword.bind(this)
+      ],
+      /**
+       * @api {post} /api/v1/auth/reset-password Reset password
+       * @apiName ResetPassword
+       *
+       * @apiGroup Auth
+       * @apiVersion 0.1.0
+       * @apiExample {json} Request-Example:
+       * {
+       *   "token": "fb7ce9c3913ed08a0dfd45d4bc",
+       *   "password": "testpass",
+       *   "repeatPassword": "testpass"
+       * }
+       */
+      [
+        'post',
+        '/api/v1/auth/reset-password',
+        this.authValidator.validateResetPassword,
+        this.resetPassword.bind(this)
+      ]
     ];
   }
 
@@ -97,6 +139,30 @@ class AuthController {
 
     await new Promise((success) => req.login(user, () => success()));
     return user;
+  }
+
+  async forgotPassword(_, email) {
+    try {
+      await this.userService.sendResetPasswordEmail(email);
+    } catch (e) {
+      switch (e.message) {
+        case this.userService.errors.USER_NOT_FOUND:
+          throw new RestError('User not found', 404);
+        case this.userService.errors.TOO_MANY_REQUESTS:
+          throw new RestError('Too many requests', 429);
+        default:
+          throw new RestError('Server side error', 500);
+      }
+    }
+
+    return true;
+  }
+
+  async resetPassword(_, {ResetToken, password}) {
+    await this.userService.resetPassword(ResetToken.user, password);
+    await ResetToken.deactivate();
+
+    return true;
   }
 
 }
