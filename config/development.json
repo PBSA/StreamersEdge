@@ -1,3 +1,5 @@
 {
-  "logLevel": "info"
+  "logLevel": "info",
+  "backendUrl": "http://localhost:3000",
+  "frontendUrl": "http://localhost:3001"
 }

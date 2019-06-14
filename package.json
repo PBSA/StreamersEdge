@@ -49,6 +49,8 @@
     "nodemailer": "^6.2.1",
     "normalize-email": "^1.1.1",
     "passport": "^0.4.0",
+    "passport-google-oauth": "^2.0.0",
+    "passport-twitch": "^1.0.3",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.2",
     "raven": "^2.6.4",
