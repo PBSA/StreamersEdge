@@ -16,7 +16,7 @@ class MailService {
   async sendMailAfterRegistration(email, uniqueLink) {
     const sourceHTML = fs.readFileSync(`${__dirname}/templates/welcome.handlebars`).toString();
     const templateHTML = Handlebars.compile(sourceHTML);
-    const url = `${this.config.frontUrl}/confirm-email/${uniqueLink}`;
+    const url = `${this.config.frontendUrl}/confirm-email/${uniqueLink}`;
     const resultHtml = templateHTML({url});
 
     const options = {

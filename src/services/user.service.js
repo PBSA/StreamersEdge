@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const Sequelize = require('sequelize');
 const moment = require('moment');
 const RestError = require('../errors/rest.error');
 
@@ -27,70 +28,34 @@ class UserService {
   }
 
   /**
-   * Find user by twitch account and create row if not exists
+   * Find user by network account id and create row if not exists
+   * @param {String} network
    * @param account
    * @returns {Promise<UserModel>}
    */
-  async getUserByTwitchAccount(account) {
-    const {_id: id, email} = account;
+  async getUserBySocialNetworkAccount(network, account) {
+    const {id, email, picture, username} = account;
 
     let User = await this.userRepository.model.findOne({
       where: {
-        twitchId: id
+        [`${network}Id`]: id
       }
     });
 
     if (!User) {
-      let emailIsUsed = await this.userRepository.model.findOne({where: {email}});
-
-      if (emailIsUsed) {
-        throw new Error('This email already is used');
-      }
-
-      User = await this.userRepository.create({
-        where: {
-          twitchId: id
-        },
-        defaults: {
-          email
-        }
+      const usedLogin = await this.userRepository.model.findAll({
+        where: {[Sequelize.Op.or]: [{email}, {username}]}
       });
-    }
 
-    return User;
-  }
-
-  /**
-   * Find user by google account and create row if not exists
-   * @param account
-   * @returns {Promise<UserModel>}
-   */
-  async getUserByGoogleAccount(account) {
-    const {
-      id, picture, email
-    } = account;
-
-    let User = await this.userRepository.model.findOne({
-      where: {
-        googleId: id
-      }
-    });
-
-    if (!User) {
-      let emailIsUsed = await this.userRepository.model.findOne({where: {email}});
-
-      if (emailIsUsed) {
-        throw new Error('This email already is used');
-      }
+      const emailIsUsed = usedLogin.find((row) => row.email === email);
+      const usernameIsUsed = usedLogin.find((row) => row.username === username);
 
       User = await this.userRepository.create({
-        where: {
-          googleId: id
-        },
-        defaults: {
-          avatar: picture,
-          email
-        }
+        [`${network}Id`]: id,
+        avatar: picture,
+        email: emailIsUsed ? null : email,
+        isEmailVerified: emailIsUsed ? null : true,
+        username: usernameIsUsed ? null : username
       });
     }
 

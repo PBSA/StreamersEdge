@@ -1,83 +1,75 @@
-const RestError = require('../../../errors/rest.error');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 class GoogleController {
 
   /**
-   * @param {AuthValidator} opts.authValidator
-   * @param {GoogleService} opts.googleService
    * @param {UserService} opts.userService
+   * @param {AppConfig} opts.config
    */
   constructor(opts) {
-    this.authValidator = opts.authValidator;
-    this.googleService = opts.googleService;
     this.userService = opts.userService;
+    this.config = opts.config;
+
+    this.DEFAULT_SCOPE = [
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
+    ];
   }
 
   /**
    * Array of routes processed by this controller
    * @returns {*[]}
    */
-  getRoutes() {
-    return [
-      /**
-       * @api {get} /api/v1/auth/google/redirect-url Get redirect url for auth with Google
-       * @apiName GetGoogleRedirectURL
-       * @apiDescription You should use this method for receiving urls for redirect.
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "result": "https://accounts.google.com/o/oauth2/auth?approval_prompt=...",
-       *   "status": 200
-       * }
-       */
-      ['get', '/api/v1/auth/google/redirect-url', this.getRedirectUrl.bind(this)],
-      /**
-       * @api {post} /api/v1/auth/google/code Auth with google code
-       * @apiName AuthWithGoogleCode
-       * @apiDescription After getting a code from google (google returns user to the redirect url with code),
-       * you should send this code to backend for finishing authentication process
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "code": "334442ikjds--s0dff"
-       * }
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": ""
-       *   }
-       * }
-       */
-      ['post', '/api/v1/auth/google/code', this.authValidator.validateAuthCode, this.authWithCode.bind(this)]
-    ];
+  getRoutes(app) {
+    /**
+     * @api {get} /api/v1/auth/google Auth by google
+     * @apiName GoogleAuth
+     * @apiGroup Google
+     * @apiVersion 0.1.0
+     */
+    this.initializePassport();
+    app.get('/api/v1/auth/google', passport.authenticate('google', {
+      scope: this.DEFAULT_SCOPE,
+      access_type: 'offline'
+    }));
+
+    app.get('/api/v1/auth/google/callback', (req, res) => {
+      passport.authenticate(
+        'google',
+        {failureRedirect: `${this.config.frontendUrl}?google-auth-error=restrict`}
+      )(req, res, (err) => {
+
+        if (err) {
+          res.redirect(`${this.config.frontendUrl}?google-auth-error=${err.message}`);
+          return;
+        }
+
+        res.redirect(this.config.frontendUrl);
+
+      });
+
+    });
+
+    return [];
   }
 
-  async getRedirectUrl() {
-    return this.googleService.getAuthRedirectURL();
-  }
-
-  async authWithCode(user, code, req) {
-    let User;
-
-    try {
-      User = await this.googleService.getUserByCode(code);
-      User = await this.userService.getUserByGoogleAccount(User);
-    } catch (e) {
-      throw new RestError(e.message, 400);
-    }
-
-    await new Promise((success) => req.login(User, () => success()));
-    return this.userService.getCleanUser(User);
+  initializePassport() {
+    passport.use(new GoogleStrategy({
+      clientID: this.config.google.clientId,
+      clientSecret: this.config.google.clientSecret,
+      callbackURL: `${this.config.backendUrl}/api/v1/auth/google/callback`
+    }, (accessToken, refreshToken, profile, done) => {
+      this.userService.getUserBySocialNetworkAccount('google', {
+        id: profile.id,
+        ...profile._json,
+        username: profile._json.email.replace(/@.+/, '')
+      }).then((User) => {
+        this.userService.getCleanUser(User).then((user) => done(null, user));
+      }).catch((error) => {
+        done(error);
+      });
+    }));
   }
 
 }

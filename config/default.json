@@ -12,19 +12,19 @@
   "port": 3000,
   "twitch": {
     "clientId": "",
-    "clientSecret": "",
-    "callbackUrl": ""
+    "clientSecret": ""
   },
   "google": {
     "clientId": "",
-    "clientSecret": "",
-    "callbackUrl": ""
+    "clientSecret": ""
   },
   "raven": {
     "enabled": true,
     "url": ""
   },
   "bitcoinNetwork": "prod",
+  "frontendUrl": "",
+  "backendUrl": "",
   "mailer": {
     "host": "",
     "port": 587,

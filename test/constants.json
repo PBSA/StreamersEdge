@@ -1,19 +1,7 @@
 {
   "modules": {
     "api": {
-      "auth": {
-        "twitchValidCode": "111111",
-        "twitchValidAuth": "222222",
-        "twitchTestUsername": "twitch-test",
-        "twitchTestEmail": "test@test.com",
-        "twitchTestId": "1",
-        "googleValidCode": "111111",
-        "googleValidAuth": "222222",
-        "googleTestUsername": "google-test",
-        "googleTestEmail": "test@test.com",
-        "googleTestId": "1",
-        "googleTestPicture": "https://google.com/imgage.png"
-      },
+      "auth": {},
       "profile": {
         "facebookLink": "https://www.facebook.com/profile.php?id=100407434133285",
         "youtubeLink": "https://www.youtube.com/channel/UCr2334MwTiAUGw29ptBVbkw",
