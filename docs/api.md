@@ -347,10 +347,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
-    "peerplaysAccountName": "testaccount",
-    "bitcoinAddress": ""
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
 }
 ```
@@ -372,10 +377,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
   }
 }
 ```
@@ -392,10 +402,12 @@ Request-Example:
 
 ```
 {
+  "avatar": "",
   "youtube": "",
   "facebook": "",
   "peerplaysAccountName": "",
-  "bitcoinAddress": ""
+  "bitcoinAddress": "",
+  "userType": "viewer"
 }
 ```
 
@@ -410,10 +422,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
 }
 ```

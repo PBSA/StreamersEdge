@@ -32,10 +32,15 @@ class ProfileController {
        *   "result": {
        *     "id": "5cc315041ec568398b99d7ca",
        *     "username": "test",
+       *     "email": "test@email.com",
+       *     "twitchUserName": "",
+       *     "googleName": "",
+       *     "avatar": "",
        *     "youtube": "",
        *     "facebook": "",
        *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": ""
+       *     "bitcoinAddress": "",
+       *     "userType": "viewer"
        *   }
        * }
        */
@@ -51,10 +56,12 @@ class ProfileController {
        * @apiVersion 0.1.0
        * @apiExample {json} Request-Example:
        * {
+       *   "avatar": "",
        *   "youtube": "",
        *   "facebook": "",
        *   "peerplaysAccountName": "",
-       *   "bitcoinAddress": ""
+       *   "bitcoinAddress": "",
+       *   "userType": "viewer"
        * }
        * @apiSuccessExample {json} Success-Response:
        * HTTP/1.1 200 OK
@@ -63,10 +70,15 @@ class ProfileController {
        *   "result": {
        *     "id": "5cc315041ec568398b99d7ca",
        *     "username": "test",
+       *     "email": "test@email.com",
+       *     "twitchUserName": "",
+       *     "googleName": "",
+       *     "avatar": "",
        *     "youtube": "",
        *     "facebook": "",
        *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": ""
+       *     "bitcoinAddress": "",
+       *     "userType": "viewer"
        *  }
        * }
        */
@@ -94,10 +106,15 @@ class ProfileController {
        *   "result": {
        *     "id": "5cc315041ec568398b99d7ca",
        *     "username": "test",
+       *     "email": "test@email.com",
+       *     "twitchUserName": "",
+       *     "googleName": "",
+       *     "avatar": "",
        *     "youtube": "",
        *     "facebook": "",
-       *     "peerplaysAccountName": "testaccount",
-       *     "bitcoinAddress": ""
+       *     "peerplaysAccountName": "",
+       *     "bitcoinAddress": "",
+       *     "userType": "viewer"
        *  }
        * }
        */
