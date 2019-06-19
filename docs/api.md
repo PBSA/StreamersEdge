@@ -7,19 +7,23 @@ Backend module for StreamersEdge application
 	- [Logout](#logout)
 	- [Sign in](#sign-in)
 	- [Sign up](#sign-up)
-	- [Auth with google code](#auth-with-google-code)
-	- [Auth with twitch code](#auth-with-twitch-code)
-	- [Get redirect url for auth with Google](#get-redirect-url-for-auth-with-google)
-	- [Get redirect url for auth with Twitch](#get-redirect-url-for-auth-with-twitch)
+	- [Forgot password](#forgot-password)
+	- [Reset password](#reset-password)
 	
 - [Challenges](#challenges)
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
 	
+- [Google](#google)
+	- [Auth by google](#auth-by-google)
+	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
+	
+- [Twitch](#twitch)
+	- [Auth by twitch](#auth-by-twitch)
 	
 - [Users](#users)
 	- [Get user by id](#get-user-by-id)
@@ -100,46 +104,11 @@ Request-Example:
 }
 ```
 
-## Auth with google code
-
-<p>After getting a code from google (google returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>
-
-	POST /api/v1/auth/google/code
+## Forgot password
 
 
-### Examples
 
-Request-Example:
-
-```
-{
-  "code": "334442ikjds--s0dff"
-}
-```
-
-### Success Response
-
-Success-Response:
-
-```
-HTTP/1.1 200 OK
-{
-  "status": 200,
-  "result": {
-    "id": "5cc315041ec568398b99d7ca",
-    "username": "test",
-    "youtube": "",
-    "facebook": "",
-    "peerplaysAccountName": "",
-    "bitcoinAddress": ""
-  }
-}
-```
-## Auth with twitch code
-
-<p>After getting a code from twitch (twitch returns user to the redirect url with code), you should send this code to backend for finishing authentication process</p>
-
-	POST /api/v1/auth/twitch/code
+	POST /api/v1/auth/forgot-password
 
 
 ### Examples
@@ -148,64 +117,29 @@ Request-Example:
 
 ```
 {
-  "code": "334442ikjds--s0dff"
+  "email": "test@test.com"
 }
 ```
 
-### Success Response
+## Reset password
 
-Success-Response:
+
+
+	POST /api/v1/auth/reset-password
+
+
+### Examples
+
+Request-Example:
 
 ```
-HTTP/1.1 200 OK
 {
-  "status": 200,
-  "result": {
-    "id": "5cc315041ec568398b99d7ca",
-    "username": "test",
-    "youtube": "",
-    "facebook": "",
-    "peerplaysAccountName": "",
-    "bitcoinAddress": ""
-  }
+  "token": "fb7ce9c3913ed08a0dfd45d4bc",
+  "password": "testpass",
+  "repeatPassword": "testpass"
 }
 ```
-## Get redirect url for auth with Google
 
-<p>You should use this method for receiving urls for redirect.</p>
-
-	GET /api/v1/auth/google/redirect-url
-
-
-### Success Response
-
-Success-Response:
-
-```
-HTTP/1.1 200 OK
-{
-  "result": "https://accounts.google.com/o/oauth2/auth?approval_prompt=...",
-  "status": 200
-}
-```
-## Get redirect url for auth with Twitch
-
-<p>You should use this method for receiving urls for redirect.</p>
-
-	GET /api/v1/auth/twitch/redirect-url
-
-
-### Success Response
-
-Success-Response:
-
-```
-HTTP/1.1 200 OK
-{
-  "result": "https://id.twitch.tv/oauth2/authorize?...",
-  "status": 200
-}
-```
 # Challenges
 
 ## Create new challenge
@@ -360,6 +294,15 @@ HTTP/1.1 200 OK
  "status": 200
 }
 ```
+# Google
+
+## Auth by google
+
+
+
+	GET /api/v1/auth/google
+
+
 # Profile
 
 ## Create peerplays account for authorized user
@@ -462,6 +405,15 @@ HTTP/1.1 200 OK
  }
 }
 ```
+# Twitch
+
+## Auth by twitch
+
+
+
+	GET /api/v1/auth/twitch
+
+
 # Users
 
 ## Get user by id
