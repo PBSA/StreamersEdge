@@ -6,6 +6,7 @@ chai.use(require('chai-url'));
 const chaiHttp = require('chai-http');
 
 const {isSuccess, isError} = require('../helpers/test.response.helper');
+const {login} = require('../helpers/test.login.helper');
 const ApiModule = require('../api.module.test');
 const constants = require('../../../constants.json');
 
@@ -30,16 +31,18 @@ describe('GET /api/v1/profile', () => {
   });
 
   it('should success. User logged', async () => {
-    await agent.post('/api/v1/auth/twitch/code').send({
-      code: constants.modules.api.auth.twitchValidCode
-    });
+    await login(agent, null, apiModule);
     const response = await agent.get('/api/v1/profile');
     isSuccess(response);
     assert.deepEqual(response.body.result, {
       id: response.body.result.id,
-      username: '',
-      email: '',
+      username: 'test-testglonal',
+      email: 'testglonal@email.com',
+      googleName: null,
+      twitchUserName: null,
+      userType: null,
       youtube: '',
+      twitch: '',
       facebook: '',
       peerplaysAccountName: '',
       bitcoinAddress: ''
@@ -52,7 +55,7 @@ describe('GET /api/v1/profile', () => {
 describe('PATCH /api/v1/profile', () => {
 
   beforeEach(async () => {
-    await agent.post('/api/v1/auth/twitch/code').send({code: constants.modules.api.auth.twitchValidCode});
+    await login(agent, null, apiModule);
   });
 
   it('should forbid, user not logged', async () => {
@@ -84,6 +87,17 @@ describe('PATCH /api/v1/profile', () => {
     });
     isSuccess(response);
     profile.youtube = constants.modules.api.profile.youtubeLink;
+    assert.deepEqual(response.body.result, profile);
+  });
+
+  it('should success, twitch only', async () => {
+    const profileResponse = await agent.get('/api/v1/profile');
+    const profile = profileResponse.body.result;
+    const response = await agent.patch('/api/v1/profile').send({
+      twitch: constants.modules.api.profile.twitchLink
+    });
+    isSuccess(response);
+    profile.twitch = constants.modules.api.profile.twitchLink;
     assert.deepEqual(response.body.result, profile);
   });
 
@@ -132,7 +146,7 @@ describe('PATCH /api/v1/profile', () => {
 describe('POST /api/v1/profile/peerplays/create-account', () => {
 
   beforeEach(async () => {
-    await agent.post('/api/v1/auth/twitch/code').send({code: constants.modules.api.auth.twitchValidCode});
+    await login(agent, null, apiModule);
   });
 
   it('should forbid, user not logged', async () => {
