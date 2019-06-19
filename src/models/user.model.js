@@ -51,7 +51,8 @@ class UserModel extends Model {
       twitch: this.twitch || '',
       peerplaysAccountName: this.peerplaysAccountName,
       bitcoinAddress: this.bitcoinAddress,
-      userType: this.userType
+      userType: this.userType,
+      avatar: this.avatar
     };
   }
 }

@@ -32,7 +32,7 @@ class ProfileValidator extends BaseValidator {
 
     return this.validate(null, bodySchema, async (req, query, body) => {
       if (body.email && req.user.email !== body.email) {
-        const exist = await this.userRepository.findOne({where: {email: body.email}});
+        const exist = await this.userRepository.model.findOne({where: {email: body.email}});
 
         if (exist) {
           throw new ValidateError(400, 'Validate error', {

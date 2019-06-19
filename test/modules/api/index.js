@@ -15,7 +15,7 @@ describe('REST API', () => {
   describe('profile.controller', () => {
     require('./controllers/profile.controller.test');
   });
-  // describe('user.controller', () => {
-  //   require('./controllers/user.controller.test');
-  // });
+  describe('user.controller', () => {
+    require('./controllers/user.controller.test');
+  });
 });
