@@ -96,6 +96,7 @@ module.exports = {
     UserModel.hasMany(models.ResetToken.model);
     UserModel.hasMany(models.Challenge.model);
     UserModel.hasMany(models.ChallengeInvitedUsers.model);
+    UserModel.hasMany(models.Stream.model);
   },
   get model() {
     return UserModel;
