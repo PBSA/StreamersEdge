@@ -66,5 +66,12 @@ const currentModule = process.env.MODULE || 'api';
  * @property {{user:String, pass:String}} mailer.auth
  * @property {String} mailer.sender
  * @property {String} peerplays.peerplaysFaucetURL
+ * @property {String} peerplays.peerplaysWS
  * @property {String} peerplays.referrer
+ * @property {String} peerplays.paymentAccountID
+ * @property {String} peerplays.paymentAccountWIF
+ * @property {String} paypal.clientId
+ * @property {String} paypal.secret
+ * @property {String} paypal.environment
+ * @property {String} coinmarketcap.apiKey
  */

@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 const request = require('request');
+const {Apis, PrivateKey} = require('peerplaysjs-lib');
 
 const BaseConnection = require('./abstracts/base.connection');
 
@@ -12,9 +13,15 @@ class PeerplaysConnection extends BaseConnection {
     super();
 
     this.config = opts.config;
+    this.dbAPI = null;
+
+    this.privateKey = PrivateKey.fromWif(this.config.peerplays.paymentAccountWIF);
   }
 
-  connect() {}
+  async connect() {
+    await Apis.instance(this.config.peerplays.peerplaysWS, true).init_promise;
+    this.dbAPI = Apis.instance().db_api();
+  }
 
   async request(form) {
     const options = {

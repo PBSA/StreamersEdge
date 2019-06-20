@@ -1,9 +1,11 @@
+// const {TransactionBuilder} = require('peerplaysjs-lib');
+
 class PeerplaysRepository {
 
   /**
-	 * @param {PeerplaysConnection} opts.peerplaysConnection
-	 * @param {AppConfig} opts.config
-	 */
+   * @param {PeerplaysConnection} opts.peerplaysConnection
+   * @param {AppConfig} opts.config
+   */
   constructor(opts) {
     this.peerplaysConnection = opts.peerplaysConnection;
     this.config = opts.config;
@@ -21,6 +23,10 @@ class PeerplaysRepository {
       }
     });
     return account;
+  }
+
+  async sendPPY() {
+    // todo: build transaction
   }
 
 }
