@@ -1,6 +1,4 @@
 const RestError = require('../../../errors/rest.error');
-const logger = require('log4js').getLogger('paypal.controller');
-
 
 class PaymentController {
 
@@ -35,9 +33,8 @@ class PaymentController {
 
   async processPurchase(user, orderId) {
     try {
-      return this.paymentService.processPayment(user, orderId);
+      return await this.paymentService.processPayment(user, orderId);
     } catch (e) {
-      logger.error(e);
       throw new RestError(e.message, 400);
     }
   }

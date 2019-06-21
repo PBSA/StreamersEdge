@@ -70,6 +70,7 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} peerplays.referrer
  * @property {String} peerplays.paymentAccountID
  * @property {String} peerplays.paymentAccountWIF
+ * @property {String} peerplays.sendAssetId
  * @property {String} paypal.clientId
  * @property {String} paypal.secret
  * @property {String} paypal.environment

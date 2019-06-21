@@ -17,7 +17,7 @@ class PaymentValidator extends BaseValidator {
 
   validatePurchase() {
     const bodySchema = {
-      orderId: Joi.string().max(254)
+      orderId: Joi.string().required().max(254)
     };
 
     return this.validate(null, bodySchema, async (req, query, {orderId}) => {

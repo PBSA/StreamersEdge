@@ -33,6 +33,7 @@
     "@paypal/checkout-server-sdk": "^1.0.1",
     "awilix": "^4.2.1",
     "bcrypt": "^3.0.6",
+    "bignumber.js": "^9.0.0",
     "body-parser": "^1.18.3",
     "config": "^3.1.0",
     "connect-session-sequelize": "^6.0.0",

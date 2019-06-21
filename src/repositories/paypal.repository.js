@@ -19,7 +19,7 @@ class PaypalRepository {
       order = await this.paypalConnection.client().execute(request);
     } catch (err) {
       logger.error(err);
-      throw err;
+      throw new Error(err.message);
     }
 
     return order.result;
