@@ -118,10 +118,10 @@ class ApiModule {
       this.authController,
       this.profileController,
       this.usersController,
+      this.challengesController,
       this.twitchController,
       this.facebookController,
-      this.googleController,
-      this.challengesController
+      this.googleController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => this.addRestHandler(...route)));
 
     this.addRestHandler('use', '*', () => {

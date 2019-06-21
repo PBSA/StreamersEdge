@@ -13,6 +13,8 @@ Backend module for StreamersEdge application
 - [Challenges](#challenges)
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
+	- [Invite user to new challenge](#invite-user-to-new-challenge)
+	- [Subscribe to new notification](#subscribe-to-new-notification)
 	
 - [Facebook](#facebook)
 	- [Auth by facebook](#auth-by-facebook)
@@ -246,6 +248,138 @@ HTTP/1.1 200 OK
 
 
 	GET /api/v1/challenges/:id
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "conditionsText": "test",
+   "user": {
+     "id": 1,
+     "username": "username",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
+   },
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
+   "invitedUsers": []
+ },
+ "status": 200
+}
+```
+## Invite user to new challenge
+
+
+
+	POST /api/v1/challenges/invite
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| senderId			| Number			|  <p>Id of the user who invited</p>							|
+| userId			| Number			|  <p>Invited user Id</p>							|
+| challengeId			| Number			|  <p>Id of of challenge</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "senderId": "7",
+  "userId": "6",
+  "challengeId": "107",
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "conditionsText": "test",
+   "user": {
+     "id": 1,
+     "username": "username",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
+   },
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
+   "invitedUsers": []
+ },
+ "status": 200
+}
+```
+## Subscribe to new notification
+
+
+
+	POST /api/v1/challenges/subscribe
 
 
 ### Success Response

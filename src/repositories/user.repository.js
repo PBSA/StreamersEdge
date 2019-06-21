@@ -8,6 +8,10 @@ class UserRepository extends BasePostgresRepository {
     super(model);
   }
 
+  async findAll() {
+    return this.model.findAll();
+  }
+
   /**
    * @param ids
    * @returns {Promise<UserModel[]>}

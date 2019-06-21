@@ -29,5 +29,9 @@
       "user": "MAILER_AUTH_USER",
       "pass": "MAILER_AUTH_PASS"
     }
+  },
+  "vapid": {
+    "publicKey": "VAPID_PUBLIC_KEY",
+    "privateKey": "VAPID_PRIVATE_KEY"
   }
 }

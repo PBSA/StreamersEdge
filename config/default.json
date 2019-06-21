@@ -43,5 +43,9 @@
   "peerplays": {
     "peerplaysFaucetURL": "https://beatrice-faucet.peerplays.download/faucet",
     "referrer": "1.2.0"
+  },
+  "vapid": {
+    "publicKey": "",
+    "privateKey": ""
   }
 }
