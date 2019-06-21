@@ -12,7 +12,7 @@ const {Model} = Sequelize;
  * @property {Number} views
  * @property {Boolean} isLive
  * @property {Date} startTime
- * @property {Date} endTime
+ * @property {String} thumbnailUrl
  * @property {UserPublicObject} user
  */
 
@@ -27,7 +27,7 @@ const {Model} = Sequelize;
  * @property {Number} views
  * @property {Boolean} isLive
  * @property {Date} startTime
- * @property {Date} endTime
+ * @property {String} thumbnailUrl
  */
 
 class StreamModel extends Model {
@@ -45,7 +45,7 @@ class StreamModel extends Model {
       views:this.views,
       isLive:this.isLive,
       startTime:this.startTime,
-      endTime:this.startTime
+      thumbnailUrl:this.thumbnailUrl
     };
 
     if (this.user) {
@@ -86,8 +86,8 @@ module.exports = {
       startTime: {
         type: Sequelize.DATE
       },
-      endTime: {
-        type: Sequelize.DATE
+      thumbnailUrl: {
+        type: Sequelize.STRING
       }
     }, {
       sequelize,

@@ -10,27 +10,9 @@ class StreamService {
     this.userRepository = opts.userRepository;
   }
 
-  /**
-   *
-   * @param creatorId
-   * @param streamObject
-   * @returns {Promise<StreamPublicObject>}
-   */
-  async createStream(creatorId, streamObject) {
-    const StreamAdded = await this.streamRepository.create({
-      userId: creatorId,
-      name: streamObject.name,
-      game: streamObject.game,
-      sourceName: streamObject.sourceName,
-      embedUrl: streamObject.embedUrl,
-      channelId:streamObject.channelId,
-      views:streamObject.views,
-      isLive:streamObject.isLive,
-      startTime:streamObject.startTime,
-      endTime:streamObject.startTime
-    });
-
-    return this.getCleanObject(StreamAdded.id);
+  async populateTwitchStreams() {
+    await this.streamRepository.populateTwitchStreams();
+    return true;
   }
 
   /**
