@@ -29,6 +29,7 @@
   "bitcoinNetwork": "prod",
   "frontendUrl": "",
   "backendUrl": "",
+  "twitchUrl":"https://api.twitch.tv/helix/streams",
   "mailer": {
     "host": "",
     "port": 587,

@@ -56,6 +56,12 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
+  async getByTwitchId(searchtwitchId) {
+    return this.model.findOne({
+      where: {twitchId:searchtwitchId}
+    });
+  }
+
 }
 
 module.exports = UserRepository;

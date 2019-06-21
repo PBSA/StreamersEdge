@@ -44,6 +44,7 @@ class ApiModule {
     this.facebookController = opts.facebookController;
     this.googleController = opts.googleController;
     this.challengesController = opts.challengesController;
+    this.streamController = opts.streamController;
 
     this.userRepository = opts.userRepository;
   }
@@ -121,7 +122,9 @@ class ApiModule {
       this.challengesController,
       this.twitchController,
       this.facebookController,
-      this.googleController
+      this.googleController,
+      this.challengesController,
+      this.streamController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => this.addRestHandler(...route)));
 
     this.addRestHandler('use', '*', () => {

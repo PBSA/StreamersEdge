@@ -27,6 +27,11 @@ Backend module for StreamersEdge application
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
 	
+- [Stream](#stream)
+	- [Get stream](#get-stream)
+	- [Get streams](#get-streams)
+	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
+	
 - [Twitch](#twitch)
 	- [Auth by twitch](#auth-by-twitch)
 	
@@ -310,7 +315,6 @@ HTTP/1.1 200 OK
 
 | Name    | Type      | Description                          |
 |---------|-----------|--------------------------------------|
-| senderId			| Number			|  <p>Id of the user who invited</p>							|
 | userId			| Number			|  <p>Invited user Id</p>							|
 | challengeId			| Number			|  <p>Id of of challenge</p>							|
 
@@ -320,61 +324,11 @@ Request-Example:
 
 ```
 {
-  "senderId": "7",
   "userId": "6",
   "challengeId": "107",
 }
 ```
 
-### Success Response
-
-Success-Response:
-
-```
-HTTP/1.1 200 OK
-{
- "result": {
-   "id": 11,
-   "name": "test",
-   "createdAt": "2019-06-02T06:11:44.866Z",
-   "startDate": "2019-07-04T08:32:19.818Z",
-   "endDate": null,
-   "game": "pubg",
-   "accessRule": "anyone",
-   "ppyAmount": "1",
-   "conditionsText": "test",
-   "user": {
-     "id": 1,
-     "username": "username",
-     "youtube": "",
-     "facebook": "",
-     "peerplaysAccountName": "",
-     "bitcoinAddress": ""
-   },
-   "conditions": [{
-     "id": 4,
-     "param": "resultPlace",
-     "operator": ">",
-     "value": 1,
-     "join": "OR",
-     "createdAt": "2019-06-02T06:11:44.874Z",
-     "updatedAt": "2019-06-02T06:11:44.874Z",
-     "challengeId": 11
-   }, {
-     "id": 5,
-     "param": "resultPlace",
-     "operator": ">",
-     "value": 1,
-     "join": "END",
-     "createdAt": "2019-06-02T06:11:44.875Z",
-     "updatedAt": "2019-06-02T06:11:44.875Z",
-     "challengeId": 11
-   }],
-   "invitedUsers": []
- },
- "status": 200
-}
-```
 ## Subscribe to new notification
 
 
@@ -382,6 +336,32 @@ HTTP/1.1 200 OK
 	POST /api/v1/challenges/subscribe
 
 
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| endpoint			| String			|  <p>url for user</p>							|
+| expirationTime			| Number			|  <p>time of expiration</p>							|
+| keys			| Object			|  <p>object</p>							|
+| keys.p256dh			| String			| **optional** <p>string in p256dh</p>							|
+| keys.auth			| String			| **optional** <p>auth string</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  endpoint: 'https://fcm.googleapis.com/...lbTgv66-WEEWWK9bxZ_ksHhV_Z49vBvnYZdeS6cL6kk',
+  expirationTime: null,
+  keys:
+   {
+     p256dh: 'BOQWqnde....j7Dk-o',
+     auth: 'EYFQS0dh2KaPMXx9nmVPww'
+   }
+}
+```
+
 ### Success Response
 
 Success-Response:
@@ -389,45 +369,7 @@ Success-Response:
 ```
 HTTP/1.1 200 OK
 {
- "result": {
-   "id": 11,
-   "name": "test",
-   "createdAt": "2019-06-02T06:11:44.866Z",
-   "startDate": "2019-07-04T08:32:19.818Z",
-   "endDate": null,
-   "game": "pubg",
-   "accessRule": "anyone",
-   "ppyAmount": "1",
-   "conditionsText": "test",
-   "user": {
-     "id": 1,
-     "username": "username",
-     "youtube": "",
-     "facebook": "",
-     "peerplaysAccountName": "",
-     "bitcoinAddress": ""
-   },
-   "conditions": [{
-     "id": 4,
-     "param": "resultPlace",
-     "operator": ">",
-     "value": 1,
-     "join": "OR",
-     "createdAt": "2019-06-02T06:11:44.874Z",
-     "updatedAt": "2019-06-02T06:11:44.874Z",
-     "challengeId": 11
-   }, {
-     "id": 5,
-     "param": "resultPlace",
-     "operator": ">",
-     "value": 1,
-     "join": "END",
-     "createdAt": "2019-06-02T06:11:44.875Z",
-     "updatedAt": "2019-06-02T06:11:44.875Z",
-     "challengeId": 11
-   }],
-   "invitedUsers": []
- },
+ "result": "BOQWqndev7VP-UCLv9QIqDtkcNwRjyu4QBPDTCymL6ILHWklqWP1XxXRLmAYywsfgGs7K8Yub_6jQKiN0j7Dk-o",
  "status": 200
 }
 ```
@@ -481,10 +423,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
-    "peerplaysAccountName": "testaccount",
-    "bitcoinAddress": ""
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
 }
 ```
@@ -506,10 +453,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
   }
 }
 ```
@@ -526,10 +478,12 @@ Request-Example:
 
 ```
 {
+  "avatar": "",
   "youtube": "",
   "facebook": "",
   "peerplaysAccountName": "",
-  "bitcoinAddress": ""
+  "bitcoinAddress": "",
+  "userType": "viewer"
 }
 ```
 
@@ -544,11 +498,120 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
+}
+```
+# Stream
+
+## Get stream
+
+<p>Get Stream by StreamId</p>
+
+	GET /api/v1/stream/:id
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": {
+  "id": 1,
+  "name": "TSM chocoTaco | today's weather: thirsty",
+  "game": "pubg",
+  "sourceName": "twitch",
+  "embedUrl": "",
+  "channelId": "34608843376",
+  "views": 3536,
+  "isLive": true,
+  "startTime": "2019-06-21T00:09:40.000Z",
+  "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
+  "user": {
+      "id": 10,
+      "username": "jotprabh",
+      "email": "prabhjot.narula@gmail.com",
+      "twitchUserName": null,
+      "googleName": null,
+      "youtube": "",
+      "facebook": "",
+      "peerplaysAccountName": "",
+      "bitcoinAddress": "",
+      "userType": null
+    }
+  },
+  "status": 200
+}
+```
+## Get streams
+
+<p>Get Streams</p>
+
+	GET /api/v1/streams
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": [
+      {
+          "id": 1,
+          "name": "TSM chocoTaco | today's weather: thirsty",
+          "game": "pubg",
+          "sourceName": "twitch",
+          "embedUrl": "",
+          "channelId": "34608843376",
+          "views": 3536,
+          "isLive": true,
+          "startTime": "2019-06-21T00:09:40.000Z",
+          "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
+          "user": {
+              "id": 10,
+              "username": "jotprabh",
+              "email": "prabhjot.narula@gmail.com",
+              "twitchUserName": null,
+              "googleName": null,
+              "youtube": "",
+              "facebook": "",
+              "peerplaysAccountName": "",
+              "bitcoinAddress": "",
+              "userType": null
+          }
+      }
+  ],
+  "status": 200
+}
+```
+## Get Streams for users from Twitch
+
+
+
+	GET /api/v1/stream/populate-twitch-streams
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": true
 }
 ```
 # Twitch

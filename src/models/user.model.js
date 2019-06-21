@@ -1,15 +1,20 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
+const profileConstants = require('../constants/profile');
 
 /**
  * @typedef {Object} UserPublicObject
  * @property {Number} id
  * @property {String} username
  * @property {String} email
+ * @property {String} twitchUserName
+ * @property {String} googleName
+ * @property {String} avatar
  * @property {String} youtube
  * @property {String} facebook
  * @property {String} peerplaysAccountName
  * @property {String} bitcoinAddress
+ * @property {Enum} userType
  */
 
 /**
@@ -18,13 +23,21 @@ const {Model} = Sequelize;
  * @property {String} username
  * @property {String} email
  * @property {String} twitchId
+ * @property {String} twitchUserName
  * @property {String} googleId
+<<<<<<< HEAD
  * @property {String} facebookId
+=======
+ * @property {String} googleName
+>>>>>>> develop
  * @property {String} avatar
  * @property {String} youtube
  * @property {String} facebook
  * @property {String} peerplaysAccountName
  * @property {String} bitcoinAddress
+ * @property {Enum} userType
+ * @property {Enum} applicationType
+ * @property {String} pushNotificationId
  */
 class UserModel extends Model {
   /**
@@ -35,10 +48,13 @@ class UserModel extends Model {
       id: this.id,
       username: this.username || '',
       email: this.email || '',
+      twitchUserName: this.twitchUserName,
+      googleName: this.googleName,
       youtube: this.youtube,
       facebook: this.facebook,
       peerplaysAccountName: this.peerplaysAccountName,
-      bitcoinAddress: this.bitcoinAddress
+      bitcoinAddress: this.bitcoinAddress,
+      userType: this.userType
     };
   }
 }
@@ -67,6 +83,10 @@ module.exports = {
         unique: true,
         allowNull: true
       },
+      twitchUserName: {
+        type: Sequelize.STRING,
+        unique: true
+      },
       googleId: {
         type: Sequelize.STRING,
         unique: true,
@@ -76,6 +96,9 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true,
         allowNull: true
+      },
+      googleName: {
+        type: Sequelize.STRING
       },
       youtube: {
         type: Sequelize.STRING,
@@ -92,6 +115,17 @@ module.exports = {
       bitcoinAddress: {
         type: Sequelize.STRING,
         defaultValue: ''
+      },
+      userType: {
+        type:Sequelize.ENUM,
+        values: profileConstants.userType
+      },
+      applicationType: {
+        type:Sequelize.ENUM,
+        values: profileConstants.applicationType
+      },
+      pushNotificationId: {
+        type: Sequelize.STRING
       }
     }, {
       sequelize,
@@ -102,6 +136,7 @@ module.exports = {
     UserModel.hasMany(models.ResetToken.model);
     UserModel.hasMany(models.Challenge.model);
     UserModel.hasMany(models.ChallengeInvitedUsers.model);
+    UserModel.hasMany(models.Stream.model);
   },
   get model() {
     return UserModel;
