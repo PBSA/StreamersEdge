@@ -42,6 +42,7 @@ class ApiModule {
     this.twitchController = opts.twitchController;
     this.googleController = opts.googleController;
     this.challengesController = opts.challengesController;
+    this.streamController = opts.streamController;
 
     this.userRepository = opts.userRepository;
   }
@@ -118,8 +119,11 @@ class ApiModule {
       this.usersController,
       this.twitchController,
       this.googleController,
-      this.challengesController
-    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => this.addRestHandler(...route)));
+      this.challengesController,
+      this.streamController
+    ].forEach((controller) => controller.getRoutes().forEach((route) => {
+      this.addRestHandler(...route);
+    }));
 
     this.addRestHandler('use', '*', () => {
       throw new MethodNotAllowedError();
