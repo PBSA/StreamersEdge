@@ -31,7 +31,7 @@ class MailService {
   async sendMailResetPassword(email, uniqueLink) {
     const sourceHTML = fs.readFileSync(`${__dirname}/templates/reset-password.handlebars`).toString();
     const templateHTML = Handlebars.compile(sourceHTML);
-    const url = `${this.config.frontUrl}/reset-password/${uniqueLink}`;
+    const url = `${this.config.frontendUrl}/reset-password/${uniqueLink}`;
     const resultHtml = templateHTML({url});
 
     const options = {
