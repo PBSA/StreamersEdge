@@ -1,11 +1,3 @@
-const {google} = require('googleapis');
-
-const DEFAULT_SCOPE = [
-  'https://www.googleapis.com/auth/userinfo.profile',
-  'https://www.googleapis.com/auth/userinfo.email',
-  'https://www.googleapis.com/auth/youtube.readonly'
-];
-
 class GoogleRepository {
 
   /**
@@ -17,32 +9,14 @@ class GoogleRepository {
     this.config = opts.config;
   }
 
-  getAuth() {
-    return new google.auth.OAuth2(
-      this.config.google.clientId,
-      this.config.google.clientSecret,
-      this.config.google.callbackUrl,
-    );
-  }
+  async getYoutubeLink(tokens) {
+    const profile = await this.googleConnection.userYoutubeInfo(tokens);
 
-  getAuthUrl() {
-    const auth = this.getAuth();
-    return auth.generateAuthUrl({
-      access_type: 'offline',
-      scope: DEFAULT_SCOPE
-    });
-  }
+    if (profile.data.items.length === 1) {
+      return `https://www.youtube.com/channel/${profile.data.items[0].id}`;
+    }
 
-  async getProfileByCode(code) {
-    const {data} = await this.googleConnection.userInfo(this.getAuth(), code);
-
-    return {
-      id: data.id,
-      picture: data.picture,
-      name: data.name,
-      email: data.email,
-      youtube: data.youtube
-    };
+    return '';
   }
 
 }

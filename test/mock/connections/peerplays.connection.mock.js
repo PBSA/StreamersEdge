@@ -1,6 +1,6 @@
 const constants = require('../../constants.json');
 
-class TwitchConnectionMock {
+class PeerplaysConnectionMock {
 
   connect() {}
 
@@ -24,4 +24,4 @@ class TwitchConnectionMock {
 
 }
 
-module.exports = TwitchConnectionMock;
+module.exports = PeerplaysConnectionMock;

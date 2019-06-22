@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
-var SequelizeStore = require('connect-session-sequelize')(session.Store);
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
@@ -20,24 +20,29 @@ class ApiModule {
    *
    * @param {AppConfig} opts.config
    * @param {DbConnection} opts.dbConnection
+   * @param {SmtpConnection} opts.smtpConnection
    * @param {AuthController} opts.authController
    * @param {ProfileController} opts.profileController
-   * @param {UserController} opts.userController
+   * @param {UsersController} opts.usersController
    * @param {TwitchController} opts.twitchController
    * @param {GoogleController} opts.googleController
    * @param {UserRepository} opts.userRepository
+   * @param {ChallengesController} opts.challengesController
    */
   constructor(opts) {
     this.config = opts.config;
     this.dbConnection = opts.dbConnection;
+    this.smtpConnection = opts.smtpConnection;
     this.app = null;
     this.server = null;
 
     this.authController = opts.authController;
     this.profileController = opts.profileController;
-    this.userController = opts.userController;
+    this.usersController = opts.usersController;
     this.twitchController = opts.twitchController;
     this.googleController = opts.googleController;
+    this.challengesController = opts.challengesController;
+    this.streamController = opts.streamController;
 
     this.userRepository = opts.userRepository;
   }
@@ -87,9 +92,13 @@ class ApiModule {
       this.app.use(passport.initialize());
       this.app.use(passport.session());
 
-      passport.serializeUser((user, done) => done(null, user.id));
+      passport.serializeUser((user, done) => {
+        done(null, user.id);
+      });
       passport.deserializeUser((user, done) => {
-        this.userRepository.findByPk(user).then((_user) => done(null, _user));
+        this.userRepository.findByPk(user).then((_user) => {
+          done(null, _user);
+        });
       });
 
       this.server = this.app.listen(this.config.port, () => {
@@ -107,10 +116,14 @@ class ApiModule {
     [
       this.authController,
       this.profileController,
-      this.userController,
+      this.usersController,
       this.twitchController,
-      this.googleController
-    ].forEach((controller) => controller.getRoutes().forEach((route) => this.addRestHandler(...route)));
+      this.googleController,
+      this.challengesController,
+      this.streamController
+    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
+      this.addRestHandler(...route);
+    }));
 
     this.addRestHandler('use', '*', () => {
       throw new MethodNotAllowedError();

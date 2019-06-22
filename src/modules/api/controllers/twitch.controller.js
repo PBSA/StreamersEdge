@@ -1,80 +1,69 @@
+const passport = require('passport');
+const twitchStrategy = require('passport-twitch').Strategy;
+
 class TwitchController {
 
   /**
-   * @param {AuthValidator} opts.authValidator
-   * @param {TwitchService} opts.twitchService
    * @param {UserService} opts.userService
+   * @param {AppConfig} opts.config
    */
   constructor(opts) {
-    this.authValidator = opts.authValidator;
-    this.twitchService = opts.twitchService;
     this.userService = opts.userService;
+    this.config = opts.config;
   }
 
   /**
    * Array of routes processed by this controller
    * @returns {*[]}
    */
-  getRoutes() {
-    return [
-      /**
-       * @api {get} /api/v1/auth/twitch/redirect-url Get redirect url for auth with Twitch
-       * @apiName GetTwitchRedirectURL
-       * @apiDescription You should use this method for receiving urls for redirect.
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "result": "https://id.twitch.tv/oauth2/authorize?...",
-       *   "status": 200
-       * }
-       */
-      ['get', '/api/v1/auth/twitch/redirect-url', this.getRedirectUrl.bind(this)],
-      /**
-       * @api {post} /api/v1/auth/twitch/code Auth with twitch code
-       * @apiName AuthWithTwitchCode
-       * @apiDescription After getting a code from twitch (twitch returns user to the redirect url with code),
-       * you should send this code to backend for finishing authentication process
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "code": "334442ikjds--s0dff"
-       * }
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": ""
-       *   }
-       * }
-       */
-      ['post', '/api/v1/auth/twitch/code', this.authValidator.validateAuthCode, this.authWithCode.bind(this)]
-    ];
+  getRoutes(app) {
+    /**
+     * @api {get} /api/v1/auth/twitch Auth by twitch
+     * @apiName TwitchAuth
+     * @apiGroup Twitch
+     * @apiVersion 0.1.0
+     */
+    this.initializePassword();
+    app.get('/api/v1/auth/twitch', passport.authenticate('twitch'));
+
+    app.get('/api/v1/auth/twitch/callback', (req, res) => {
+      passport.authenticate(
+        'twitch',
+        {failureRedirect: `${this.config.frontendUrl}?twitch-auth-error=restrict`}
+      )(req, res, (err) => {
+
+        if (err) {
+          res.redirect(`${this.config.frontendUrl}?twitch-auth-error=${err.message}`);
+          return;
+        }
+
+        res.redirect(this.config.frontendUrl);
+
+      });
+
+    });
+
+    return [];
   }
 
-  /**
-   * @route GET /api/v1/auth/twitch/redirect-url
-   * @description Receive url string for redirection user to twirch auth page and receive
-   *              auth code for further processing
-   * @returns {Promise<string>}
-   */
-  async getRedirectUrl() {
-    return this.twitchService.getAuthRedirectURL();
-  }
-
-  async authWithCode(user, code, req) {
-    const twitchUser = await this.twitchService.getUserByCode(code);
-    const User = await this.userService.getUserByTwitchAccount(twitchUser);
-    await new Promise((success) => req.login(User, () => success()));
-    return this.userService.getCleanUser(User);
+  initializePassword() {
+    passport.use(new twitchStrategy({
+      clientID: this.config.twitch.clientId,
+      clientSecret: this.config.twitch.clientSecret,
+      callbackURL: `${this.config.backendUrl}/api/v1/auth/twitch/callback`,
+      scope: 'user_read'
+    }, (accessToken, refreshToken, profile, done) => {
+      this.userService.getUserBySocialNetworkAccount('twitch', {
+        id: profile.id.toString(),
+        username: profile.username,
+        email: profile.email,
+        picture: profile._json.logo
+      }).then((User) => {
+        this.userService.getCleanUser(User).then((user) => done(null, user));
+      }).catch((error) => {
+        done(error);
+      });
+    }));
   }
 
 }
