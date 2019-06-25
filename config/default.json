@@ -36,7 +36,6 @@
     },
     "sender": ""
   },
-  "frontUrl": "",
   "peerplays": {
     "peerplaysWS": "wss://api.ppy.blckchnd.com",
     "peerplaysFaucetURL": "https://beatrice-faucet.peerplays.download/faucet",
