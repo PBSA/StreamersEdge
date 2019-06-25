@@ -131,7 +131,7 @@ class ProfileController {
   _uploadAvatarMiddleware() {
     return async (req) => {
       try {
-        return await this.fileService.saveImage(req, 'avatar');
+        req.uploadedFile = await this.fileService.saveImage(req, 'avatar');
       } catch (e) {
         throw new RestError(e.message, 400);
       }
@@ -155,7 +155,7 @@ class ProfileController {
   }
 
   async uploadAvatar(user, data, req) {
-    user = await this.userService.updateAvatar(user, req.file.filename);
+    user = await this.userService.updateAvatar(user, req.uploadedFile);
     return this.userService.getCleanUser(user);
   }
 

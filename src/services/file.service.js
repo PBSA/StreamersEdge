@@ -2,13 +2,19 @@ const pify = require('pify');
 const multer = require('multer');
 const path = require('path');
 const fse = require('fs-extra');
+const fs = require('fs');
 const randomString = require('randomstring');
 const Jimp = require('jimp');
 const mkdirp = require('mkdirp');
 
 class FileService {
 
-  constructor({config}) {
+  /**
+   * @param {AppConfig} config
+   * @param {S3Repository} s3Repository
+   */
+  constructor({config, s3Repository}) {
+    this.s3Repository = s3Repository;
     this.basePath = `${config.basePath}/public`;
     this.config = config;
 
@@ -99,6 +105,9 @@ class FileService {
     }
 
     await this.sliceImageSize(file.filename, key);
+    const url = await this.deployToS3(file.filename, key);
+    await this.deleteImage(file.filename, key);
+    return url;
   }
 
   checkPath(pathFile) {
@@ -124,6 +133,18 @@ class FileService {
     const pathFile = `${this.basePath}/images/${key}`;
     await fse.remove(`${pathFile}/original/${filename}`);
     await fse.remove(`${pathFile}/${this.IMAGES_SIZE.x}x${this.IMAGES_SIZE.y}/${filename}`);
+  }
+
+  async deployToS3(filename, key) {
+    const pathFile = `${this.basePath}/images/${key}`;
+    const originalFile = await new Promise((success, fail) => {
+      fs.readFile(`${pathFile}/original/${filename}`, (err, file) => err ? fail(err) : success(file));
+    });
+    await this.s3Repository.deployFile(originalFile, `${key}/original/${filename}`);
+    const finishFile = await new Promise((success, fail) => {
+      fs.readFile(`${pathFile}/${this.IMAGES_SIZE.x}x${this.IMAGES_SIZE.y}/${filename}`, (err, file) => err ? fail(err) : success(file));
+    });
+    return await this.s3Repository.deployFile(finishFile, `${key}/${this.IMAGES_SIZE.x}x${this.IMAGES_SIZE.y}/${filename}`);
   }
 
   _destination(req, file, done) {
