@@ -25,11 +25,8 @@ const profileConstants = require('../constants/profile');
  * @property {String} twitchId
  * @property {String} twitchUserName
  * @property {String} googleId
-<<<<<<< HEAD
  * @property {String} facebookId
-=======
  * @property {String} googleName
->>>>>>> develop
  * @property {String} avatar
  * @property {String} youtube
  * @property {String} facebook
