@@ -2,6 +2,9 @@
 
 Backend module for StreamersEdge application
 
+- [Admin](#admin)
+	- [Get authorized admin profile](#get-authorized-admin-profile)
+	
 - [Auth](#auth)
 	- [Confirm email](#confirm-email)
 	- [Logout](#logout)
@@ -22,6 +25,11 @@ Backend module for StreamersEdge application
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
 	
+- [Stream](#stream)
+	- [Get stream](#get-stream)
+	- [Get streams](#get-streams)
+	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
+	
 - [Twitch](#twitch)
 	- [Auth by twitch](#auth-by-twitch)
 	
@@ -31,6 +39,38 @@ Backend module for StreamersEdge application
 	
 
 
+# Admin
+
+## Get authorized admin profile
+
+<p>Get profile of authorized admin</p>
+
+	GET /api/v1/admin/profile
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
+  }
+}
+```
 # Auth
 
 ## Confirm email
@@ -335,10 +375,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
-    "peerplaysAccountName": "testaccount",
-    "bitcoinAddress": ""
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
 }
 ```
@@ -360,10 +405,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
   }
 }
 ```
@@ -380,10 +430,12 @@ Request-Example:
 
 ```
 {
+  "avatar": "",
   "youtube": "",
   "facebook": "",
   "peerplaysAccountName": "",
-  "bitcoinAddress": ""
+  "bitcoinAddress": "",
+  "userType": "viewer"
 }
 ```
 
@@ -398,11 +450,120 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
+}
+```
+# Stream
+
+## Get stream
+
+<p>Get Stream by StreamId</p>
+
+	GET /api/v1/stream/:id
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": {
+  "id": 1,
+  "name": "TSM chocoTaco | today's weather: thirsty",
+  "game": "pubg",
+  "sourceName": "twitch",
+  "embedUrl": "",
+  "channelId": "34608843376",
+  "views": 3536,
+  "isLive": true,
+  "startTime": "2019-06-21T00:09:40.000Z",
+  "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
+  "user": {
+      "id": 10,
+      "username": "jotprabh",
+      "email": "prabhjot.narula@gmail.com",
+      "twitchUserName": null,
+      "googleName": null,
+      "youtube": "",
+      "facebook": "",
+      "peerplaysAccountName": "",
+      "bitcoinAddress": "",
+      "userType": null
+    }
+  },
+  "status": 200
+}
+```
+## Get streams
+
+<p>Get Streams</p>
+
+	GET /api/v1/streams
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": [
+      {
+          "id": 1,
+          "name": "TSM chocoTaco | today's weather: thirsty",
+          "game": "pubg",
+          "sourceName": "twitch",
+          "embedUrl": "",
+          "channelId": "34608843376",
+          "views": 3536,
+          "isLive": true,
+          "startTime": "2019-06-21T00:09:40.000Z",
+          "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
+          "user": {
+              "id": 10,
+              "username": "jotprabh",
+              "email": "prabhjot.narula@gmail.com",
+              "twitchUserName": null,
+              "googleName": null,
+              "youtube": "",
+              "facebook": "",
+              "peerplaysAccountName": "",
+              "bitcoinAddress": "",
+              "userType": null
+          }
+      }
+  ],
+  "status": 200
+}
+```
+## Get Streams for users from Twitch
+
+
+
+	GET /api/v1/stream/populate-twitch-streams
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": true
 }
 ```
 # Twitch
