@@ -1,5 +1,5 @@
 const challengeConstants = require('../constants/challenge');
-
+const invitationConstants = require('../constants/invitation');
 
 class ChallengeService {
 
@@ -8,6 +8,8 @@ class ChallengeService {
    * @param {ChallengeConditionRepository} opts.challengeConditionRepository
    * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
    * @param {UserRepository} opts.userRepository
+   * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
+   * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
    * @param {WebPushConnection} opts.webPushConnection
    */
   constructor(opts) {
@@ -15,12 +17,15 @@ class ChallengeService {
     this.challengeConditionRepository = opts.challengeConditionRepository;
     this.userRepository = opts.userRepository;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
+    this.userRepository = opts.userRepository;
+    this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
+    this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.webPushConnection = opts.webPushConnection;
     this.vapidData = {};
     this.userVapidKeys = {};
     this.errors = {
-      challengeNotFound: 'classicGame_NOT_FOUND',
-      isNotAccessedToAnyone: 'challenge_IS_NOT_ACCESSED_TO_ANYONE'
+      DO_NOT_RECEIVE_INVITATIONS: 'THIS_IS_PRIVATE_CHALLENGE',
+      CHALLENGE_NOT_FOUND: 'CLASSIC_GAME_NOT_FOUND'
     };
   }
 
@@ -50,7 +55,6 @@ class ChallengeService {
     }));
 
     if (challengeObject.accessRule === challengeConstants.accessRules.invite) {
-      const creatorEmail = await this.userRepository.findByPk(creatorId);
 
       await Promise.all(challengeObject.invitedAccounts.map(async (id) => {
         await this.challengeInvitedUsersRepository.create({
@@ -60,18 +64,38 @@ class ChallengeService {
 
         const vapidKeys = this.userVapidKeys[id];
         const invitation = {title: `You invited to ${Challenge.name}`};
-        await this.webPushConnection.sendNotificaton(this.vapidData[id], creatorEmail.email, vapidKeys, invitation);
+
+        const invitationState = await this.userRepository.findByPk(id);
+
+        switch (invitationState.invitations) {
+          case invitationConstants.invitationStatus.all:
+            return await this.webPushConnection.sendNotification(this.vapidData[id], vapidKeys, invitation);
+          case invitationConstants.invitationStatus.users: {
+            const isAllowedForUser = await this.whitelistedUsersRepository.isWhitelistedFor(id, creatorId);
+
+            if (isAllowedForUser) {
+              return await this.webPushConnection.sendNotification(this.vapidData[id], vapidKeys, invitation);
+            }
+          }
+
+            break;
+          default:
+            return;
+        }
       }));
 
     }
 
     if (challengeObject.accessRule === challengeConstants.accessRules.anyone) {
-      const creatorEmail = await this.userRepository.findByPk(creatorId);
 
       await Promise.all(Object.keys(this.vapidData).map(async (userId) => {
-        const vapidKeys = this.userVapidKeys[userId];
-        const notification = {title: `Challenge ${Challenge.name} appeared`};
-        await this.webPushConnection.sendNotificaton(this.vapidData[userId], creatorEmail.email, vapidKeys, notification);
+        const notificationsState = await this.userRepository.findByPk(userId);
+
+        if (notificationsState.notifications === true) {
+          const vapidKeys = this.userVapidKeys[userId];
+          const notification = {title: `Challenge ${Challenge.name} appeared`};
+          await this.webPushConnection.sendNotification(this.vapidData[userId], vapidKeys, notification);
+        }
       }));
 
     }
@@ -112,13 +136,15 @@ class ChallengeService {
       return this.userVapidKeys[userId].publicKey;
     }
 
-    const vapidKeys = this.webPushConnection.generateVapidKeys();
-    this.userVapidKeys[userId] = {
-      publicKey: vapidKeys.publicKey,
-      privateKey: vapidKeys.privateKey
-    };
+    if (!this.userVapidKeys.hasOwnProperty(userId)) {
+      const vapidKeys = this.webPushConnection.generateVapidKeys();
+      this.userVapidKeys[userId] = {
+        publicKey: vapidKeys.publicKey,
+        privateKey: vapidKeys.privateKey
+      };
 
-    return this.userVapidKeys[userId].publicKey;
+      return this.userVapidKeys[userId].publicKey;
+    }
 
   }
 
@@ -132,16 +158,44 @@ class ChallengeService {
     const challenge = await this.challengeRepository.findByPk(challengeId);
 
     if (!challenge) {
-      throw new Error(this.errors.challengeNotFound);
-    }
-
-    if (challenge.accessRule !== challengeConstants.accessRules.anyone) {
-      throw new Error(this.errors.isNotAccessedToAnyone);
+      throw this.errors.CHALLENGE_NOT_FOUND;
     }
 
     const vapidKeys = this.userVapidKeys[toUserWithId];
     const invitation = {title: `You invited to ${challenge.name}`};
-    return await this.webPushConnection.sendNotificaton(this.vapidData[toUserWithId], fromUser.email, vapidKeys, invitation);
+
+    const accessStatus = await this.userRepository.findByPk(toUserWithId);
+
+    const isInvited = await this.challengeInvitedUsersRepository.isUserInvited(challengeId, toUserWithId);
+
+    if (challenge.accessRule !== challengeConstants.accessRules.anyone && !isInvited) {
+      throw this.errors.DO_NOT_RECEIVE_INVITATIONS;
+    }
+
+    switch (accessStatus.invitations) {
+      case invitationConstants.invitationStatus.users: {
+        const isAllowedForUser = await this.whitelistedUsersRepository.isWhitelistedFor(toUserWithId, fromUser.id);
+
+        if (isAllowedForUser) {
+          return await this.webPushConnection.sendNotification(this.vapidData[toUserWithId], vapidKeys, invitation);
+        }
+      }
+
+        break;
+      case invitationConstants.invitationStatus.games: {
+        const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(toUserWithId, challengeId);
+
+        if (isAllowedForGame) {
+          return await this.webPushConnection.sendNotification(this.vapidData[toUserWithId], vapidKeys, invitation);
+        }
+      }
+
+        break;
+      case invitationConstants.invitationStatus.all:
+        return await this.webPushConnection.sendNotification(this.vapidData[toUserWithId], vapidKeys, invitation);
+      default:
+        return;
+    }
 
   }
 

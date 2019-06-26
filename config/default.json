@@ -48,5 +48,6 @@
   "vapid": {
     "publicKey": "",
     "privateKey": ""
-  }
+  },
+  "streamersEdgeServiceEmail": ""
 }

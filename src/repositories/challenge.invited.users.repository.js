@@ -7,6 +7,21 @@ class ChallengeInvitedUsersRepository extends BasePostgresRepository {
     super(model);
   }
 
+
+  /**
+   * @param challengeId
+   * @param userId
+   * @returns {Promise<Boolean>}
+   */
+  async isUserInvited(challengeId, userId) {
+    return !!(await this.model.findOne({
+      where: {
+        challengeId: challengeId,
+        userId: userId
+      }
+    }));
+  }
+
 }
 
 module.exports = ChallengeInvitedUsersRepository;

@@ -160,6 +160,7 @@ class ChallengesController {
          * @apiName InviteToChallenge
          * @apiGroup Challenges
          * @apiVersion 0.1.0
+         * @apiUse ChallengeObjectResponse
          * @apiExample {json} Request-Example:
          * {
          *   "userId": "6",
@@ -169,6 +170,7 @@ class ChallengesController {
          * @apiParam {Number} challengeId Id of of challenge
          */
         'post', '/api/v1/challenges/invite',
+        this.authValidator.loggedOnly,
         this.challengeValidator.invite,
         this.sendInvite.bind(this)
       ]
@@ -205,11 +207,11 @@ class ChallengesController {
     try {
       return await this.challengeService.sendInvite(user, userId, challengeId);
     } catch (err) {
-      switch (err.message) {
-        case this.challengeService.errors.challengeNotFound:
-          throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
-        case this.challengeService.errors.isNotAccessedToAnyone:
-          throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
+      switch (err) {
+        case this.challengeService.errors.CHALLENGE_NOT_FOUND:
+          throw new RestError('', 404, {challengeId: [{message: 'Challenge not found'}]});
+        case this.challengeService.errors.DO_NOT_RECEIVE_INVITATIONS:
+          throw new RestError('', 422, {challengeId: [{message: 'This is private challenge'}]});
         default:
           throw err;
       }
