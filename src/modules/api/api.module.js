@@ -124,7 +124,7 @@ class ApiModule {
       this.googleController,
       this.challengesController,
       this.streamController
-    ].forEach((controller) => controller.getRoutes().forEach((route) => {
+    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
       this.addRestHandler(...route);
     }));
 
