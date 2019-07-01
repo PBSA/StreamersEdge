@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const Sequelize = require('sequelize');
 const moment = require('moment');
 const RestError = require('../errors/rest.error');
+const {types: txTypes} = require('../constants/transaction');
 
 class UserService {
 
@@ -206,6 +207,32 @@ class UserService {
   async getUserTransactions(userId, skip, limit) {
     const transactions = await this.transactionRepository.searchTransactions(userId, limit, skip);
     return Promise.all(transactions.map(async (Tx) => Tx.getPublic()));
+  }
+
+  /**
+   *
+   * @param {Number} userId
+   * @param {Number} receiverId
+   * @param signTx
+   * @return {Promise<*>}
+   */
+  async donate(userId, receiverId, donateOp){
+    const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(donateOp);
+
+    await this.transactionRepository.create({
+      txId: broadcastResult[0].id,
+      blockNum: broadcastResult[0].block_num,
+      trxNum: broadcastResult[0].trx_num,
+      ppyAmountValue: donateOp.operations[0][1].amount.amount,
+      type: txTypes.donate,
+      userId,
+      receiverUserId: receiverId,
+      challengeId: null,
+      peerplaysFromId: donateOp.operations[0][1].from,
+      peerplaysToId: donateOp.operations[0][1].to
+    });
+
+    return true;
   }
 
 }

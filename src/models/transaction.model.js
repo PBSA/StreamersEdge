@@ -35,7 +35,8 @@ module.exports = {
       ppyAmountValue: {type: Sequelize.INTEGER},
       type: {type: Sequelize.ENUM(Object.keys(types).map((key) => types[key]))},
       peerplaysFromId: {type: Sequelize.STRING},
-      peerplaysToId: {type: Sequelize.STRING}
+      peerplaysToId: {type: Sequelize.STRING},
+      receiverUserId: {type: Sequelize.INTEGER}
     }, {
       sequelize,
       modelName: 'transaction'
@@ -44,6 +45,7 @@ module.exports = {
   associate: (models) => {
     TransactionModel.belongsTo(models.User.model);
     TransactionModel.belongsTo(models.Challenge.model);
+    TransactionModel.belongsTo(models.User.model, {foreignKey : 'receiverUserId', targetKey: 'id'});
   },
   get model() {
     return TransactionModel;

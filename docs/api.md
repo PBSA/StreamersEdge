@@ -31,6 +31,7 @@ Backend module for StreamersEdge application
 	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
 	
 - [Transactions](#transactions)
+	- [Watch for donate transaction](#watch-for-donate-transaction)
 	- [Get user transactions](#get-user-transactions)
 	
 - [Twitch](#twitch)
@@ -548,6 +549,60 @@ HTTP/1.1 200 OK
 ```
 # Transactions
 
+## Watch for donate transaction
+
+
+
+	GET /api/v1/donate
+
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "receiverId": "testaccount",
+  "donateOp": {
+     "ref_block_num": 52650,
+     "ref_block_prefix": 4002977493,
+	    "expiration": "2019-07-01T09:59:32",
+     "operations": [
+       [ 0,
+         {
+          "fee": {
+             "amount": "2000000",
+             "asset_id": "1.3.0"
+          },
+          "from": "1.2.33",
+          "to": "1.2.22",
+          "amount": {
+            "amount": "100",
+            "asset_id": "1.3.0"
+            },
+            }
+          ]
+       ],
+  "extensions": [],
+  "signatures": [
+      "1f034e960ec8a809f26923748a32bdd6e2fc2ebe4e8051ec3b1e53409f37eff3cc24063f37539814dc05206794fbe6562d5db51cffa662357e3ca7de0710a0d187"
+    ]
+   ]
+ },
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "status": 200
+ "result": true
+}
+```
 ## Get user transactions
 
 
