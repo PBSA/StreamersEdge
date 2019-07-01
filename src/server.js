@@ -76,9 +76,11 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} peerplays.sendAssetId
  * @property {String} peerplays.paymentReceiver
  * @property {String} peerplays.paymentReceiverWIF
+ * @property {String} peerplays.feeReceiver
  * @property {String} paypal.clientId
  * @property {String} paypal.secret
  * @property {String} paypal.environment
  * @property {String} coinmarketcap.apiKey
+ * @property {Number} userRewardPercent
  * @property {{ joinFee: string }} challenge
  */

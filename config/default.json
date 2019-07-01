@@ -48,6 +48,7 @@
     "paymentAccountID": "",
     "paymentAccountWIF": "",
     "paymentReceiver": "",
+    "feeReceiver": "",
     "paymentReceiverWIF": ""
   },
   "vapid": {
@@ -66,6 +67,7 @@
   "coinmarketcap": {
     "apiKey": ""
   },
+  "userRewardPercent": 0.95,
   "challenge": {
     "joinFee": "100"
   }

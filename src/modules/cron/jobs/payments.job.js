@@ -1,5 +1,6 @@
 const challengeConstants = require('../../../constants/challenge');
 const txConstants = require('../../../constants/transaction');
+const BigNumber = require('bignumber.js');
 
 class PaymentsJob {
 
@@ -55,8 +56,24 @@ class PaymentsJob {
   }
 
   async payToWinner(Challenge) {
-    console.log(Challenge);
-    // TODO will be ended on a next branch
+    const Winner = await this.userRepository.model.findByPk(Challenge.winnerUserId);
+
+    if (!Winner.peerplaysAccountId) {
+      return;
+    }
+
+    const reward = new BigNumber(Challenge.ppyAmount).times(this.config.userRewardPercent).toFixed(0);
+
+    const result = await this.peerplaysRepository.sendPPYFromReceiverAccount(Winner.peerplaysAccountId, reward);
+    await this.peerplaysRepository.sendPPYFromReceiverAccount(
+      this.config.peerplays.feeReceiver,
+      new BigNumber(Challenge.ppyAmount).minus(reward)
+    );
+
+    await this.saveTx(result, Challenge, Winner);
+
+    Challenge.status = challengeConstants.status.paid;
+    await Challenge.save();
   }
 
   async payToOwner(Challenge) {
@@ -72,20 +89,24 @@ class PaymentsJob {
     }
 
     const result = await this.peerplaysRepository.sendPPYFromReceiverAccount(creator.peerplaysAccountId, Challenge.ppyAmount);
-    await this.transactionRepository.create({
-      txId: result.id,
-      blockNum: result.block_num,
-      trxNum: result.trx_num,
-      ppyAmountValue: Challenge.ppyAmount,
-      type: txConstants.types.challengeRefund,
-      userId: creator.id,
-      challengeId: Challenge.id,
-      peerplaysFromId: this.config.peerplays.paymentReceiver,
-      peerplaysToId: creator.peerplaysAccountId
-    });
+    await this.saveTx(result, Challenge, creator);
 
     Challenge.status = challengeConstants.status.paid;
     await Challenge.save();
+  }
+
+  async saveTx(tx, Challenge, User) {
+    await this.transactionRepository.create({
+      txId: tx.id,
+      blockNum: tx.block_num,
+      trxNum: tx.trx_num,
+      ppyAmountValue: Challenge.ppyAmount,
+      type: txConstants.types.challengeRefund,
+      userId: User.id,
+      challengeId: Challenge.id,
+      peerplaysFromId: this.config.peerplays.paymentReceiver,
+      peerplaysToId: User.peerplaysAccountId
+    });
   }
 
 }
