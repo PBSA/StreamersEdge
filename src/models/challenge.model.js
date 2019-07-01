@@ -94,6 +94,10 @@ module.exports = {
       conditionsText: {
         type: Sequelize.TEXT,
         allowNull: true
+      },
+      status: {
+        type: Sequelize.ENUM(Object.keys(challengeConstants.status).map((key) => challengeConstants.status[key])),
+        defaultValue: challengeConstants.status.open
       }
     }, {
       sequelize,
@@ -102,6 +106,9 @@ module.exports = {
   },
   associate: (models) => {
     ChallengeModel.belongsTo(models.User.model);
+    ChallengeModel.belongsTo(models.User.model, {
+      foreignKey: 'winnerUserId'
+    });
     ChallengeModel.hasMany(models.ChallengeCondition.model);
     ChallengeModel.hasMany(models.ChallengeInvitedUsers.model);
     ChallengeModel.hasMany(models.JoinedUsers.model);
@@ -110,3 +117,4 @@ module.exports = {
     return ChallengeModel;
   }
 };
+

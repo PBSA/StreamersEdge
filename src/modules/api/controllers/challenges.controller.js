@@ -264,6 +264,7 @@ class ChallengesController {
       switch (err) {
         case this.challengeService.errors.CHALLENGE_NOT_FOUND:
           throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
+
         default:
           throw err;
       }

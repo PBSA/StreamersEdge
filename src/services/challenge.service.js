@@ -143,7 +143,7 @@ class ChallengeService {
    * @param challengeId
    * @returns {Promise<ChallengePublicObject>}
    */
-  async getCleanObject(challengeId) {
+  async getCleanObject(challengeId, userId) {
     const Challenge = await this.challengeRepository.findByPk(challengeId, {
       include: [{
         model: this.userRepository.model,
@@ -159,7 +159,20 @@ class ChallengeService {
       throw this.errors.CHALLENGE_NOT_FOUND;
     }
 
-    return Challenge.getPublic();
+    switch (Challenge.accessRule) {
+      case challengeConstants.accessRules.invite: {
+        const checkAccess = await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId);
+
+        if (!checkAccess) {
+          throw this.errors.DO_NOT_RECEIVE_INVITATIONS;
+        }
+
+        return Challenge.getPublic();
+      }
+
+      default:
+        return Challenge.getPublic();
+    }
   }
 
   /**

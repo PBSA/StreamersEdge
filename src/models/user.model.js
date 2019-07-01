@@ -91,10 +91,10 @@ module.exports = {
         unique: true,
         allowNull: true
       },
-      twitchUserName: {
-        type: Sequelize.STRING,
-        unique: true
-      },
+      // twitchUserName: {
+      //   type: Sequelize.STRING,
+      //   unique: true
+      // },
       googleId: {
         type: Sequelize.STRING,
         unique: true,
@@ -105,9 +105,9 @@ module.exports = {
         unique: true,
         allowNull: true
       },
-      googleName: {
-        type: Sequelize.STRING
-      },
+      // googleName: {
+      //   type: Sequelize.STRING
+      // },
       youtube: {
         type: Sequelize.STRING,
         defaultValue: ''
@@ -132,10 +132,6 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: true
       },
-      invitations: {
-        type: Sequelize.ENUM(...Object.keys(invitationConstants.invitationStatus)),
-        defaultValue: invitationConstants.invitationStatus.all
-      },
       userType: {
         type:Sequelize.ENUM,
         values: profileConstants.userType
@@ -143,6 +139,10 @@ module.exports = {
       applicationType: {
         type:Sequelize.ENUM,
         values: profileConstants.applicationType
+      },
+      invitations: {
+        type: Sequelize.ENUM(...Object.keys(invitationConstants.invitationStatus)),
+        defaultValue: invitationConstants.invitationStatus.all
       },
       pushNotificationId: {
         type: Sequelize.STRING

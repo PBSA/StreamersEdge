@@ -9,8 +9,13 @@ module.exports = {
   operators: ['>', '<', '=', '>=', '<='],
   joinTypes: ['AND', 'OR', 'END'],
   paramTypes: {
-    resultPlace: 'result_place',
-    winTime: 'win_time',
+    resultPlace: 'resultPlace',
+    winTime: 'winTime',
     frags: 'frags'
+  },
+  status: {
+    open: 'open',
+    resolved: 'resolved',
+    paid: 'paid'
   }
 };
