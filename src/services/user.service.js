@@ -12,9 +12,11 @@ class UserService {
    * @param {ResetTokenRepository} opts.resetTokenRepository
    * @param {MailService} opts.mailService
    * @param {PubgApiRepository} opts.pubgApiRepository
+   * @param {TransactionRepository} opts.transactionRepository
    */
   constructor(opts) {
     this.userRepository = opts.userRepository;
+    this.transactionRepository = opts.transactionRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
@@ -199,6 +201,11 @@ class UserService {
     await User.save();
 
     return true;
+  }
+
+  async getUserTransactions(userId, skip, limit) {
+    const transactions = await this.transactionRepository.searchTransactions(userId, limit, skip);
+    return Promise.all(transactions.map(async (Tx) => Tx.getPublic()));
   }
 
 }

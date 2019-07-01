@@ -17,10 +17,21 @@ Backend module for StreamersEdge application
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
 	
+- [PayPal](#paypal)
+	- [Process payment paypal](#process-payment-paypal)
+	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
+	
+- [Stream](#stream)
+	- [Get stream](#get-stream)
+	- [Get streams](#get-streams)
+	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
+	
+- [Transactions](#transactions)
+	- [Get user transactions](#get-user-transactions)
 	
 - [Twitch](#twitch)
 	- [Auth by twitch](#auth-by-twitch)
@@ -303,6 +314,15 @@ HTTP/1.1 200 OK
 	GET /api/v1/auth/google
 
 
+# PayPal
+
+## Process payment paypal
+
+
+
+	POST /api/v1/payment
+
+
 # Profile
 
 ## Create peerplays account for authorized user
@@ -335,10 +355,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
-    "peerplaysAccountName": "testaccount",
-    "bitcoinAddress": ""
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
 }
 ```
@@ -360,10 +385,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
   }
 }
 ```
@@ -380,10 +410,12 @@ Request-Example:
 
 ```
 {
+  "avatar": "",
   "youtube": "",
   "facebook": "",
   "peerplaysAccountName": "",
-  "bitcoinAddress": ""
+  "bitcoinAddress": "",
+  "userType": "viewer"
 }
 ```
 
@@ -398,11 +430,158 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
+}
+```
+# Stream
+
+## Get stream
+
+<p>Get Stream by StreamId</p>
+
+	GET /api/v1/stream/:id
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": {
+  "id": 1,
+  "name": "TSM chocoTaco | today's weather: thirsty",
+  "game": "pubg",
+  "sourceName": "twitch",
+  "embedUrl": "",
+  "channelId": "34608843376",
+  "views": 3536,
+  "isLive": true,
+  "startTime": "2019-06-21T00:09:40.000Z",
+  "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
+  "user": {
+      "id": 10,
+      "username": "jotprabh",
+      "email": "prabhjot.narula@gmail.com",
+      "twitchUserName": null,
+      "googleName": null,
+      "youtube": "",
+      "facebook": "",
+      "peerplaysAccountName": "",
+      "bitcoinAddress": "",
+      "userType": null
+    }
+  },
+  "status": 200
+}
+```
+## Get streams
+
+<p>Get Streams</p>
+
+	GET /api/v1/streams
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": [
+      {
+          "id": 1,
+          "name": "TSM chocoTaco | today's weather: thirsty",
+          "game": "pubg",
+          "sourceName": "twitch",
+          "embedUrl": "",
+          "channelId": "34608843376",
+          "views": 3536,
+          "isLive": true,
+          "startTime": "2019-06-21T00:09:40.000Z",
+          "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
+          "user": {
+              "id": 10,
+              "username": "jotprabh",
+              "email": "prabhjot.narula@gmail.com",
+              "twitchUserName": null,
+              "googleName": null,
+              "youtube": "",
+              "facebook": "",
+              "peerplaysAccountName": "",
+              "bitcoinAddress": "",
+              "userType": null
+          }
+      }
+  ],
+  "status": 200
+}
+```
+## Get Streams for users from Twitch
+
+
+
+	GET /api/v1/stream/populate-twitch-streams
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": true
+}
+```
+# Transactions
+
+## Get user transactions
+
+
+
+	GET /api/v1/transactions
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| limit			| String			|  							|
+| skip			| String			| **optional** 							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "status": 200
+ "result": [{
+   "id": 1,
+   "txId": "8ed2756c1b26883585f6259eca90ad0e44be04a2",
+   "blockNum": 901602,
+   "trxNum": 0,
+   "ppyAmountValue": 100,
+   "type": "challengeCreation",
+   "createdAt": "2019-07-01T07:25:33.100Z",
+   "updatedAt": "2019-07-01T07:25:33.100Z",
+   "userId": 1,
+   "challengeId": 3
+ }]
 }
 ```
 # Twitch

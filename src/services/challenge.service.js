@@ -1,4 +1,5 @@
 const challengeConstants = require('../constants/challenge');
+const {types: txTypes} = require('../constants/transaction');
 
 class ChallengeService {
 
@@ -7,12 +8,15 @@ class ChallengeService {
    * @param {ChallengeConditionRepository} opts.challengeConditionRepository
    * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
    * @param {UserRepository} opts.userRepository
+   * @param {PeerplaysRepository} opts.peerplaysRepository
    */
   constructor(opts) {
     this.challengeRepository = opts.challengeRepository;
     this.challengeConditionRepository = opts.challengeConditionRepository;
     this.userRepository = opts.userRepository;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
+    this.peerplaysRepository = opts.peerplaysRepository;
+    this.transactionRepository = opts.transactionRepository;
   }
 
   /**
@@ -22,6 +26,8 @@ class ChallengeService {
    * @returns {Promise<ChallengePublicObject>}
    */
   async createChallenge(creatorId, challengeObject) {
+    const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
+
     const Challenge = await this.challengeRepository.create({
       userId: creatorId,
       name: challengeObject.name,
@@ -48,6 +54,16 @@ class ChallengeService {
         });
       }));
     }
+
+    await this.transactionRepository.create({
+      txId: broadcastResult[0].id,
+      blockNum: broadcastResult[0].block_num,
+      trxNum: broadcastResult[0].trx_num,
+      ppyAmountValue: challengeObject.ppyAmount,
+      type: txTypes.challengeCreation,
+      userId: creatorId,
+      challengeId: Challenge.id
+    });
 
     return this.getCleanObject(Challenge.id);
   }

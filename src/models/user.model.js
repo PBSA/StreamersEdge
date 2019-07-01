@@ -107,6 +107,10 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: ''
       },
+      peerplaysAccountId: {
+        type: Sequelize.STRING,
+        defaultValue: ''
+      },
       bitcoinAddress: {
         type: Sequelize.STRING,
         defaultValue: ''

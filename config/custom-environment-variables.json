@@ -28,5 +28,18 @@
   },
   "pubg": {
     "apiKey": "PUBG_API_KEY"
+  },
+  "paypal": {
+    "clientId": "PAYPAL_CLIENT_ID",
+    "secret": "PAYPAL_SECRET",
+    "environment": "PAYPAL_ENV"
+  },
+  "coinmarketcap": {
+    "apiKey": "COINMARKETCAP_API_KEY"
+  },
+  "peerplays": {
+    "paymentAccountID": "PEERPLAYS_PAYMENT_ACCOUNT_ID",
+    "paymentAccountWIF": "PEERPLAYS_PAYMENT_ACCOUNT_WIF",
+    "paymentReceiver": "PEERPLAYS_PAYMENT_RECEIVER"
   }
 }

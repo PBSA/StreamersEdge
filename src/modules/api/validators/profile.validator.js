@@ -8,12 +8,15 @@ class ProfileValidator extends BaseValidator {
   /**
    * @param {PubgApiRepository} opts.pubgApiRepository
    * @param {AppConfig} opts.config
+   * @param {PeerplaysRepository} opts.peerplaysRepository
    */
   constructor(opts) {
     super();
 
     this.pubgApiRepository = opts.pubgApiRepository;
     this.config = opts.config;
+    this.peerplaysRepository = opts.peerplaysRepository;
+
     this.patchProfile = this.patchProfile.bind(this);
     this.createPeerplaysAccount = this.createPeerplaysAccount.bind(this);
   }
@@ -30,6 +33,11 @@ class ProfileValidator extends BaseValidator {
     };
 
     return this.validate(null, bodySchema, async (req, query, body) => {
+      const {peerplaysAccountName} = body;
+
+      if (peerplaysAccountName) {
+        body.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccountName);
+      }
 
       if (body.pubgUsername) {
         try {
