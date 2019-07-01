@@ -134,7 +134,18 @@ class AuthValidator extends BaseValidator {
       login: Joi.string().required(),
       password: Joi.string().required()
     };
-    return this.validate(null, bodySchema, (req, query, body) => body);
+
+    return this.validate(null, bodySchema,async (req, query, body) => {
+      const {login} = body;
+
+      const user = await this.userRepository.getByLogin(login);
+
+      if(user && user.status === profileConstants.status.banned){
+        throw new ValidateError(403, 'You have been banned. Please contact our admins for potential unban.');
+      }
+
+      return body;
+    });
   }
 
   validateForgotPassword() {

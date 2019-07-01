@@ -53,6 +53,10 @@ class UserModel extends Model {
       userType: this.userType
     };
   }
+  
+  addTwitchLink() {
+    this.dataValues.twitchLink = this.twitchId ? `https://www.twitch.tv/${this.twitchId}/videos` : null;
+  }
 }
 
 module.exports = {
@@ -116,6 +120,10 @@ module.exports = {
       },
       pushNotificationId: {
         type: Sequelize.STRING
+      },
+      status: {
+        type: Sequelize.ENUM(Object.keys(profileConstants.status).map((key) => profileConstants.status[key])),
+        defaultValue: profileConstants.status.active
       }
     }, {
       sequelize,
@@ -127,6 +135,7 @@ module.exports = {
     UserModel.hasMany(models.Challenge.model);
     UserModel.hasMany(models.ChallengeInvitedUsers.model);
     UserModel.hasMany(models.Stream.model);
+    UserModel.hasMany(models.BanHistory.model);
   },
   get model() {
     return UserModel;

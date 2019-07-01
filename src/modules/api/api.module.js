@@ -116,14 +116,14 @@ class ApiModule {
    */
   _initRestRoutes() {
     [
+      this.adminController,
       this.authController,
       this.profileController,
       this.usersController,
       this.twitchController,
       this.googleController,
       this.challengesController,
-      this.streamController,
-      this.adminController
+      this.streamController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
       this.addRestHandler(...route);
     }));

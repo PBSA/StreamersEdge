@@ -1,6 +1,9 @@
 const Sequelize = require('sequelize');
+
 const {model} = require('../models/user.model');
+const {model: banHistoryModel} = require('../models/ban.history.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
+const {status} = require('../constants/profile');
 
 class UserRepository extends BasePostgresRepository {
 
@@ -46,6 +49,77 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
+  /**
+   * @param flag
+   * @param search
+   * @param offset
+   * @param limit
+   * @returns {Promise<UserModel[]>}
+   */
+  async getUsersWithBansHistory(flag, search, offset, limit) {
+    const filter = search ? {
+      [Sequelize.Op.or]: [{
+        username: {
+          [Sequelize.Op.like]: `%${search}%`
+        }
+      }, {
+        email: {
+          [Sequelize.Op.like]: `%${search}%`
+        }
+      }]
+    } : {};
+
+    switch (flag) {
+      case status.banned: {
+        filter.status = status.banned;
+        break;
+      }
+
+      case status.active: {
+        filter.status = status.active;
+        break;
+      }
+
+      default: {
+        break;
+      }
+    }
+
+    return this.model.findAll({
+      where: filter,
+      include: [
+        {
+          model: banHistoryModel,
+          where: {
+            unbannedById: null
+          },
+          attributes: ['bannedById', ['createdAt', 'bannedAt']],
+          required: false
+        }
+      ],
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'applicationType', 'pushNotificationId', 'password']
+      },
+      raw: true,
+      order: [[ 'id', 'ASC' ]],
+      offset,
+      limit
+    });
+  }
+
+  async getUserInfo(userId) {
+    const userInfo = await this.model.findOne({
+      where: {
+        id: userId
+      },
+      attributes: ['username', 'email', 'peerplaysAccountName', 'facebook', 'youtube', 'twitchId']
+    });
+
+    userInfo.addTwitchLink();
+
+    return userInfo;
+  }
+
   async getByEmailOrUsername(email, username) {
     return this.model.findOne({
       where: {[Sequelize.Op.or]: [{email}, {username}]}
@@ -56,6 +130,29 @@ class UserRepository extends BasePostgresRepository {
     return this.model.findOne({
       where: {twitchId:searchtwitchId}
     });
+  }
+
+  /**
+   *
+   * @param {Number} userId
+   * @param {String} status
+   * @param {Object} transaction
+   * @return {Promise<*>}
+   */
+  async changeStatus(userId, status, {transaction} = {transaction: undefined}) {
+    return this.model.update(
+      {
+        status
+      },
+      {
+        where: {
+          id: userId
+        },
+        returning: true,
+        transaction
+      }
+    );
+
   }
 
 }
