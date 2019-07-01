@@ -14,6 +14,8 @@ const {types} = require('../constants/transaction');
  * @property {String} type
  * @property {Number} userId
  * @property {Number} challengeId
+ * @property {Number} peerplaysFromId
+ * @property {Number} peerplaysFromId
  */
 class TransactionModel extends Model {
   getPublic() {
@@ -31,7 +33,9 @@ module.exports = {
       blockNum: {type: Sequelize.INTEGER},
       trxNum: {type: Sequelize.INTEGER},
       ppyAmountValue: {type: Sequelize.INTEGER},
-      type: {type: Sequelize.ENUM(Object.keys(types).map((key) => types[key]))}
+      type: {type: Sequelize.ENUM(Object.keys(types).map((key) => types[key]))},
+      peerplaysFromId: {type: Sequelize.STRING},
+      peerplaysToId: {type: Sequelize.STRING}
     }, {
       sequelize,
       modelName: 'transaction'

@@ -62,7 +62,9 @@ class ChallengeService {
       ppyAmountValue: challengeObject.ppyAmount,
       type: txTypes.challengeCreation,
       userId: creatorId,
-      challengeId: Challenge.id
+      challengeId: Challenge.id,
+      peerplaysFromId: challengeObject.depositOp.operations[0][1].from,
+      peerplaysToId: challengeObject.depositOp.operations[0][1].to
     });
 
     return this.getCleanObject(Challenge.id);
