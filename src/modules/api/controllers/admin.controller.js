@@ -99,6 +99,7 @@ class AdminController {
        * @apiName BanUserById
        * @apiGroup Admin
        * @apiVersion 0.1.0
+       * @apiParam {Number} userId  User id
        * @apiSuccessExample {json} Success-Response:
        * HTTP/1.1 200 OK
        * {
@@ -111,6 +112,25 @@ class AdminController {
         this.authValidator.loggedAdminOnly,
         this.userValidator.banUser,
         this.banUser.bind(this)
+      ],
+      /**
+       * @api {post} /api/v1/admin/users/unban/:userId Unban user by id
+       * @apiName UnbanUserById
+       * @apiGroup Admin
+       * @apiVersion 0.1.0
+       * @apiParam {Number} userId  User id
+       * @apiSuccessExample {json} Success-Response:
+       * HTTP/1.1 200 OK
+       * {
+       *  "result": true,
+       *  "status": 200
+       * }
+       */
+      [
+        'put', '/api/v1/admin/users/unban/:userId',
+        this.authValidator.loggedAdminOnly,
+        this.userValidator.unbanUser,
+        this.unbanUser.bind(this)
       ],
       /**
        * @api {get} /api/v1/admin/users/ban/:userId get user info by id
@@ -140,6 +160,10 @@ class AdminController {
       ]
     ];
     
+  }
+
+  async unbanUser(user, pure, req) {
+    return this.adminService.unbanUser(user, req.query.userId);
   }
 
   async getProfile(user) {
