@@ -125,7 +125,9 @@ class ApiModule {
       this.googleController,
       this.challengesController,
       this.streamController
-    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => this.addRestHandler(...route)));
+    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
+      this.addRestHandler(...route);
+    }));
 
     this.addRestHandler('use', '*', () => {
       throw new MethodNotAllowedError();
