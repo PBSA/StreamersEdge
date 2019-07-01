@@ -29,6 +29,7 @@ class ApiModule {
    * @param {UserRepository} opts.userRepository
    * @param {ChallengesController} opts.challengesController
    * @param {AdminController} opts.adminController
+   * @param {ReportController} opts.reportController
    */
   constructor(opts) {
     this.config = opts.config;
@@ -45,6 +46,7 @@ class ApiModule {
     this.challengesController = opts.challengesController;
     this.streamController = opts.streamController;
     this.adminController = opts.adminController;
+    this.reportController = opts.reportController;
 
     this.userRepository = opts.userRepository;
   }
@@ -94,6 +96,10 @@ class ApiModule {
       this.app.use(passport.initialize());
       this.app.use(passport.session());
 
+      // backend can process file requests but in production you should
+      // process files directly by nginx
+      this.app.use('/api/images/', express.static('public/images/'));
+
       passport.serializeUser((user, done) => {
         done(null, user.id);
       });
@@ -123,7 +129,8 @@ class ApiModule {
       this.twitchController,
       this.googleController,
       this.challengesController,
-      this.streamController
+      this.streamController,
+      this.reportController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
       this.addRestHandler(...route);
     }));

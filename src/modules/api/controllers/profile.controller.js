@@ -6,11 +6,13 @@ class ProfileController {
    * @param {AuthValidator} opts.authValidator
    * @param {ProfileValidator} opts.profileValidator
    * @param {UserService} opts.userService
+   * @param {FileService} opts.fileService
    */
   constructor(opts) {
     this.authValidator = opts.authValidator;
     this.profileValidator = opts.profileValidator;
     this.userService = opts.userService;
+    this.fileService = opts.fileService;
   }
 
   /**
@@ -20,29 +22,35 @@ class ProfileController {
   getRoutes() {
     return [
       /**
-       * @api {get} /api/v1/profile Get authorized user profile
-       * @apiName ProfileGet
-       * @apiDescription Get profile of authorized user
-       * @apiGroup Profile
-       * @apiVersion 0.1.0
+       * @apiDefine AccountObjectResponse
        * @apiSuccessExample {json} Success-Response:
        * HTTP/1.1 200 OK
        * {
        *   "status": 200,
        *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
+       *     "id": 7,
        *     "username": "test",
        *     "email": "test@email.com",
        *     "twitchUserName": "",
        *     "googleName": "",
-       *     "avatar": "",
        *     "youtube": "",
        *     "facebook": "",
+       *     "twitch": "",
        *     "peerplaysAccountName": "",
        *     "bitcoinAddress": "",
-       *     "userType": "viewer"
-       *   }
+       *     "userType": "viewer",
+       *     "avatar": ""
+       *  }
        * }
+       */
+
+      /**
+       * @api {get} /api/v1/profile Get authorized user profile
+       * @apiName ProfileGet
+       * @apiDescription Get profile of authorized user
+       * @apiGroup Profile
+       * @apiVersion 0.1.0
+       * @apiUse AccountObjectResponse
        */
       [
         'get', '/api/v1/profile',
@@ -63,24 +71,7 @@ class ProfileController {
        *   "bitcoinAddress": "",
        *   "userType": "viewer"
        * }
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "email": "test@email.com",
-       *     "twitchUserName": "",
-       *     "googleName": "",
-       *     "avatar": "",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": "",
-       *     "userType": "viewer"
-       *  }
-       * }
+       * @apiUse AccountObjectResponse
        */
       [
         'patch', '/api/v1/profile',
@@ -99,32 +90,52 @@ class ProfileController {
        *   "activeKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
        *   "ownerKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
        * }
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "email": "test@email.com",
-       *     "twitchUserName": "",
-       *     "googleName": "",
-       *     "avatar": "",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": "",
-       *     "userType": "viewer"
-       *  }
-       * }
+       * @apiUse AccountObjectResponse
        */
       [
         'post', '/api/v1/profile/peerplays/create-account',
         this.authValidator.loggedOnly,
         this.profileValidator.createPeerplaysAccount,
         this.createPeerplaysAccount.bind(this)
+      ],
+      /**
+       * @api {post} /api/v1/profile/avatar Add or change account avatar
+       * @apiName ProfileUploadAvatar
+       * @apiGroup Profile
+       * @apiVersion 0.1.0
+       * @apiExample {form-data} Request-Example:
+       * "file": ...file...
+       * @apiUse AccountObjectResponse
+       */
+      [
+        'post', '/api/v1/profile/avatar',
+        this.authValidator.loggedOnly,
+        () => this._uploadAvatarMiddleware(),
+        this.uploadAvatar.bind(this)
+      ],
+      /**
+       * @api {delete} /api/v1/profile/avatar Delete profile avatar
+       * @apiName ProfileDeleteAvatar
+       * @apiGroup Profile
+       * @apiVersion 0.1.0
+       * @apiUse AccountObjectResponse
+       */
+      [
+        'delete', '/api/v1/profile/avatar',
+        this.authValidator.loggedOnly,
+        this.deleteAvatar.bind(this)
       ]
     ];
+  }
+
+  _uploadAvatarMiddleware() {
+    return async (req) => {
+      try {
+        req.uploadedFile = await this.fileService.saveImage(req, 'avatar');
+      } catch (e) {
+        throw new RestError(e.message, 400);
+      }
+    };
   }
 
   async getProfile(user) {
@@ -141,6 +152,20 @@ class ProfileController {
     } catch (e) {
       throw new RestError(e.message, 400, e.details);
     }
+  }
+
+  async uploadAvatar(user, data, req) {
+    user = await this.userService.updateAvatar(user, req.uploadedFile);
+    return this.userService.getCleanUser(user);
+  }
+
+  async deleteAvatar(user) {
+    if (!user.avatar.match(/^http/)) {
+      await this.fileService.deleteImage(user.avatar, 'avatar');
+    }
+
+    user = await this.userService.updateAvatar(user, null);
+    return this.userService.getCleanUser(user);
   }
 
 }

@@ -7,11 +7,13 @@ class AdminService {
    * @param {UserRepository} opts.userRepository
    * @param {BanHistoryRepository} opts.banHistoryRepository
    * @param {SessionsRepository} opts.sessionsRepository
+   * @param {ReportRepository} opts.reportRepository
    * @param {DbConnection} opts.dbConnection
    */
   constructor(opts) {
     this.dbConnection = opts.dbConnection;
     this.userRepository = opts.userRepository;
+    this.reportRepository = opts.reportRepository;
     this.banHistoryRepository = opts.banHistoryRepository;
     this.sessionsRepository = opts.sessionsRepository;
   }
@@ -68,6 +70,10 @@ class AdminService {
 
   async getUserInfo(userId) {
     return await this.userRepository.getUserInfo(userId);
+  }
+
+  async getReports(){
+    return this.reportRepository.fetchAll();
   }
 
 

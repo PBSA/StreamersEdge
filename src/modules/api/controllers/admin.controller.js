@@ -157,6 +157,41 @@ class AdminController {
         this.authValidator.loggedAdminOnly,
         this.userValidator.getUser,
         this.getUserInfo.bind(this)
+      ],
+      /**
+       * @api {get} /api/v1/admin/reports get all reports
+       * @apiName getAllReports
+       * @apiGroup Admin
+       * @apiVersion 0.1.0
+       * @apiSuccessExample {json} Success-Response:
+       * HTTP/1.1 200 OK
+       *  {
+       *   "result": [
+       *       {
+       *           "id": 1,
+       *           "reportedUserId": 1,
+       *           "reportedByUserId": 2,
+       *           "reason": "offendsMyReligiousSentiments",
+       *           "description": "bad bad bad",
+       *           "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+       *           "reporter": {
+       *               "username": "kokoko"
+       *           },
+       *           "troublemaker": {
+       *               "email": "ww@mail.com",
+       *               "username": "koko",
+       *               "userType": null,
+       *               "avatar": null
+       *           }
+       *       }
+       *   ],
+       *   "status": 200
+       *  }
+       */
+      [
+        'get', '/api/v1/admin/reports',
+        this.authValidator.loggedAdminOnly,
+        this.getAllReports.bind(this)
       ]
     ];
     
@@ -180,6 +215,10 @@ class AdminController {
 
   async getUserInfo(user, pure, req) {
     return this.adminService.getUserInfo(req.query.id);
+  }
+
+  async getAllReports() {
+    return this.adminService.getReports();
   }
 
 }
