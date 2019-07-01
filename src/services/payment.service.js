@@ -55,7 +55,7 @@ class PaymentService {
     }
 
     try {
-      const result = await this.peerplaysRepository.sendPPY(peerplaysAccountId, payment.ppyAmountValue);
+      const result = await this.peerplaysRepository.sendPPYFromPaymentAccount(peerplaysAccountId, payment.ppyAmountValue);
       payment.txId = result.id;
       payment.blockNumber = result.block_num;
       payment.ppyAmountValue = result.amount;

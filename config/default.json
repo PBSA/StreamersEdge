@@ -47,7 +47,8 @@
     "sendAssetId": "1.3.0",
     "paymentAccountID": "",
     "paymentAccountWIF": "",
-    "paymentReceiver": ""
+    "paymentReceiver": "",
+    "paymentReceiverWIF": ""
   },
   "vapid": {
     "publicKey": "",
