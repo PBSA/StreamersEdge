@@ -21,7 +21,6 @@ class TwitchStreamConnection extends BaseConnection {
       uri: this.config.twitchUrl + streamConstants.gamedIds + userIds,
       headers: {'Client-ID': this.config.twitch.clientId}
     };
-    console.log(options.uri);
     return new Promise((success, fail) => {
       request(options, (err, res, body) => {
         if (err) {

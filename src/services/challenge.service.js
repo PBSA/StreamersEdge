@@ -1,5 +1,6 @@
 const challengeConstants = require('../constants/challenge');
 const invitationConstants = require('../constants/invitation');
+const {types: txTypes} = require('../constants/transaction');
 
 class ChallengeService {
 
@@ -11,6 +12,7 @@ class ChallengeService {
    * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
    * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
    * @param {WebPushConnection} opts.webPushConnection
+   * @param {PeerplaysRepository} opts.peerplaysRepository
    */
   constructor(opts) {
     this.challengeRepository = opts.challengeRepository;
@@ -23,6 +25,8 @@ class ChallengeService {
     this.webPushConnection = opts.webPushConnection;
     this.vapidData = {};
     this.userVapidKeys = {};
+    this.peerplaysRepository = opts.peerplaysRepository;
+    this.transactionRepository = opts.transactionRepository;
     this.errors = {
       DO_NOT_RECEIVE_INVITATIONS: 'THIS_IS_PRIVATE_CHALLENGE',
       CHALLENGE_NOT_FOUND: 'CLASSIC_GAME_NOT_FOUND'
@@ -36,6 +40,8 @@ class ChallengeService {
    * @returns {Promise<ChallengePublicObject>}
    */
   async createChallenge(creatorId, challengeObject) {
+    const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
+
     const Challenge = await this.challengeRepository.create({
       userId: creatorId,
       name: challengeObject.name,
@@ -99,6 +105,18 @@ class ChallengeService {
       }));
 
     }
+
+    await this.transactionRepository.create({
+      txId: broadcastResult[0].id,
+      blockNum: broadcastResult[0].block_num,
+      trxNum: broadcastResult[0].trx_num,
+      ppyAmountValue: challengeObject.ppyAmount,
+      type: txTypes.challengeCreation,
+      userId: creatorId,
+      challengeId: Challenge.id,
+      peerplaysFromId: challengeObject.depositOp.operations[0][1].from,
+      peerplaysToId: challengeObject.depositOp.operations[0][1].to
+    });
 
     return this.getCleanObject(Challenge.id);
   }
