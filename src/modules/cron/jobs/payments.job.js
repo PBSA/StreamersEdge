@@ -77,8 +77,10 @@ class PaymentsJob {
   }
 
   async payToOwner(Challenge) {
-    console.log(Challenge);
-    // TODO will be ended on a next branch
+    await this.peerplaysRepository.sendPPYFromReceiverAccount(this.config.peerplays.feeReceiver, Challenge.ppyAmount);
+
+    Challenge.status = challengeConstants.status.paid;
+    await Challenge.save();
   }
 
   async payToCreator(Challenge) {
