@@ -44,7 +44,7 @@ module.exports = {
       }
     }, {
       sequelize,
-      modelName: 'WhitelistedGames'
+      modelName: 'whitelisted-games'
     });
   },
   associate: (models) => {

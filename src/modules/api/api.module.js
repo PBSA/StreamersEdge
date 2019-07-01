@@ -131,13 +131,10 @@ class ApiModule {
       this.googleController,
       this.challengesController,
       this.steamController,
-      this.paymentController,
       this.streamController,
-      this.transactionController
-    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
-      this.addRestHandler(...route);
-    }));
-
+      this.transactionController,
+      this.paymentController
+    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => this.addRestHandler(...route)));
     this.addRestHandler('use', '*', () => {
       throw new MethodNotAllowedError();
     });

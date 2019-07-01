@@ -44,7 +44,7 @@ module.exports = {
       }
     }, {
       sequelize,
-      modelName: 'WhitelistedUsers'
+      modelName: 'whitelisted-users'
     });
   },
   associate: (models) => {

@@ -1165,21 +1165,6 @@
       "integrity": "sha512-qhAVI1+Av2X7qelOfAIYwXONood6XlZE/fXaBSmW/T5SzLAmCgzi+eiWE7fUvbHaeNBQH13UftjpXxsfLkMpgw==",
       "dev": true
     },
-    "bs58": {
-      "version": "3.1.0",
-      "resolved": "https://registry.npmjs.org/bs58/-/bs58-3.1.0.tgz",
-      "integrity": "sha1-1MJjiL9IBMrHFBQbGUWqR+XrJI4=",
-      "requires": {
-        "base-x": "1.1.0"
-      },
-      "dependencies": {
-        "base-x": {
-          "version": "1.1.0",
-          "resolved": "https://registry.npmjs.org/base-x/-/base-x-1.1.0.tgz",
-          "integrity": "sha1-QtPXF0dPnqAiB/bRqh9CaRPut6w="
-        }
-      }
-    },
     "buffer": {
       "version": "5.2.1",
       "resolved": "https://registry.npmjs.org/buffer/-/buffer-5.2.1.tgz",
@@ -8588,6 +8573,35 @@
         "secure-random": "1.1.2",
         "uglify-js": "3.6.0",
         "ws": "2.3.1"
+      },
+      "dependencies": {
+        "base-x": {
+          "version": "1.1.0",
+          "resolved": "https://registry.npmjs.org/base-x/-/base-x-1.1.0.tgz",
+          "integrity": "sha1-QtPXF0dPnqAiB/bRqh9CaRPut6w="
+        },
+        "bs58": {
+          "version": "3.1.0",
+          "resolved": "https://registry.npmjs.org/bs58/-/bs58-3.1.0.tgz",
+          "integrity": "sha1-1MJjiL9IBMrHFBQbGUWqR+XrJI4=",
+          "requires": {
+            "base-x": "1.1.0"
+          }
+        },
+        "safe-buffer": {
+          "version": "5.0.1",
+          "resolved": "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.0.1.tgz",
+          "integrity": "sha1-0mPKVGls2KMGtcplUekt5XkY++c="
+        },
+        "ws": {
+          "version": "2.3.1",
+          "resolved": "https://registry.npmjs.org/ws/-/ws-2.3.1.tgz",
+          "integrity": "sha1-a5Sz5EfLajY/eF6vlK9jWejoHIA=",
+          "requires": {
+            "safe-buffer": "5.0.1",
+            "ultron": "1.1.1"
+          }
+        }
       }
     },
     "performance-now": {
@@ -11165,22 +11179,6 @@
         "graceful-fs": "4.1.15",
         "imurmurhash": "0.1.4",
         "signal-exit": "3.0.2"
-      }
-    },
-    "ws": {
-      "version": "2.3.1",
-      "resolved": "https://registry.npmjs.org/ws/-/ws-2.3.1.tgz",
-      "integrity": "sha1-a5Sz5EfLajY/eF6vlK9jWejoHIA=",
-      "requires": {
-        "safe-buffer": "5.0.1",
-        "ultron": "1.1.1"
-      },
-      "dependencies": {
-        "safe-buffer": {
-          "version": "5.0.1",
-          "resolved": "https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.0.1.tgz",
-          "integrity": "sha1-0mPKVGls2KMGtcplUekt5XkY++c="
-        }
       }
     },
     "xdg-basedir": {

@@ -79,4 +79,5 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} paypal.secret
  * @property {String} paypal.environment
  * @property {String} coinmarketcap.apiKey
+ * @property {{ joinFee: string }} challenge
  */

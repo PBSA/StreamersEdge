@@ -64,5 +64,8 @@
   },
   "coinmarketcap": {
     "apiKey": ""
+  },
+  "challenge": {
+    "joinFee": "100"
   }
 }

@@ -1,7 +1,6 @@
 /* istanbul ignore file */
 const request = require('request');
 const {Apis} = require('peerplaysjs-lib');
-
 const BaseConnection = require('./abstracts/base.connection');
 
 class PeerplaysConnection extends BaseConnection {

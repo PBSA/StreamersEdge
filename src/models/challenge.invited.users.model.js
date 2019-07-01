@@ -12,7 +12,16 @@ class ChallengeInvitedUsersModel extends Model {}
 
 module.exports = {
   init: (sequelize) => {
-    ChallengeInvitedUsersModel.init({}, {
+    ChallengeInvitedUsersModel.init({
+      challengeId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      }
+    }, {
       sequelize,
       modelName: 'challenge-invited-users'
     });

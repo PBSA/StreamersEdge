@@ -1,3 +1,4 @@
+const BigNumber = require('bignumber.js');
 const challengeConstants = require('../constants/challenge');
 const invitationConstants = require('../constants/invitation');
 const {types: txTypes} = require('../constants/transaction');
@@ -5,16 +6,21 @@ const {types: txTypes} = require('../constants/transaction');
 class ChallengeService {
 
   /**
+   * @param {AppConfig} opts.config
    * @param {ChallengeRepository} opts.challengeRepository
    * @param {ChallengeConditionRepository} opts.challengeConditionRepository
    * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
    * @param {UserRepository} opts.userRepository
    * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
    * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
+   * @param {JoinedUsersRepository} opts.joinedUsersRepository
    * @param {WebPushConnection} opts.webPushConnection
    * @param {PeerplaysRepository} opts.peerplaysRepository
+   * @param {PeerplaysConnection} opts.peerplaysConnection
+   * @param {DbConnection} opts.dbConnection
    */
   constructor(opts) {
+    this.config = opts.config;
     this.challengeRepository = opts.challengeRepository;
     this.challengeConditionRepository = opts.challengeConditionRepository;
     this.userRepository = opts.userRepository;
@@ -22,14 +28,21 @@ class ChallengeService {
     this.userRepository = opts.userRepository;
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
+    this.joinedUsersRepository = opts.joinedUsersRepository;
     this.webPushConnection = opts.webPushConnection;
+    this.dbConnection = opts.dbConnection;
     this.vapidData = {};
     this.userVapidKeys = {};
     this.peerplaysRepository = opts.peerplaysRepository;
     this.transactionRepository = opts.transactionRepository;
+    this.peerplaysConnection = opts.peerplaysConnection;
     this.errors = {
       DO_NOT_RECEIVE_INVITATIONS: 'THIS_IS_PRIVATE_CHALLENGE',
-      CHALLENGE_NOT_FOUND: 'CLASSIC_GAME_NOT_FOUND'
+      CHALLENGE_NOT_FOUND: 'CLASSIC_GAME_NOT_FOUND',
+      TRANSACTION_ERROR: 'TRANSACTION_ERROR',
+      INVALID_TRANSACTION_SENDER: 'INVALID_TRANSACTION_SENDER',
+      INVALID_TRANSACTION_RECEIVER: 'INVALID_TRANSACTION_RECEIVER',
+      INVALID_TRANSACTION_AMOUNT: 'INVALID_TRANSACTION_AMOUNT'
     };
   }
 
@@ -69,6 +82,11 @@ class ChallengeService {
         });
 
         const vapidKeys = this.userVapidKeys[id];
+
+        if (!vapidKeys) {
+          return;
+        }
+
         const invitation = {title: `You invited to ${Challenge.name}`};
 
         const invitationState = await this.userRepository.findByPk(id);
@@ -138,7 +156,7 @@ class ChallengeService {
     });
 
     if (!Challenge) {
-      return null;
+      throw this.errors.CHALLENGE_NOT_FOUND;
     }
 
     return Challenge.getPublic();
@@ -214,6 +232,57 @@ class ChallengeService {
       default:
         return;
     }
+
+  }
+
+  async getAllChallenges(userId) {
+    return await this.challengeRepository.findAllChallenges(userId);
+  }
+
+  async joinToChallenge(userId, challengeId, bcTx) {
+    return await this.dbConnection.sequelize.transaction(async (dbTx) => {
+      if (operation.to !== this.config.peerplays.paymentReceiver) {
+        throw new Error(this.errors.INVALID_TRANSACTION_RECEIVER);
+      }
+
+      if (!new BigNumber(operation.amount.amount).eq(this.config.challenge.joinFee)) {
+        throw new Error(this.errors.INVALID_TRANSACTION_AMOUNT);
+      }
+
+      const [user, challenge] = await Promise.all([
+        this.userRepository.findByPk(userId, {transaction: dbTx}),
+        this.challengeRepository.findByPk(challengeId, {transaction: dbTx})
+      ]);
+
+      const operation = bcTx.operations[0][1];
+
+      if (user.peerplaysAccountId === '') {
+        await this.userRepository.setPeerplaysAccountId(userId, operation.from);
+      } else if (operation.from !== user.peerplaysAccountId) {
+        throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
+      }
+
+      if (!challenge) {
+        throw new Error(this.errors.CHALLENGE_NOT_FOUND);
+      }
+
+      if (challenge.accessRule === challengeConstants.accessRules.invite) {
+        if (!await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
+          throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
+        }
+      }
+
+      const res = await new Promise(async (resolve, reject) => {
+        await this.peerplaysConnection.networkAPI.exec('broadcast_transaction_with_callback', [resolve, bcTx])
+          .catch((err) => {
+            const error = new Error(this.errors.TRANSACTION_ERROR);
+            error.data = err;
+            reject(error);
+          });
+      });
+      await this.joinedUsersRepository.joinToChallenge(userId, challengeId, {transaction: dbTx});
+      return res;
+    });
 
   }
 

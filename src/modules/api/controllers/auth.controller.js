@@ -44,7 +44,7 @@ class AuthController {
        * {
        *   "email": "test@test.com",
        *   "username": "test",
-       *   "password": "testtest"
+       *   "password": "testtest",
        *   "repeatPassword": "testtest"
        * }
        */
