@@ -7,7 +7,6 @@ class FileService {
 
   /**
    * @param {AppConfig} config
-   * @param {S3Repository} s3Repository
    * @param {AwsConnection} awsConnection
    */
   constructor({config, awsConnection}) {

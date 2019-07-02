@@ -201,12 +201,6 @@ class UserService {
     return true;
   }
 
-  async updateAvatar(User, filename) {
-    User.avatar = filename;
-    await User.save();
-    return User;
-  }
-
 }
 
 module.exports = UserService;

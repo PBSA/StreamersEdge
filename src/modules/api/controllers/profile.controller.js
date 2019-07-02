@@ -145,13 +145,11 @@ class ProfileController {
 
   async uploadAvatar(user, data, req, res) {
     const location = await this.fileService.saveImage(req, res);
-    user = await this.userService.updateAvatar(user, location);
-    return this.userService.getCleanUser(user);
+    return await this.userService.patchProfile(user, {avatar: location});
   }
 
   async deleteAvatar(user) {
-    user = await this.userService.updateAvatar(user, null);
-    return this.userService.getCleanUser(user);
+    return await this.userService.patchProfile(user, {avatar: null});
   }
 
 }
