@@ -52,7 +52,7 @@ class UserModel extends Model {
       peerplaysAccountName: this.peerplaysAccountName,
       bitcoinAddress: this.bitcoinAddress,
       userType: this.userType,
-      avatar: this.avatar
+      avatar: this.avatar || ''
     };
   }
 }

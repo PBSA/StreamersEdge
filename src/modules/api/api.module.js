@@ -150,7 +150,7 @@ class ApiModule {
           return handler()(req, res);
         }, Promise.resolve());
 
-        const result = await action(req.user, req.pure, req);
+        const result = await action(req.user, req.pure, req, res);
         return res.status(200).json({
           result: result || null,
           status: 200

@@ -69,12 +69,7 @@ class UserService {
    * @returns {Promise<UserPublicObject>}
    */
   async getCleanUser(User) {
-    const object = User.getPublic();
-    const avatar = object.avatar ? object.avatar : '';
-    object.avatar = avatar && !avatar.match(/^http/)
-      ? this.fileService.getImage(User.avatar, 'avatar')
-      : avatar;
-    return object;
+    return User.getPublic();
   }
 
   /**

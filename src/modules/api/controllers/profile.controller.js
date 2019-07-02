@@ -110,7 +110,6 @@ class ProfileController {
       [
         'post', '/api/v1/profile/avatar',
         this.authValidator.loggedOnly,
-        () => this._uploadAvatarMiddleware(),
         this.uploadAvatar.bind(this)
       ],
       /**
@@ -126,16 +125,6 @@ class ProfileController {
         this.deleteAvatar.bind(this)
       ]
     ];
-  }
-
-  _uploadAvatarMiddleware() {
-    return async (req) => {
-      try {
-        req.uploadedFile = await this.fileService.saveImage(req, 'avatar');
-      } catch (e) {
-        throw new RestError(e.message, 400);
-      }
-    };
   }
 
   async getProfile(user) {
@@ -154,16 +143,13 @@ class ProfileController {
     }
   }
 
-  async uploadAvatar(user, data, req) {
-    user = await this.userService.updateAvatar(user, req.uploadedFile);
+  async uploadAvatar(user, data, req, res) {
+    const location = await this.fileService.saveImage(req, res);
+    user = await this.userService.updateAvatar(user, location);
     return this.userService.getCleanUser(user);
   }
 
   async deleteAvatar(user) {
-    if (!user.avatar.match(/^http/)) {
-      await this.fileService.deleteImage(user.avatar, 'avatar');
-    }
-
     user = await this.userService.updateAvatar(user, null);
     return this.userService.getCleanUser(user);
   }
