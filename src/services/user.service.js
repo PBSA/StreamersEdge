@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const Sequelize = require('sequelize');
 const moment = require('moment');
 const RestError = require('../errors/rest.error');
 
@@ -43,12 +42,8 @@ class UserService {
     });
 
     if (!User) {
-      const usedLogin = await this.userRepository.model.findAll({
-        where: {[Sequelize.Op.or]: [{email}, {username}]}
-      });
-
-      const emailIsUsed = usedLogin.find((row) => row.email === email);
-      const usernameIsUsed = usedLogin.find((row) => row.username === username);
+      const emailIsUsed = email && await this.userRepository.model.count({where: {email}});
+      const usernameIsUsed = username && await this.userRepository.model.count({where: {username}});
 
       User = await this.userRepository.create({
         [`${network}Id`]: id,
