@@ -29,5 +29,8 @@
       "user": "MAILER_AUTH_USER",
       "pass": "MAILER_AUTH_PASS"
     }
+  },
+  "pubg": {
+    "apiKey": "PUBG_API_KEY"
   }
 }

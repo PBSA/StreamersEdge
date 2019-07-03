@@ -69,4 +69,5 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} mailer.sender
  * @property {String} peerplays.peerplaysFaucetURL
  * @property {String} peerplays.referrer
+ * @property {String} pubg.apiKey
  */

@@ -10,6 +10,7 @@ class UserService {
    * @param {VerificationTokenRepository} opts.verificationTokenRepository
    * @param {ResetTokenRepository} opts.resetTokenRepository
    * @param {MailService} opts.mailService
+   * @param {PubgApiRepository} opts.pubgApiRepository
    */
   constructor(opts) {
     this.userRepository = opts.userRepository;
@@ -17,6 +18,7 @@ class UserService {
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
     this.mailService = opts.mailService;
+    this.pubgApiRepository = opts.pubgApiRepository;
 
     this.errors = {
       USER_NOT_FOUND: 'USER_NOT_FOUND',
