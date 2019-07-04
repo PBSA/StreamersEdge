@@ -30,6 +30,10 @@
       "pass": "MAILER_AUTH_PASS"
     }
   },
+  "vapid": {
+    "publicKey": "VAPID_PUBLIC_KEY",
+    "privateKey": "VAPID_PRIVATE_KEY"
+  },
   "pubg": {
     "apiKey": "PUBG_API_KEY"
   }

@@ -1,5 +1,6 @@
 const challengeConstants = require('../constants/challenge');
 
+
 class ChallengeService {
 
   /**
@@ -7,12 +8,20 @@ class ChallengeService {
    * @param {ChallengeConditionRepository} opts.challengeConditionRepository
    * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
    * @param {UserRepository} opts.userRepository
+   * @param {WebPushConnection} opts.webPushConnection
    */
   constructor(opts) {
     this.challengeRepository = opts.challengeRepository;
     this.challengeConditionRepository = opts.challengeConditionRepository;
     this.userRepository = opts.userRepository;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
+    this.webPushConnection = opts.webPushConnection;
+    this.vapidData = {};
+    this.userVapidKeys = {};
+    this.errors = {
+      challengeNotFound: 'classicGame_NOT_FOUND',
+      isNotAccessedToAnyone: 'challenge_IS_NOT_ACCESSED_TO_ANYONE'
+    };
   }
 
   /**
@@ -41,12 +50,30 @@ class ChallengeService {
     }));
 
     if (challengeObject.accessRule === challengeConstants.accessRules.invite) {
+      const creatorEmail = await this.userRepository.findByPk(creatorId);
+
       await Promise.all(challengeObject.invitedAccounts.map(async (id) => {
-        return await this.challengeInvitedUsersRepository.create({
+        await this.challengeInvitedUsersRepository.create({
           challengeId: Challenge.id,
           userId: id
         });
+
+        const vapidKeys = this.userVapidKeys[id];
+        const invitation = {title: `You invited to ${Challenge.name}`};
+        await this.webPushConnection.sendNotificaton(this.vapidData[id], creatorEmail.email, vapidKeys, invitation);
       }));
+
+    }
+
+    if (challengeObject.accessRule === challengeConstants.accessRules.anyone) {
+      const creatorEmail = await this.userRepository.findByPk(creatorId);
+
+      await Promise.all(Object.keys(this.vapidData).map(async (userId) => {
+        const vapidKeys = this.userVapidKeys[userId];
+        const notification = {title: `Challenge ${Challenge.name} appeared`};
+        await this.webPushConnection.sendNotificaton(this.vapidData[userId], creatorEmail.email, vapidKeys, notification);
+      }));
+
     }
 
     return this.getCleanObject(Challenge.id);
@@ -73,6 +100,49 @@ class ChallengeService {
     }
 
     return Challenge.getPublic();
+  }
+
+  /**
+   * @param userId
+   * @returns {Promise<String>}
+   */
+  async checkUserSubscribe(userId) {
+
+    if (this.userVapidKeys.hasOwnProperty(userId)) {
+      return this.userVapidKeys[userId].publicKey;
+    }
+
+    const vapidKeys = this.webPushConnection.generateVapidKeys();
+    this.userVapidKeys[userId] = {
+      publicKey: vapidKeys.publicKey,
+      privateKey: vapidKeys.privateKey
+    };
+
+    return this.userVapidKeys[userId].publicKey;
+
+  }
+
+  /**
+   * @param fromUser
+   * @param toUserWithId
+   * @param challengeId
+   * @returns {Promise<Object>}
+   */
+  async sendInvite(fromUser, toUserWithId, challengeId) {
+    const challenge = await this.challengeRepository.findByPk(challengeId);
+
+    if (!challenge) {
+      throw new Error(this.errors.challengeNotFound);
+    }
+
+    if (challenge.accessRule !== challengeConstants.accessRules.anyone) {
+      throw new Error(this.errors.isNotAccessedToAnyone);
+    }
+
+    const vapidKeys = this.userVapidKeys[toUserWithId];
+    const invitation = {title: `You invited to ${challenge.name}`};
+    return await this.webPushConnection.sendNotificaton(this.vapidData[toUserWithId], fromUser.email, vapidKeys, invitation);
+
   }
 
 }

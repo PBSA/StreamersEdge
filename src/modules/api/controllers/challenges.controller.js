@@ -121,6 +121,56 @@ class ChallengesController {
         this.authValidator.loggedOnly,
         this.challengeValidator.validateGetChallenge,
         this.getChallenge.bind(this)
+      ],
+      [
+        /**
+         * @api {post} /api/v1/challenges/subscribe Subscribe to new notification
+         * @apiName SubscribeNotification
+         * @apiGroup Challenges
+         * @apiVersion 0.1.0
+         * @apiExample {json} Request-Example:
+         * {
+         *   endpoint: 'https://fcm.googleapis.com/...lbTgv66-WEEWWK9bxZ_ksHhV_Z49vBvnYZdeS6cL6kk',
+         *   expirationTime: null,
+         *   keys:
+         *    {
+         *      p256dh: 'BOQWqnde....j7Dk-o',
+         *      auth: 'EYFQS0dh2KaPMXx9nmVPww'
+         *    }
+         * }
+         * @apiParam {String} endpoint url for user
+         * @apiParam {Number} expirationTime time of expiration
+         * @apiParam {Object} keys object
+         * @apiParam {String} [keys.p256dh] string in p256dh
+         * @apiParam {String} [keys.auth] auth string
+         * @apiSuccessExample {json} Success-Response:
+         * HTTP/1.1 200 OK
+         * {
+         *  "result": "BOQWqndev7VP-UCLv9QIqDtkcNwRjyu4QBPDTCymL6ILHWklqWP1XxXRLmAYywsfgGs7K8Yub_6jQKiN0j7Dk-o",
+         *  "status": 200
+         * }
+         */
+        'post', '/api/v1/challenges/subscribe',
+        this.challengeValidator.subscribe,
+        this.subscribeToChallenges.bind(this)
+      ],
+      [
+        /**
+         * @api {post} /api/v1/challenges/invite Invite user to new challenge
+         * @apiName InviteToChallenge
+         * @apiGroup Challenges
+         * @apiVersion 0.1.0
+         * @apiExample {json} Request-Example:
+         * {
+         *   "userId": "6",
+         *   "challengeId": "107",
+         * }
+         * @apiParam {Number} userId Invited user Id
+         * @apiParam {Number} challengeId Id of of challenge
+         */
+        'post', '/api/v1/challenges/invite',
+        this.challengeValidator.invite,
+        this.sendInvite.bind(this)
       ]
     ];
   }
@@ -141,6 +191,31 @@ class ChallengesController {
     }
 
     return challenge;
+  }
+
+  async subscribeToChallenges(user, data) {
+    const result = await this.challengeService.checkUserSubscribe(user.id);
+    this.challengeService.vapidData[user.id] = data;
+
+    return result;
+
+  }
+
+  async sendInvite(user, {userId, challengeId}) {
+    try {
+      return await this.challengeService.sendInvite(user, userId, challengeId);
+    } catch (err) {
+      switch (err.message) {
+        case this.challengeService.errors.challengeNotFound:
+          throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
+        case this.challengeService.errors.isNotAccessedToAnyone:
+          throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
+        default:
+          throw err;
+      }
+
+    }
+
   }
 
 }

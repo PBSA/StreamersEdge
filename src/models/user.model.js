@@ -52,9 +52,11 @@ class UserModel extends Model {
       googleName: this.googleName,
       youtube: this.youtube,
       facebook: this.facebook,
+      twitch: this.twitch || '',
       peerplaysAccountName: this.peerplaysAccountName,
       bitcoinAddress: this.bitcoinAddress,
       userType: this.userType,
+      avatar: this.avatar || '',
       pubgUsername: this.pubgUsername
     };
   }
@@ -106,6 +108,10 @@ module.exports = {
         defaultValue: ''
       },
       facebook: {
+        type: Sequelize.STRING,
+        defaultValue: ''
+      },
+      twitch: {
         type: Sequelize.STRING,
         defaultValue: ''
       },
