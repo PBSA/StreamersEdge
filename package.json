@@ -53,6 +53,7 @@
     "nodemailer": "^6.2.1",
     "normalize-email": "^1.1.1",
     "passport": "^0.4.0",
+    "passport-facebook": "^3.0.0",
     "passport-google-oauth": "^2.0.0",
     "passport-steam": "^1.0.10",
     "passport-twitch": "^1.0.3",

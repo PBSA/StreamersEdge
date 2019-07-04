@@ -57,10 +57,11 @@ class GoogleController {
 
   initializePassport() {
     passport.use(new GoogleStrategy({
+      passReqToCallback: true,
       clientID: this.config.google.clientId,
       clientSecret: this.config.google.clientSecret,
       callbackURL: `${this.config.backendUrl}/api/v1/auth/google/callback`
-    }, (accessToken, refreshToken, profile, done) => {
+    }, (req, accessToken, refreshToken, profile, done) => {
 
       this.userService.getUserYoutubeLink({
         access_token: accessToken,
@@ -71,7 +72,7 @@ class GoogleController {
           ...profile._json,
           username: profile._json.email.replace(/@.+/, ''),
           youtube
-        }).then((User) => {
+        }, req.user).then((User) => {
           this.userService.getCleanUser(User).then((user) => done(null, user));
         }).catch((error) => {
           done(error);

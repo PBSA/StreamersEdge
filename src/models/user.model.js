@@ -26,6 +26,7 @@ const profileConstants = require('../constants/profile');
  * @property {String} twitchId
  * @property {String} twitchUserName
  * @property {String} googleId
+ * @property {String} facebookId
  * @property {String} googleName
  * @property {String} avatar
  * @property {String} youtube
@@ -88,6 +89,11 @@ module.exports = {
         unique: true
       },
       googleId: {
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: true
+      },
+      facebookId: {
         type: Sequelize.STRING,
         unique: true,
         allowNull: true
