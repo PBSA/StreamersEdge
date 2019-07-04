@@ -8,6 +8,10 @@ class UserRepository extends BasePostgresRepository {
     super(model);
   }
 
+  async findAll() {
+    return this.model.findAll();
+  }
+
   /**
    * @param ids
    * @returns {Promise<UserModel[]>}
@@ -55,6 +59,16 @@ class UserRepository extends BasePostgresRepository {
   async getByTwitchId(searchtwitchId) {
     return this.model.findOne({
       where: {twitchId:searchtwitchId}
+    });
+  }
+
+  async findWithGames() {
+    return this.model.findAll({
+      where: {
+        pubgUsername: {
+          [Sequelize.Op.ne]: null
+        }
+      }
     });
   }
 

@@ -13,7 +13,8 @@ class GoogleController {
 
     this.DEFAULT_SCOPE = [
       'https://www.googleapis.com/auth/userinfo.profile',
-      'https://www.googleapis.com/auth/userinfo.email'
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/youtube.readonly'
     ];
   }
 
@@ -56,18 +57,26 @@ class GoogleController {
 
   initializePassport() {
     passport.use(new GoogleStrategy({
+      passReqToCallback: true,
       clientID: this.config.google.clientId,
       clientSecret: this.config.google.clientSecret,
       callbackURL: `${this.config.backendUrl}/api/v1/auth/google/callback`
-    }, (accessToken, refreshToken, profile, done) => {
-      this.userService.getUserBySocialNetworkAccount('google', {
-        id: profile.id,
-        ...profile._json,
-        username: profile._json.email.replace(/@.+/, '')
-      }).then((User) => {
-        this.userService.getCleanUser(User).then((user) => done(null, user));
-      }).catch((error) => {
-        done(error);
+    }, (req, accessToken, refreshToken, profile, done) => {
+
+      this.userService.getUserYoutubeLink({
+        access_token: accessToken,
+        refresh_token: refreshToken
+      }).then((youtube) => {
+        this.userService.getUserBySocialNetworkAccount('google', {
+          id: profile.id,
+          ...profile._json,
+          username: profile._json.email.replace(/@.+/, ''),
+          youtube
+        }, req.user).then((User) => {
+          this.userService.getCleanUser(User).then((user) => done(null, user));
+        }).catch((error) => {
+          done(error);
+        });
       });
     }));
   }

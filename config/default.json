@@ -18,6 +18,10 @@
     "clientId": "",
     "clientSecret": ""
   },
+  "facebook": {
+    "clientId": "",
+    "clientSecret": ""
+  },
   "raven": {
     "enabled": true,
     "url": ""
@@ -50,6 +54,16 @@
     "environment": "live"
   },
   "coinmarketcap": {
+    "apiKey": ""
+  },
+  "vapid": {
+    "publicKey": "",
+    "privateKey": ""
+  },
+  "s3": {
+    "bucket": ""
+  },
+  "pubg": {
     "apiKey": ""
   }
 }
