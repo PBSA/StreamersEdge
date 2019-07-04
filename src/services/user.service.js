@@ -10,6 +10,7 @@ class UserService {
    * @param {VerificationTokenRepository} opts.verificationTokenRepository
    * @param {ResetTokenRepository} opts.resetTokenRepository
    * @param {MailService} opts.mailService
+   * @param {GoogleRepository} opts.googleRepository
    * @param {PubgApiRepository} opts.pubgApiRepository
    */
   constructor(opts) {
@@ -18,6 +19,7 @@ class UserService {
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
     this.mailService = opts.mailService;
+    this.googleRepository = opts.googleRepository;
     this.pubgApiRepository = opts.pubgApiRepository;
 
     this.errors = {
@@ -37,7 +39,7 @@ class UserService {
    */
   async getUserBySocialNetworkAccount(network, account, LoggedUser = null) {
 
-    const {id, email, picture, username} = account;
+    const {id, email, picture, username, youtube} = account;
 
     let UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
 
@@ -61,12 +63,13 @@ class UserService {
       avatar: picture,
       email: emailIsUsed ? null : email,
       isEmailVerified: emailIsUsed ? null : true,
-      username: usernameIsUsed ? null : username
+      username: usernameIsUsed ? null : username,
+      youtube
     });
   }
 
   async connectSocialNetwork(network, account, User) {
-    const {id, email, picture, username} = account;
+    const {id, email, picture, username, youtube} = account;
 
     if (User[`${network}Id`] === id) {
       return User;
@@ -91,6 +94,10 @@ class UserService {
 
     if (!User.avatar) {
       User.avatar = picture;
+    }
+
+    if (!User.youtube) {
+      User.youtube = youtube;
     }
 
     await User.save();
@@ -233,6 +240,10 @@ class UserService {
     await User.save();
 
     return true;
+  }
+
+  async getUserYoutubeLink(tokens) {
+    return this.googleRepository.getYoutubeLink(tokens);
   }
 
 }
