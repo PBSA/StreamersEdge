@@ -2,8 +2,8 @@ module.exports.login = async (agent, validObject, apiModule) => {
 
   if (!validObject) {
     validObject = {
-      email: 'testglonal@email.com',
-      username: 'test-testglonal',
+      email: 'testglobal@email.com',
+      username: 'test-global',
       password: 'MyPassword^',
       repeatPassword: 'MyPassword^'
     };
