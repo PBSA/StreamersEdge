@@ -3,9 +3,11 @@ const {getLogger} = require('log4js');
 // const { assert } = require('chai');
 const {container} = require('./../src/awilix');
 const PeerplaysConnection = require('./mock/connections/peerplays.connection.mock');
+const SmtpConnection = require('./mock/connections/smtp.connection.mock');
 
 container.register({
-  peerplaysConnection: asClass(PeerplaysConnection)
+  peerplaysConnection: asClass(PeerplaysConnection),
+  smtpConnection: asClass(SmtpConnection)
 });
 
 describe('ALL TESTS', () => {

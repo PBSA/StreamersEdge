@@ -6,6 +6,7 @@ chai.use(require('chai-url'));
 const chaiHttp = require('chai-http');
 
 const {isSuccess, isError} = require('../helpers/test.response.helper');
+const {login} = require('../helpers/test.login.helper');
 const ApiModule = require('../api.module.test');
 const constants = require('../../../constants.json');
 
@@ -30,15 +31,16 @@ describe('GET /api/v1/profile', () => {
   });
 
   it('should success. User logged', async () => {
-    await agent.post('/api/v1/auth/twitch/code').send({
-      code: constants.modules.api.auth.twitchValidCode
-    });
+    await login(agent, null, apiModule);
     const response = await agent.get('/api/v1/profile');
     isSuccess(response);
     assert.deepEqual(response.body.result, {
       id: response.body.result.id,
-      username: '',
-      email: '',
+      username: 'test-testglonal',
+      email: 'testglonal@email.com',
+      googleName: null,
+      twitchUserName: null,
+      userType: null,
       youtube: '',
       facebook: '',
       peerplaysAccountName: '',
@@ -52,7 +54,7 @@ describe('GET /api/v1/profile', () => {
 describe('PATCH /api/v1/profile', () => {
 
   beforeEach(async () => {
-    await agent.post('/api/v1/auth/twitch/code').send({code: constants.modules.api.auth.twitchValidCode});
+    await login(agent, null, apiModule);
   });
 
   it('should forbid, user not logged', async () => {
@@ -132,7 +134,7 @@ describe('PATCH /api/v1/profile', () => {
 describe('POST /api/v1/profile/peerplays/create-account', () => {
 
   beforeEach(async () => {
-    await agent.post('/api/v1/auth/twitch/code').send({code: constants.modules.api.auth.twitchValidCode});
+    await login(agent, null, apiModule);
   });
 
   it('should forbid, user not logged', async () => {

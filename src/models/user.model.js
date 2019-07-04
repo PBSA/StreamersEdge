@@ -15,6 +15,7 @@ const profileConstants = require('../constants/profile');
  * @property {String} peerplaysAccountName
  * @property {String} bitcoinAddress
  * @property {Enum} userType
+ * @property {String} pubgUsername
  */
 
 /**
@@ -25,6 +26,7 @@ const profileConstants = require('../constants/profile');
  * @property {String} twitchId
  * @property {String} twitchUserName
  * @property {String} googleId
+ * @property {String} facebookId
  * @property {String} googleName
  * @property {String} avatar
  * @property {String} youtube
@@ -34,6 +36,8 @@ const profileConstants = require('../constants/profile');
  * @property {Enum} userType
  * @property {Enum} applicationType
  * @property {String} pushNotificationId
+ * @property {String} pubgUsername
+ * @property {String} pubgId
  */
 class UserModel extends Model {
   /**
@@ -50,7 +54,8 @@ class UserModel extends Model {
       facebook: this.facebook,
       peerplaysAccountName: this.peerplaysAccountName,
       bitcoinAddress: this.bitcoinAddress,
-      userType: this.userType
+      userType: this.userType,
+      pubgUsername: this.pubgUsername
     };
   }
 }
@@ -88,6 +93,11 @@ module.exports = {
         unique: true,
         allowNull: true
       },
+      facebookId: {
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: true
+      },
       googleName: {
         type: Sequelize.STRING
       },
@@ -115,6 +125,15 @@ module.exports = {
         values: profileConstants.applicationType
       },
       pushNotificationId: {
+        type: Sequelize.STRING
+      },
+      steamId: {
+        type: Sequelize.STRING
+      },
+      pubgUsername: {
+        type: Sequelize.STRING
+      },
+      pubgId: {
         type: Sequelize.STRING
       }
     }, {

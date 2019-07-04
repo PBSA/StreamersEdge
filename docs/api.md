@@ -17,6 +17,9 @@ Backend module for StreamersEdge application
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
 	
+- [Facebook](#facebook)
+	- [Auth by facebook](#auth-by-facebook)
+	
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
 	
@@ -334,6 +337,15 @@ HTTP/1.1 200 OK
  "status": 200
 }
 ```
+# Facebook
+
+## Auth by facebook
+
+
+
+	GET /api/v1/auth/facebook
+
+
 # Google
 
 ## Auth by google
