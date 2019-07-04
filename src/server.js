@@ -55,6 +55,8 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} twitch.callbackUrl
  * @property {String} google.clientId
  * @property {String} google.clientSecret
+ * @property {String} facebook.clientId
+ * @property {String} facebook.clientSecret
  * @property {{enabled: Boolean, url: String}} raven
  * @property {String<prod|testnet>} bitcoinNetwork
  * @property {String} backendUrl
@@ -68,4 +70,5 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} peerplays.peerplaysFaucetURL
  * @property {String} peerplays.referrer
  * @property {String} s3.bucket
+ * @property {String} pubg.apiKey
  */

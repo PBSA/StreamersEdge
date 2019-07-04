@@ -14,6 +14,9 @@ Backend module for StreamersEdge application
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
 	
+- [Facebook](#facebook)
+	- [Auth by facebook](#auth-by-facebook)
+	
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
 	
@@ -23,6 +26,11 @@ Backend module for StreamersEdge application
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
 	- [Add or change account avatar](#add-or-change-account-avatar)
+	
+- [Stream](#stream)
+	- [Get stream](#get-stream)
+	- [Get streams](#get-streams)
+	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
 	
 - [Twitch](#twitch)
 	- [Auth by twitch](#auth-by-twitch)
@@ -296,6 +304,15 @@ HTTP/1.1 200 OK
  "status": 200
 }
 ```
+# Facebook
+
+## Auth by facebook
+
+
+
+	GET /api/v1/auth/facebook
+
+
 # Google
 
 ## Auth by google
@@ -495,6 +512,110 @@ HTTP/1.1 200 OK
     "userType": "viewer",
     "avatar": ""
  }
+}
+```
+# Stream
+
+## Get stream
+
+<p>Get Stream by StreamId</p>
+
+	GET /api/v1/stream/:id
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": {
+  "id": 1,
+  "name": "TSM chocoTaco | today's weather: thirsty",
+  "game": "pubg",
+  "sourceName": "twitch",
+  "embedUrl": "",
+  "channelId": "34608843376",
+  "views": 3536,
+  "isLive": true,
+  "startTime": "2019-06-21T00:09:40.000Z",
+  "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
+  "user": {
+      "id": 10,
+      "username": "jotprabh",
+      "email": "prabhjot.narula@gmail.com",
+      "twitchUserName": null,
+      "googleName": null,
+      "youtube": "",
+      "facebook": "",
+      "peerplaysAccountName": "",
+      "bitcoinAddress": "",
+      "userType": null
+    }
+  },
+  "status": 200
+}
+```
+## Get streams
+
+<p>Get Streams</p>
+
+	GET /api/v1/streams
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": [
+      {
+          "id": 1,
+          "name": "TSM chocoTaco | today's weather: thirsty",
+          "game": "pubg",
+          "sourceName": "twitch",
+          "embedUrl": "",
+          "channelId": "34608843376",
+          "views": 3536,
+          "isLive": true,
+          "startTime": "2019-06-21T00:09:40.000Z",
+          "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
+          "user": {
+              "id": 10,
+              "username": "jotprabh",
+              "email": "prabhjot.narula@gmail.com",
+              "twitchUserName": null,
+              "googleName": null,
+              "youtube": "",
+              "facebook": "",
+              "peerplaysAccountName": "",
+              "bitcoinAddress": "",
+              "userType": null
+          }
+      }
+  ],
+  "status": 200
+}
+```
+## Get Streams for users from Twitch
+
+
+
+	GET /api/v1/stream/populate-twitch-streams
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": true
 }
 ```
 # Twitch

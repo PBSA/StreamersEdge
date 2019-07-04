@@ -18,6 +18,10 @@
     "clientId": "",
     "clientSecret": ""
   },
+  "facebook": {
+    "clientId": "",
+    "clientSecret": ""
+  },
   "raven": {
     "enabled": true,
     "url": ""
@@ -42,5 +46,8 @@
   },
   "s3": {
     "bucket": ""
+  },
+  "pubg": {
+    "apiKey": ""
   }
 }
