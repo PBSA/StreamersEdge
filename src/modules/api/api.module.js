@@ -121,6 +121,7 @@ class ApiModule {
       this.authController,
       this.profileController,
       this.usersController,
+      this.challengesController,
       this.twitchController,
       this.facebookController,
       this.googleController,
