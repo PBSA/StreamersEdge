@@ -18,6 +18,10 @@
     "clientId": "",
     "clientSecret": ""
   },
+  "facebook": {
+    "clientId": "",
+    "clientSecret": ""
+  },
   "raven": {
     "enabled": true,
     "url": ""
@@ -39,5 +43,8 @@
   "peerplays": {
     "peerplaysFaucetURL": "https://beatrice-faucet.peerplays.download/faucet",
     "referrer": "1.2.0"
+  },
+  "pubg": {
+    "apiKey": ""
   }
 }
