@@ -62,6 +62,16 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
+  async findWithGames() {
+    return this.model.findAll({
+      where: {
+        pubgUsername: {
+          [Sequelize.Op.ne]: null
+        }
+      }
+    });
+  }
+
 }
 
 module.exports = UserRepository;
