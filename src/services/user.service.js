@@ -15,6 +15,7 @@ class UserService {
    * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
    * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
    * @param {MailService} opts.mailService
+   * @param {PubgApiRepository} opts.pubgApiRepository
    */
   constructor(opts) {
     this.dbConnection = opts.dbConnection;
@@ -25,6 +26,7 @@ class UserService {
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.mailService = opts.mailService;
+    this.pubgApiRepository = opts.pubgApiRepository;
 
     this.errors = {
       USER_NOT_FOUND: 'USER_NOT_FOUND',

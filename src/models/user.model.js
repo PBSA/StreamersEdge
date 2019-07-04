@@ -18,6 +18,7 @@ const invitationConstants = require('../constants/invitation');
  * @property {Boolean} notifications
  * @property {String} invitations
  * @property {Enum} userType
+ * @property {String} pubgUsername
  */
 
 /**
@@ -40,6 +41,8 @@ const invitationConstants = require('../constants/invitation');
  * @property {Enum} userType
  * @property {Enum} applicationType
  * @property {String} pushNotificationId
+ * @property {String} pubgUsername
+ * @property {String} pubgId
  */
 class UserModel extends Model {
   /**
@@ -58,7 +61,8 @@ class UserModel extends Model {
       bitcoinAddress: this.bitcoinAddress,
       notifications: this.notifications,
       invitations: this.invitations,
-      userType: this.userType
+      userType: this.userType,
+      pubgUsername: this.pubgUsername
     };
   }
 }
@@ -137,6 +141,15 @@ module.exports = {
         values: profileConstants.applicationType
       },
       pushNotificationId: {
+        type: Sequelize.STRING
+      },
+      steamId: {
+        type: Sequelize.STRING
+      },
+      pubgUsername: {
+        type: Sequelize.STRING
+      },
+      pubgId: {
         type: Sequelize.STRING
       }
     }, {
