@@ -48,6 +48,9 @@
     "publicKey": "",
     "privateKey": ""
   },
+  "s3": {
+    "bucket": ""
+  },
   "pubg": {
     "apiKey": ""
   }
