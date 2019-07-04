@@ -14,6 +14,9 @@ Backend module for StreamersEdge application
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
 	
+- [Facebook](#facebook)
+	- [Auth by facebook](#auth-by-facebook)
+	
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
 	
@@ -294,6 +297,15 @@ HTTP/1.1 200 OK
  "status": 200
 }
 ```
+# Facebook
+
+## Auth by facebook
+
+
+
+	GET /api/v1/auth/facebook
+
+
 # Google
 
 ## Auth by google
@@ -335,10 +347,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
-    "peerplaysAccountName": "testaccount",
-    "bitcoinAddress": ""
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
 }
 ```
@@ -360,10 +377,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
   }
 }
 ```
@@ -380,10 +402,12 @@ Request-Example:
 
 ```
 {
+  "avatar": "",
   "youtube": "",
   "facebook": "",
   "peerplaysAccountName": "",
-  "bitcoinAddress": ""
+  "bitcoinAddress": "",
+  "userType": "viewer"
 }
 ```
 
@@ -398,10 +422,15 @@ HTTP/1.1 200 OK
   "result": {
     "id": "5cc315041ec568398b99d7ca",
     "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
-    "bitcoinAddress": ""
+    "bitcoinAddress": "",
+    "userType": "viewer"
  }
 }
 ```

@@ -18,6 +18,10 @@
     "clientId": "",
     "clientSecret": ""
   },
+  "facebook": {
+    "clientId": "",
+    "clientSecret": ""
+  },
   "raven": {
     "enabled": true,
     "url": ""
