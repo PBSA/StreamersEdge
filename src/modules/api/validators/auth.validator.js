@@ -2,6 +2,7 @@ const Joi = require('./abstract/joi.form');
 const normalizeEmail = require('normalize-email');
 const BaseValidator = require('./abstract/base.validator');
 const ValidateError = require('./../../../errors/validate.error');
+const profileConstants = require('../../../constants/profile');
 
 class AuthValidator extends BaseValidator {
 
@@ -24,6 +25,7 @@ class AuthValidator extends BaseValidator {
     this.validateForgotPassword = this.validateForgotPassword.bind(this);
     this.validateResetPassword = this.validateResetPassword.bind(this);
     this.loggedOnly = this.loggedOnly.bind(this);
+    this.loggedAdminOnly = this.loggedAdminOnly.bind(this);
   }
 
   loggedOnly() {
@@ -31,6 +33,21 @@ class AuthValidator extends BaseValidator {
 
       if (!req.isAuthenticated()) {
         throw new ValidateError(401, 'unauthorized');
+      }
+
+      return null;
+    });
+  }
+
+  loggedAdminOnly() {
+    return this.validate(null, null, async (req) => {
+
+      if (!req.isAuthenticated()) {
+        throw new ValidateError(401, 'unauthorized');
+      }
+
+      if (req.user.userType !== profileConstants.userType.admin) {
+        throw new ValidateError(403, 'forbidden');
       }
 
       return null;

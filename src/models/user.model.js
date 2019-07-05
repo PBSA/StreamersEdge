@@ -128,8 +128,7 @@ module.exports = {
         defaultValue: ''
       },
       userType: {
-        type:Sequelize.ENUM,
-        values: profileConstants.userType
+        type: Sequelize.ENUM(Object.keys(profileConstants.userType).map((key) => profileConstants.userType[key]))
       },
       applicationType: {
         type:Sequelize.ENUM,
