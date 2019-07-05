@@ -2,6 +2,9 @@
 
 Backend module for StreamersEdge application
 
+- [Admin](#admin)
+	- [Get authorized admin profile](#get-authorized-admin-profile)
+	
 - [Auth](#auth)
 	- [Confirm email](#confirm-email)
 	- [Logout](#logout)
@@ -39,6 +42,11 @@ Backend module for StreamersEdge application
 	- [Get streams](#get-streams)
 	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
 	
+- [Stream](#stream)
+	- [Get stream](#get-stream)
+	- [Get streams](#get-streams)
+	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
+	
 - [Twitch](#twitch)
 	- [Auth by twitch](#auth-by-twitch)
 	
@@ -48,6 +56,38 @@ Backend module for StreamersEdge application
 	
 
 
+# Admin
+
+## Get authorized admin profile
+
+<p>Get profile of authorized admin</p>
+
+	GET /api/v1/admin/profile
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
+  }
+}
+```
 # Auth
 
 ## Confirm email
