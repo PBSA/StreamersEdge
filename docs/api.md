@@ -2,6 +2,9 @@
 
 Backend module for StreamersEdge application
 
+- [Admin](#admin)
+	- [Get authorized admin profile](#get-authorized-admin-profile)
+	
 - [Auth](#auth)
 	- [Confirm email](#confirm-email)
 	- [Logout](#logout)
@@ -24,8 +27,10 @@ Backend module for StreamersEdge application
 	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
+	- [Delete profile avatar](#delete-profile-avatar)
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
+	- [Add or change account avatar](#add-or-change-account-avatar)
 	
 - [Stream](#stream)
 	- [Get stream](#get-stream)
@@ -42,6 +47,38 @@ Backend module for StreamersEdge application
 	
 
 
+# Admin
+
+## Get authorized admin profile
+
+<p>Get profile of authorized admin</p>
+
+	GET /api/v1/admin/profile
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
+  }
+}
+```
 # Auth
 
 ## Confirm email
@@ -330,55 +367,6 @@ Request-Example:
 }
 ```
 
-### Success Response
-
-Success-Response:
-
-```
-HTTP/1.1 200 OK
-{
- "result": {
-   "id": 11,
-   "name": "test",
-   "createdAt": "2019-06-02T06:11:44.866Z",
-   "startDate": "2019-07-04T08:32:19.818Z",
-   "endDate": null,
-   "game": "pubg",
-   "accessRule": "anyone",
-   "ppyAmount": "1",
-   "conditionsText": "test",
-   "user": {
-     "id": 1,
-     "username": "username",
-     "youtube": "",
-     "facebook": "",
-     "peerplaysAccountName": "",
-     "bitcoinAddress": ""
-   },
-   "conditions": [{
-     "id": 4,
-     "param": "resultPlace",
-     "operator": ">",
-     "value": 1,
-     "join": "OR",
-     "createdAt": "2019-06-02T06:11:44.874Z",
-     "updatedAt": "2019-06-02T06:11:44.874Z",
-     "challengeId": 11
-   }, {
-     "id": 5,
-     "param": "resultPlace",
-     "operator": ">",
-     "value": 1,
-     "join": "END",
-     "createdAt": "2019-06-02T06:11:44.875Z",
-     "updatedAt": "2019-06-02T06:11:44.875Z",
-     "challengeId": 11
-   }],
-   "invitedUsers": []
- },
- "status": 200
-}
-```
 ## Subscribe to new notification
 
 
@@ -471,17 +459,49 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": {
-    "id": "5cc315041ec568398b99d7ca",
+    "id": 7,
     "username": "test",
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
-    "avatar": "",
     "youtube": "",
     "facebook": "",
+    "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
-    "userType": "viewer"
+    "userType": "viewer",
+    "avatar": ""
+ }
+}
+```
+## Delete profile avatar
+
+
+
+	DELETE /api/v1/profile/avatar
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": 7,
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "youtube": "",
+    "facebook": "",
+    "twitch": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer",
+    "avatar": ""
  }
 }
 ```
@@ -501,18 +521,19 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": {
-    "id": "5cc315041ec568398b99d7ca",
+    "id": 7,
     "username": "test",
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
-    "avatar": "",
     "youtube": "",
     "facebook": "",
+    "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
-    "userType": "viewer"
-  }
+    "userType": "viewer",
+    "avatar": ""
+ }
 }
 ```
 ## Update authorized user profile
@@ -546,17 +567,57 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": {
-    "id": "5cc315041ec568398b99d7ca",
+    "id": 7,
     "username": "test",
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
-    "avatar": "",
     "youtube": "",
     "facebook": "",
+    "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
-    "userType": "viewer"
+    "userType": "viewer",
+    "avatar": ""
+ }
+}
+```
+## Add or change account avatar
+
+
+
+	POST /api/v1/profile/avatar
+
+
+### Examples
+
+Request-Example:
+
+```
+"file": ...file...
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": 7,
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "youtube": "",
+    "facebook": "",
+    "twitch": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer",
+    "avatar": ""
  }
 }
 ```

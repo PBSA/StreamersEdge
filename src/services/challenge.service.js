@@ -1,6 +1,7 @@
 const challengeConstants = require('../constants/challenge');
 const invitationConstants = require('../constants/invitation');
 
+
 class ChallengeService {
 
   /**
@@ -17,7 +18,6 @@ class ChallengeService {
     this.challengeConditionRepository = opts.challengeConditionRepository;
     this.userRepository = opts.userRepository;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
-    this.userRepository = opts.userRepository;
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.webPushConnection = opts.webPushConnection;
@@ -55,7 +55,6 @@ class ChallengeService {
     }));
 
     if (challengeObject.accessRule === challengeConstants.accessRules.invite) {
-
       await Promise.all(challengeObject.invitedAccounts.map(async (id) => {
         await this.challengeInvitedUsersRepository.create({
           challengeId: Challenge.id,
@@ -196,7 +195,6 @@ class ChallengeService {
       default:
         return;
     }
-
   }
 
 }

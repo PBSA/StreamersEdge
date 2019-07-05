@@ -160,7 +160,6 @@ class ChallengesController {
          * @apiName InviteToChallenge
          * @apiGroup Challenges
          * @apiVersion 0.1.0
-         * @apiUse ChallengeObjectResponse
          * @apiExample {json} Request-Example:
          * {
          *   "userId": "6",

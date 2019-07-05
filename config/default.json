@@ -48,5 +48,11 @@
     "publicKey": "",
     "privateKey": ""
   },
-  "streamersEdgeServiceEmail": ""
+  "streamersEdgeServiceEmail": "",
+  "s3": {
+    "bucket": ""
+  },
+  "pubg": {
+    "apiKey": ""
+  }
 }
