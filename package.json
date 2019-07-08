@@ -66,7 +66,7 @@
     "pubg.js": "^3.9.0",
     "raven": "^2.6.4",
     "request": "^2.88.0",
-    "sequelize": "^5.8.7",
+    "sequelize": "^5.8.11",
     "un": "0.0.0",
     "url": "^0.11.0",
     "wallet-address-validator": "^0.2.4",
