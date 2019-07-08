@@ -4,14 +4,11 @@ Backend module for StreamersEdge application
 
 - [Admin](#admin)
 	- [Get authorized admin profile](#get-authorized-admin-profile)
-<<<<<<< HEAD
 	- [Ban user by id](#ban-user-by-id)
 	- [Unban user by id](#unban-user-by-id)
 	- [get all reports](#get-all-reports)
 	- [get user info by id](#get-user-info-by-id)
 	- [Get users with their status](#get-users-with-their-status)
-=======
->>>>>>> develop
 	
 - [Auth](#auth)
 	- [Confirm email](#confirm-email)
@@ -40,21 +37,9 @@ Backend module for StreamersEdge application
 	- [Update authorized user profile](#update-authorized-user-profile)
 	- [Add or change account avatar](#add-or-change-account-avatar)
 	
-<<<<<<< HEAD
 - [Report](#report)
 	- [Upload report video](#upload-report-video)
 	- [Report user](#report-user)
-=======
-- [Stream](#stream)
-	- [Get stream](#get-stream)
-	- [Get streams](#get-streams)
-	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
-	
-- [Stream](#stream)
-	- [Get stream](#get-stream)
-	- [Get streams](#get-streams)
-	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
->>>>>>> develop
 	
 - [Stream](#stream)
 	- [Get stream](#get-stream)
@@ -102,7 +87,6 @@ HTTP/1.1 200 OK
   }
 }
 ```
-<<<<<<< HEAD
 ## Ban user by id
 
 
@@ -260,8 +244,6 @@ HTTP/1.1 200 OK
   }
 ]
 ```
-=======
->>>>>>> develop
 # Auth
 
 ## Confirm email
@@ -801,7 +783,6 @@ HTTP/1.1 200 OK
     "bitcoinAddress": "",
     "userType": "viewer",
     "avatar": ""
-<<<<<<< HEAD
  }
 }
 ```
@@ -886,11 +867,6 @@ HTTP/1.1 200 OK
     "status": 200
   }
 ```
-=======
- }
-}
-```
->>>>>>> develop
 # Stream
 
 ## Get stream
