@@ -131,7 +131,9 @@ class ApiModule {
       this.streamController,
       this.adminController,
       this.steamController
-    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => this.addRestHandler(...route)));
+    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
+      this.addRestHandler(...route);
+    }));
 
     this.addRestHandler('use', '*', () => {
       throw new MethodNotAllowedError();
