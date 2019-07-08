@@ -13,6 +13,7 @@ class AdminController {
     this.userValidator = opts.userValidator;
     this.userService = opts.userService;
     this.adminService = opts.adminService;
+    this.userService = opts.userService;
   }
 
   /**
@@ -194,7 +195,7 @@ class AdminController {
         this.getAllReports.bind(this)
       ]
     ];
-    
+
   }
 
   async unbanUser(user, pure, req) {

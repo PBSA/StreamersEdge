@@ -4,11 +4,14 @@ Backend module for StreamersEdge application
 
 - [Admin](#admin)
 	- [Get authorized admin profile](#get-authorized-admin-profile)
+<<<<<<< HEAD
 	- [Ban user by id](#ban-user-by-id)
 	- [Unban user by id](#unban-user-by-id)
 	- [get all reports](#get-all-reports)
 	- [get user info by id](#get-user-info-by-id)
 	- [Get users with their status](#get-users-with-their-status)
+=======
+>>>>>>> develop
 	
 - [Auth](#auth)
 	- [Confirm email](#confirm-email)
@@ -21,6 +24,11 @@ Backend module for StreamersEdge application
 - [Challenges](#challenges)
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
+	- [Invite user to new challenge](#invite-user-to-new-challenge)
+	- [Subscribe to new notification](#subscribe-to-new-notification)
+	
+- [Facebook](#facebook)
+	- [Auth by facebook](#auth-by-facebook)
 	
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
@@ -32,9 +40,21 @@ Backend module for StreamersEdge application
 	- [Update authorized user profile](#update-authorized-user-profile)
 	- [Add or change account avatar](#add-or-change-account-avatar)
 	
+<<<<<<< HEAD
 - [Report](#report)
 	- [Upload report video](#upload-report-video)
 	- [Report user](#report-user)
+=======
+- [Stream](#stream)
+	- [Get stream](#get-stream)
+	- [Get streams](#get-streams)
+	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
+	
+- [Stream](#stream)
+	- [Get stream](#get-stream)
+	- [Get streams](#get-streams)
+	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
+>>>>>>> develop
 	
 - [Stream](#stream)
 	- [Get stream](#get-stream)
@@ -82,6 +102,7 @@ HTTP/1.1 200 OK
   }
 }
 ```
+<<<<<<< HEAD
 ## Ban user by id
 
 
@@ -239,6 +260,8 @@ HTTP/1.1 200 OK
   }
 ]
 ```
+=======
+>>>>>>> develop
 # Auth
 
 ## Confirm email
@@ -502,6 +525,84 @@ HTTP/1.1 200 OK
  "status": 200
 }
 ```
+## Invite user to new challenge
+
+
+
+	POST /api/v1/challenges/invite
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| userId			| Number			|  <p>Invited user Id</p>							|
+| challengeId			| Number			|  <p>Id of of challenge</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "userId": "6",
+  "challengeId": "107",
+}
+```
+
+## Subscribe to new notification
+
+
+
+	POST /api/v1/challenges/subscribe
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| endpoint			| String			|  <p>url for user</p>							|
+| expirationTime			| Number			|  <p>time of expiration</p>							|
+| keys			| Object			|  <p>object</p>							|
+| keys.p256dh			| String			| **optional** <p>string in p256dh</p>							|
+| keys.auth			| String			| **optional** <p>auth string</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  endpoint: 'https://fcm.googleapis.com/...lbTgv66-WEEWWK9bxZ_ksHhV_Z49vBvnYZdeS6cL6kk',
+  expirationTime: null,
+  keys:
+   {
+     p256dh: 'BOQWqnde....j7Dk-o',
+     auth: 'EYFQS0dh2KaPMXx9nmVPww'
+   }
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": "BOQWqndev7VP-UCLv9QIqDtkcNwRjyu4QBPDTCymL6ILHWklqWP1XxXRLmAYywsfgGs7K8Yub_6jQKiN0j7Dk-o",
+ "status": 200
+}
+```
+# Facebook
+
+## Auth by facebook
+
+
+
+	GET /api/v1/auth/facebook
+
+
 # Google
 
 ## Auth by google
@@ -700,6 +801,7 @@ HTTP/1.1 200 OK
     "bitcoinAddress": "",
     "userType": "viewer",
     "avatar": ""
+<<<<<<< HEAD
  }
 }
 ```
@@ -784,6 +886,11 @@ HTTP/1.1 200 OK
     "status": 200
   }
 ```
+=======
+ }
+}
+```
+>>>>>>> develop
 # Stream
 
 ## Get stream

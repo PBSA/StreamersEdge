@@ -65,5 +65,4 @@ config/local-test.json
 apidoc
 public/images
 public/video
-config/local-test.json
 .idea/

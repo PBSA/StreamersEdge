@@ -15,6 +15,10 @@
     "clientId": "GOOGLE_CLIENT_ID",
     "clientSecret": "GOOGLE_CLIENT_SECRET"
   },
+  "facebook": {
+    "clientId": "FACEBOOK_CLIENT_ID",
+    "clientSecret": "FACEBOOK_CLIENT_SECRET"
+  },
   "raven": {
     "url": "RAVEN_URL"
   },
@@ -25,5 +29,12 @@
       "user": "MAILER_AUTH_USER",
       "pass": "MAILER_AUTH_PASS"
     }
+  },
+  "vapid": {
+    "publicKey": "VAPID_PUBLIC_KEY",
+    "privateKey": "VAPID_PRIVATE_KEY"
+  },
+  "pubg": {
+    "apiKey": "PUBG_API_KEY"
   }
 }

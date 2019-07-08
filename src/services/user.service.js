@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const Sequelize = require('sequelize');
 const moment = require('moment');
 const RestError = require('../errors/rest.error');
 
@@ -12,6 +11,7 @@ class UserService {
    * @param {ResetTokenRepository} opts.resetTokenRepository
    * @param {MailService} opts.mailService
    * @param {FileService} opts.fileService
+   * @param {GoogleRepository} opts.googleRepository
    */
   constructor(opts) {
     this.userRepository = opts.userRepository;
@@ -20,6 +20,7 @@ class UserService {
     this.resetTokenRepository = opts.resetTokenRepository;
     this.mailService = opts.mailService;
     this.fileService = opts.fileService;
+    this.googleRepository = opts.googleRepository;
 
     this.errors = {
       USER_NOT_FOUND: 'USER_NOT_FOUND',
@@ -33,34 +34,73 @@ class UserService {
    * Find user by network account id and create row if not exists
    * @param {String} network
    * @param account
+   * @param {UserModel|null} LoggedUser
    * @returns {Promise<UserModel>}
    */
-  async getUserBySocialNetworkAccount(network, account) {
-    const {id, email, picture, username} = account;
+  async getUserBySocialNetworkAccount(network, account, LoggedUser = null) {
 
-    let User = await this.userRepository.model.findOne({
-      where: {
-        [`${network}Id`]: id
-      }
-    });
+    const {id, email, picture, username, youtube} = account;
 
-    if (!User) {
-      const usedLogin = await this.userRepository.model.findAll({
-        where: {[Sequelize.Op.or]: [{email}, {username}]}
-      });
+    let UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
 
-      const emailIsUsed = usedLogin.find((row) => row.email === email);
-      const usernameIsUsed = usedLogin.find((row) => row.username === username);
-
-      User = await this.userRepository.create({
-        [`${network}Id`]: id,
-        avatar: picture,
-        email: emailIsUsed ? null : email,
-        isEmailVerified: emailIsUsed ? null : true,
-        username: usernameIsUsed ? null : username
-      });
+    if (UserWithNetworkAccount && LoggedUser && LoggedUser.id !== UserWithNetworkAccount.id) {
+      throw new Error('this account already connected to another profile');
     }
 
+    if (LoggedUser) {
+      return await this.connectSocialNetwork(network, account, LoggedUser);
+    }
+
+    if (UserWithNetworkAccount) {
+      return UserWithNetworkAccount;
+    }
+
+    const emailIsUsed = email && await this.userRepository.model.count({where: {email}});
+    const usernameIsUsed = username && await this.userRepository.model.count({where: {username}});
+
+    return await this.userRepository.create({
+      [`${network}Id`]: id,
+      avatar: picture,
+      email: emailIsUsed ? null : email,
+      isEmailVerified: emailIsUsed ? null : true,
+      username: usernameIsUsed ? null : username,
+      youtube
+    });
+  }
+
+  async connectSocialNetwork(network, account, User) {
+    const {id, email, picture, username, youtube} = account;
+
+    if (User[`${network}Id`] === id) {
+      return User;
+    }
+
+    const emailIsUsed = email && await this.userRepository.model.count({where: {email}});
+    const usernameIsUsed = username && await this.userRepository.model.count({where: {username}});
+
+    User[`${network}Id`] = id;
+
+    if (!User.email && !emailIsUsed) {
+      User.email = email;
+    }
+
+    if (User.email === email) {
+      User.isEmailVerified = true;
+    }
+
+    if (!User.username && !usernameIsUsed) {
+      User.username = username;
+    }
+
+    if (!User.avatar) {
+      User.avatar = picture;
+    }
+
+    if (!User.youtube) {
+      User.youtube = youtube;
+    }
+
+    await User.save();
     return User;
   }
 
@@ -69,25 +109,21 @@ class UserService {
    * @returns {Promise<UserPublicObject>}
    */
   async getCleanUser(User) {
-    const object = User.getPublic();
-    const avatar = object.avatar ? object.avatar : '';
-    object.avatar = avatar && !avatar.match(/^http/)
-      ? this.fileService.getImage(User.avatar, 'avatar')
-      : avatar;
-    return object;
+    return User.getPublic();
   }
 
   /**
    * @param {UserModel} User
    * @param updateObject
+   * @param getClean
    * @returns {Promise<UserModel>}
    */
-  async patchProfile(User, updateObject) {
+  async patchProfile(User, updateObject, getClean = true) {
     Object.keys(updateObject).forEach((field) => {
       User[field] = updateObject[field];
     });
     await User.save();
-    return this.getCleanUser(User);
+    return getClean ? this.getCleanUser(User) : User;
   }
 
   async getUser(id) {
@@ -210,6 +246,10 @@ class UserService {
     User.avatar = filename;
     await User.save();
     return User;
+  }
+
+  async getUserYoutubeLink(tokens) {
+    return this.googleRepository.getYoutubeLink(tokens);
   }
 
 }
