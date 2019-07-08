@@ -107,10 +107,10 @@ class UsersController {
        * @apiExample {json} Request-Example:
        * {
        *   "invitations": "games",
-       *   "games": [6, 7, 8]
+       *   "games": ["pubg"]
        * }
        * @apiParam {String} invitation is one of invitations types
-       * @apiParam {Array} Ids of games from which user can accepts invitations
+       * @apiParam {Array} Names of games from which user can accepts invitations
        */
       [
         'patch', '/api/v1/users/setInvitation',

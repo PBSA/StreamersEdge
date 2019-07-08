@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
+const allowedGames = require('../constants/games');
 
 /**
  * @typedef {Object} WhitelistedGames
@@ -34,8 +35,8 @@ class WhitelistedGames extends Model {
 module.exports = {
   init: (sequelize) => {
     WhitelistedGames.init({
-      fromUser: {
-        type: Sequelize.INTEGER,
+      fromGame: {
+        type: Sequelize.ENUM(...Object.keys(allowedGames.games)),
         allowNull: false
       },
       toUser: {
@@ -44,7 +45,7 @@ module.exports = {
       }
     }, {
       sequelize,
-      modelName: 'WhitelistedGames'
+      modelName: 'whitelisted-games'
     });
   },
   associate: (models) => {

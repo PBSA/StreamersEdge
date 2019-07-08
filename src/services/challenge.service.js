@@ -36,6 +36,7 @@ class ChallengeService {
    * @returns {Promise<ChallengePublicObject>}
    */
   async createChallenge(creatorId, challengeObject) {
+
     const Challenge = await this.challengeRepository.create({
       userId: creatorId,
       name: challengeObject.name,
@@ -73,6 +74,15 @@ class ChallengeService {
             const isAllowedForUser = await this.whitelistedUsersRepository.isWhitelistedFor(id, creatorId);
 
             if (isAllowedForUser) {
+              return await this.webPushConnection.sendNotification(this.vapidData[id], vapidKeys, invitation);
+            }
+          }
+
+            break;
+          case invitationConstants.invitationStatus.games: {
+            const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(id, challengeObject.game);
+
+            if (isAllowedForGame) {
               return await this.webPushConnection.sendNotification(this.vapidData[id], vapidKeys, invitation);
             }
           }
@@ -154,6 +164,7 @@ class ChallengeService {
    * @returns {Promise<Object>}
    */
   async sendInvite(fromUser, toUserWithId, challengeId) {
+
     const challenge = await this.challengeRepository.findByPk(challengeId);
 
     if (!challenge) {
@@ -182,7 +193,8 @@ class ChallengeService {
 
         break;
       case invitationConstants.invitationStatus.games: {
-        const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(toUserWithId, challengeId);
+
+        const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(toUserWithId, challenge.game);
 
         if (isAllowedForGame) {
           return await this.webPushConnection.sendNotification(this.vapidData[toUserWithId], vapidKeys, invitation);

@@ -295,9 +295,9 @@ class UserService {
         }
 
         case invitationConstants.invitationStatus.games: {
-          const games = status.games.map((gameId) => ({
+          const games = status.games.map((game) => ({
             'toUser': user.id,
-            'fromUser': gameId
+            'fromGame': game
           }));
           await Promise.all([
             this.whitelistedGamesRepository.destroyByToUserId(user.id, tx),
