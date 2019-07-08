@@ -26,9 +26,11 @@ class ApiModule {
    * @param {UsersController} opts.usersController
    * @param {TwitchController} opts.twitchController
    * @param {GoogleController} opts.googleController
+   * @param {FacebookController} opts.facebookController
    * @param {UserRepository} opts.userRepository
    * @param {ChallengesController} opts.challengesController
    * @param {AdminController} opts.adminController
+   * @param {SteamController} opts.steamController
    */
   constructor(opts) {
     this.config = opts.config;
@@ -41,10 +43,12 @@ class ApiModule {
     this.profileController = opts.profileController;
     this.usersController = opts.usersController;
     this.twitchController = opts.twitchController;
+    this.facebookController = opts.facebookController;
     this.googleController = opts.googleController;
     this.challengesController = opts.challengesController;
     this.streamController = opts.streamController;
     this.adminController = opts.adminController;
+    this.steamController = opts.steamController;
 
     this.userRepository = opts.userRepository;
   }
@@ -120,10 +124,14 @@ class ApiModule {
       this.authController,
       this.profileController,
       this.usersController,
+      this.challengesController,
       this.twitchController,
+      this.facebookController,
       this.googleController,
       this.challengesController,
-      this.streamController
+      this.streamController,
+      this.adminController,
+      this.steamController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
       this.addRestHandler(...route);
     }));
@@ -149,7 +157,7 @@ class ApiModule {
           return handler()(req, res);
         }, Promise.resolve());
 
-        const result = await action(req.user, req.pure, req);
+        const result = await action(req.user, req.pure, req, res);
         return res.status(200).json({
           result: result || null,
           status: 200

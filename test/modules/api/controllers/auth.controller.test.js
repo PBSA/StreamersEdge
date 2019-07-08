@@ -5,8 +5,8 @@ chai.use(require('chai-url'));
 const chaiHttp = require('chai-http');
 
 const {isSuccess, isError} = require('../helpers/test.response.helper');
+const {login} = require('../helpers/test.login.helper');
 const ApiModule = require('../api.module.test');
-const constants = require('../../../constants.json');
 
 chai.use(chaiHttp);
 let agent;
@@ -19,6 +19,13 @@ before(async () => {
 
 describe('POST /api/v1/auth/logout', () => {
 
+  const validObject = {
+    email: 'testlogout@email.com',
+    username: 'test-testlogout',
+    password: 'MyPassword^',
+    repeatPassword: 'MyPassword^'
+  };
+
   beforeEach(async () => {
     await agent.post('/api/v1/auth/logout');
   });
@@ -29,9 +36,7 @@ describe('POST /api/v1/auth/logout', () => {
   });
 
   it('should success. valid request', async () => {
-    await agent.post('/api/v1/auth/twitch/code').send({
-      code: constants.modules.api.auth.twitchValidCode
-    });
+    await login(agent, validObject, apiModule);
     const response = await agent.post('/api/v1/auth/logout');
     isSuccess(response);
   });

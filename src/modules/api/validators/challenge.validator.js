@@ -17,13 +17,15 @@ class ChallengeValidator extends BaseValidator {
     this.config = opts.config;
     this.createChallenge = this.createChallenge.bind(this);
     this.validateGetChallenge = this.validateGetChallenge.bind(this);
+    this.subscribe = this.subscribe.bind(this);
+    this.invite = this.invite.bind(this);
   }
 
   createChallenge() {
     const bodySchema = {
       name: Joi.string().max(50).required(),
       startDate: Joi.date().iso().min('now'),
-      endDate: Joi.date().iso().min('now'),
+      endDate: Joi.date().iso().min('now').required(),
       game: Joi.string().valid(challengeConstants.games).required(),
       accessRule: Joi.string().valid(Object.keys(challengeConstants.accessRules)).required(),
       ppyAmount: Joi.number().min(1).required(),
@@ -87,6 +89,18 @@ class ChallengeValidator extends BaseValidator {
     };
 
     return this.validate(querySchema, null, (req, query) => query.id);
+  }
+
+  subscribe() {
+    return this.validate(null,
+      {endpoint: Joi.string(), expirationTime: Joi.number().allow(null), keys: Joi.object({p256dh: Joi.string(), auth: Joi.string()})},
+      (req, query, body) => body);
+  }
+
+  invite() {
+    return this.validate(null,
+      {userId: Joi.number(), challengeId: Joi.number()},
+      (req, query, body) => body);
   }
 
 }

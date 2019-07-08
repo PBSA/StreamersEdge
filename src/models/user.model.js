@@ -15,6 +15,7 @@ const profileConstants = require('../constants/profile');
  * @property {String} peerplaysAccountName
  * @property {String} bitcoinAddress
  * @property {Enum} userType
+ * @property {String} pubgUsername
  */
 
 /**
@@ -25,6 +26,7 @@ const profileConstants = require('../constants/profile');
  * @property {String} twitchId
  * @property {String} twitchUserName
  * @property {String} googleId
+ * @property {String} facebookId
  * @property {String} googleName
  * @property {String} avatar
  * @property {String} youtube
@@ -34,6 +36,8 @@ const profileConstants = require('../constants/profile');
  * @property {Enum} userType
  * @property {Enum} applicationType
  * @property {String} pushNotificationId
+ * @property {String} pubgUsername
+ * @property {String} pubgId
  */
 class UserModel extends Model {
   /**
@@ -48,12 +52,15 @@ class UserModel extends Model {
       googleName: this.googleName,
       youtube: this.youtube,
       facebook: this.facebook,
+      twitch: this.twitch || '',
       peerplaysAccountName: this.peerplaysAccountName,
       bitcoinAddress: this.bitcoinAddress,
-      userType: this.userType
+      userType: this.userType,
+      avatar: this.avatar || '',
+      pubgUsername: this.pubgUsername
     };
   }
-  
+
   addTwitchLink() {
     this.dataValues.twitchLink = this.twitchId ? `https://www.twitch.tv/${this.twitchId}/videos` : null;
   }
@@ -92,6 +99,11 @@ module.exports = {
         unique: true,
         allowNull: true
       },
+      facebookId: {
+        type: Sequelize.STRING,
+        unique: true,
+        allowNull: true
+      },
       googleName: {
         type: Sequelize.STRING
       },
@@ -100,6 +112,10 @@ module.exports = {
         defaultValue: ''
       },
       facebook: {
+        type: Sequelize.STRING,
+        defaultValue: ''
+      },
+      twitch: {
         type: Sequelize.STRING,
         defaultValue: ''
       },
@@ -124,6 +140,15 @@ module.exports = {
       status: {
         type: Sequelize.ENUM(Object.keys(profileConstants.status).map((key) => profileConstants.status[key])),
         defaultValue: profileConstants.status.active
+      },
+      steamId: {
+        type: Sequelize.STRING
+      },
+      pubgUsername: {
+        type: Sequelize.STRING
+      },
+      pubgId: {
+        type: Sequelize.STRING
       }
     }, {
       sequelize,

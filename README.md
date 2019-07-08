@@ -72,3 +72,34 @@ You can run the application with docker-compose:
 ```bash
 docker-compose up --build
 ```
+
+## Project configuration 
+
+### AWS S3 Credentials
+
+The server uses AWS S3 to store user-uploaded avatars. To grant server 
+permissions to upload files, you must pass the following variables to 
+environment variables:
+
+```
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_SESSION_TOKEN (optional)
+```
+
+For provide public access to files in Bucket you can add next policy: 
+
+```
+{
+  "Version":"2012-10-17",
+  "Statement":[
+    {
+      "Sid":"AddPerm",
+      "Effect":"Allow",
+      "Principal": "*",
+      "Action":["s3:GetObject"],
+      "Resource":["arn:aws:s3:::simplified-guide/*"]
+    }
+  ]
+}
+``` 
