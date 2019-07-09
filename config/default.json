@@ -52,6 +52,7 @@
   "s3": {
     "bucket": ""
   },
+  "cdnUrl": "",
   "pubg": {
     "apiKey": ""
   }
