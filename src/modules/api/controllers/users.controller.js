@@ -72,6 +72,51 @@ class UsersController {
         this.authValidator.loggedOnly,
         this.userValidator.getUsers,
         this.getUsers.bind(this)
+      ],
+      /**
+       * @api {patch} /api/v1/users/setNotification Change notification status
+       * @apiName PatchNotification
+       * @apiGroup Users
+       * @apiVersion 0.1.0
+       * @apiParam {Boolean} set notification for user
+       * @apiSuccessExample {json} Success-Response:
+       * HTTP/1.1 200 OK
+       * {
+       *   "result": [1],
+       *   "status": 200
+       * }
+       */
+      [
+        'patch', '/api/v1/users/setNotification',
+        this.authValidator.loggedOnly,
+        this.userValidator.changeNotificationStatus,
+        this.changeNotificationStatus.bind(this)
+      ],
+      /**
+       * @api {patch} /api/v1/users/setInvitation Change invitation status
+       * @apiName PatchNotification
+       * @apiGroup Users
+       * @apiVersion 0.1.0
+       * @apiParam {String} set invitation for user
+       * @apiSuccessExample {json} Success-Response:
+       * HTTP/1.1 200 OK
+       * {
+       *   "result": [1],
+       *   "status": 200
+       * }
+       * @apiExample {json} Request-Example:
+       * {
+       *   "invitations": "games",
+       *   "games": ["pubg"]
+       * }
+       * @apiParam {String} invitation is one of invitations types
+       * @apiParam {Array} Names of games from which user can accepts invitations
+       */
+      [
+        'patch', '/api/v1/users/setInvitation',
+        this.authValidator.loggedOnly,
+        this.userValidator.changeInvitationStatus,
+        this.changeInvitationStatus.bind(this)
       ]
     ];
   }
@@ -87,6 +132,14 @@ class UsersController {
   async getUsers(user, {search, limit, skip}) {
     skip = skip || 0;
     return await this.userService.searchUsers(search, limit, skip);
+  }
+
+  async changeNotificationStatus(user, status) {
+    return await this.userService.changeNotificationStatus(user, status);
+  }
+
+  async changeInvitationStatus(user, status) {
+    return await this.userService.changeInvitationStatus(user, status);
   }
 
 }

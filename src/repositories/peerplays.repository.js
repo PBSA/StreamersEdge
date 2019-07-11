@@ -53,6 +53,7 @@ class PeerplaysRepository {
       result.amount = amount;
     } catch (e) {
       logger.error(e.message);
+      throw e;
     }
 
     return result;

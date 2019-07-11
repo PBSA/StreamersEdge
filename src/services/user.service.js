@@ -1,23 +1,30 @@
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const RestError = require('../errors/rest.error');
+const invitationConstants = require('../constants/invitation');
 
 class UserService {
 
   /**
+   * @param {DbConnection} opts.dbConnection
    * @param {UserRepository} opts.userRepository
    * @param {PeerplaysRepository} opts.peerplaysRepository
    * @param {VerificationTokenRepository} opts.verificationTokenRepository
    * @param {ResetTokenRepository} opts.resetTokenRepository
+   * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
+   * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
    * @param {MailService} opts.mailService
    * @param {FileService} opts.fileService
    * @param {GoogleRepository} opts.googleRepository
    */
   constructor(opts) {
+    this.dbConnection = opts.dbConnection;
     this.userRepository = opts.userRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
+    this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
+    this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.mailService = opts.mailService;
     this.googleRepository = opts.googleRepository;
 
@@ -239,6 +246,70 @@ class UserService {
     await User.save();
 
     return true;
+  }
+
+  /**
+   * Change notification status of user
+   *
+   * @param user
+   * @param notifications
+   * @returns {Promise<Array>}
+   */
+  async changeNotificationStatus(user, {notifications}) {
+    const updatedNotification = await this.userRepository.updateNotification(user.id, notifications);
+
+    if (!updatedNotification[0]) {
+      throw new Error(this.errors.USER_NOT_FOUND);
+    }
+
+    return updatedNotification;
+
+  }
+
+  /**
+   * Change invitation status of user
+   *
+   * @param user
+   * @param status
+   * @returns {Promise<Array>}
+   */
+  async changeInvitationStatus(user, status) {
+    return await this.dbConnection.sequelize.transaction(async (tx) => {
+      const updatedInvitation = await this.userRepository.updateInvitation(user.id, status.invitations);
+
+      if (!updatedInvitation[0]) {
+        throw new Error(this.errors.USER_NOT_FOUND);
+      }
+
+      switch (status.invitations) {
+        case invitationConstants.invitationStatus.users: {
+          const users = status.users.map((userId) => ({
+            'toUser': user.id,
+            'fromUser': userId
+          }));
+          await Promise.all([
+            this.whitelistedUsersRepository.destroyByToUserId(user.id, tx),
+            this.whitelistedUsersRepository.bulkCreateFromUsers(users, tx)
+          ]);
+          return updatedInvitation;
+        }
+
+        case invitationConstants.invitationStatus.games: {
+          const games = status.games.map((game) => ({
+            'toUser': user.id,
+            'fromGame': game
+          }));
+          await Promise.all([
+            this.whitelistedGamesRepository.destroyByToUserId(user.id, tx),
+            this.whitelistedGamesRepository.bulkCreateFromGames(games, tx)
+          ]);
+          return updatedInvitation;
+        }
+
+        default:
+          return updatedInvitation;
+      }
+    });
   }
 
   async getUserYoutubeLink(tokens) {

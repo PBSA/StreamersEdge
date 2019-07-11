@@ -5,9 +5,11 @@ class PaymentController {
   /**
    * @param {PaymentService} opts.paymentService
    * @param {PaymentValidator} opts.paymentValidator
+   * @param {AuthValidator} opts.authValidator
    */
   constructor(opts) {
     this.paymentService = opts.paymentService;
+    this.authValidator = opts.authValidator;
     this.paymentValidator = opts.paymentValidator;
   }
 
@@ -25,6 +27,7 @@ class PaymentController {
        */
       [
         'post', '/api/v1/payment',
+        this.authValidator.loggedOnly,
         this.paymentValidator.validatePurchase,
         this.processPurchase.bind(this)
       ]
