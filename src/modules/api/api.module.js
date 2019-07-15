@@ -26,11 +26,13 @@ class ApiModule {
    * @param {UsersController} opts.usersController
    * @param {TwitchController} opts.twitchController
    * @param {GoogleController} opts.googleController
+   * @param {FacebookController} opts.facebookController
    * @param {UserRepository} opts.userRepository
    * @param {ChallengesController} opts.challengesController
    * @param {SteamController} opts.steamController
    * @param {PaymentController} opts.paymentController
    * @param {TransactionController} opts.transactionController
+   * @param {AdminController} opts.adminController
    */
   constructor(opts) {
     this.config = opts.config;
@@ -43,12 +45,14 @@ class ApiModule {
     this.profileController = opts.profileController;
     this.usersController = opts.usersController;
     this.twitchController = opts.twitchController;
+    this.facebookController = opts.facebookController;
     this.googleController = opts.googleController;
     this.challengesController = opts.challengesController;
     this.paymentController = opts.paymentController;
     this.streamController = opts.streamController;
     this.steamController = opts.steamController;
     this.transactionController = opts.transactionController;
+    this.adminController = opts.adminController;
 
     this.userRepository = opts.userRepository;
   }
@@ -123,13 +127,16 @@ class ApiModule {
       this.authController,
       this.profileController,
       this.usersController,
+      this.challengesController,
       this.twitchController,
+      this.facebookController,
       this.googleController,
       this.challengesController,
       this.steamController,
       this.paymentController,
       this.streamController,
-      this.transactionController
+      this.transactionController,
+      this.adminController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
       this.addRestHandler(...route);
     }));
@@ -155,7 +162,7 @@ class ApiModule {
           return handler()(req, res);
         }, Promise.resolve());
 
-        const result = await action(req.user, req.pure, req);
+        const result = await action(req.user, req.pure, req, res);
         return res.status(200).json({
           result: result || null,
           status: 200

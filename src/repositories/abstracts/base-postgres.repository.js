@@ -20,6 +20,14 @@ class BasePostgresRepository {
     return this.model.create(data);
   }
 
+  async update(values, options) {
+    return this.model.update(values, options);
+  }
+
+  async destroy(options) {
+    return this.model.destroy(options);
+  }
+
 }
 
 module.exports = BasePostgresRepository;

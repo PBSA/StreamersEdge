@@ -9,6 +9,7 @@ class ProfileValidator extends BaseValidator {
    * @param {PubgApiRepository} opts.pubgApiRepository
    * @param {AppConfig} opts.config
    * @param {PeerplaysRepository} opts.peerplaysRepository
+   * @param {UserRepository} opts.userRepository
    */
   constructor(opts) {
     super();
@@ -17,23 +18,36 @@ class ProfileValidator extends BaseValidator {
     this.config = opts.config;
     this.peerplaysRepository = opts.peerplaysRepository;
 
+    this.userRepository = opts.userRepository;
     this.patchProfile = this.patchProfile.bind(this);
     this.createPeerplaysAccount = this.createPeerplaysAccount.bind(this);
   }
 
   patchProfile() {
     const bodySchema = {
-      avatar: Joi.string().uri({scheme:[/https?/]}).allow('').max(254),
-      youtube: Joi.string().uri({scheme: [/https?/]}).allow('').max(254),
-      facebook: Joi.string().uri({scheme: [/https?/]}).allow('').max(254),
+      avatar: Joi.string().uri({scheme: [/https?/]}).allow('').max(254),
+      youtube: Joi.string().regex(/^https:\/\/www\.youtube\.com/).uri().allow('').max(254),
+      facebook: Joi.string().regex(/^https:\/\/www\.facebook\.com/).uri().allow('').max(254),
+      twitch: Joi.string().regex(/^https:\/\/www\.twitch\.tv\/[A-Za-z0-9]+$/).uri().allow('').max(254),
       peerplaysAccountName: Joi.string().allow('').max(254),
       bitcoinAddress: Joi.string().bitcoinAddress().allow(''),
       pubgUsername: Joi.string().allow(''),
-      userType: Joi.string().valid(profileConstants.gamer,profileConstants.viewer,profileConstants.sponsor)
+      userType: Joi.string().valid(profileConstants.gamer, profileConstants.viewer, profileConstants.sponsor),
+      email: Joi.string().email().allow('')
     };
 
     return this.validate(null, bodySchema, async (req, query, body) => {
       const {peerplaysAccountName} = body;
+
+      if (body.email && req.user.email !== body.email) {
+        const exist = await this.userRepository.model.findOne({where: {email: body.email}});
+
+        if (exist) {
+          throw new ValidateError(400, 'Validate error', {
+            email: 'Already is used'
+          });
+        }
+      }
 
       if (peerplaysAccountName) {
         body.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccountName);

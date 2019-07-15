@@ -2,6 +2,9 @@
 
 Backend module for StreamersEdge application
 
+- [Admin](#admin)
+	- [Get authorized admin profile](#get-authorized-admin-profile)
+	
 - [Auth](#auth)
 	- [Confirm email](#confirm-email)
 	- [Logout](#logout)
@@ -13,6 +16,11 @@ Backend module for StreamersEdge application
 - [Challenges](#challenges)
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
+	- [Invite user to new challenge](#invite-user-to-new-challenge)
+	- [Subscribe to new notification](#subscribe-to-new-notification)
+	
+- [Facebook](#facebook)
+	- [Auth by facebook](#auth-by-facebook)
 	
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
@@ -22,8 +30,15 @@ Backend module for StreamersEdge application
 	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
+	- [Delete profile avatar](#delete-profile-avatar)
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
+	- [Add or change account avatar](#add-or-change-account-avatar)
+	
+- [Stream](#stream)
+	- [Get stream](#get-stream)
+	- [Get streams](#get-streams)
+	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
 	
 - [Stream](#stream)
 	- [Get stream](#get-stream)
@@ -37,11 +52,44 @@ Backend module for StreamersEdge application
 	- [Auth by twitch](#auth-by-twitch)
 	
 - [Users](#users)
+	- [Change notification status](#change-notification-status)
 	- [Get user by id](#get-user-by-id)
 	- [Get users list](#get-users-list)
 	
 
 
+# Admin
+
+## Get authorized admin profile
+
+<p>Get profile of authorized admin</p>
+
+	GET /api/v1/admin/profile
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
+  }
+}
+```
 # Auth
 
 ## Confirm email
@@ -305,6 +353,84 @@ HTTP/1.1 200 OK
  "status": 200
 }
 ```
+## Invite user to new challenge
+
+
+
+	POST /api/v1/challenges/invite
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| userId			| Number			|  <p>Invited user Id</p>							|
+| challengeId			| Number			|  <p>Id of of challenge</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "userId": "6",
+  "challengeId": "107",
+}
+```
+
+## Subscribe to new notification
+
+
+
+	POST /api/v1/challenges/subscribe
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| endpoint			| String			|  <p>url for user</p>							|
+| expirationTime			| Number			|  <p>time of expiration</p>							|
+| keys			| Object			|  <p>object</p>							|
+| keys.p256dh			| String			| **optional** <p>string in p256dh</p>							|
+| keys.auth			| String			| **optional** <p>auth string</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  endpoint: 'https://fcm.googleapis.com/...lbTgv66-WEEWWK9bxZ_ksHhV_Z49vBvnYZdeS6cL6kk',
+  expirationTime: null,
+  keys:
+   {
+     p256dh: 'BOQWqnde....j7Dk-o',
+     auth: 'EYFQS0dh2KaPMXx9nmVPww'
+   }
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": "BOQWqndev7VP-UCLv9QIqDtkcNwRjyu4QBPDTCymL6ILHWklqWP1XxXRLmAYywsfgGs7K8Yub_6jQKiN0j7Dk-o",
+ "status": 200
+}
+```
+# Facebook
+
+## Auth by facebook
+
+
+
+	GET /api/v1/auth/facebook
+
+
 # Google
 
 ## Auth by google
@@ -353,17 +479,58 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": {
-    "id": "5cc315041ec568398b99d7ca",
+    "id": 7,
     "username": "test",
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
+<<<<<<< HEAD
     "avatar": "",
     "youtube": "",
     "facebook": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
     "userType": "viewer"
+=======
+    "youtube": "",
+    "facebook": "",
+    "twitch": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer",
+    "avatar": ""
+ }
+}
+```
+## Delete profile avatar
+
+
+
+	DELETE /api/v1/profile/avatar
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": 7,
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "youtube": "",
+    "facebook": "",
+    "twitch": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer",
+    "avatar": ""
+>>>>>>> develop
  }
 }
 ```
@@ -383,18 +550,28 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": {
-    "id": "5cc315041ec568398b99d7ca",
+    "id": 7,
     "username": "test",
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
+<<<<<<< HEAD
     "avatar": "",
+=======
+>>>>>>> develop
     "youtube": "",
     "facebook": "",
+    "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
+<<<<<<< HEAD
     "userType": "viewer"
   }
+=======
+    "userType": "viewer",
+    "avatar": ""
+ }
+>>>>>>> develop
 }
 ```
 ## Update authorized user profile
@@ -428,17 +605,65 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": {
-    "id": "5cc315041ec568398b99d7ca",
+    "id": 7,
     "username": "test",
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
+<<<<<<< HEAD
     "avatar": "",
+=======
+>>>>>>> develop
     "youtube": "",
     "facebook": "",
+    "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
+<<<<<<< HEAD
     "userType": "viewer"
+=======
+    "userType": "viewer",
+    "avatar": ""
+ }
+}
+```
+## Add or change account avatar
+
+
+
+	POST /api/v1/profile/avatar
+
+
+### Examples
+
+Request-Example:
+
+```
+"file": ...file...
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": 7,
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "youtube": "",
+    "facebook": "",
+    "twitch": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer",
+    "avatar": ""
+>>>>>>> develop
  }
 }
 ```
@@ -546,6 +771,7 @@ HTTP/1.1 200 OK
   "result": true
 }
 ```
+<<<<<<< HEAD
 # Transactions
 
 ## Get user transactions
@@ -584,6 +810,8 @@ HTTP/1.1 200 OK
  }]
 }
 ```
+=======
+>>>>>>> develop
 # Twitch
 
 ## Auth by twitch
@@ -595,6 +823,30 @@ HTTP/1.1 200 OK
 
 # Users
 
+## Change notification status
+
+
+
+	PATCH /api/v1/users/setNotification
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| set			| Boolean			|  <p>notification for user</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": [1],
+  "status": 200
+}
+```
 ## Get user by id
 
 
