@@ -1,0 +1,867 @@
+---
+swagger: "2.0"
+info:
+  description: APIs for StreamerEdge Lite
+  version: "1"
+  title: StreamerEdge Lite
+  contact: {}
+host: virtserver.swaggerhub.com
+basePath: /pbsa/liteMVP/1
+tags:
+- name: challenges
+  description: ""
+- name: streams
+  description: ""
+- name: game_data
+  description: ""
+- name: user-profile
+  description: ""
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /challenge:
+    get:
+      tags:
+      - challenges
+      summary: listChallenges
+      description: Lists all challenges
+      operationId: ChallengeGet
+      produces:
+      - application/json
+      parameters:
+      - name: limit
+        in: query
+        description: How many items to return at one time (max 100)
+        required: false
+        type: integer
+        format: int32
+      - name: nextId
+        in: query
+        description: ID of the next challenge to be returned
+        required: false
+        type: integer
+        format: int32
+      - name: search_param
+        in: query
+        description: parameter to be searched
+        required: false
+        type: string
+      - name: search_text
+        in: query
+        description: text to be searched in the parameter values
+        required: false
+        type: string
+      responses:
+        200:
+          description: A paged array of challenges
+          headers: {}
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ChallengeShort'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+    post:
+      tags:
+      - challenges
+      summary: createChallenge
+      description: Create a Challenge
+      operationId: ChallengePost
+      produces:
+      - application/json
+      parameters:
+      - name: challenge
+        in: query
+        description: Challenge to be created
+        required: true
+        type: string
+      responses:
+        201:
+          description: Null response
+          headers: {}
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+  /challenge/{challengeId}:
+    get:
+      tags:
+      - challenges
+      summary: showChallengeById
+      description: Info for a specific challenge
+      operationId: ChallengeByChallengeIdGet
+      produces:
+      - application/json
+      parameters:
+      - name: challengeId
+        in: path
+        description: The id of the challenge to retrieve
+        required: true
+        type: string
+      responses:
+        200:
+          description: Expected response to a valid request
+          headers: {}
+          schema:
+            $ref: '#/definitions/Challenge'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+  /stream:
+    get:
+      tags:
+      - streams
+      summary: listStreams
+      description: Lists all streams
+      operationId: StreamGet
+      produces:
+      - application/json
+      parameters:
+      - name: limit
+        in: query
+        description: How many items to return at one time (max 100)
+        required: false
+        type: integer
+        format: int32
+      - name: nextId
+        in: query
+        description: ID of the next stream to be returned
+        required: false
+        type: integer
+        format: int32
+      - name: search_param
+        in: query
+        description: parameter to be searched
+        required: false
+        type: string
+      - name: search_text
+        in: query
+        description: text to be searched in the parameter values
+        required: false
+        type: string
+      responses:
+        200:
+          description: A paged array of streams
+          headers: {}
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Stream'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+    post:
+      tags:
+      - streams
+      summary: addStream
+      description: Add a newly created stream on twitch/youtube
+      operationId: StreamPost
+      produces:
+      - application/json
+      parameters:
+      - name: stream
+        in: query
+        description: Stream to be Added
+        required: true
+        type: string
+      responses:
+        201:
+          description: Null response
+          headers: {}
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+  /stream/{streamId}:
+    get:
+      tags:
+      - streams
+      summary: showStreamById
+      description: Info for a specific stream
+      operationId: StreamByStreamIdGet
+      produces:
+      - application/json
+      parameters:
+      - name: streamId
+        in: path
+        description: The id of the stream to retrieve
+        required: true
+        type: string
+      responses:
+        200:
+          description: Expected response to a valid request
+          headers: {}
+          schema:
+            $ref: '#/definitions/Stream'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+  /game_data:
+    get:
+      tags:
+      - game_data
+      summary: listGames
+      description: Lists all games data
+      operationId: GameDataGet
+      produces:
+      - application/json
+      parameters:
+      - name: search_param
+        in: query
+        description: parameter to be searched
+        required: true
+        type: string
+      - name: search_text
+        in: query
+        description: text to be searched in the parameter values
+        required: true
+        type: string
+      - name: limit
+        in: query
+        description: How many items to return at one time (max 100)
+        required: false
+        type: integer
+        format: int32
+      - name: nextId
+        in: query
+        description: ID of the next game_data to be returned
+        required: false
+        type: integer
+        format: int32
+      responses:
+        200:
+          description: A paged array of game_data
+          headers: {}
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GameData'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+    post:
+      tags:
+      - game_data
+      summary: addGameData
+      description: Add a newly retrieved game data from game API
+      operationId: GameDataPost
+      produces:
+      - application/json
+      parameters:
+      - name: game_data
+        in: query
+        description: Game Data to be Added
+        required: true
+        type: string
+      responses:
+        201:
+          description: Null response
+          headers: {}
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+  /game_data/{game_data_id}:
+    get:
+      tags:
+      - game_data
+      summary: showGameDataById
+      description: Info for a specific game data
+      operationId: GameDataByGameDataIdGet
+      produces:
+      - application/json
+      parameters:
+      - name: game_data_id
+        in: path
+        description: The id of the game data to retrieve
+        required: true
+        type: string
+      responses:
+        200:
+          description: Expected response to a valid request
+          headers: {}
+          schema:
+            $ref: '#/definitions/GameData'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+  /profile:
+    post:
+      tags:
+      - user-profile
+      summary: createUserProfile
+      description: Create/edit user profile
+      operationId: ProfilePost
+      produces:
+      - application/json
+      parameters:
+      - name: profile
+        in: query
+        description: User Profile to be created/edited
+        required: true
+        type: string
+      responses:
+        201:
+          description: Null response
+          headers: {}
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+  /profile/{user_id}:
+    get:
+      tags:
+      - user-profile
+      summary: showProfileByUserId
+      description: Info for a specific user
+      operationId: ProfileByUserIdGet
+      produces:
+      - application/json
+      parameters:
+      - name: user_id
+        in: path
+        description: The id of the user whose profile has to be retrieved
+        required: true
+        type: string
+      responses:
+        200:
+          description: Expected response to a valid request
+          headers: {}
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      deprecated: false
+definitions:
+  Challenge:
+    type: object
+    required:
+    - bounty
+    - conditions
+    - creator
+    - expiration_time
+    - game
+    - gamers_invited
+    - id
+    - invite_condition
+    - is_completed
+    - name
+    - next_id
+    - participants
+    - start_time
+    - voting_time
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      game:
+        $ref: '#/definitions/Challenge_game'
+      creator:
+        type: string
+      participants:
+        type: array
+        items:
+          $ref: '#/definitions/Participant'
+      invite_condition:
+        $ref: '#/definitions/InviteCondition'
+      gamers_invited:
+        type: array
+        items:
+          $ref: '#/definitions/User'
+      conditions:
+        type: array
+        items:
+          $ref: '#/definitions/Condition'
+      conditions_text:
+        type: string
+        description: Condition Text for non-verifiable games where no parameters are received from game API to create and verify a challenge.
+      bounty:
+        $ref: '#/definitions/Challenge_bounty'
+      start_time:
+        type: integer
+        format: uint64
+      expiration_time:
+        type: integer
+        format: uint64
+      is_completed:
+        type: boolean
+      voting_time:
+        type: integer
+        format: uint64
+        description: Voting time in seconds
+      n_votes:
+        type: integer
+        format: uint64
+        description: Minimum number of votes required to decide the result
+      next_id:
+        type: integer
+        format: int64
+        description: Id of the next challenge in the array of challenges
+    title: Challenge
+  User:
+    type: object
+    required:
+    - user_id
+    properties:
+      user_id:
+        type: string
+    title: User
+  Condition:
+    type: object
+    required:
+    - join
+    - operator
+    - param
+    - value
+    properties:
+      param:
+        type: string
+      operator:
+        type: string
+      value:
+        type: integer
+        format: int64
+      join:
+        $ref: '#/definitions/Join'
+    title: Condition
+  ChallengeShort:
+    type: object
+    required:
+    - bounty
+    - creator
+    - expiration_time
+    - game
+    - gamers_invited
+    - id
+    - invite_condition
+    - is_completed
+    - name
+    - next_id
+    - start_time
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      game:
+        $ref: '#/definitions/Challenge_game'
+      creator:
+        type: string
+      invite_condition:
+        $ref: '#/definitions/InviteCondition'
+      gamers_invited:
+        type: array
+        items:
+          $ref: '#/definitions/User'
+      bounty:
+        $ref: '#/definitions/Challenge_bounty'
+      start_time:
+        type: integer
+        format: int32
+      expiration_time:
+        type: integer
+        format: int32
+      is_completed:
+        type: boolean
+      next_id:
+        type: integer
+        format: int64
+        description: Id of the next challenge in the array of challenges
+    title: ChallengeShort
+  Participant:
+    type: object
+    required:
+    - status
+    - user_id
+    properties:
+      user_id:
+        type: string
+      status:
+        $ref: '#/definitions/Status'
+      game_data_id:
+        type: integer
+        format: int64
+      votes_win:
+        type: integer
+        format: int64
+      votes_lose:
+        type: integer
+        format: int64
+    title: Participant
+  Stream:
+    type: object
+    required:
+    - creator
+    - end_time
+    - game
+    - id
+    - is_live
+    - n_downvotes
+    - n_upvotes
+    - name
+    - source
+    - start_time
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+      game:
+        $ref: '#/definitions/Challenge_game'
+      creator:
+        $ref: '#/definitions/Stream_creator'
+      source:
+        $ref: '#/definitions/Stream_source'
+      is_live:
+        type: boolean
+      start_time:
+        type: integer
+        format: int64
+      end_time:
+        type: integer
+        format: int64
+      n_upvotes:
+        type: integer
+        format: int64
+      n_downvotes:
+        type: integer
+        format: int64
+      comments:
+        type: array
+        items:
+          $ref: '#/definitions/Comment'
+      associated_challenges:
+        type: array
+        items:
+          $ref: '#/definitions/AssociatedChallenge'
+      donations:
+        type: array
+        items:
+          $ref: '#/definitions/Donation'
+    title: Stream
+  AssociatedChallenge:
+    type: object
+    required:
+    - challenge_id
+    properties:
+      challenge_id:
+        type: integer
+        format: int64
+    title: AssociatedChallenge
+  GameData:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      game:
+        $ref: '#/definitions/Challenge_game'
+      data_provider:
+        type: string
+      time_received:
+        type: integer
+        format: int32
+      is_streaming_ended:
+        type: boolean
+      game_data:
+        type: string
+        description: The game data for all the different games that we support will be different. We should store the data received from the data-provider as a stringified JSON.
+    title: GameData
+  Profile:
+    type: object
+    required:
+    - application_type
+    - email
+    - profile_pic
+    - user_id
+    - user_type
+    properties:
+      user_id:
+        type: string
+      email:
+        type: string
+      profile_pic:
+        type: string
+      application_type:
+        $ref: '#/definitions/ApplicationType'
+      push_notification_id:
+        type: string
+        description: Apple Push Notification Service ID or Google/Firebase Push Notification ID or id for any other push notification service that we intend to use.
+      user_type:
+        $ref: '#/definitions/UserType'
+      linked_streaming_accounts:
+        type: array
+        items:
+          $ref: '#/definitions/StreamingAccount'
+      linked_gaming_accounts:
+        type: array
+        items:
+          $ref: '#/definitions/GamingAccount'
+      linked_crypto_accounts:
+        type: array
+        items:
+          $ref: '#/definitions/CryptoAccount'
+    title: Profile
+  GamingAccount:
+    type: object
+    required:
+    - account_id
+    - game
+    - matches_checked
+    - username
+    properties:
+      game:
+        $ref: '#/definitions/Game'
+      account_id:
+        type: string
+      username:
+        type: string
+      matches_checked:
+        type: integer
+        format: int32
+        description: To store the date and time when the matches were last checked for this account
+    title: GamingAccount
+  StreamingAccount:
+    type: object
+    required:
+    - access_token
+    - account
+    - account_id
+    properties:
+      account:
+        type: string
+        description: This is linked account such as twitch, youtube, discord, facebook, etc.
+      account_id:
+        type: string
+        format: uuid
+      access_token:
+        type: string
+      access_secret:
+        type: string
+      refresh_token:
+        type: string
+      expiry_date:
+        type: integer
+        format: int32
+      other_details:
+        type: string
+    title: StreamingAccount
+  CryptoAccount:
+    type: object
+    required:
+    - account
+    - account_id
+    properties:
+      account:
+        type: string
+        description: This is linked account such as bitcoin, peerplays, etc.
+      account_id:
+        type: string
+    title: CryptoAccount
+  Error:
+    type: object
+    required:
+    - code
+    - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+    title: Error
+  Challenge_game:
+    type: object
+    required:
+    - id
+    - is_verifiable
+    - name
+    properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+        example: Fortnite/PUBG
+        default: Fortnite/PUBG
+      is_verifiable:
+        type: boolean
+    title: Challenge_game
+  Challenge_bounty:
+    type: object
+    required:
+    - amount
+    - asset_id
+    properties:
+      asset_id:
+        type: string
+      amount:
+        type: integer
+        format: int64
+    title: Challenge_bounty
+  Stream_creator:
+    type: object
+    required:
+    - user_id
+    properties:
+      user_id:
+        type: string
+    title: Stream_creator
+  Stream_source:
+    type: object
+    required:
+    - channel_id
+    - name
+    - url
+    properties:
+      name:
+        $ref: '#/definitions/Name'
+      url:
+        type: string
+      channel_id:
+        type: string
+      views:
+        type: integer
+        format: int64
+      viewing:
+        type: integer
+        format: int64
+    title: Stream_source
+  Comment:
+    type: object
+    required:
+    - comment
+    - id
+    - n_downvotes
+    - n_upvotes
+    - reply_to_id
+    - user_id
+    properties:
+      id:
+        type: integer
+        format: int64
+      user_id:
+        type: string
+      comment:
+        type: string
+      reply_to_id:
+        type: integer
+        format: int64
+        description: If this comment is a reply to another comment then the ID of that comment should be saved here
+      n_upvotes:
+        type: integer
+        format: int64
+      n_downvotes:
+        type: integer
+        format: int64
+    title: Comment
+  Donation:
+    type: object
+    required:
+    - donation_amount
+    - transfer_id
+    - user_id
+    properties:
+      transfer_id:
+        type: string
+      user_id:
+        type: string
+      donation_amount:
+        $ref: '#/definitions/Donation_donation_amount'
+    title: Donation
+  ApplicationType:
+    type: string
+    title: ApplicationType
+    example: desktop
+    enum:
+    - desktop
+    - web
+    - extension
+    - android
+    - ios
+  Game:
+    type: string
+    title: Game
+    example: Fortnite
+    enum:
+    - Fortnite
+    - PUBG
+  InviteCondition:
+    type: string
+    title: InviteCondition
+    example: anyone_can_join
+    enum:
+    - anyone_can_join
+    - join_by_invite
+    - both
+  Join:
+    type: string
+    title: Join
+    example: AND
+    enum:
+    - AND
+    - OR
+    - END
+  Name:
+    type: string
+    title: Name
+    example: twitch
+    enum:
+    - twitch
+    - youtube
+  Status:
+    type: string
+    title: Status
+    example: accepted
+    enum:
+    - accepted
+    - streaming
+    - won
+    - lost
+  UserType:
+    type: string
+    title: UserType
+    example: gamer
+    enum:
+    - gamer
+    - viewer
+    - sponsor
+    - whitelist
+    - admin
+  Donation_donation_amount:
+    required:
+    - amount
+    - asset_id
+    properties:
+      asset_id:
+        type: string
+      amount:
+        type: integer
+        format: int64
