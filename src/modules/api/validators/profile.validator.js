@@ -1,20 +1,23 @@
 const Joi = require('./abstract/joi.form');
 const BaseValidator = require('./abstract/base.validator');
-const ValidateError = require('./../../../errors/validate.error');
 const profileConstants = require('../../../constants/profile');
+const ValidateError = require('../../../errors/validate.error');
 
 class ProfileValidator extends BaseValidator {
 
   /**
-   * @param {UserRepository} opts.userRepository
    * @param {PubgApiRepository} opts.pubgApiRepository
    * @param {AppConfig} opts.config
+   * @param {PeerplaysRepository} opts.peerplaysRepository
+   * @param {UserRepository} opts.userRepository
    */
   constructor(opts) {
     super();
 
     this.pubgApiRepository = opts.pubgApiRepository;
     this.config = opts.config;
+    this.peerplaysRepository = opts.peerplaysRepository;
+
     this.userRepository = opts.userRepository;
     this.patchProfile = this.patchProfile.bind(this);
     this.createPeerplaysAccount = this.createPeerplaysAccount.bind(this);
@@ -34,6 +37,12 @@ class ProfileValidator extends BaseValidator {
     };
 
     return this.validate(null, bodySchema, async (req, query, body) => {
+      const {peerplaysAccountName} = body;
+
+      if (peerplaysAccountName) {
+        body.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccountName);
+      }
+
       if (body.email && req.user.email !== body.email) {
         const exist = await this.userRepository.model.findOne({where: {email: body.email}});
 

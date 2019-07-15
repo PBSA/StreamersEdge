@@ -1,6 +1,6 @@
 const challengeConstants = require('../constants/challenge');
+const {types: txTypes} = require('../constants/transaction');
 const invitationConstants = require('../constants/invitation');
-
 
 class ChallengeService {
 
@@ -9,6 +9,7 @@ class ChallengeService {
    * @param {ChallengeConditionRepository} opts.challengeConditionRepository
    * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
    * @param {UserRepository} opts.userRepository
+   * @param {PeerplaysRepository} opts.peerplaysRepository
    * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
    * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
    * @param {WebPushConnection} opts.webPushConnection
@@ -18,6 +19,8 @@ class ChallengeService {
     this.challengeConditionRepository = opts.challengeConditionRepository;
     this.userRepository = opts.userRepository;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
+    this.peerplaysRepository = opts.peerplaysRepository;
+    this.transactionRepository = opts.transactionRepository;
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.webPushConnection = opts.webPushConnection;
@@ -36,6 +39,7 @@ class ChallengeService {
    * @returns {Promise<ChallengePublicObject>}
    */
   async createChallenge(creatorId, challengeObject) {
+    const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
 
     const Challenge = await this.challengeRepository.create({
       userId: creatorId,
@@ -108,6 +112,18 @@ class ChallengeService {
       }));
 
     }
+
+    await this.transactionRepository.create({
+      txId: broadcastResult[0].id,
+      blockNum: broadcastResult[0].block_num,
+      trxNum: broadcastResult[0].trx_num,
+      ppyAmountValue: challengeObject.ppyAmount,
+      type: txTypes.challengeCreation,
+      userId: creatorId,
+      challengeId: Challenge.id,
+      peerplaysFromId: challengeObject.depositOp.operations[0][1].from,
+      peerplaysToId: challengeObject.depositOp.operations[0][1].to
+    });
 
     return this.getCleanObject(Challenge.id);
   }

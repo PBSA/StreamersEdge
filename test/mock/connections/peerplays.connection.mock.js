@@ -2,6 +2,17 @@ const constants = require('../../constants.json');
 
 class PeerplaysConnectionMock {
 
+  constructor() {
+    this.dbAPI = {
+      exec: (method) => {
+        if (method === 'get_account_by_name') {
+          return {id: '1.2.999'};
+        }
+      }
+    };
+  }
+
+
   connect() {}
 
   async request(form) {

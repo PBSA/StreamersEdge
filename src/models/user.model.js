@@ -60,9 +60,9 @@ class UserModel extends Model {
       twitch: this.twitch || '',
       peerplaysAccountName: this.peerplaysAccountName,
       bitcoinAddress: this.bitcoinAddress,
+      userType: this.userType,
       notifications: this.notifications,
       invitations: this.invitations,
-      userType: this.userType,
       avatar: this.avatar || '',
       pubgUsername: this.pubgUsername
     };
@@ -127,6 +127,10 @@ module.exports = {
         defaultValue: ''
       },
       peerplaysAccountName: {
+        type: Sequelize.STRING,
+        defaultValue: ''
+      },
+      peerplaysAccountId: {
         type: Sequelize.STRING,
         defaultValue: ''
       },

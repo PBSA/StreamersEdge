@@ -28,6 +28,9 @@ Backend module for StreamersEdge application
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
 	
+- [PayPal](#paypal)
+	- [Process payment paypal](#process-payment-paypal)
+	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
 	- [Delete profile avatar](#delete-profile-avatar)
@@ -39,6 +42,9 @@ Backend module for StreamersEdge application
 	- [Get stream](#get-stream)
 	- [Get streams](#get-streams)
 	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
+	
+- [Transactions](#transactions)
+	- [Get user transactions](#get-user-transactions)
 	
 - [Twitch](#twitch)
 	- [Auth by twitch](#auth-by-twitch)
@@ -523,6 +529,15 @@ HTTP/1.1 200 OK
 	GET /api/v1/auth/google
 
 
+# PayPal
+
+## Process payment paypal
+
+
+
+	POST /api/v1/payment
+
+
 # Profile
 
 ## Create peerplays account for authorized user
@@ -817,6 +832,44 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": true
+}
+```
+# Transactions
+
+## Get user transactions
+
+
+
+	GET /api/v1/transactions
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| limit			| String			|  							|
+| skip			| String			| **optional** 							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "status": 200
+ "result": [{
+   "id": 1,
+   "txId": "8ed2756c1b26883585f6259eca90ad0e44be04a2",
+   "blockNum": 901602,
+   "trxNum": 0,
+   "ppyAmountValue": 100,
+   "type": "challengeCreation",
+   "createdAt": "2019-07-01T07:25:33.100Z",
+   "updatedAt": "2019-07-01T07:25:33.100Z",
+   "userId": 1,
+   "challengeId": 3
+ }]
 }
 ```
 # Twitch
