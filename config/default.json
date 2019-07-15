@@ -49,9 +49,6 @@
     "paymentAccountWIF": "",
     "paymentReceiver": ""
   },
-  "pubg": {
-    "apiKey": ""
-  },
   "paypal": {
     "clientId": "",
     "secret": "",
@@ -67,5 +64,9 @@
   "streamersEdgeServiceEmail": "",
   "s3": {
     "bucket": ""
+  },
+  "cdnUrl": "",
+  "pubg": {
+    "apiKey": ""
   }
 }
