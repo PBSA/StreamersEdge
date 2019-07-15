@@ -44,6 +44,7 @@ Backend module for StreamersEdge application
 	- [Auth by twitch](#auth-by-twitch)
 	
 - [Users](#users)
+	- [Change notification status](#change-notification-status)
 	- [Get user by id](#get-user-by-id)
 	- [Get users list](#get-users-list)
 	
@@ -829,6 +830,30 @@ HTTP/1.1 200 OK
 
 # Users
 
+## Change notification status
+
+
+
+	PATCH /api/v1/users/setNotification
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| set			| Boolean			|  <p>notification for user</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": [1],
+  "status": 200
+}
+```
 ## Get user by id
 
 

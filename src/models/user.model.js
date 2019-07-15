@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
 const profileConstants = require('../constants/profile');
+const invitationConstants = require('../constants/invitation');
 
 /**
  * @typedef {Object} UserPublicObject
@@ -14,6 +15,8 @@ const profileConstants = require('../constants/profile');
  * @property {String} facebook
  * @property {String} peerplaysAccountName
  * @property {String} bitcoinAddress
+ * @property {Boolean} notifications
+ * @property {String} invitations
  * @property {Enum} userType
  * @property {String} pubgUsername
  */
@@ -33,6 +36,8 @@ const profileConstants = require('../constants/profile');
  * @property {String} facebook
  * @property {String} peerplaysAccountName
  * @property {String} bitcoinAddress
+ * @property {Boolean} notifications
+ * @property {String} invitations
  * @property {Enum} userType
  * @property {Enum} applicationType
  * @property {String} pushNotificationId
@@ -55,6 +60,8 @@ class UserModel extends Model {
       twitch: this.twitch || '',
       peerplaysAccountName: this.peerplaysAccountName,
       bitcoinAddress: this.bitcoinAddress,
+      notifications: this.notifications,
+      invitations: this.invitations,
       userType: this.userType,
       avatar: this.avatar || '',
       pubgUsername: this.pubgUsername
@@ -127,6 +134,14 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: ''
       },
+      notifications: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
+      },
+      invitations: {
+        type: Sequelize.ENUM(...Object.keys(invitationConstants.invitationStatus)),
+        defaultValue: invitationConstants.invitationStatus.all
+      },
       userType: {
         type: Sequelize.ENUM(Object.keys(profileConstants.userType).map((key) => profileConstants.userType[key]))
       },
@@ -159,6 +174,8 @@ module.exports = {
     UserModel.hasMany(models.ResetToken.model);
     UserModel.hasMany(models.Challenge.model);
     UserModel.hasMany(models.ChallengeInvitedUsers.model);
+    UserModel.hasMany(models.WhitelistedUsers.model);
+    UserModel.hasMany(models.WhitelistedGames.model);
     UserModel.hasMany(models.Stream.model);
     UserModel.hasMany(models.BanHistory.model);
   },

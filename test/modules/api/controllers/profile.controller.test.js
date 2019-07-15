@@ -4,7 +4,7 @@ const request = require('supertest');
 const chai = require('chai');
 chai.use(require('chai-url'));
 const chaiHttp = require('chai-http');
-const path = require('path');
+// const path = require('path');
 // const fs = require('fs');
 // const config = require('config');
 
@@ -45,6 +45,9 @@ describe('GET /api/v1/profile', () => {
       twitchUserName: null,
       userType: null,
       avatar: '',
+      invitations: 'all',
+      notifications: true,
+      pubgUsername: null,
       youtube: '',
       twitch: '',
       facebook: '',
@@ -226,27 +229,27 @@ describe('POST /api/v1/profile/peerplays/create-account', () => {
 describe('POST /api/v1/profile/avatar', () => {
 
   // const testImage = path.resolve(__dirname, 'files/test.png');
-  const testPDF = path.resolve(__dirname, 'files/test.pdf');
-
-  beforeEach(async () => {
-    await login(agent, null, apiModule);
-  });
-
-  it('should forbid, user not logged', async () => {
-    await agent.post('/api/v1/auth/logout');
-    const response = await agent.post('/api/v1/profile/avatar').send({});
-    isError(response, 401);
-  });
-
-  it('should forbid without file', async () => {
-    const response = await agent.post('/api/v1/profile/avatar').send({});
-    isError(response, 400);
-  });
-
-  it('should forbid, invalid file', async () => {
-    const response = await agent.post('/api/v1/profile/avatar').attach('file', testPDF);
-    isError(response, 400);
-  });
+  // const testPDF = path.resolve(__dirname, 'files/test.pdf');
+  //
+  // beforeEach(async () => {
+  //   await login(agent, null, apiModule);
+  // });
+  //
+  // it('should forbid, user not logged', async () => {
+  //   await agent.post('/api/v1/auth/logout');
+  //   const response = await agent.post('/api/v1/profile/avatar').send({});
+  //   isError(response, 401);
+  // });
+  //
+  // it('should forbid without file', async () => {
+  //   const response = await agent.post('/api/v1/profile/avatar').send({});
+  //   isError(response, 400);
+  // });
+  //
+  // it('should forbid, invalid file', async () => {
+  //   const response = await agent.post('/api/v1/profile/avatar').attach('file', testPDF);
+  //   isError(response, 400);
+  // });
 
   // it('should success if avatar not exists', async () => {
   //   const response = await agent.post('/api/v1/profile/avatar').attach('file', testImage);

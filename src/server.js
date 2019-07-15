@@ -70,5 +70,6 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} peerplays.peerplaysFaucetURL
  * @property {String} peerplays.referrer
  * @property {String} s3.bucket
+ * @property {String} cdnUrl
  * @property {String} pubg.apiKey
  */
