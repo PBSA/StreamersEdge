@@ -40,11 +40,6 @@ Backend module for StreamersEdge application
 	- [Get streams](#get-streams)
 	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
 	
-- [Stream](#stream)
-	- [Get stream](#get-stream)
-	- [Get streams](#get-streams)
-	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
-	
 - [Transactions](#transactions)
 	- [Get user transactions](#get-user-transactions)
 	
@@ -484,14 +479,6 @@ HTTP/1.1 200 OK
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
-<<<<<<< HEAD
-    "avatar": "",
-    "youtube": "",
-    "facebook": "",
-    "peerplaysAccountName": "",
-    "bitcoinAddress": "",
-    "userType": "viewer"
-=======
     "youtube": "",
     "facebook": "",
     "twitch": "",
@@ -530,7 +517,6 @@ HTTP/1.1 200 OK
     "bitcoinAddress": "",
     "userType": "viewer",
     "avatar": ""
->>>>>>> develop
  }
 }
 ```
@@ -555,23 +541,14 @@ HTTP/1.1 200 OK
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
-<<<<<<< HEAD
-    "avatar": "",
-=======
->>>>>>> develop
     "youtube": "",
     "facebook": "",
     "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
-<<<<<<< HEAD
-    "userType": "viewer"
-  }
-=======
     "userType": "viewer",
     "avatar": ""
  }
->>>>>>> develop
 }
 ```
 ## Update authorized user profile
@@ -610,18 +587,11 @@ HTTP/1.1 200 OK
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
-<<<<<<< HEAD
-    "avatar": "",
-=======
->>>>>>> develop
     "youtube": "",
     "facebook": "",
     "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
-<<<<<<< HEAD
-    "userType": "viewer"
-=======
     "userType": "viewer",
     "avatar": ""
  }
@@ -663,7 +633,6 @@ HTTP/1.1 200 OK
     "bitcoinAddress": "",
     "userType": "viewer",
     "avatar": ""
->>>>>>> develop
  }
 }
 ```
@@ -771,7 +740,6 @@ HTTP/1.1 200 OK
   "result": true
 }
 ```
-<<<<<<< HEAD
 # Transactions
 
 ## Get user transactions
@@ -810,8 +778,6 @@ HTTP/1.1 200 OK
  }]
 }
 ```
-=======
->>>>>>> develop
 # Twitch
 
 ## Auth by twitch

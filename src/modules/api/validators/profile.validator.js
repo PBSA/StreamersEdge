@@ -39,6 +39,10 @@ class ProfileValidator extends BaseValidator {
     return this.validate(null, bodySchema, async (req, query, body) => {
       const {peerplaysAccountName} = body;
 
+      if (peerplaysAccountName) {
+        body.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccountName);
+      }
+
       if (body.email && req.user.email !== body.email) {
         const exist = await this.userRepository.model.findOne({where: {email: body.email}});
 
@@ -47,10 +51,6 @@ class ProfileValidator extends BaseValidator {
             email: 'Already is used'
           });
         }
-      }
-
-      if (peerplaysAccountName) {
-        body.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccountName);
       }
 
       if (body.pubgUsername) {

@@ -29,6 +29,8 @@ class ApiModule {
    * @param {FacebookController} opts.facebookController
    * @param {UserRepository} opts.userRepository
    * @param {ChallengesController} opts.challengesController
+   * @param {PaymentController} opts.paymentController
+   * @param {AdminController} opts.adminController
    * @param {SteamController} opts.steamController
    * @param {PaymentController} opts.paymentController
    * @param {TransactionController} opts.transactionController

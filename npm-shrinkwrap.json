@@ -783,15 +783,6 @@
         "safer-buffer": "~2.1.0"
       }
     },
-<<<<<<< HEAD
-    "assert": {
-      "version": "1.5.0",
-      "resolved": "https://registry.npmjs.org/assert/-/assert-1.5.0.tgz",
-      "integrity": "sha512-EDsgawzwoun2CZkCgtxJbv392v4nbk9XDD06zI+kQYoBM/3RBWLlEyJARDOmhAAosBjWACEkKL6S+lIZtcAubA==",
-      "requires": {
-        "object-assign": "^4.1.1",
-        "util": "0.10.3"
-=======
     "asn1.js": {
       "version": "5.1.0",
       "resolved": "https://registry.npmjs.org/asn1.js/-/asn1.js-5.1.0.tgz",
@@ -800,7 +791,15 @@
         "bn.js": "^4.0.0",
         "inherits": "^2.0.1",
         "minimalistic-assert": "^1.0.0"
->>>>>>> develop
+      }
+    },
+    "assert": {
+      "version": "1.5.0",
+      "resolved": "https://registry.npmjs.org/assert/-/assert-1.5.0.tgz",
+      "integrity": "sha512-EDsgawzwoun2CZkCgtxJbv392v4nbk9XDD06zI+kQYoBM/3RBWLlEyJARDOmhAAosBjWACEkKL6S+lIZtcAubA==",
+      "requires": {
+        "object-assign": "^4.1.1",
+        "util": "0.10.3"
       }
     },
     "assert-plus": {
@@ -2929,7 +2928,6 @@
         "capture-stack-trace": "^1.0.0"
       }
     },
-<<<<<<< HEAD
     "create-hash": {
       "version": "1.2.0",
       "resolved": "https://registry.npmjs.org/create-hash/-/create-hash-1.2.0.tgz",
@@ -2955,8 +2953,6 @@
         "sha.js": "^2.4.8"
       }
     },
-=======
->>>>>>> develop
     "cron": {
       "version": "1.7.1",
       "resolved": "https://registry.npmjs.org/cron/-/cron-1.7.1.tgz",
@@ -3484,7 +3480,6 @@
       "integrity": "sha512-Um/+FxMr9CISWh0bi5Zv0iOD+4cFh5qLeks1qhAopKVAJw3drgKbKySikp7wGhDL0HPeaja0P5ULZrxLkniUVg==",
       "dev": true
     },
-<<<<<<< HEAD
     "es6-iterator": {
       "version": "2.0.3",
       "resolved": "https://registry.npmjs.org/es6-iterator/-/es6-iterator-2.0.3.tgz",
@@ -3494,12 +3489,11 @@
         "es5-ext": "^0.10.35",
         "es6-symbol": "^3.1.1"
       }
-=======
+    },
     "es6-promise": {
       "version": "4.2.8",
       "resolved": "https://registry.npmjs.org/es6-promise/-/es6-promise-4.2.8.tgz",
       "integrity": "sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w=="
->>>>>>> develop
     },
     "es6-promisify": {
       "version": "5.0.0",
@@ -10239,14 +10233,11 @@
       "resolved": "https://registry.npmjs.org/statuses/-/statuses-1.5.0.tgz",
       "integrity": "sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow="
     },
-<<<<<<< HEAD
     "stealthy-require": {
       "version": "1.1.1",
       "resolved": "https://registry.npmjs.org/stealthy-require/-/stealthy-require-1.1.1.tgz",
       "integrity": "sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks="
     },
-=======
->>>>>>> develop
     "steam-web": {
       "version": "0.4.0",
       "resolved": "https://registry.npmjs.org/steam-web/-/steam-web-0.4.0.tgz",
