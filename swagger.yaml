@@ -1,12 +1,12 @@
 ---
 swagger: "2.0"
 info:
-  description: APIs for StreamerEdge Lite
+  description: APIs for StreamerEdge
   version: "1"
-  title: StreamerEdge Lite
+  title: StreamerEdge
   contact: {}
 host: virtserver.swaggerhub.com
-basePath: /pbsa/liteMVP/1
+basePath: /api/v1
 tags:
 - name: challenges
   description: ""
