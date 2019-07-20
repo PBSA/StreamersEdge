@@ -18,10 +18,19 @@ class FacebookController {
    */
   getRoutes(app) {
     /**
-     * @api {get} /api/v1/auth/facebook Auth by facebook
-     * @apiName FacebookAuth
-     * @apiGroup Facebook
-     * @apiVersion 0.1.0
+     * @swagger
+     *
+     * /auth/facebook:
+     *  get:
+     *    description: Auth by facebook
+     *    summary: Auth by facebook
+     *    produces:
+     *      - application/json
+     *    tags:
+     *      - SocNetwork
+     *    responses:
+     *      302:
+     *        description: Redirect to facebook
      */
     this.initializePassport();
     app.get('/api/v1/auth/facebook', passport.authenticate('facebook'));

@@ -24,10 +24,19 @@ class GoogleController {
    */
   getRoutes(app) {
     /**
-     * @api {get} /api/v1/auth/google Auth by google
-     * @apiName GoogleAuth
-     * @apiGroup Google
-     * @apiVersion 0.1.0
+     * @swagger
+     *
+     * /auth/google:
+     *  get:
+     *    description: Auth by google
+     *    summary: Auth by google
+     *    produces:
+     *      - application/json
+     *    tags:
+     *      - SocNetwork
+     *    responses:
+     *      302:
+     *        description: Redirect to google
      */
     this.initializePassport();
     app.get('/api/v1/auth/google', passport.authenticate('google', {

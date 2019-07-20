@@ -32,6 +32,42 @@ const {Model} = Sequelize;
 
 class StreamModel extends Model {
   /**
+   * @swagger
+   *
+   * definitions:
+   *
+   *  Stream:
+   *    type: object
+   *    properties:
+   *      id:
+   *        type: integer
+   *      name:
+   *        type: string
+   *      game:
+   *        type: string
+   *        enum:
+   *          - pubg
+   *          - fortnite
+   *      sourceName:
+   *        type: boolean
+   *        enum:
+   *          - twitch
+   *          - youtube
+   *      embedUrl:
+   *        type: string
+   *      channelId:
+   *        type: integer
+   *      views:
+   *        type: integer
+   *      isLive:
+   *        type: boolean
+   *      startTime:
+   *        type: string
+   *      thumbnailUrl:
+   *        type: string
+   *      user:
+   *        $ref: '#/definitions/User'
+   *
    * @returns {StreamPublicObject}
    */
   getPublic() {
@@ -41,11 +77,11 @@ class StreamModel extends Model {
       game: this.game,
       sourceName: this.sourceName,
       embedUrl: this.embedUrl,
-      channelId:this.channelId,
-      views:this.views,
-      isLive:this.isLive,
-      startTime:this.startTime,
-      thumbnailUrl:this.thumbnailUrl
+      channelId: this.channelId,
+      views: this.views,
+      isLive: this.isLive,
+      startTime: this.startTime,
+      thumbnailUrl: this.thumbnailUrl
     };
 
     if (this.user) {
