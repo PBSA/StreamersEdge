@@ -1,4 +1,4 @@
-const paypal = require('@paypal/checkout-server-sdk');
+const constants = require('../../constants.json');
 
 class PaypalConnectionMock {
 
@@ -9,20 +9,20 @@ class PaypalConnectionMock {
     this.config = opts.config;
   }
 
-  connect() {}
+  connect() {
+  }
 
   client() {
-    return new paypal.core.PayPalHttpClient(this.environment());
+    return {
+      execute: (request) => {
+        const orderId = request.path.match(/\/([A-z0-9]+)\?/)[1];
+        return constants.modules.api.payments.payPalOrders[orderId];
+      }
+    };
   }
 
-  environment() {
-    const clientId = this.config.paypal.clientId;
-    const clientSecret = this.config.paypal.secret;
-
-    return new paypal.core.SandboxEnvironment(clientId, clientSecret);
+  disconnect() {
   }
-
-  disconnect() {}
 
 }
 

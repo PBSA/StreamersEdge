@@ -196,6 +196,7 @@ class ChallengesController {
 
   async subscribeToChallenges(user, data) {
     const result = await this.challengeService.checkUserSubscribe(user.id);
+
     this.challengeService.vapidData[user.id] = data;
 
     return result;

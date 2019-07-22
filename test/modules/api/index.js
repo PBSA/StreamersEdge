@@ -6,6 +6,9 @@ chai.use(chaiHttp);
 const describe = global.describe;
 
 describe('REST API', () => {
+  describe('challenges.controller', () => {
+    require('./controllers/challenges.controller.test');
+  });
   describe('auth.controller', () => {
     require('./controllers/auth.controller.test');
   });

@@ -5,6 +5,7 @@ const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const path = require('path');
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
@@ -99,6 +100,7 @@ class ApiModule {
 
       this.app.use(passport.initialize());
       this.app.use(passport.session());
+      this.app.use(express.static(path.join(__dirname, '../../push-notifications')));
 
       passport.serializeUser((user, done) => {
         done(null, user.id);

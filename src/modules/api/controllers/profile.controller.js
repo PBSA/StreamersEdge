@@ -144,8 +144,19 @@ class ProfileController {
   }
 
   async uploadAvatar(user, data, req, res) {
-    const location = await this.fileService.saveImage(req, res);
-    return await this.userService.patchProfile(user, {avatar: location});
+    try {
+      const location = await this.fileService.saveImage(req, res);
+      return await this.userService.patchProfile(user, {avatar: location});
+    } catch (err) {
+      switch (err.message) {
+        case this.fileService.errors.FILE_NOT_FOUND:
+          throw new RestError('', 400, {image: [{message: 'File not found'}]});
+        case this.fileService.errors.INVALID_IMAGE_FORMAT:
+          throw new RestError('', 400, {format: [{message: 'Invalid file format'}]});
+        default:
+          throw err;
+      }
+    }
   }
 
   async deleteAvatar(user) {
