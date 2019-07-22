@@ -3,6 +3,7 @@ const RestError = require('../../../errors/rest.error');
 class PaymentController {
 
   /**
+   * @param {AuthValidator} opts.authValidator
    * @param {PaymentService} opts.paymentService
    * @param {PaymentValidator} opts.paymentValidator
    * @param {AuthValidator} opts.authValidator
@@ -11,6 +12,7 @@ class PaymentController {
     this.paymentService = opts.paymentService;
     this.authValidator = opts.authValidator;
     this.paymentValidator = opts.paymentValidator;
+    this.authValidator = opts.authValidator;
   }
 
   /**

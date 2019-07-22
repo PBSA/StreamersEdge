@@ -18,4 +18,7 @@ describe('REST API', () => {
   describe('user.controller', () => {
     require('./controllers/user.controller.test');
   });
+  describe('payment.controller', () => {
+    require('./controllers/payment.controller.test');
+  });
 });

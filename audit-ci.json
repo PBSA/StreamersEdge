@@ -1,3 +1,6 @@
 {
-	"high": true
+	"high": true,
+	"critical": true,
+	"report-type": "full",
+	"whitelist": ["ws", "lodash"]
 }

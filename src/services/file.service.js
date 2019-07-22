@@ -41,6 +41,7 @@ class FileService {
     await new Promise((success, fail) => {
       upload(req, res, (err, res) => err ? fail(err) : success(res));
     });
+    // eslint-disable-next-line node/no-deprecated-api
     return this.config.cdnUrl + url.parse(req.file.location).pathname;
   }
 
