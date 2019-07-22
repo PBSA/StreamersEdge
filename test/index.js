@@ -4,15 +4,16 @@ const {getLogger} = require('log4js');
 const {container} = require('./../src/awilix');
 const PeerplaysConnection = require('./mock/connections/peerplays.connection.mock');
 const SmtpConnection = require('./mock/connections/smtp.connection.mock');
+const WebPushConnection = require('./mock/connections/web-push.connection.mock');
 const PaypalConnection = require('./mock/connections/paypal.connection.mock');
 const CoinmarketcapConnection = require('./mock/connections/coinmarketcap.connection.mock');
 
 container.register({
   peerplaysConnection: asClass(PeerplaysConnection),
   smtpConnection: asClass(SmtpConnection),
+  webPushConnection: asClass(WebPushConnection),
   paypalConnection: asClass(PaypalConnection),
   coinmarketcapConnection: asClass(CoinmarketcapConnection)
-
 });
 
 describe('ALL TESTS', () => {
