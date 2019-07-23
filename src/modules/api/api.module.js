@@ -4,11 +4,33 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+let swaggerDef = require('./swagger-definition.js');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
-
+/**
+ * @swagger
+ *
+ * definitions:
+ *  SuccessResponse:
+ *    type: object
+ *    properties:
+ *      status:
+ *        type: number
+ *        default: 200
+ *        example: 200
+ *  SuccessEmptyResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            type: boolean
+ *            example: true
+ */
 /**
  * A namespace.
  * @namespace api
@@ -18,7 +40,6 @@ class ApiModule {
 
   /**
    *
-   * @param {AppConfig} opts.config
    * @param {DbConnection} opts.dbConnection
    * @param {SmtpConnection} opts.smtpConnection
    * @param {AuthController} opts.authController
@@ -106,6 +127,13 @@ class ApiModule {
           done(null, _user);
         });
       });
+
+      if (process.env.NODE_ENV != 'production') {
+        this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc({
+          definition: swaggerDef,
+          apis: swaggerDef.apis
+        })));
+      }
 
       this.server = this.app.listen(this.config.port, () => {
         logger.info(`API APP REST listen ${this.config.port} Port`);
