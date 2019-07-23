@@ -12,7 +12,7 @@
     "url": "https://github.com/PBSA"
   },
   "engines": {
-    "node": ">=8.3.0"
+    "node": ">=10.16.0"
   },
   "scripts": {
     "sonar": "node scripts/sonar.js",

@@ -4,7 +4,7 @@ stages:
   - deploy
 
 test:
-  image: node:10.15-alpine
+  image: node:10.16-alpine
   stage: test
   variables:
     DB_USER: postgres

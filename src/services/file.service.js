@@ -2,7 +2,6 @@ const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
 const randomString = require('randomstring');
-const url = require('url');
 
 class FileService {
 
@@ -41,8 +40,7 @@ class FileService {
     await new Promise((success, fail) => {
       upload(req, res, (err, res) => err ? fail(err) : success(res));
     });
-    // eslint-disable-next-line node/no-deprecated-api
-    return this.config.cdnUrl + url.parse(req.file.location).pathname;
+    return this.config.cdnUrl + new URL(req.file.location).pathname;
   }
 
   /**
