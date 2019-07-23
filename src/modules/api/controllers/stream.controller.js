@@ -1,5 +1,40 @@
 const RestError = require('../../../errors/rest.error');
 
+/**
+ * @swagger
+ *
+ * definitions:
+ *  StreamGet:
+ *    type: object
+ *    required:
+ *      - name
+ *      - activeKey
+ *      - ownerKey
+ *    properties:
+ *      name:
+ *        type: string
+ *      activeKey:
+ *        type: string
+ *      ownerKey:
+ *        type: string
+ *  StreamResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/Stream'
+ *  StreamsResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            type: array
+ *            items:
+ *              $ref: '#/definitions/Stream'
+ */
+
 class StreamController {
 
   /**
@@ -20,40 +55,28 @@ class StreamController {
   getRoutes() {
     return [
       /**
-       * @api {get} /api/v1/stream/:id Get stream
-       * @apiName GetStreamById
-       * @apiDescription Get Stream by StreamId
-       * @apiGroup Stream
-       * @apiVersion 0.1.0
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "result": {
-       *   "id": 1,
-       *   "name": "TSM chocoTaco | today's weather: thirsty",
-       *   "game": "pubg",
-       *   "sourceName": "twitch",
-       *   "embedUrl": "",
-       *   "channelId": "34608843376",
-       *   "views": 3536,
-       *   "isLive": true,
-       *   "startTime": "2019-06-21T00:09:40.000Z",
-       *   "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
-       *   "user": {
-       *       "id": 10,
-       *       "username": "jotprabh",
-       *       "email": "prabhjot.narula@gmail.com",
-       *       "twitchUserName": null,
-       *       "googleName": null,
-       *       "youtube": "",
-       *       "facebook": "",
-       *       "peerplaysAccountName": "",
-       *       "bitcoinAddress": "",
-       *       "userType": null
-       *     }
-       *   },
-       *   "status": 200
-       * }
+       * @swagger
+       *
+       * /stream/{id}:
+       *  get:
+       *    description: Get stream
+       *    summary: Get stream
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Stream
+       *    parameters:
+       *      - name: id
+       *        in: path
+       *        required: true
+       *        type: string
+       *    responses:
+       *      200:
+       *        schema:
+       *         $ref: '#/definitions/StreamResponse'
+       *      401:
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
        */
       [
         'get', '/api/v1/stream/:streamId',
@@ -62,42 +85,52 @@ class StreamController {
         this.getStream.bind(this)
       ],
       /**
-       * @api {get} /api/v1/streams Get streams
-       * @apiName GetStreams
-       * @apiDescription Get Streams
-       * @apiGroup Stream
-       * @apiVersion 0.1.0
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "result": [
-       *       {
-       *           "id": 1,
-       *           "name": "TSM chocoTaco | today's weather: thirsty",
-       *           "game": "pubg",
-       *           "sourceName": "twitch",
-       *           "embedUrl": "",
-       *           "channelId": "34608843376",
-       *           "views": 3536,
-       *           "isLive": true,
-       *           "startTime": "2019-06-21T00:09:40.000Z",
-       *           "thumbnailUrl": "https://static-cdn.jtvnw.net/previews-ttv/live_user_chocotaco-{width}x{height}.jpg",
-       *           "user": {
-       *               "id": 10,
-       *               "username": "jotprabh",
-       *               "email": "prabhjot.narula@gmail.com",
-       *               "twitchUserName": null,
-       *               "googleName": null,
-       *               "youtube": "",
-       *               "facebook": "",
-       *               "peerplaysAccountName": "",
-       *               "bitcoinAddress": "",
-       *               "userType": null
-       *           }
-       *       }
-       *   ],
-       *   "status": 200
-       *}
+       * @swagger
+       *
+       * /streams:
+       *  get:
+       *    description: Get stream
+       *    summary: Get stream
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Stream
+       *    parameters:
+       *      - name: search
+       *        in: query
+       *        required: false
+       *        type: string
+       *      - name: limit
+       *        in: query
+       *        required: false
+       *        type: integer
+       *      - name: skip
+       *        in: query
+       *        required: false
+       *        type: integer
+       *      - name: orderBy
+       *        in: query
+       *        required: false
+       *        type: string
+       *      - name: isAscending
+       *        in: query
+       *        required: false
+       *        type: boolean
+       *      - name: isActive
+       *        in: query
+       *        required: false
+       *        type: boolean
+       *    responses:
+       *      200:
+       *        schema:
+       *         $ref: '#/definitions/StreamsResponse'
+       *      401:
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'get', '/api/v1/streams',
@@ -106,16 +139,20 @@ class StreamController {
         this.getStreams.bind(this)
       ],
       /**
-       * @api {get} /api/v1/stream/populate-twitch-streams Get Streams for users from Twitch
-       * @apiName PopulateTwitchStreams
-       * @apiGroup Stream
-       * @apiVersion 0.1.0
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": true
-       * }
+       * @swagger
+       *
+       * /populate-twitch-streams:
+       *  get:
+       *    description: Get Streams for users from Twitch
+       *    summary: Get Streams for users from Twitch
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Stream
+       *    responses:
+       *      200:
+       *        schema:
+       *         $ref: '#/definitions/SuccessEmptyResponse'
        */
       [
         'get', '/api/v1/populate-twitch-streams',

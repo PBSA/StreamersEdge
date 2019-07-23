@@ -39,7 +39,7 @@ class UserValidator extends BaseValidator {
   }
 
   changeInvitationStatus() {
-    const statusChecker = Joi.string().valid(...Object.keys(invitationConstants.invitationStatus));
+    const statusChecker = Joi.string().valid(...Object.keys(invitationConstants.invitationStatus)).required();
     const usersChecker = Joi.array().items(Joi.number().integer().greater(0)).allow(null);
     const gamesChecker = Joi.array().items(Joi.string()).allow(null);
     return this.validate(null,
