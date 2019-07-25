@@ -90,7 +90,7 @@ class UserService {
     User[`${network}Id`] = id;
 
     switch(network) {
-      case 'twitch': User.twitchUserName = username; console.log(username); break;
+      case 'twitch': User.twitchUserName = username; break;
       case 'google': User.googleName = username; break;
       case 'facebook': User.facebook = username; break;
       default: throw new RestError(`Unexpected Network ${network}`);
