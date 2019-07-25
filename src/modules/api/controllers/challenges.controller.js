@@ -85,14 +85,15 @@ class ChallengesController {
        *      - name: challenge
        *        in:  body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/ChallengeFullNew'
        *    responses:
        *      200:
+       *        description: Challenge response
        *        schema:
        *          $ref: '#/definitions/ChallengeResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      400:
@@ -124,6 +125,7 @@ class ChallengesController {
        *        type: string
        *    responses:
        *      200:
+       *        description: Challenge response
        *        schema:
        *         $ref: '#/definitions/ChallengeResponse'
        *      400:
@@ -131,9 +133,11 @@ class ChallengesController {
        *        schema:
        *          $ref: '#/definitions/ValidateError'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      404:
+       *        description: Error challenge not found
        *        schema:
        *          properties:
        *            status:
@@ -164,11 +168,11 @@ class ChallengesController {
        *      - name: ChallengeSubscribe
        *        in: body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/ChallengeSubscribe'
        *    responses:
        *      200:
+       *        description: Subscribe response
        *        schema:
        *         $ref: '#/definitions/ChallengeSubscribeResponse'
        *      400:
@@ -176,6 +180,7 @@ class ChallengesController {
        *        schema:
        *          $ref: '#/definitions/ValidateError'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        */
@@ -200,11 +205,11 @@ class ChallengesController {
        *      - name: ChallengeInvite
        *        in: body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/ChallengeInvite'
        *    responses:
        *      200:
+       *        description: Invite response
        *        schema:
        *         $ref: '#/definitions/SuccessEmptyResponse'
        *      400:
@@ -212,6 +217,7 @@ class ChallengesController {
        *        schema:
        *          $ref: '#/definitions/ValidateError'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        */
@@ -244,6 +250,7 @@ class ChallengesController {
 
   async subscribeToChallenges(user, data) {
     const result = await this.challengeService.checkUserSubscribe(user.id);
+
     this.challengeService.vapidData[user.id] = data;
 
     return result;

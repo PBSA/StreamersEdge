@@ -29,12 +29,15 @@ class AdminController {
        *      - Admin
        *    responses:
        *      200:
+       *        description: Profile response
        *        schema:
        *          $ref: '#/definitions/UserResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      403:
+       *        description: Error forbidden for this user
        *        schema:
        *          $ref: '#/definitions/ForbiddenError'
        */

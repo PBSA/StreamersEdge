@@ -63,6 +63,7 @@ class ChallengeService {
         });
 
         const vapidKeys = this.userVapidKeys[id];
+
         const invitation = {title: `You invited to ${Challenge.name}`};
 
         const invitationState = await this.userRepository.findByPk(id);
@@ -98,6 +99,7 @@ class ChallengeService {
     if (challengeObject.accessRule === challengeConstants.accessRules.anyone) {
 
       await Promise.all(Object.keys(this.vapidData).map(async (userId) => {
+
         const notificationsState = await this.userRepository.findByPk(userId);
 
         if (notificationsState.notifications === true) {
@@ -105,6 +107,7 @@ class ChallengeService {
           const notification = {title: `Challenge ${Challenge.name} appeared`};
           await this.webPushConnection.sendNotification(this.vapidData[userId], vapidKeys, notification);
         }
+
       }));
 
     }

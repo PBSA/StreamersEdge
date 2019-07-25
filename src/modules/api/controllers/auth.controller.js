@@ -25,8 +25,6 @@ const RestError = require('../../../errors/rest.error');
  *        type: string
  *        format: password
  *  AuthSignInUser:
- *    tags:
- *      - Auth
  *    type: object
  *    required:
  *      - login
@@ -107,6 +105,7 @@ class AuthController {
        *      - Auth
        *    responses:
        *      200:
+       *        description: Logout response
        *        schema:
        *          $ref: '#/definitions/SuccessEmptyResponse'
        *      400:
@@ -114,6 +113,7 @@ class AuthController {
        *        schema:
        *          $ref: '#/definitions/ValidateError'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *
@@ -134,7 +134,6 @@ class AuthController {
        *        description: User object
        *        in:  body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/AuthSignUpUser'
        *    responses:
@@ -160,15 +159,12 @@ class AuthController {
        *      - Auth
        *    parameters:
        *      - name: token
-       *        in:  query
+       *        in:  path
        *        required: true
        *        type: string
-       *        schema:
-       *          properties:
-       *            token:
-       *              type: string
        *    responses:
        *      200:
+       *        description: Confirm-email response
        *        schema:
        *         $ref: '#/definitions/SuccessEmptyResponse'
        *      400:
@@ -196,11 +192,11 @@ class AuthController {
        *      - name: token
        *        in:  body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/AuthSignInUser'
        *    responses:
        *      200:
+       *        description: Sign in response
        *        schema:
        *          $ref: '#/definitions/UserResponse'
        *      400:
@@ -223,11 +219,11 @@ class AuthController {
        *      - name: token
        *        in:  body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/AuthForgotPassword'
        *    responses:
        *      200:
+       *        description: Forgot-password response
        *        schema:
        *         $ref: '#/definitions/SuccessEmptyResponse'
        *      400:
@@ -235,6 +231,7 @@ class AuthController {
        *        schema:
        *          $ref: '#/definitions/ValidateError'
        *      404:
+       *        description: Error user not found
        *        schema:
        *          properties:
        *            status:
@@ -244,6 +241,7 @@ class AuthController {
        *              type: string
        *              example: User not found
        *      429:
+       *        description: Error too many requests
        *        schema:
        *          properties:
        *            status:
@@ -273,11 +271,11 @@ class AuthController {
        *      - name: token
        *        in:  body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/AuthResetPassword'
        *    responses:
        *      200:
+       *        description: Reset-password response
        *        schema:
        *         $ref: '#/definitions/SuccessEmptyResponse'
        *      400:
@@ -285,6 +283,7 @@ class AuthController {
        *        schema:
        *          $ref: '#/definitions/ValidateError'
        *      404:
+       *        description: Error token not found
        *        schema:
        *          properties:
        *            status:

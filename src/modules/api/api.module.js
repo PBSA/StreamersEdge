@@ -8,6 +8,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
 let swaggerDef = require('./swagger-definition.js');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const path = require('path');
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
@@ -50,6 +51,7 @@ class ApiModule {
    * @param {FacebookController} opts.facebookController
    * @param {UserRepository} opts.userRepository
    * @param {ChallengesController} opts.challengesController
+   * @param {PaymentController} opts.paymentController
    * @param {AdminController} opts.adminController
    * @param {SteamController} opts.steamController
    */
@@ -67,6 +69,7 @@ class ApiModule {
     this.facebookController = opts.facebookController;
     this.googleController = opts.googleController;
     this.challengesController = opts.challengesController;
+    this.paymentController = opts.paymentController;
     this.streamController = opts.streamController;
     this.adminController = opts.adminController;
     this.steamController = opts.steamController;
@@ -118,6 +121,7 @@ class ApiModule {
 
       this.app.use(passport.initialize());
       this.app.use(passport.session());
+      this.app.use(express.static(path.join(__dirname, '../../push-notifications')));
 
       passport.serializeUser((user, done) => {
         done(null, user.id);
@@ -156,6 +160,8 @@ class ApiModule {
       this.facebookController,
       this.googleController,
       this.challengesController,
+      this.paymentController,
+      this.steamController,
       this.streamController,
       this.adminController,
       this.steamController

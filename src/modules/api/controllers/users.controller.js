@@ -65,10 +65,6 @@ class UsersController {
        *        in: path
        *        required: true
        *        type: string
-       *        schema:
-       *          properties:
-       *            id:
-       *              type: string
        *    responses:
        *      200:
        *        description: User response
@@ -79,9 +75,11 @@ class UsersController {
        *        schema:
        *          $ref: '#/definitions/ValidateError'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      404:
+       *        description: Error user not found
        *        schema:
        *          properties:
        *            status:
@@ -125,9 +123,11 @@ class UsersController {
        *        type: integer
        *    responses:
        *      200:
+       *        description: Users response
        *        schema:
        *          $ref: '#/definitions/UsersResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      400:
@@ -155,13 +155,13 @@ class UsersController {
        *      - name: notifications
        *        in: body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/UsersChangeNotificationsStatus'
        *    responses:
        *      200:
        *        description: Change result
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      400:
@@ -189,13 +189,13 @@ class UsersController {
        *      - name: invitations-status
        *        in: body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/UsersChangeInvitationsStatus'
        *    responses:
        *      200:
        *        description: Change result
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      400:

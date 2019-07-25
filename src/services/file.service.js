@@ -16,7 +16,8 @@ class FileService {
     this.IMAGE_FORMATS = ['jpeg', 'png', 'gif'];
 
     this.errors = {
-      INVALID_IMAGE_FORMAT: 'Invalid image format'
+      INVALID_IMAGE_FORMAT: 'Invalid image format',
+      FILE_NOT_FOUND: 'File not found'
     };
   }
 
@@ -24,9 +25,14 @@ class FileService {
    *
    * @param {Object} req
    * @param {Object} res
+   * @param {Function} done
    * @return Promise<>
    */
   async saveImage(req, res) {
+
+    if (!req.file) {
+      throw new Error(this.errors.FILE_NOT_FOUND);
+    }
 
     const upload = multer({
       storage: multerS3({

@@ -2,10 +2,10 @@ info:
   title: StreamerEdge
   version: '1'
   description: APIs for StreamerEdge
-host: 'localhost:3000'
+host: virtserver.swaggerhub.com
 basePath: /api/v1
 schemes:
-  - http
+  - https
 swagger: '2.0'
 paths:
   /admin/profile:
@@ -17,12 +17,15 @@ paths:
         - Admin
       responses:
         '200':
+          description: Profile response
           schema:
             $ref: '#/definitions/UserResponse'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
         '403':
+          description: Error forbidden for this user
           schema:
             $ref: '#/definitions/ForbiddenError'
   /auth/logout:
@@ -34,6 +37,7 @@ paths:
         - Auth
       responses:
         '200':
+          description: Logout response
           schema:
             $ref: '#/definitions/SuccessEmptyResponse'
         '400':
@@ -41,6 +45,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /auth/sign-up:
@@ -55,7 +60,6 @@ paths:
           description: User object
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/AuthSignUpUser'
       responses:
@@ -76,15 +80,12 @@ paths:
         - Auth
       parameters:
         - name: token
-          in: query
+          in: path
           required: true
           type: string
-          schema:
-            properties:
-              token:
-                type: string
       responses:
         '200':
+          description: Confirm-email response
           schema:
             $ref: '#/definitions/SuccessEmptyResponse'
         '400':
@@ -102,11 +103,11 @@ paths:
         - name: token
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/AuthSignInUser'
       responses:
         '200':
+          description: Sign in response
           schema:
             $ref: '#/definitions/UserResponse'
         '400':
@@ -124,11 +125,11 @@ paths:
         - name: token
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/AuthForgotPassword'
       responses:
         '200':
+          description: Forgot-password response
           schema:
             $ref: '#/definitions/SuccessEmptyResponse'
         '400':
@@ -136,6 +137,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '404':
+          description: Error user not found
           schema:
             properties:
               status:
@@ -145,6 +147,7 @@ paths:
                 type: string
                 example: User not found
         '429':
+          description: Error too many requests
           schema:
             properties:
               status:
@@ -164,11 +167,11 @@ paths:
         - name: token
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/AuthResetPassword'
       responses:
         '200':
+          description: Reset-password response
           schema:
             $ref: '#/definitions/SuccessEmptyResponse'
         '400':
@@ -176,6 +179,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '404':
+          description: Error token not found
           schema:
             properties:
               status:
@@ -196,11 +200,11 @@ paths:
         - name: challenge
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/ChallengeFullNew'
       responses:
         '200':
+          description: Challenge response
           schema:
             $ref: '#/definitions/ChallengeResponse'
         '400':
@@ -208,6 +212,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   '/challenges/{id}':
@@ -225,6 +230,7 @@ paths:
           type: string
       responses:
         '200':
+          description: Challenge response
           schema:
             $ref: '#/definitions/ChallengeResponse'
         '400':
@@ -232,9 +238,11 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
         '404':
+          description: Error challenge not found
           schema:
             properties:
               status:
@@ -255,11 +263,11 @@ paths:
         - name: ChallengeSubscribe
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/ChallengeSubscribe'
       responses:
         '200':
+          description: Subscribe response
           schema:
             $ref: '#/definitions/ChallengeSubscribeResponse'
         '400':
@@ -267,6 +275,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /challenges/invite:
@@ -281,11 +290,11 @@ paths:
         - name: ChallengeInvite
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/ChallengeInvite'
       responses:
         '200':
+          description: Invite response
           schema:
             $ref: '#/definitions/SuccessEmptyResponse'
         '400':
@@ -293,6 +302,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /auth/facebook:
@@ -317,6 +327,33 @@ paths:
       responses:
         '302':
           description: Redirect to google
+  /payment:
+    post:
+      description: Process payment paypal
+      summary: Make payment
+      produces:
+        - application/json
+      tags:
+        - Payment
+      parameters:
+        - name: payment
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PaymentPaypal'
+      responses:
+        '200':
+          description: Payment response
+          schema:
+            $ref: '#/definitions/PaymentResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
   /profile:
     get:
       description: Get authorized user profile
@@ -327,9 +364,11 @@ paths:
         - Profile
       responses:
         '200':
+          description: Profile response
           schema:
             $ref: '#/definitions/UserResponse'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
     patch:
@@ -343,11 +382,11 @@ paths:
         - name: profile
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/UserNew'
       responses:
         '200':
+          description: Profile response
           schema:
             $ref: '#/definitions/ProfileResponse'
         '400':
@@ -355,6 +394,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /profile/peerplays/create-account:
@@ -369,11 +409,11 @@ paths:
         - name: ProfileCreatePeerplaysAccount
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/ProfileCreatePeerplaysAccount'
       responses:
         '200':
+          description: Create-account response
           schema:
             $ref: '#/definitions/ProfileResponse'
         '400':
@@ -381,6 +421,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /profile/avatar:
@@ -391,15 +432,21 @@ paths:
         - application/json
       tags:
         - Profile
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
+      parameters:
+        - name: file
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - file
+            properties:
               file:
                 type: string
                 format: binary
       responses:
         '200':
+          description: Profile avatar response
           schema:
             $ref: '#/definitions/ProfileResponse'
         '400':
@@ -407,6 +454,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
     delete:
@@ -418,9 +466,11 @@ paths:
         - Profile
       responses:
         '200':
+          description: Delete profile avatar response
           schema:
             $ref: '#/definitions/ProfileResponse'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /auth/steam:
@@ -449,9 +499,11 @@ paths:
           type: string
       responses:
         '200':
+          description: Stream response
           schema:
             $ref: '#/definitions/StreamResponse'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /streams:
@@ -489,6 +541,7 @@ paths:
           type: boolean
       responses:
         '200':
+          description: Streams response
           schema:
             $ref: '#/definitions/StreamsResponse'
         '400':
@@ -496,6 +549,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /populate-twitch-streams:
@@ -508,6 +562,7 @@ paths:
         - Stream
       responses:
         '200':
+          description: Twitch-stream response
           schema:
             $ref: '#/definitions/SuccessEmptyResponse'
   /auth/twitch:
@@ -534,10 +589,6 @@ paths:
           in: path
           required: true
           type: string
-          schema:
-            properties:
-              id:
-                type: string
       responses:
         '200':
           description: User response
@@ -548,9 +599,11 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
         '404':
+          description: Error user not found
           schema:
             properties:
               status:
@@ -584,6 +637,7 @@ paths:
           type: integer
       responses:
         '200':
+          description: Users response
           schema:
             $ref: '#/definitions/UsersResponse'
         '400':
@@ -591,6 +645,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /users/setNotification:
@@ -604,7 +659,6 @@ paths:
         - name: notifications
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/UsersChangeNotificationsStatus'
       responses:
@@ -615,6 +669,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
   /users/setInvitation:
@@ -628,7 +683,6 @@ paths:
         - name: invitations-status
           in: body
           required: true
-          type: string
           schema:
             $ref: '#/definitions/UsersChangeInvitationsStatus'
       responses:
@@ -639,6 +693,7 @@ paths:
           schema:
             $ref: '#/definitions/ValidateError'
         '401':
+          description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
 definitions:
@@ -688,8 +743,6 @@ definitions:
         type: string
         format: password
   AuthSignInUser:
-    tags:
-      - Auth
     type: object
     required:
       - login
@@ -780,6 +833,47 @@ definitions:
         properties:
           result:
             type: string
+  PaymentPaypal:
+    type: object
+    required:
+      - orderId
+    properties:
+      orderId:
+        type: string
+  PaymentResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/Payment'
+  Payment:
+    type: object
+    properties:
+      id:
+        type: number
+      userId:
+        type: number
+      orderId:
+        type: string
+      amountCurrency:
+        type: string
+      amountValue:
+        type: number
+      ppyAmountValue:
+        type: number
+      status:
+        type: string
+      error:
+        type: string
+      txId:
+        type: number
+      blockNumber:
+        type: number
+      updatedAt:
+        type: string
+      createdAt:
+        type: string
   ProfileCreatePeerplaysAccount:
     type: object
     required:

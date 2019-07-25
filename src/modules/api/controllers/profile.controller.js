@@ -73,9 +73,11 @@ class ProfileController {
        *      - Profile
        *    responses:
        *      200:
+       *        description: Profile response
        *        schema:
        *         $ref: '#/definitions/UserResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        */
@@ -99,14 +101,15 @@ class ProfileController {
        *      - name: profile
        *        in:  body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/UserNew'
        *    responses:
        *      200:
+       *        description: Profile response
        *        schema:
        *          $ref: '#/definitions/ProfileResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      400:
@@ -135,14 +138,15 @@ class ProfileController {
        *      - name: ProfileCreatePeerplaysAccount
        *        in:  body
        *        required: true
-       *        type: string
        *        schema:
        *          $ref: '#/definitions/ProfileCreatePeerplaysAccount'
        *    responses:
        *      200:
+       *        description: Create-account response
        *        schema:
        *          $ref: '#/definitions/ProfileResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      400:
@@ -167,18 +171,25 @@ class ProfileController {
        *      - application/json
        *    tags:
        *      - Profile
-       *    requestBody:
-       *      content:
-       *        multipart/form-data:
-       *          schema:
+       *    parameters:
+       *      - name: file
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          type: object
+       *          required:
+       *            - file
+       *          properties:
        *            file:
        *              type: string
        *              format: binary
        *    responses:
        *      200:
+       *        description: Profile avatar response
        *        schema:
        *          $ref: '#/definitions/ProfileResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      400:
@@ -204,9 +215,11 @@ class ProfileController {
        *      - Profile
        *    responses:
        *      200:
+       *        description: Delete profile avatar response
        *        schema:
        *          $ref: '#/definitions/ProfileResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        */
@@ -235,8 +248,19 @@ class ProfileController {
   }
 
   async uploadAvatar(user, data, req, res) {
-    const location = await this.fileService.saveImage(req, res);
-    return await this.userService.patchProfile(user, {avatar: location});
+    try {
+      const location = await this.fileService.saveImage(req, res);
+      return await this.userService.patchProfile(user, {avatar: location});
+    } catch (err) {
+      switch (err.message) {
+        case this.fileService.errors.FILE_NOT_FOUND:
+          throw new RestError('', 400, {image: [{message: 'File not found'}]});
+        case this.fileService.errors.INVALID_IMAGE_FORMAT:
+          throw new RestError('', 400, {format: [{message: 'Invalid file format'}]});
+        default:
+          throw err;
+      }
+    }
   }
 
   async deleteAvatar(user) {

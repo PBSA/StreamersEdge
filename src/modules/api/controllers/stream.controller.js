@@ -72,9 +72,11 @@ class StreamController {
        *        type: string
        *    responses:
        *      200:
+       *        description: Stream response
        *        schema:
        *         $ref: '#/definitions/StreamResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        */
@@ -122,9 +124,11 @@ class StreamController {
        *        type: boolean
        *    responses:
        *      200:
+       *        description: Streams response
        *        schema:
        *         $ref: '#/definitions/StreamsResponse'
        *      401:
+       *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
        *      400:
@@ -151,6 +155,7 @@ class StreamController {
        *      - Stream
        *    responses:
        *      200:
+       *        description: Twitch-stream response
        *        schema:
        *         $ref: '#/definitions/SuccessEmptyResponse'
        */
