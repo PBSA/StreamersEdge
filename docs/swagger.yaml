@@ -1,867 +1,1156 @@
----
-swagger: "2.0"
 info:
-  description: APIs for StreamerEdge
-  version: "1"
   title: StreamerEdge
-  contact: {}
+  version: '1'
+  description: APIs for StreamerEdge
 host: virtserver.swaggerhub.com
 basePath: /api/v1
-tags:
-- name: challenges
-  description: ""
-- name: streams
-  description: ""
-- name: game_data
-  description: ""
-- name: user-profile
-  description: ""
 schemes:
-- https
-consumes:
-- application/json
-produces:
-- application/json
+  - https
+swagger: '2.0'
 paths:
-  /challenge:
+  /admin/profile:
     get:
-      tags:
-      - challenges
-      summary: listChallenges
-      description: Lists all challenges
-      operationId: ChallengeGet
+      description: Get profile of authorized admin
       produces:
-      - application/json
-      parameters:
-      - name: limit
-        in: query
-        description: How many items to return at one time (max 100)
-        required: false
-        type: integer
-        format: int32
-      - name: nextId
-        in: query
-        description: ID of the next challenge to be returned
-        required: false
-        type: integer
-        format: int32
-      - name: search_param
-        in: query
-        description: parameter to be searched
-        required: false
-        type: string
-      - name: search_text
-        in: query
-        description: text to be searched in the parameter values
-        required: false
-        type: string
+        - application/json
+      tags:
+        - Admin
       responses:
-        200:
-          description: A paged array of challenges
-          headers: {}
+        '200':
+          description: Profile response
           schema:
+            $ref: '#/definitions/UserResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '403':
+          description: Error forbidden for this user
+          schema:
+            $ref: '#/definitions/ForbiddenError'
+  /auth/logout:
+    post:
+      description: Logout
+      produces:
+        - application/json
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Logout response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /auth/sign-up:
+    post:
+      description: Sign up
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: user
+          description: User object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthSignUpUser'
+      responses:
+        '200':
+          description: User response
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+  '/auth/confirm-email/:token':
+    post:
+      description: Confirm email
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Confirm-email response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+  /auth/sign-in:
+    post:
+      description: Sign in
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthSignInUser'
+      responses:
+        '200':
+          description: Sign in response
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+  /auth/forgot-password:
+    post:
+      description: Forgot password
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthForgotPassword'
+      responses:
+        '200':
+          description: Forgot-password response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '404':
+          description: Error user not found
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: User not found
+        '429':
+          description: Error too many requests
+          schema:
+            properties:
+              status:
+                type: number
+                example: 429
+              error:
+                type: string
+                example: Too many requests
+  /auth/reset-password:
+    post:
+      description: Forgot password
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthResetPassword'
+      responses:
+        '200':
+          description: Reset-password response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '404':
+          description: Error token not found
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: Token not found
+  /challenges:
+    post:
+      description: Create new challenge
+      summary: Create new challenge
+      produces:
+        - application/json
+      tags:
+        - Challenge
+      parameters:
+        - name: challenge
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ChallengeFullNew'
+      responses:
+        '200':
+          description: Challenge response
+          schema:
+            $ref: '#/definitions/ChallengeResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/challenges/{id}':
+    get:
+      description: Get challenge by id
+      summary: Get challenge by id
+      produces:
+        - application/json
+      tags:
+        - Challenge
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Challenge response
+          schema:
+            $ref: '#/definitions/ChallengeResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '404':
+          description: Error challenge not found
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: Challenge not found
+  /challenges/subscribe:
+    post:
+      description: Subscribe to new notification
+      summary: Subscribe to new notification
+      produces:
+        - application/json
+      tags:
+        - Challenge
+      parameters:
+        - name: ChallengeSubscribe
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ChallengeSubscribe'
+      responses:
+        '200':
+          description: Subscribe response
+          schema:
+            $ref: '#/definitions/ChallengeSubscribeResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /challenges/invite:
+    post:
+      description: Invite user to new challenge
+      summary: Invite user to new challenge
+      produces:
+        - application/json
+      tags:
+        - Challenge
+      parameters:
+        - name: ChallengeInvite
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ChallengeInvite'
+      responses:
+        '200':
+          description: Invite response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /auth/facebook:
+    get:
+      description: Auth by facebook
+      summary: Auth by facebook
+      produces:
+        - application/json
+      tags:
+        - SocNetwork
+      responses:
+        '302':
+          description: Redirect to facebook
+  /auth/google:
+    get:
+      description: Auth by google
+      summary: Auth by google
+      produces:
+        - application/json
+      tags:
+        - SocNetwork
+      responses:
+        '302':
+          description: Redirect to google
+  /payment:
+    post:
+      description: Process payment paypal
+      summary: Make payment
+      produces:
+        - application/json
+      tags:
+        - Payment
+      parameters:
+        - name: payment
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PaymentPaypal'
+      responses:
+        '200':
+          description: Payment response
+          schema:
+            $ref: '#/definitions/PaymentResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /profile:
+    get:
+      description: Get authorized user profile
+      summary: Get authorized user profile
+      produces:
+        - application/json
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Profile response
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+    patch:
+      description: Update authorized user profile
+      summary: Update authorized user profile
+      produces:
+        - application/json
+      tags:
+        - Profile
+      parameters:
+        - name: profile
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserNew'
+      responses:
+        '200':
+          description: Profile response
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /profile/peerplays/create-account:
+    post:
+      description: Create peerplays account for authorized user
+      summary: Create peerplays account for authorized user
+      produces:
+        - application/json
+      tags:
+        - Profile
+      parameters:
+        - name: ProfileCreatePeerplaysAccount
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ProfileCreatePeerplaysAccount'
+      responses:
+        '200':
+          description: Create-account response
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /profile/avatar:
+    post:
+      description: Add or change account avatar
+      summary: Add or change account avatar
+      produces:
+        - application/json
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Profile avatar response
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+    delete:
+      description: Delete profile avatar
+      summary: Delete profile avatar
+      produces:
+        - application/json
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Delete profile avatar response
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /auth/steam:
+    get:
+      description: Auth by steam
+      summary: Auth by steam
+      produces:
+        - application/json
+      tags:
+        - SocNetwork
+      responses:
+        '302':
+          description: Redirect to steam
+  '/stream/{id}':
+    get:
+      description: Get stream
+      summary: Get stream
+      produces:
+        - application/json
+      tags:
+        - Stream
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Stream response
+          schema:
+            $ref: '#/definitions/StreamResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /streams:
+    get:
+      description: Get stream
+      summary: Get stream
+      produces:
+        - application/json
+      tags:
+        - Stream
+      parameters:
+        - name: search
+          in: query
+          required: false
+          type: string
+        - name: limit
+          in: query
+          required: false
+          type: integer
+        - name: skip
+          in: query
+          required: false
+          type: integer
+        - name: orderBy
+          in: query
+          required: false
+          type: string
+        - name: isAscending
+          in: query
+          required: false
+          type: boolean
+        - name: isActive
+          in: query
+          required: false
+          type: boolean
+      responses:
+        '200':
+          description: Streams response
+          schema:
+            $ref: '#/definitions/StreamsResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /populate-twitch-streams:
+    get:
+      description: Get Streams for users from Twitch
+      summary: Get Streams for users from Twitch
+      produces:
+        - application/json
+      tags:
+        - Stream
+      responses:
+        '200':
+          description: Twitch-stream response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+  /auth/twitch:
+    get:
+      description: Auth by twitch
+      summary: Auth by twitch
+      produces:
+        - application/json
+      tags:
+        - SocNetwork
+      responses:
+        '302':
+          description: Redirect to twitch
+  '/users/{id}':
+    get:
+      description: Get user bu id
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - name: id
+          description: User id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User response
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '404':
+          description: Error user not found
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: User not found
+  /users:
+    get:
+      description: Get users list
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - name: search
+          description: Filter by PeerPlays Account Name
+          in: query
+          required: false
+          type: string
+        - name: limit
+          description: Limit of rows
+          in: query
+          required: true
+          type: integer
+        - name: skip
+          description: Number of rows to skip
+          in: query
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: Users response
+          schema:
+            $ref: '#/definitions/UsersResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /users/setNotification:
+    patch:
+      description: Change notification status
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - name: notifications
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UsersChangeNotificationsStatus'
+      responses:
+        '200':
+          description: Change result
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /users/setInvitation:
+    patch:
+      description: Change invitation status
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - name: invitations-status
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UsersChangeInvitationsStatus'
+      responses:
+        '200':
+          description: Change result
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+definitions:
+  ValidateError:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 400
+      error:
+        type: object
+  UnauthorizedError:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 401
+      error:
+        type: string
+        example: unauthorized
+  ForbiddenError:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 403
+      error:
+        type: string
+        example: forbidden
+  AuthSignUpUser:
+    type: object
+    required:
+      - email
+      - username
+      - password
+      - repeatPassword
+    properties:
+      email:
+        type: string
+        format: email
+      username:
+        type: string
+      password:
+        type: string
+        format: password
+      repeatPassword:
+        type: string
+        format: password
+  AuthSignInUser:
+    type: object
+    required:
+      - login
+      - password
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+        format: password
+  AuthForgotPassword:
+    type: object
+    required:
+      - email
+    properties:
+      email:
+        type: string
+        format: email
+  AuthResetPassword:
+    type: object
+    required:
+      - token
+      - password
+      - repeatPassword
+    properties:
+      token:
+        type: string
+      password:
+        type: string
+        format: password
+      repeatPassword:
+        type: string
+        format: password
+  UserResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/User'
+  UsersResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
             type: array
             items:
-              $ref: '#/definitions/ChallengeShort'
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-    post:
-      tags:
-      - challenges
-      summary: createChallenge
-      description: Create a Challenge
-      operationId: ChallengePost
-      produces:
-      - application/json
-      parameters:
-      - name: challenge
-        in: query
-        description: Challenge to be created
-        required: true
+              $ref: '#/definitions/User'
+  ChallengeSubscribe:
+    type: object
+    required:
+      - endpoint
+      - keys
+    properties:
+      endpoint:
         type: string
-      responses:
-        201:
-          description: Null response
-          headers: {}
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-  /challenge/{challengeId}:
-    get:
-      tags:
-      - challenges
-      summary: showChallengeById
-      description: Info for a specific challenge
-      operationId: ChallengeByChallengeIdGet
-      produces:
-      - application/json
-      parameters:
-      - name: challengeId
-        in: path
-        description: The id of the challenge to retrieve
-        required: true
-        type: string
-      responses:
-        200:
-          description: Expected response to a valid request
-          headers: {}
-          schema:
+      expirationTime:
+        type: number
+      keys:
+        type: object
+        properties:
+          p256dh:
+            type: string
+          auth:
+            type: string
+  ChallengeInvite:
+    type: object
+    required:
+      - userId
+      - challengeId
+    properties:
+      userId:
+        type: number
+      challengeId:
+        type: number
+  ChallengeResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
             $ref: '#/definitions/Challenge'
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-  /stream:
-    get:
-      tags:
-      - streams
-      summary: listStreams
-      description: Lists all streams
-      operationId: StreamGet
-      produces:
-      - application/json
-      parameters:
-      - name: limit
-        in: query
-        description: How many items to return at one time (max 100)
-        required: false
-        type: integer
-        format: int32
-      - name: nextId
-        in: query
-        description: ID of the next stream to be returned
-        required: false
-        type: integer
-        format: int32
-      - name: search_param
-        in: query
-        description: parameter to be searched
-        required: false
+  ChallengeSubscribeResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            type: string
+  PaymentPaypal:
+    type: object
+    required:
+      - orderId
+    properties:
+      orderId:
         type: string
-      - name: search_text
-        in: query
-        description: text to be searched in the parameter values
-        required: false
+  PaymentResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/Payment'
+  Payment:
+    type: object
+    properties:
+      id:
+        type: number
+      userId:
+        type: number
+      orderId:
         type: string
-      responses:
-        200:
-          description: A paged array of streams
-          headers: {}
-          schema:
+      amountCurrency:
+        type: string
+      amountValue:
+        type: number
+      ppyAmountValue:
+        type: number
+      status:
+        type: string
+      error:
+        type: string
+      txId:
+        type: number
+      blockNumber:
+        type: number
+      updatedAt:
+        type: string
+      createdAt:
+        type: string
+  ProfileCreatePeerplaysAccount:
+    type: object
+    required:
+      - name
+      - activeKey
+      - ownerKey
+    properties:
+      name:
+        type: string
+      activeKey:
+        type: string
+      ownerKey:
+        type: string
+  ProfileAvatar:
+    type: object
+    required:
+      - name
+      - activeKey
+      - ownerKey
+    properties:
+      name:
+        type: string
+      activeKey:
+        type: string
+      ownerKey:
+        type: string
+  ProfileResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/User'
+  StreamGet:
+    type: object
+    required:
+      - name
+      - activeKey
+      - ownerKey
+    properties:
+      name:
+        type: string
+      activeKey:
+        type: string
+      ownerKey:
+        type: string
+  StreamResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/Stream'
+  StreamsResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
             type: array
             items:
               $ref: '#/definitions/Stream'
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-    post:
-      tags:
-      - streams
-      summary: addStream
-      description: Add a newly created stream on twitch/youtube
-      operationId: StreamPost
-      produces:
-      - application/json
-      parameters:
-      - name: stream
-        in: query
-        description: Stream to be Added
-        required: true
-        type: string
-      responses:
-        201:
-          description: Null response
-          headers: {}
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-  /stream/{streamId}:
-    get:
-      tags:
-      - streams
-      summary: showStreamById
-      description: Info for a specific stream
-      operationId: StreamByStreamIdGet
-      produces:
-      - application/json
-      parameters:
-      - name: streamId
-        in: path
-        description: The id of the stream to retrieve
-        required: true
-        type: string
-      responses:
-        200:
-          description: Expected response to a valid request
-          headers: {}
-          schema:
-            $ref: '#/definitions/Stream'
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-  /game_data:
-    get:
-      tags:
-      - game_data
-      summary: listGames
-      description: Lists all games data
-      operationId: GameDataGet
-      produces:
-      - application/json
-      parameters:
-      - name: search_param
-        in: query
-        description: parameter to be searched
-        required: true
-        type: string
-      - name: search_text
-        in: query
-        description: text to be searched in the parameter values
-        required: true
-        type: string
-      - name: limit
-        in: query
-        description: How many items to return at one time (max 100)
-        required: false
-        type: integer
-        format: int32
-      - name: nextId
-        in: query
-        description: ID of the next game_data to be returned
-        required: false
-        type: integer
-        format: int32
-      responses:
-        200:
-          description: A paged array of game_data
-          headers: {}
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/GameData'
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-    post:
-      tags:
-      - game_data
-      summary: addGameData
-      description: Add a newly retrieved game data from game API
-      operationId: GameDataPost
-      produces:
-      - application/json
-      parameters:
-      - name: game_data
-        in: query
-        description: Game Data to be Added
-        required: true
-        type: string
-      responses:
-        201:
-          description: Null response
-          headers: {}
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-  /game_data/{game_data_id}:
-    get:
-      tags:
-      - game_data
-      summary: showGameDataById
-      description: Info for a specific game data
-      operationId: GameDataByGameDataIdGet
-      produces:
-      - application/json
-      parameters:
-      - name: game_data_id
-        in: path
-        description: The id of the game data to retrieve
-        required: true
-        type: string
-      responses:
-        200:
-          description: Expected response to a valid request
-          headers: {}
-          schema:
-            $ref: '#/definitions/GameData'
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-  /profile:
-    post:
-      tags:
-      - user-profile
-      summary: createUserProfile
-      description: Create/edit user profile
-      operationId: ProfilePost
-      produces:
-      - application/json
-      parameters:
-      - name: profile
-        in: query
-        description: User Profile to be created/edited
-        required: true
-        type: string
-      responses:
-        201:
-          description: Null response
-          headers: {}
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-  /profile/{user_id}:
-    get:
-      tags:
-      - user-profile
-      summary: showProfileByUserId
-      description: Info for a specific user
-      operationId: ProfileByUserIdGet
-      produces:
-      - application/json
-      parameters:
-      - name: user_id
-        in: path
-        description: The id of the user whose profile has to be retrieved
-        required: true
-        type: string
-      responses:
-        200:
-          description: Expected response to a valid request
-          headers: {}
-          schema:
-            $ref: '#/definitions/Profile'
-        default:
-          description: unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-      deprecated: false
-definitions:
-  Challenge:
+  UsersChangeNotificationsStatus:
     type: object
     required:
-    - bounty
-    - conditions
-    - creator
-    - expiration_time
-    - game
-    - gamers_invited
-    - id
-    - invite_condition
-    - is_completed
-    - name
-    - next_id
-    - participants
-    - start_time
-    - voting_time
+      - notifications
     properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-      game:
-        $ref: '#/definitions/Challenge_game'
-      creator:
-        type: string
-      participants:
-        type: array
-        items:
-          $ref: '#/definitions/Participant'
-      invite_condition:
-        $ref: '#/definitions/InviteCondition'
-      gamers_invited:
-        type: array
-        items:
-          $ref: '#/definitions/User'
-      conditions:
-        type: array
-        items:
-          $ref: '#/definitions/Condition'
-      conditions_text:
-        type: string
-        description: Condition Text for non-verifiable games where no parameters are received from game API to create and verify a challenge.
-      bounty:
-        $ref: '#/definitions/Challenge_bounty'
-      start_time:
-        type: integer
-        format: uint64
-      expiration_time:
-        type: integer
-        format: uint64
-      is_completed:
+      notifications:
         type: boolean
-      voting_time:
-        type: integer
-        format: uint64
-        description: Voting time in seconds
-      n_votes:
-        type: integer
-        format: uint64
-        description: Minimum number of votes required to decide the result
-      next_id:
-        type: integer
-        format: int64
-        description: Id of the next challenge in the array of challenges
-    title: Challenge
-  User:
+  UsersChangeInvitationsStatus:
     type: object
     required:
-    - user_id
+      - invitations
     properties:
-      user_id:
+      invitations:
         type: string
-    title: User
-  Condition:
+      users:
+        type: array
+        items:
+          type: integer
+      games:
+        type: array
+        description: Names of games from which user can accepts invitations
+        items:
+          type: string
+  SuccessResponse:
+    type: object
+    properties:
+      status:
+        type: number
+        default: 200
+        example: 200
+  SuccessEmptyResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            type: boolean
+            example: true
+  ChallengeConditionNew:
     type: object
     required:
-    - join
-    - operator
-    - param
-    - value
+      - param
+      - operator
+      - value
+      - join
     properties:
       param:
         type: string
+        enum:
+          - result_place
+          - win_time
+          - frags
       operator:
         type: string
+        enum:
+          - '>'
+          - <
+          - =
+          - '>='
+          - <=
       value:
         type: integer
-        format: int64
       join:
-        $ref: '#/definitions/Join'
-    title: Condition
-  ChallengeShort:
+        type: string
+        enum:
+          - AND
+          - OR
+          - END
+  ChallengeNew:
     type: object
     required:
-    - bounty
-    - creator
-    - expiration_time
-    - game
-    - gamers_invited
-    - id
-    - invite_condition
-    - is_completed
-    - name
-    - next_id
-    - start_time
+      - notifications
+      - endDate
+      - game
+      - accessRule
+      - ppyAmount
     properties:
-      id:
-        type: integer
-        format: int64
       name:
         type: string
-      game:
-        $ref: '#/definitions/Challenge_game'
-      creator:
+      startDate:
         type: string
-      invite_condition:
-        $ref: '#/definitions/InviteCondition'
-      gamers_invited:
+        format: date
+      endDate:
+        type: string
+        format: date
+      accessRule:
+        type: string
+        enum:
+          - invite
+          - anyone
+      ppyAmount:
+        type: integer
+      conditionsText:
+        type: string
+      game:
+        type: string
+        enum:
+          - pubg
+      invitedAccounts:
         type: array
         items:
-          $ref: '#/definitions/User'
-      bounty:
-        $ref: '#/definitions/Challenge_bounty'
-      start_time:
-        type: integer
-        format: int32
-      expiration_time:
-        type: integer
-        format: int32
-      is_completed:
-        type: boolean
-      next_id:
-        type: integer
-        format: int64
-        description: Id of the next challenge in the array of challenges
-    title: ChallengeShort
-  Participant:
-    type: object
-    required:
-    - status
-    - user_id
-    properties:
-      user_id:
-        type: string
-      status:
-        $ref: '#/definitions/Status'
-      game_data_id:
-        type: integer
-        format: int64
-      votes_win:
-        type: integer
-        format: int64
-      votes_lose:
-        type: integer
-        format: int64
-    title: Participant
+          type: integer
+  ChallengeFullNew:
+    allOf:
+      - $ref: '#/definitions/ChallengeNew'
+      - type: object
+        properties:
+          conditions:
+            type: array
+            items:
+              $ref: '#/definitions/ChallengeConditionNew'
+  ChallengeCondition:
+    allOf:
+      - $ref: '#/definitions/ChallengeConditionNew'
+      - type: object
+        properties:
+          id:
+            type: integer
+          createdAt:
+            type: string
+            format: date
+          updatedAt:
+            type: string
+            format: date
+          challengeId:
+            type: integer
+  Challenge:
+    allOf:
+      - $ref: '#/definitions/ChallengeNew'
+      - type: object
+        properties:
+          conditions:
+            type: array
+            items:
+              $ref: '#/definitions/ChallengeCondition'
+          id:
+            type: integer
+          createdAt:
+            type: string
+            format: date
+          updatedAt:
+            type: string
+            format: date
+          invitedUsers:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+          user:
+            $ref: '#/definitions/User'
   Stream:
     type: object
-    required:
-    - creator
-    - end_time
-    - game
-    - id
-    - is_live
-    - n_downvotes
-    - n_upvotes
-    - name
-    - source
-    - start_time
     properties:
       id:
         type: integer
-        format: int64
       name:
         type: string
       game:
-        $ref: '#/definitions/Challenge_game'
-      creator:
-        $ref: '#/definitions/Stream_creator'
-      source:
-        $ref: '#/definitions/Stream_source'
-      is_live:
+        type: string
+        enum:
+          - pubg
+          - fortnite
+      sourceName:
         type: boolean
-      start_time:
+        enum:
+          - twitch
+          - youtube
+      embedUrl:
+        type: string
+      channelId:
         type: integer
-        format: int64
-      end_time:
-        type: integer
-        format: int64
-      n_upvotes:
-        type: integer
-        format: int64
-      n_downvotes:
-        type: integer
-        format: int64
-      comments:
-        type: array
-        items:
-          $ref: '#/definitions/Comment'
-      associated_challenges:
-        type: array
-        items:
-          $ref: '#/definitions/AssociatedChallenge'
-      donations:
-        type: array
-        items:
-          $ref: '#/definitions/Donation'
-    title: Stream
-  AssociatedChallenge:
-    type: object
-    required:
-    - challenge_id
-    properties:
-      challenge_id:
-        type: integer
-        format: int64
-    title: AssociatedChallenge
-  GameData:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      game:
-        $ref: '#/definitions/Challenge_game'
-      data_provider:
-        type: string
-      time_received:
-        type: integer
-        format: int32
-      is_streaming_ended:
-        type: boolean
-      game_data:
-        type: string
-        description: The game data for all the different games that we support will be different. We should store the data received from the data-provider as a stringified JSON.
-    title: GameData
-  Profile:
-    type: object
-    required:
-    - application_type
-    - email
-    - profile_pic
-    - user_id
-    - user_type
-    properties:
-      user_id:
-        type: string
-      email:
-        type: string
-      profile_pic:
-        type: string
-      application_type:
-        $ref: '#/definitions/ApplicationType'
-      push_notification_id:
-        type: string
-        description: Apple Push Notification Service ID or Google/Firebase Push Notification ID or id for any other push notification service that we intend to use.
-      user_type:
-        $ref: '#/definitions/UserType'
-      linked_streaming_accounts:
-        type: array
-        items:
-          $ref: '#/definitions/StreamingAccount'
-      linked_gaming_accounts:
-        type: array
-        items:
-          $ref: '#/definitions/GamingAccount'
-      linked_crypto_accounts:
-        type: array
-        items:
-          $ref: '#/definitions/CryptoAccount'
-    title: Profile
-  GamingAccount:
-    type: object
-    required:
-    - account_id
-    - game
-    - matches_checked
-    - username
-    properties:
-      game:
-        $ref: '#/definitions/Game'
-      account_id:
-        type: string
-      username:
-        type: string
-      matches_checked:
-        type: integer
-        format: int32
-        description: To store the date and time when the matches were last checked for this account
-    title: GamingAccount
-  StreamingAccount:
-    type: object
-    required:
-    - access_token
-    - account
-    - account_id
-    properties:
-      account:
-        type: string
-        description: This is linked account such as twitch, youtube, discord, facebook, etc.
-      account_id:
-        type: string
-        format: uuid
-      access_token:
-        type: string
-      access_secret:
-        type: string
-      refresh_token:
-        type: string
-      expiry_date:
-        type: integer
-        format: int32
-      other_details:
-        type: string
-    title: StreamingAccount
-  CryptoAccount:
-    type: object
-    required:
-    - account
-    - account_id
-    properties:
-      account:
-        type: string
-        description: This is linked account such as bitcoin, peerplays, etc.
-      account_id:
-        type: string
-    title: CryptoAccount
-  Error:
-    type: object
-    required:
-    - code
-    - message
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
-    title: Error
-  Challenge_game:
-    type: object
-    required:
-    - id
-    - is_verifiable
-    - name
-    properties:
-      id:
-        type: integer
-        format: int64
-      name:
-        type: string
-        example: Fortnite/PUBG
-        default: Fortnite/PUBG
-      is_verifiable:
-        type: boolean
-    title: Challenge_game
-  Challenge_bounty:
-    type: object
-    required:
-    - amount
-    - asset_id
-    properties:
-      asset_id:
-        type: string
-      amount:
-        type: integer
-        format: int64
-    title: Challenge_bounty
-  Stream_creator:
-    type: object
-    required:
-    - user_id
-    properties:
-      user_id:
-        type: string
-    title: Stream_creator
-  Stream_source:
-    type: object
-    required:
-    - channel_id
-    - name
-    - url
-    properties:
-      name:
-        $ref: '#/definitions/Name'
-      url:
-        type: string
-      channel_id:
-        type: string
       views:
         type: integer
-        format: int64
-      viewing:
-        type: integer
-        format: int64
-    title: Stream_source
-  Comment:
+      isLive:
+        type: boolean
+      startTime:
+        type: string
+      thumbnailUrl:
+        type: string
+      user:
+        $ref: '#/definitions/User'
+  UserNew:
     type: object
-    required:
-    - comment
-    - id
-    - n_downvotes
-    - n_upvotes
-    - reply_to_id
-    - user_id
     properties:
-      id:
-        type: integer
-        format: int64
-      user_id:
+      avatar:
         type: string
-      comment:
+      youtube:
         type: string
-      reply_to_id:
-        type: integer
-        format: int64
-        description: If this comment is a reply to another comment then the ID of that comment should be saved here
-      n_upvotes:
-        type: integer
-        format: int64
-      n_downvotes:
-        type: integer
-        format: int64
-    title: Comment
-  Donation:
-    type: object
-    required:
-    - donation_amount
-    - transfer_id
-    - user_id
-    properties:
-      transfer_id:
+      facebook:
         type: string
-      user_id:
+      twitch:
         type: string
-      donation_amount:
-        $ref: '#/definitions/Donation_donation_amount'
-    title: Donation
-  ApplicationType:
-    type: string
-    title: ApplicationType
-    example: desktop
-    enum:
-    - desktop
-    - web
-    - extension
-    - android
-    - ios
-  Game:
-    type: string
-    title: Game
-    example: Fortnite
-    enum:
-    - Fortnite
-    - PUBG
-  InviteCondition:
-    type: string
-    title: InviteCondition
-    example: anyone_can_join
-    enum:
-    - anyone_can_join
-    - join_by_invite
-    - both
-  Join:
-    type: string
-    title: Join
-    example: AND
-    enum:
-    - AND
-    - OR
-    - END
-  Name:
-    type: string
-    title: Name
-    example: twitch
-    enum:
-    - twitch
-    - youtube
-  Status:
-    type: string
-    title: Status
-    example: accepted
-    enum:
-    - accepted
-    - streaming
-    - won
-    - lost
-  UserType:
-    type: string
-    title: UserType
-    example: gamer
-    enum:
-    - gamer
-    - viewer
-    - sponsor
-    - whitelist
-    - admin
-  Donation_donation_amount:
-    required:
-    - amount
-    - asset_id
-    properties:
-      asset_id:
+      peerplaysAccountName:
         type: string
-      amount:
-        type: integer
-        format: int64
+      bitcoinAddress:
+        type: string
+      pubgUsername:
+        type: string
+      userType:
+        type: string
+        enum:
+          - gamer
+          - viewer
+          - sponsor
+          - whitelist
+          - admin
+      email:
+        type: string
+  User:
+    allOf:
+      - $ref: '#/definitions/UserNew'
+      - type: object
+        properties:
+          id:
+            type: integer
+          username:
+            type: string
+          googleName:
+            type: string
+          notifications:
+            type: boolean
+          invitations:
+            type: string
+            enum:
+              - allnone
+              - users
+              - games
+responses: {}
+parameters: {}
+securityDefinitions: {}
+tags: []

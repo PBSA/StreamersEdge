@@ -1,5 +1,35 @@
 const RestError = require('../../../errors/rest.error');
 
+/**
+ * @swagger
+ *
+ * definitions:
+ *  UsersChangeNotificationsStatus:
+ *    type: object
+ *    required:
+ *      - notifications
+ *    properties:
+ *      notifications:
+ *        type: boolean
+ *  UsersChangeInvitationsStatus:
+ *    type: object
+ *    required:
+ *      - invitations
+ *    properties:
+ *      invitations:
+ *        type: string
+ *      users:
+ *        type: array
+ *        items:
+ *          type: integer
+ *      games:
+ *        type: array
+ *        description: Names of games from which user can accepts invitations
+ *        items:
+ *          type: string
+ *
+ */
+
 class UsersController {
 
   /**
@@ -20,24 +50,44 @@ class UsersController {
   getRoutes() {
     return [
       /**
-       * @api {get} /api/v1/users/:id Get user by id
-       * @apiName UserGet
-       * @apiGroup Users
-       * @apiVersion 0.1.0
-       * @apiParam {String} id  User id
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": ""
-       *   }
-       * }
+       * @swagger
+       *
+       * /users/{id}:
+       *  get:
+       *    description: Get user bu id
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - User
+       *    parameters:
+       *      - name: id
+       *        description: User id
+       *        in: path
+       *        required: true
+       *        type: string
+       *    responses:
+       *      200:
+       *        description: User response
+       *        schema:
+       *          $ref: '#/definitions/UserResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      404:
+       *        description: Error user not found
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: User not found
        */
       [
         'get', '/api/v1/users/:id',
@@ -46,26 +96,44 @@ class UsersController {
         this.getUser.bind(this)
       ],
       /**
-       * @api {get} /api/v1/users Get users list
-       * @apiName UsersGet
-       * @apiGroup Users
-       * @apiVersion 0.1.0
-       * @apiParam {String} [search] Filter by PeerPlays Account Name
-       * @apiParam {Number} limit Limit of rows
-       * @apiParam {Number} [skip] Number of rows to skip
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": [{
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": ""
-       *   }]
-       * }
+       * @swagger
+       *
+       * /users:
+       *  get:
+       *    description: Get users list
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - User
+       *    parameters:
+       *      - name: search
+       *        description: Filter by PeerPlays Account Name
+       *        in: query
+       *        required: false
+       *        type: string
+       *      - name: limit
+       *        description: Limit of rows
+       *        in: query
+       *        required: true
+       *        type: integer
+       *      - name: skip
+       *        description: Number of rows to skip
+       *        in: query
+       *        required: false
+       *        type: integer
+       *    responses:
+       *      200:
+       *        description: Users response
+       *        schema:
+       *          $ref: '#/definitions/UsersResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'get', '/api/v1/users',
@@ -74,17 +142,32 @@ class UsersController {
         this.getUsers.bind(this)
       ],
       /**
-       * @api {patch} /api/v1/users/setNotification Change notification status
-       * @apiName PatchNotification
-       * @apiGroup Users
-       * @apiVersion 0.1.0
-       * @apiParam {Boolean} set notification for user
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "result": [1],
-       *   "status": 200
-       * }
+       * @swagger
+       *
+       * /users/setNotification:
+       *  patch:
+       *    description: Change notification status
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - User
+       *    parameters:
+       *      - name: notifications
+       *        in: body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/UsersChangeNotificationsStatus'
+       *    responses:
+       *      200:
+       *        description: Change result
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'patch', '/api/v1/users/setNotification',
@@ -93,24 +176,32 @@ class UsersController {
         this.changeNotificationStatus.bind(this)
       ],
       /**
-       * @api {patch} /api/v1/users/setInvitation Change invitation status
-       * @apiName PatchNotification
-       * @apiGroup Users
-       * @apiVersion 0.1.0
-       * @apiParam {String} set invitation for user
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "result": [1],
-       *   "status": 200
-       * }
-       * @apiExample {json} Request-Example:
-       * {
-       *   "invitations": "games",
-       *   "games": ["pubg"]
-       * }
-       * @apiParam {String} invitation is one of invitations types
-       * @apiParam {Array} Names of games from which user can accepts invitations
+       * @swagger
+       *
+       * /users/setInvitation:
+       *  patch:
+       *    description: Change invitation status
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - User
+       *    parameters:
+       *      - name: invitations-status
+       *        in: body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/UsersChangeInvitationsStatus'
+       *    responses:
+       *      200:
+       *        description: Change result
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'patch', '/api/v1/users/setInvitation',

@@ -31,6 +31,128 @@ const challengeConstants = require('../constants/challenge');
  */
 
 class ChallengeModel extends Model {
+  /**
+   *
+   * @swagger
+   *
+   * definitions:
+   *  ChallengeConditionNew:
+   *   type: object
+   *   required:
+   *    - param
+   *    - operator
+   *    - value
+   *    - join
+   *   properties:
+   *    param:
+   *      type: string
+   *      enum:
+   *        - result_place
+   *        - win_time
+   *        - frags
+   *    operator:
+   *      type: string
+   *      enum:
+   *        - ">"
+   *        - "<"
+   *        - "="
+   *        - ">="
+   *        - "<="
+   *    value:
+   *      type: integer
+   *    join:
+   *      type: string
+   *      enum:
+   *        - AND
+   *        - OR
+   *        - END
+   *
+   *  ChallengeNew:
+   *    type: object
+   *    required:
+   *      - notifications
+   *      - endDate
+   *      - game
+   *      - accessRule
+   *      - ppyAmount
+   *    properties:
+   *      name:
+   *        type: string
+   *      startDate:
+   *        type: string
+   *        format: date
+   *      endDate:
+   *        type: string
+   *        format: date
+   *      accessRule:
+   *        type: string
+   *        enum:
+   *          - invite
+   *          - anyone
+   *      ppyAmount:
+   *        type: integer
+   *      conditionsText:
+   *        type: string
+   *      game:
+   *        type: string
+   *        enum:
+   *          - pubg
+   *      invitedAccounts:
+   *        type: array
+   *        items:
+   *          type: integer
+   *
+   *  ChallengeFullNew:
+   *    allOf:
+   *      - $ref: '#/definitions/ChallengeNew'
+   *      - type: object
+   *        properties:
+   *          conditions:
+   *            type: array
+   *            items:
+   *              $ref: '#/definitions/ChallengeConditionNew'
+   *
+   *  ChallengeCondition:
+   *    allOf:
+   *      - $ref: '#/definitions/ChallengeConditionNew'
+   *      - type: object
+   *        properties:
+   *          id:
+   *            type: integer
+   *          createdAt:
+   *            type: string
+   *            format: date
+   *          updatedAt:
+   *            type: string
+   *            format: date
+   *          challengeId:
+   *            type: integer
+   *
+   *  Challenge:
+   *    allOf:
+   *      - $ref: '#/definitions/ChallengeNew'
+   *      - type: object
+   *        properties:
+   *          conditions:
+   *            type: array
+   *            items:
+   *              $ref: '#/definitions/ChallengeCondition'
+   *          id:
+   *            type: integer
+   *          createdAt:
+   *            type: string
+   *            format: date
+   *          updatedAt:
+   *            type: string
+   *            format: date
+   *          invitedUsers:
+   *            type: array
+   *            items:
+   *               $ref: '#/definitions/User'
+   *          user:
+   *            $ref: '#/definitions/User'
+   *
+   */
   getPublic() {
     const result = {
       id: this.id,
