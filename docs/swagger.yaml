@@ -71,7 +71,7 @@ paths:
           description: Error form validation
           schema:
             $ref: '#/definitions/ValidateError'
-  '/auth/confirm-email/:token':
+  '/auth/confirm-email/{token}':
     post:
       description: Confirm email
       produces:
@@ -80,7 +80,7 @@ paths:
         - Auth
       parameters:
         - name: token
-          in: query
+          in: path
           required: true
           type: string
       responses:
@@ -432,6 +432,18 @@ paths:
         - application/json
       tags:
         - Profile
+      parameters:
+        - name: file
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - file
+            properties:
+              file:
+                type: string
+                format: binary
       responses:
         '200':
           description: Profile avatar response

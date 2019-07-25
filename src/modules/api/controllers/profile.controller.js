@@ -171,6 +171,18 @@ class ProfileController {
        *      - application/json
        *    tags:
        *      - Profile
+       *    parameters:
+       *      - name: file
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          type: object
+       *          required:
+       *            - file
+       *          properties:
+       *            file:
+       *              type: string
+       *              format: binary
        *    responses:
        *      200:
        *        description: Profile avatar response

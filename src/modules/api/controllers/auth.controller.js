@@ -150,7 +150,7 @@ class AuthController {
       /**
        * @swagger
        *
-       * /auth/confirm-email/:token:
+       * /auth/confirm-email/{token}:
        *  post:
        *    description: Confirm email
        *    produces:
@@ -159,7 +159,7 @@ class AuthController {
        *      - Auth
        *    parameters:
        *      - name: token
-       *        in:  query
+       *        in:  path
        *        required: true
        *        type: string
        *    responses:
