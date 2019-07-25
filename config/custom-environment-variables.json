@@ -30,9 +30,6 @@
       "pass": "MAILER_AUTH_PASS"
     }
   },
-  "pubg": {
-    "apiKey": "PUBG_API_KEY"
-  },
   "paypal": {
     "clientId": "PAYPAL_CLIENT_ID",
     "secret": "PAYPAL_SECRET",
@@ -49,5 +46,8 @@
   "vapid": {
     "publicKey": "VAPID_PUBLIC_KEY",
     "privateKey": "VAPID_PRIVATE_KEY"
+  },
+  "pubg": {
+    "apiKey": "PUBG_API_KEY"
   }
 }

@@ -2,7 +2,6 @@ const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
 const randomString = require('randomstring');
-const url = require('url');
 
 class FileService {
 
@@ -17,7 +16,8 @@ class FileService {
     this.IMAGE_FORMATS = ['jpeg', 'png', 'gif'];
 
     this.errors = {
-      INVALID_IMAGE_FORMAT: 'Invalid image format'
+      INVALID_IMAGE_FORMAT: 'Invalid image format',
+      FILE_NOT_FOUND: 'File not found'
     };
   }
 
@@ -25,9 +25,14 @@ class FileService {
    *
    * @param {Object} req
    * @param {Object} res
+   * @param {Function} done
    * @return Promise<>
    */
   async saveImage(req, res) {
+
+    if (!req.file) {
+      throw new Error(this.errors.FILE_NOT_FOUND);
+    }
 
     const upload = multer({
       storage: multerS3({
@@ -41,8 +46,7 @@ class FileService {
     await new Promise((success, fail) => {
       upload(req, res, (err, res) => err ? fail(err) : success(res));
     });
-    // eslint-disable-next-line node/no-deprecated-api
-    return this.config.cdnUrl + url.parse(req.file.location).pathname;
+    return this.config.cdnUrl + new URL(req.file.location).pathname;
   }
 
   /**

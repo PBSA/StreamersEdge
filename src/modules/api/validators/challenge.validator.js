@@ -108,15 +108,25 @@ class ChallengeValidator extends BaseValidator {
   }
 
   subscribe() {
-    return this.validate(null,
-      {endpoint: Joi.string(), expirationTime: Joi.number().allow(null), keys: Joi.object({p256dh: Joi.string(), auth: Joi.string()})},
-      (req, query, body) => body);
+    const bodySchema = {
+      endpoint: Joi.string().required(),
+      expirationTime: Joi.number().allow(null),
+      keys: Joi.object({
+        p256dh: Joi.string().required(),
+        auth: Joi.string().required()
+      }).required()
+    };
+
+    return this.validate(null, bodySchema, (req, query, body) => body);
   }
 
   invite() {
-    return this.validate(null,
-      {userId: Joi.number(), challengeId: Joi.number()},
-      (req, query, body) => body);
+    const bodySchema = {
+      userId: Joi.number().required(),
+      challengeId: Joi.number().required()
+    };
+
+    return this.validate(null, bodySchema, (req, query, body) => body);
   }
 
 }
