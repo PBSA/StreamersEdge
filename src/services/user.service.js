@@ -70,9 +70,9 @@ class UserService {
       email: emailIsUsed ? null : email,
       isEmailVerified: emailIsUsed ? null : true,
       username: usernameIsUsed ? null : username,
-      twitchUserName: network == 'twitch' ? username : '',
-      googleName: network == 'google' ? username : '',
-      facebook: network == 'facebook' ? username : '',
+      twitchUserName: network === 'twitch' ? username : '',
+      googleName: network === 'google' ? username : '',
+      facebook: network === 'facebook' ? username : '',
       youtube
     });
   }
@@ -90,9 +90,12 @@ class UserService {
     User[`${network}Id`] = id;
 
     switch(network) {
-      case 'twitch': User.twitchUserName = username; break;
-      case 'google': User.googleName = username; break;
-      case 'facebook': User.facebook = username; break;
+      case 'twitch': User.twitchUserName = username; 
+        break;
+      case 'google': User.googleName = username; 
+        break;
+      case 'facebook': User.facebook = username; 
+        break;
       default: throw new RestError(`Unexpected Network ${network}`);
     }
 
