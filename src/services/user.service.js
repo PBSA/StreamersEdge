@@ -88,7 +88,6 @@ class UserService {
     const usernameIsUsed = username && await this.userRepository.model.count({where: {username}});
 
     User[`${network}Id`] = id;
-    console.log(network);
 
     switch(network) {
       case 'twitch': User.twitchUserName = username; console.log(username); break;
