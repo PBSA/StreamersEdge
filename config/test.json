@@ -3,5 +3,8 @@
     "database": "streamers-edge-test"
   },
   "port": 3001,
-  "cors": true
+  "cors": true,
+  "peerplays": {
+    "paymentReceiver": "1.2.57"
+  }
 }
