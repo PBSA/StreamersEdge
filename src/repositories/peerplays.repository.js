@@ -73,6 +73,14 @@ class PeerplaysRepository {
     return account.id;
   }
 
+  async broadcastSerializedTx(tr) {
+    return new Promise((success, fail) => {
+      this.peerplaysConnection.networkAPI
+        .exec('broadcast_transaction_with_callback', [(res) => success(res), tr])
+        .catch((error) => fail(error));
+    });
+  }
+
 }
 
 module.exports = PeerplaysRepository;

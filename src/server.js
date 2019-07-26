@@ -66,13 +66,13 @@ const currentModule = process.env.MODULE || 'api';
  * @property {Number} mailer.port
  * @property {Boolean} mailer.secure
  * @property {{user:String, pass:String}} mailer.auth
- * @property {String} mailer.sender
  * @property {String} peerplays.peerplaysFaucetURL
  * @property {String} peerplays.peerplaysWS
  * @property {String} peerplays.referrer
  * @property {String} peerplays.paymentAccountID
  * @property {String} peerplays.paymentAccountWIF
  * @property {String} peerplays.sendAssetId
+ * @property {String} peerplays.paymentReceiver
  * @property {String} paypal.clientId
  * @property {String} paypal.secret
  * @property {String} paypal.environment

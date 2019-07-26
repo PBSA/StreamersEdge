@@ -22,6 +22,7 @@ class PeerplaysConnection extends BaseConnection {
     await Apis.instance(this.config.peerplays.peerplaysWS, true).init_promise;
 
     this.dbAPI = Apis.instance().db_api();
+    this.networkAPI = Apis.instance().network_api();
     [this.asset] = await this.dbAPI.exec('get_assets', [[this.config.peerplays.sendAssetId]]);
     this.TransactionBuilder = TransactionBuilder;
   }

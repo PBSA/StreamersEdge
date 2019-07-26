@@ -10,6 +10,8 @@ const {isSuccess, isError} = require('../helpers/test.response.helper');
 const ApiModule = require('../api.module.test');
 const constants = require('../../../constants.json');
 const {login} = require('../helpers/test.login.helper');
+const {firstTx, secondTx} = require('../helpers/test.transaction.helper');
+
 
 chai.use(chaiHttp);
 let agent;
@@ -69,6 +71,7 @@ describe('POST /api/v1/challenges', () => {
     const body = {...validRequest};
     body.conditions = [];
     body.conditionsText = '';
+    body.depositOp = firstTx;
     const response = await agent.post('/api/v1/challenges').send(body);
     isError(response, 400);
     assert.hasAllKeys(response.body.error, ['conditions']);
@@ -77,6 +80,7 @@ describe('POST /api/v1/challenges', () => {
   it('should forbid create invite challenge without users', async () => {
     const body = {...validRequest};
     body.accessRule = 'invite';
+    body.depositOp = firstTx;
     const response = await agent.post('/api/v1/challenges').send(body);
     isError(response, 400);
     assert.hasAllKeys(response.body.error, ['invitedAccounts']);
@@ -85,6 +89,7 @@ describe('POST /api/v1/challenges', () => {
   it('should success create challenge', async () => {
     await agent.post('/api/v1/challenges/subscribe').send(subscribe);
     const body = {...validRequest};
+    body.depositOp = firstTx;
     const response = await agent.post('/api/v1/challenges').send(body);
     isSuccess(response);
   });
@@ -93,6 +98,7 @@ describe('POST /api/v1/challenges', () => {
     await agent.post('/api/v1/challenges/subscribe').send(subscribe);
     const body = {...validRequest};
     body.accessRule = 'invite';
+    body.depositOp = secondTx;
     body.invitedAccounts = [1];
     const response = await agent.post('/api/v1/challenges').send(body);
     isSuccess(response);

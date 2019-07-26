@@ -46,6 +46,11 @@ class PeerplaysConnectionMock {
     this._accountsCount = 0;
     this.asset = {precision: 5};
     this.balances = {[config.peerplays.paymentAccountID]: 1e10};
+
+    this.id = '8037d9f02e76eccbca449ae6a6e42294090bc9d7';
+    this.block_num = 1416474;
+    this.trx_num = 0;
+
     this.dbAPI = {
       exec: (method, args) => {
 
@@ -62,6 +67,25 @@ class PeerplaysConnectionMock {
         }
       }
     };
+    this.networkAPI = {
+      exec: async (method, [cb, tx])  => {
+        const arr = [ {
+          id: Math.random().toString(36).substring(7),//this.id,
+          block_num: this.block_num,
+          trx_num: this.trx_num,
+          trx: tx
+        } ];
+
+        switch(method) {
+          case 'broadcast_transaction_with_callback':
+            setTimeout(() => cb(arr), 1);
+            return arr;
+          default:
+            throw new Error('method not allowed');
+        }
+      }
+    };
+
     this.TransactionBuilder = TransactionBuilderMock.bind(null, this);
   }
 

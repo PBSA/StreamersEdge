@@ -14,18 +14,22 @@ class UserService {
    * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
    * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
    * @param {MailService} opts.mailService
+   * @param {PubgApiRepository} opts.pubgApiRepository
+   * @param {TransactionRepository} opts.transactionRepository
    * @param {FileService} opts.fileService
    * @param {GoogleRepository} opts.googleRepository
    */
   constructor(opts) {
     this.dbConnection = opts.dbConnection;
     this.userRepository = opts.userRepository;
+    this.transactionRepository = opts.transactionRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.mailService = opts.mailService;
+    this.pubgApiRepository = opts.pubgApiRepository;
     this.googleRepository = opts.googleRepository;
 
     this.errors = {
@@ -246,6 +250,11 @@ class UserService {
     await User.save();
 
     return true;
+  }
+
+  async getUserTransactions(userId, skip, limit) {
+    const transactions = await this.transactionRepository.searchTransactions(userId, limit, skip);
+    return Promise.all(transactions.map(async (Tx) => Tx.getPublic()));
   }
 
   /**
