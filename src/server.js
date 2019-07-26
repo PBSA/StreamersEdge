@@ -66,11 +66,9 @@ const currentModule = process.env.MODULE || 'api';
  * @property {Number} mailer.port
  * @property {Boolean} mailer.secure
  * @property {{user:String, pass:String}} mailer.auth
- * @property {String} mailer.sender
  * @property {String} peerplays.peerplaysFaucetURL
  * @property {String} peerplays.peerplaysWS
  * @property {String} peerplays.referrer
- * @property {String} pubg.apiKey
  * @property {String} peerplays.paymentAccountID
  * @property {String} peerplays.paymentAccountWIF
  * @property {String} peerplays.sendAssetId
@@ -78,6 +76,7 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} paypal.clientId
  * @property {String} paypal.secret
  * @property {String} paypal.environment
+ * @property {String} pubg.apiKey
  * @property {String} coinmarketcap.apiKey
  * @property {String} s3.bucket
  * @property {String} cdnUrl

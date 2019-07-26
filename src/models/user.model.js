@@ -46,6 +46,57 @@ const invitationConstants = require('../constants/invitation');
  */
 class UserModel extends Model {
   /**
+   * @swagger
+   *
+   * definitions:
+   *  UserNew:
+   *    type: object
+   *    properties:
+   *      avatar:
+   *        type: string
+   *      youtube:
+   *        type: string
+   *      facebook:
+   *        type: string
+   *      twitch:
+   *        type: string
+   *      peerplaysAccountName:
+   *        type: string
+   *      bitcoinAddress:
+   *        type: string
+   *      pubgUsername:
+   *        type: string
+   *      userType:
+   *        type: string
+   *        enum:
+   *          - gamer
+   *          - viewer
+   *          - sponsor
+   *          - whitelist
+   *          - admin
+   *      email:
+   *        type: string
+   *
+   *  User:
+   *    allOf:
+   *      - $ref: '#/definitions/UserNew'
+   *      - type: object
+   *        properties:
+   *          id:
+   *            type: integer
+   *          username:
+   *            type: string
+   *          googleName:
+   *            type: string
+   *          notifications:
+   *            type: boolean
+   *          invitations:
+   *            type: string
+   *            enum:
+   *              - allnone
+   *              - users
+   *              - games
+   *
    * @returns {UserPublicObject}
    */
   getPublic() {
@@ -150,7 +201,7 @@ module.exports = {
         type: Sequelize.ENUM(Object.keys(profileConstants.userType).map((key) => profileConstants.userType[key]))
       },
       applicationType: {
-        type:Sequelize.ENUM,
+        type: Sequelize.ENUM,
         values: profileConstants.applicationType
       },
       pushNotificationId: {

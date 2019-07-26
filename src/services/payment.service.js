@@ -8,12 +8,14 @@ class PaymentService {
    * @param {PaymentRepository} opts.paymentRepository
    * @param {CoinmarketcapRepository} opts.coinmarketcapRepository
    * @param {PeerplaysRepository} opts.peerplaysRepository
+   * @param {UserRepository} opts.userRepository
    */
   constructor(opts) {
     this.paypalRepository = opts.paypalRepository;
     this.paymentRepository = opts.paymentRepository;
     this.coinmarketcapRepository = opts.coinmarketcapRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
+    this.userRepository = opts.userRepository;
   }
 
   async processPayment(User, orderId) {
@@ -27,6 +29,11 @@ class PaymentService {
 
     if (order.status !== VALID_ORDER_STATUS) {
       throw new Error('Invalid order status');
+    }
+
+    if (!User.peerplaysAccountId && User.peerplaysAccountName) {
+      User.peerplaysAccountId = await this.peerplaysRepository.getAccountId(User.peerplaysAccountName);
+      await this.userRepository.setAccountId(User.id, User.peerplaysAccountId);
     }
 
     return await Promise.all(order.purchase_units.map(async (unit) => {

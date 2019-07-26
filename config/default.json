@@ -68,5 +68,9 @@
   "cdnUrl": "",
   "pubg": {
     "apiKey": ""
+  },
+  "swagger": {
+    "host": "virtserver.swaggerhub.com",
+    "schemes": ["https"]
   }
 }

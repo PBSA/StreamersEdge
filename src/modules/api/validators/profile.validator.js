@@ -1,15 +1,15 @@
 const Joi = require('./abstract/joi.form');
 const BaseValidator = require('./abstract/base.validator');
+const ValidateError = require('./../../../errors/validate.error');
 const profileConstants = require('../../../constants/profile');
-const ValidateError = require('../../../errors/validate.error');
 
 class ProfileValidator extends BaseValidator {
 
   /**
-   * @param {PubgApiRepository} opts.pubgApiRepository
    * @param {AppConfig} opts.config
    * @param {PeerplaysRepository} opts.peerplaysRepository
    * @param {UserRepository} opts.userRepository
+   * @param {PubgApiRepository} opts.pubgApiRepository
    */
   constructor(opts) {
     super();

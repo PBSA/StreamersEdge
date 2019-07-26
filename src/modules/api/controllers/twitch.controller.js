@@ -18,10 +18,19 @@ class TwitchController {
    */
   getRoutes(app) {
     /**
-     * @api {get} /api/v1/auth/twitch Auth by twitch
-     * @apiName TwitchAuth
-     * @apiGroup Twitch
-     * @apiVersion 0.1.0
+     * @swagger
+     *
+     * /auth/twitch:
+     *  get:
+     *    description: Auth by twitch
+     *    summary: Auth by twitch
+     *    produces:
+     *      - application/json
+     *    tags:
+     *      - SocNetwork
+     *    responses:
+     *      302:
+     *        description: Redirect to twitch
      */
     this.initializePassword();
     app.get('/api/v1/auth/twitch', passport.authenticate('twitch'));
