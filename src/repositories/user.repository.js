@@ -11,6 +11,10 @@ class UserRepository extends BasePostgresRepository {
     super(model);
   }
 
+  async findAll() {
+    return this.model.findAll();
+  }
+
   /**
    * @param ids
    * @returns {Promise<UserModel[]>}
@@ -126,10 +130,41 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
+  /**
+   * @param values
+   * @param options
+   * @returns {Promise<Array>}
+   */
+  async updateNotification(values, options) {
+    return this.model.update(
+      {notifications: options},
+      {where: {id: values}}
+    );
+  }
+
+  /**
+   * @param values
+   * @param options
+   * @returns {Promise<Array>}
+   */
+  async updateInvitation(values, options) {
+    return this.model.update(
+      {invitations: options},
+      {where: {id: values}}
+    );
+  }
+
   async getByTwitchId(searchtwitchId) {
     return this.model.findOne({
       where: {twitchId:searchtwitchId}
     });
+  }
+
+  async setAccountId(userId, accountId) {
+    return this.model.update(
+      {peerplaysAccountId: accountId},
+      {where: {id: userId}}
+    );
   }
 
   /**
@@ -152,7 +187,16 @@ class UserRepository extends BasePostgresRepository {
         transaction
       }
     );
+  }
 
+  async findWithGames() {
+    return this.model.findAll({
+      where: {
+        pubgUsername: {
+          [Sequelize.Op.ne]: null
+        }
+      }
+    });
   }
 
 }

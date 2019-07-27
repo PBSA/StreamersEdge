@@ -1,0 +1,1424 @@
+info:
+  title: StreamerEdge
+  version: '1'
+  description: APIs for StreamerEdge
+host: virtserver.swaggerhub.com
+basePath: /api/v1
+schemes:
+  - https
+swagger: '2.0'
+paths:
+  /admin/profile:
+    get:
+      description: Get profile of authorized admin
+      produces:
+        - application/json
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Profile response
+          schema:
+            $ref: '#/definitions/AdminUsersResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '403':
+          description: Error forbidden for this user
+          schema:
+            $ref: '#/definitions/ForbiddenError'
+  /api/v1/admin/users:
+    get:
+      description: Get profiles of all users with their ban status
+      produces:
+        - application/json
+      tags:
+        - Admin
+      parameters:
+        - name: flag
+          description: Filter param to fetch users by status
+          in: query
+          required: false
+          type: string
+        - name: search
+          description: Filter by username / email
+          in: query
+          required: false
+          type: string
+        - name: offset
+          description: Number of rows to skip
+          in: query
+          required: false
+          type: integer
+        - name: limit
+          description: Limit of rows
+          in: query
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: getUsersWithStatus response
+          schema:
+            $ref: '#/definitions/AdminUsersResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '403':
+          description: Error forbidden for this user
+          schema:
+            $ref: '#/definitions/ForbiddenError'
+  '/api/v1/admin/users/ban/:userId':
+    put:
+      description: Ban user by id
+      produces:
+        - application/json
+      tags:
+        - Admin
+      parameters:
+        - name: Ban
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Ban result schema
+          schema:
+            $ref: '#/definitions/BanUserResponse'
+        '400':
+          description: Error this user does not exist
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: This user does not exist
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '403':
+          description: Error forbidden for this user
+          schema:
+            $ref: '#/definitions/ForbiddenError'
+        '404':
+          description: Error user not found
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: User not found
+  '/api/v1/admin/users/info/{id}':
+    get:
+      description: Get user info by id
+      produces:
+        - application/json
+      tags:
+        - Admin
+      parameters:
+        - name: id
+          description: User id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User response
+          schema:
+            $ref: '#/definitions/UserInfoResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '403':
+          description: Error forbidden for this user
+          schema:
+            $ref: '#/definitions/ForbiddenError'
+  /auth/logout:
+    post:
+      description: Logout
+      produces:
+        - application/json
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Logout response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /auth/sign-up:
+    post:
+      description: Sign up
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: user
+          description: User object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthSignUpUser'
+      responses:
+        '200':
+          description: User response
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+  '/auth/confirm-email/{token}':
+    post:
+      description: Confirm email
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Confirm-email response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+  /auth/sign-in:
+    post:
+      description: Sign in
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthSignInUser'
+      responses:
+        '200':
+          description: Sign in response
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+  /auth/forgot-password:
+    post:
+      description: Forgot password
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthForgotPassword'
+      responses:
+        '200':
+          description: Forgot-password response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '404':
+          description: Error user not found
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: User not found
+        '429':
+          description: Error too many requests
+          schema:
+            properties:
+              status:
+                type: number
+                example: 429
+              error:
+                type: string
+                example: Too many requests
+  /auth/reset-password:
+    post:
+      description: Forgot password
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthResetPassword'
+      responses:
+        '200':
+          description: Reset-password response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '404':
+          description: Error token not found
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: Token not found
+  /challenges:
+    post:
+      description: Create new challenge
+      summary: Create new challenge
+      produces:
+        - application/json
+      tags:
+        - Challenge
+      parameters:
+        - name: challenge
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ChallengeFullNew'
+      responses:
+        '200':
+          description: Challenge response
+          schema:
+            $ref: '#/definitions/ChallengeResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  '/challenges/{id}':
+    get:
+      description: Get challenge by id
+      summary: Get challenge by id
+      produces:
+        - application/json
+      tags:
+        - Challenge
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Challenge response
+          schema:
+            $ref: '#/definitions/ChallengeResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '404':
+          description: Error challenge not found
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: Challenge not found
+  /challenges/subscribe:
+    post:
+      description: Subscribe to new notification
+      summary: Subscribe to new notification
+      produces:
+        - application/json
+      tags:
+        - Challenge
+      parameters:
+        - name: ChallengeSubscribe
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ChallengeSubscribe'
+      responses:
+        '200':
+          description: Subscribe response
+          schema:
+            $ref: '#/definitions/ChallengeSubscribeResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /challenges/invite:
+    post:
+      description: Invite user to new challenge
+      summary: Invite user to new challenge
+      produces:
+        - application/json
+      tags:
+        - Challenge
+      parameters:
+        - name: ChallengeInvite
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ChallengeInvite'
+      responses:
+        '200':
+          description: Invite response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /auth/facebook:
+    get:
+      description: Auth by facebook
+      summary: Auth by facebook
+      produces:
+        - application/json
+      tags:
+        - SocNetwork
+      responses:
+        '302':
+          description: Redirect to facebook
+  /auth/google:
+    get:
+      description: Auth by google
+      summary: Auth by google
+      produces:
+        - application/json
+      tags:
+        - SocNetwork
+      responses:
+        '302':
+          description: Redirect to google
+  /payment:
+    post:
+      description: Process payment paypal
+      summary: Make payment
+      produces:
+        - application/json
+      tags:
+        - Payment
+      parameters:
+        - name: payment
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PaymentPaypal'
+      responses:
+        '200':
+          description: Payment response
+          schema:
+            $ref: '#/definitions/PaymentResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /profile:
+    get:
+      description: Get authorized user profile
+      summary: Get authorized user profile
+      produces:
+        - application/json
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Profile response
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+    patch:
+      description: Update authorized user profile
+      summary: Update authorized user profile
+      produces:
+        - application/json
+      tags:
+        - Profile
+      parameters:
+        - name: profile
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserNew'
+      responses:
+        '200':
+          description: Profile response
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /profile/peerplays/create-account:
+    post:
+      description: Create peerplays account for authorized user
+      summary: Create peerplays account for authorized user
+      produces:
+        - application/json
+      tags:
+        - Profile
+      parameters:
+        - name: ProfileCreatePeerplaysAccount
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ProfileCreatePeerplaysAccount'
+      responses:
+        '200':
+          description: Create-account response
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /profile/avatar:
+    post:
+      description: Add or change account avatar
+      summary: Add or change account avatar
+      produces:
+        - application/json
+      tags:
+        - Profile
+      parameters:
+        - name: file
+          in: body
+          required: true
+          schema:
+            type: object
+            required:
+              - file
+            properties:
+              file:
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: Profile avatar response
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+    delete:
+      description: Delete profile avatar
+      summary: Delete profile avatar
+      produces:
+        - application/json
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Delete profile avatar response
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /auth/steam:
+    get:
+      description: Auth by steam
+      summary: Auth by steam
+      produces:
+        - application/json
+      tags:
+        - SocNetwork
+      responses:
+        '302':
+          description: Redirect to steam
+  '/stream/{id}':
+    get:
+      description: Get stream
+      summary: Get stream
+      produces:
+        - application/json
+      tags:
+        - Stream
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Stream response
+          schema:
+            $ref: '#/definitions/StreamResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /streams:
+    get:
+      description: Get stream
+      summary: Get stream
+      produces:
+        - application/json
+      tags:
+        - Stream
+      parameters:
+        - name: search
+          in: query
+          required: false
+          type: string
+        - name: limit
+          in: query
+          required: false
+          type: integer
+        - name: skip
+          in: query
+          required: false
+          type: integer
+        - name: orderBy
+          in: query
+          required: false
+          type: string
+        - name: isAscending
+          in: query
+          required: false
+          type: boolean
+        - name: isActive
+          in: query
+          required: false
+          type: boolean
+      responses:
+        '200':
+          description: Streams response
+          schema:
+            $ref: '#/definitions/StreamsResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /populate-twitch-streams:
+    get:
+      description: Get Streams for users from Twitch
+      summary: Get Streams for users from Twitch
+      produces:
+        - application/json
+      tags:
+        - Stream
+      responses:
+        '200':
+          description: Twitch-stream response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
+  /api/v1/transactions:
+    get:
+      description: Get user transactions
+      produces:
+        - application/json
+      tags:
+        - Transactions
+      parameters:
+        - name: limit
+          description: Limit of rows
+          in: query
+          required: true
+          type: integer
+        - name: skip
+          description: Number of rows to skip
+          in: query
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: getUsersWithStatus response
+          schema:
+            $ref: '#/definitions/TransactionResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /auth/twitch:
+    get:
+      description: Auth by twitch
+      summary: Auth by twitch
+      produces:
+        - application/json
+      tags:
+        - SocNetwork
+      responses:
+        '302':
+          description: Redirect to twitch
+  '/users/{id}':
+    get:
+      description: Get user bu id
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - name: id
+          description: User id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: User response
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '404':
+          description: Error user not found
+          schema:
+            properties:
+              status:
+                type: number
+                example: 404
+              error:
+                type: string
+                example: User not found
+  /users:
+    get:
+      description: Get users list
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - name: search
+          description: Filter by PeerPlays Account Name
+          in: query
+          required: false
+          type: string
+        - name: limit
+          description: Limit of rows
+          in: query
+          required: true
+          type: integer
+        - name: skip
+          description: Number of rows to skip
+          in: query
+          required: false
+          type: integer
+      responses:
+        '200':
+          description: Users response
+          schema:
+            $ref: '#/definitions/UsersResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /users/setNotification:
+    patch:
+      description: Change notification status
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - name: notifications
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UsersChangeNotificationsStatus'
+      responses:
+        '200':
+          description: Change result
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /users/setInvitation:
+    patch:
+      description: Change invitation status
+      produces:
+        - application/json
+      tags:
+        - User
+      parameters:
+        - name: invitations-status
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UsersChangeInvitationsStatus'
+      responses:
+        '200':
+          description: Change result
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+definitions:
+  ValidateError:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 400
+      error:
+        type: object
+  UnauthorizedError:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 401
+      error:
+        type: string
+        example: unauthorized
+  ForbiddenError:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 403
+      error:
+        type: string
+        example: forbidden
+  BanUserData:
+    type: object
+    required:
+      - userId
+    properties:
+      userId:
+        type: number
+  BanUserResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/BanUser'
+  BanUser:
+    type: object
+    properties:
+      result:
+        type: boolean
+  UserInfoResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/UserInfo'
+  UserInfo:
+    type: object
+    properties:
+      id:
+        type: number
+      username:
+        type: string
+      peerplaysAccountName:
+        type: string
+      facebook:
+        type: string
+      youtube:
+        type: string
+      twitchId:
+        type: number
+      twitchLink:
+        type: string
+  AdminUsersResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/AdminUsers'
+  AdminUsers:
+    type: object
+    properties:
+      id:
+        type: number
+      username:
+        type: string
+      email:
+        type: string
+      isEmailVerified:
+        type: boolean
+      twitchUserName:
+        type: string
+      twitchId:
+        type: number
+      googleId:
+        type: number
+      googleName:
+        type: string
+      avatar:
+        type: string
+      youtube:
+        type: string
+      facebook:
+        type: string
+      peerplaysAccountName:
+        type: string
+      bitcoinAddress:
+        type: string
+      userType:
+        type: string
+      status:
+        type: string
+      ban-histories.bannedById:
+        type: number
+      ban-histories.bannedAt:
+        type: string
+  AuthSignUpUser:
+    type: object
+    required:
+      - email
+      - username
+      - password
+      - repeatPassword
+    properties:
+      email:
+        type: string
+        format: email
+      username:
+        type: string
+      password:
+        type: string
+        format: password
+      repeatPassword:
+        type: string
+        format: password
+  AuthSignInUser:
+    type: object
+    required:
+      - login
+      - password
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+        format: password
+  AuthForgotPassword:
+    type: object
+    required:
+      - email
+    properties:
+      email:
+        type: string
+        format: email
+  AuthResetPassword:
+    type: object
+    required:
+      - token
+      - password
+      - repeatPassword
+    properties:
+      token:
+        type: string
+      password:
+        type: string
+        format: password
+      repeatPassword:
+        type: string
+        format: password
+  UserResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/User'
+  UsersResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+  ChallengeSubscribe:
+    type: object
+    required:
+      - endpoint
+      - keys
+    properties:
+      endpoint:
+        type: string
+      expirationTime:
+        type: number
+      keys:
+        type: object
+        properties:
+          p256dh:
+            type: string
+          auth:
+            type: string
+  ChallengeInvite:
+    type: object
+    required:
+      - userId
+      - challengeId
+    properties:
+      userId:
+        type: number
+      challengeId:
+        type: number
+  ChallengeResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/Challenge'
+  ChallengeSubscribeResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            type: string
+  PaymentPaypal:
+    type: object
+    required:
+      - orderId
+    properties:
+      orderId:
+        type: string
+  PaymentResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/Payment'
+  Payment:
+    type: object
+    properties:
+      id:
+        type: number
+      userId:
+        type: number
+      orderId:
+        type: string
+      amountCurrency:
+        type: string
+      amountValue:
+        type: number
+      ppyAmountValue:
+        type: number
+      status:
+        type: string
+      error:
+        type: string
+      txId:
+        type: number
+      blockNumber:
+        type: number
+      updatedAt:
+        type: string
+      createdAt:
+        type: string
+  ProfileCreatePeerplaysAccount:
+    type: object
+    required:
+      - name
+      - activeKey
+      - ownerKey
+    properties:
+      name:
+        type: string
+      activeKey:
+        type: string
+      ownerKey:
+        type: string
+  ProfileAvatar:
+    type: object
+    required:
+      - name
+      - activeKey
+      - ownerKey
+    properties:
+      name:
+        type: string
+      activeKey:
+        type: string
+      ownerKey:
+        type: string
+  ProfileResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/User'
+  StreamGet:
+    type: object
+    required:
+      - name
+      - activeKey
+      - ownerKey
+    properties:
+      name:
+        type: string
+      activeKey:
+        type: string
+      ownerKey:
+        type: string
+  StreamResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/Stream'
+  StreamsResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            type: array
+            items:
+              $ref: '#/definitions/Stream'
+  TransactionResponse:
+    allOf:
+      - $ref: '#/definitions/TransactionResponse'
+      - type: object
+        properties:
+          result:
+            $ref: '#/definitions/Transaction'
+  Transaction:
+    type: object
+    properties:
+      id:
+        type: number
+      txId:
+        type: string
+      blockNum:
+        type: number
+      trxNum:
+        type: number
+      ppyAmountValue:
+        type: number
+      type:
+        type: string
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: number
+      challengeId:
+        type: number
+  UsersChangeNotificationsStatus:
+    type: object
+    required:
+      - notifications
+    properties:
+      notifications:
+        type: boolean
+  UsersChangeInvitationsStatus:
+    type: object
+    required:
+      - invitations
+    properties:
+      invitations:
+        type: string
+      users:
+        type: array
+        items:
+          type: integer
+      games:
+        type: array
+        description: Names of games from which user can accepts invitations
+        items:
+          type: string
+  SuccessResponse:
+    type: object
+    properties:
+      status:
+        type: number
+        default: 200
+        example: 200
+  SuccessEmptyResponse:
+    allOf:
+      - $ref: '#/definitions/SuccessResponse'
+      - type: object
+        properties:
+          result:
+            type: boolean
+            example: true
+  ChallengeConditionNew:
+    type: object
+    required:
+      - param
+      - operator
+      - value
+      - join
+    properties:
+      param:
+        type: string
+        enum:
+          - result_place
+          - win_time
+          - frags
+      operator:
+        type: string
+        enum:
+          - '>'
+          - <
+          - =
+          - '>='
+          - <=
+      value:
+        type: integer
+      join:
+        type: string
+        enum:
+          - AND
+          - OR
+          - END
+  ChallengeNew:
+    type: object
+    required:
+      - notifications
+      - endDate
+      - game
+      - accessRule
+      - ppyAmount
+    properties:
+      name:
+        type: string
+      startDate:
+        type: string
+        format: date
+      endDate:
+        type: string
+        format: date
+      accessRule:
+        type: string
+        enum:
+          - invite
+          - anyone
+      ppyAmount:
+        type: integer
+      conditionsText:
+        type: string
+      game:
+        type: string
+        enum:
+          - pubg
+      invitedAccounts:
+        type: array
+        items:
+          type: integer
+  ChallengeFullNew:
+    allOf:
+      - $ref: '#/definitions/ChallengeNew'
+      - type: object
+        properties:
+          conditions:
+            type: array
+            items:
+              $ref: '#/definitions/ChallengeConditionNew'
+  ChallengeCondition:
+    allOf:
+      - $ref: '#/definitions/ChallengeConditionNew'
+      - type: object
+        properties:
+          id:
+            type: integer
+          createdAt:
+            type: string
+            format: date
+          updatedAt:
+            type: string
+            format: date
+          challengeId:
+            type: integer
+  Challenge:
+    allOf:
+      - $ref: '#/definitions/ChallengeNew'
+      - type: object
+        properties:
+          conditions:
+            type: array
+            items:
+              $ref: '#/definitions/ChallengeCondition'
+          id:
+            type: integer
+          createdAt:
+            type: string
+            format: date
+          updatedAt:
+            type: string
+            format: date
+          invitedUsers:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+          user:
+            $ref: '#/definitions/User'
+  Stream:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      game:
+        type: string
+        enum:
+          - pubg
+          - fortnite
+      sourceName:
+        type: boolean
+        enum:
+          - twitch
+          - youtube
+      embedUrl:
+        type: string
+      channelId:
+        type: integer
+      views:
+        type: integer
+      isLive:
+        type: boolean
+      startTime:
+        type: string
+      thumbnailUrl:
+        type: string
+      user:
+        $ref: '#/definitions/User'
+  UserNew:
+    type: object
+    properties:
+      avatar:
+        type: string
+      youtube:
+        type: string
+      facebook:
+        type: string
+      twitch:
+        type: string
+      peerplaysAccountName:
+        type: string
+      bitcoinAddress:
+        type: string
+      pubgUsername:
+        type: string
+      userType:
+        type: string
+        enum:
+          - gamer
+          - viewer
+          - sponsor
+          - whitelist
+          - admin
+      email:
+        type: string
+  User:
+    allOf:
+      - $ref: '#/definitions/UserNew'
+      - type: object
+        properties:
+          id:
+            type: integer
+          username:
+            type: string
+          googleName:
+            type: string
+          notifications:
+            type: boolean
+          invitations:
+            type: string
+            enum:
+              - allnone
+              - users
+              - games
+responses: {}
+parameters: {}
+securityDefinitions: {}
+tags: []

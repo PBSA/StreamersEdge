@@ -1,3 +1,103 @@
+/**
+ * @swagger
+ *
+ * definitions:
+ *  BanUserData:
+ *    type: object
+ *    required:
+ *      - userId
+ *    properties:
+ *      userId:
+ *        type: number
+ *
+ *  BanUserResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/BanUser'
+ *
+ *  BanUser:
+ *    type: object
+ *    properties:
+ *      result:
+ *        type: boolean
+ *
+ *  UserInfoResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/UserInfo'
+ *
+ *  UserInfo:
+ *    type: object
+ *    properties:
+ *      id:
+ *        type: number
+ *      username:
+ *        type: string
+ *      peerplaysAccountName:
+ *        type: string
+ *      facebook:
+ *        type: string
+ *      youtube:
+ *        type: string
+ *      twitchId:
+ *        type: number
+ *      twitchLink:
+ *        type: string
+ *
+ *  AdminUsersResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/AdminUsers'
+ *
+ *  AdminUsers:
+ *    type: object
+ *    properties:
+ *      id:
+ *        type: number
+ *      username:
+ *        type: string
+ *      email:
+ *        type: string
+ *      isEmailVerified:
+ *        type: boolean
+ *      twitchUserName:
+ *        type: string
+ *      twitchId:
+ *        type: number
+ *      googleId:
+ *        type: number
+ *      googleName:
+ *        type: string
+ *      avatar:
+ *        type: string
+ *      youtube:
+ *        type: string
+ *      facebook:
+ *        type: string
+ *      peerplaysAccountName:
+ *        type: string
+ *      bitcoinAddress:
+ *        type: string
+ *      userType:
+ *        type: string
+ *      status:
+ *        type: string
+ *      ban-histories.bannedById:
+ *        type: number
+ *      ban-histories.bannedAt:
+ *        type: string
+ *
+ */
+
 class AdminController {
 
   /**
@@ -22,29 +122,28 @@ class AdminController {
   getRoutes() {
     return [
       /**
-       * @api {get} /api/v1/admin/profile Get authorized admin profile
-       * @apiName AdminProfileGet
-       * @apiDescription Get profile of authorized admin
-       * @apiGroup Admin
-       * @apiVersion 0.1.0
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "email": "test@email.com",
-       *     "twitchUserName": "",
-       *     "googleName": "",
-       *     "avatar": "",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": "",
-       *     "userType": "viewer"
-       *   }
-       * }
+       * @swagger
+       *
+       * /admin/profile:
+       *  get:
+       *    description: Get profile of authorized admin
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Admin
+       *    responses:
+       *      200:
+       *        description: Profile response
+       *        schema:
+       *          $ref: '#/definitions/AdminUsersResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      403:
+       *        description: Error forbidden for this user
+       *        schema:
+       *          $ref: '#/definitions/ForbiddenError'
        */
       [
         'get', '/api/v1/admin/profile',
@@ -52,41 +151,49 @@ class AdminController {
         this.getProfile.bind(this)
       ],
       /**
-       * @api {get} /api/v1/admin/users Get users with their status
-       * @apiName getUsersWithStatus
-       * @apiDescription Get profiles of all users with their ban status
-       * @apiGroup Admin
-       * @apiVersion 0.1.0
-       * @apiParam {Number} [offset] Number of rows to skip
-       * @apiParam {Number} limit
-       * @apiParam {String} [flag] Filter param to fetch users by status
-       * @apiParam {String} [search] Filter by username / email
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * [
-       *   {
-       *     "status": 200,
-       *     "result": {
-       *       "id": "1",
-       *       "username": "test",
-       *       "email": "test@email.com",
-       *       "isEmailVerified": true,
-       *       "twitchUserName": "",
-       *       "twitchId": "",
-       *       "googleId": "",
-       *       "googleName": "",
-       *       "avatar": "",
-       *       "youtube": "",
-       *       "facebook": "",
-       *       "peerplaysAccountName": "",
-       *       "bitcoinAddress": "",
-       *       "userType": "viewer",
-       *       "status": "banned",
-       *       "ban-histories.bannedById": "2"
-       *       "ban-histories.bannedAt": "2019-06-29T12:26:56.453Z"
-       *     }
-       *   }
-       * ]
+       * @swagger
+       *
+       * /api/v1/admin/users:
+       *  get:
+       *    description: Get profiles of all users with their ban status
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Admin
+       *    parameters:
+       *      - name: flag
+       *        description: Filter param to fetch users by status
+       *        in: query
+       *        required: false
+       *        type: string
+       *      - name: search
+       *        description: Filter by username / email
+       *        in: query
+       *        required: false
+       *        type: string
+       *      - name: offset
+       *        description: Number of rows to skip
+       *        in: query
+       *        required: false
+       *        type: integer
+       *      - name: limit
+       *        description: Limit of rows
+       *        in: query
+       *        required: true
+       *        type: integer
+       *    responses:
+       *      200:
+       *        description: getUsersWithStatus response
+       *        schema:
+       *          $ref: '#/definitions/AdminUsersResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      403:
+       *        description: Error forbidden for this user
+       *        schema:
+       *          $ref: '#/definitions/ForbiddenError'
        */
       [
         'get', '/api/v1/admin/users',
@@ -95,17 +202,53 @@ class AdminController {
         this.getUsers.bind(this)
       ],
       /**
-       * @api {post} /api/v1/admin/users/ban/:userId Ban user by id
-       * @apiName BanUserById
-       * @apiGroup Admin
-       * @apiVersion 0.1.0
-       * @apiParam {Number} userId  User id
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *  "result": true,
-       *  "status": 200
-       * }
+       * @swagger
+       *
+       * /api/v1/admin/users/ban/:userId:
+       *  put:
+       *    description: Ban user by id
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Admin
+       *    parameters:
+       *      - name: userId
+       *        in: path
+       *        required: true
+       *        type: string
+       *    responses:
+       *      200:
+       *        description: Ban result schema
+       *        schema:
+       *          $ref: '#/definitions/BanUserResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      403:
+       *        description: Error forbidden for this user
+       *        schema:
+       *          $ref: '#/definitions/ForbiddenError'
+       *      400:
+       *        description: Error this user does not exist
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: This user does not exist
+       *      404:
+       *        description: Error user not found
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: User not found
        */
       [
         'put', '/api/v1/admin/users/ban/:userId',
@@ -114,17 +257,53 @@ class AdminController {
         this.banUser.bind(this)
       ],
       /**
-       * @api {post} /api/v1/admin/users/unban/:userId Unban user by id
-       * @apiName UnbanUserById
-       * @apiGroup Admin
-       * @apiVersion 0.1.0
-       * @apiParam {Number} userId  User id
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *  "result": true,
-       *  "status": 200
-       * }
+       * @swagger
+       *
+       * /api/v1/admin/users/unban/:userId:
+       *  put:
+       *    description: Uban user by id
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Admin
+       *    parameters:
+       *      - name: userId
+       *        in: path
+       *        required: true
+       *        type: string
+       *    responses:
+       *      200:
+       *        description: Unban result schema
+       *        schema:
+       *          $ref: '#/definitions/SuccessEmptyResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      403:
+       *        description: Error forbidden for this user
+       *        schema:
+       *          $ref: '#/definitions/ForbiddenError'
+       *      400:
+       *        description: Error this user does not exist
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: This user does not exist
+       *      404:
+       *        description: Error user not found
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: User not found
        */
       [
         'put', '/api/v1/admin/users/unban/:userId',
@@ -133,24 +312,34 @@ class AdminController {
         this.unbanUser.bind(this)
       ],
       /**
-       * @api {get} /api/v1/admin/users/ban/:userId get user info by id
-       * @apiName getUserInfoById
-       * @apiGroup Admin
-       * @apiVersion 0.1.0
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *  "status": 200
-       *  "result": {
-       *     "id": "1",
-       *     "username": "test",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "twitchId": "42342",
-       *     "twitchLink": "https://www.twitch.tv/42342/videos",
-       *   }
-       * }
+       * @swagger
+       *
+       * /api/v1/admin/users/info/{id}:
+       *  get:
+       *    description: Get user info by id
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Admin
+       *    parameters:
+       *      - name: id
+       *        description: User id
+       *        in: path
+       *        required: true
+       *        type: string
+       *    responses:
+       *      200:
+       *        description: User response
+       *        schema:
+       *          $ref: '#/definitions/UserInfoResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      403:
+       *        description: Error forbidden for this user
+       *        schema:
+       *          $ref: '#/definitions/ForbiddenError'
        */
       [
         'get', '/api/v1/admin/users/info/:id',
@@ -159,7 +348,6 @@ class AdminController {
         this.getUserInfo.bind(this)
       ]
     ];
-    
   }
 
   async unbanUser(user, pure, req) {

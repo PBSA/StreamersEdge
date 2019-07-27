@@ -4,7 +4,7 @@ stages:
   - deploy
 
 test:
-  image: node:10.15-alpine
+  image: node:10.16-alpine
   stage: test
   variables:
     DB_USER: postgres
@@ -15,6 +15,15 @@ test:
     POSTGRES_DB: streamers-edge-test
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: ""
+    TWITCH_CLIENT_ID: $TEST_TWITCH_CLIENT_ID
+    TWITCH_CLIENT_SECRET: $TEST_TWITCH_CLIENT_SECRET
+    GOOGLE_CLIENT_ID: $TEST_GOOGLE_CLIENT_ID
+    GOOGLE_CLIENT_SECRET: $TEST_GOOGLE_CLIENT_SECRET
+    FACEBOOK_CLIENT_ID: $TEST_FACEBOOK_CLIENT_ID
+    FACEBOOK_CLIENT_SECRET: $TEST_FACEBOOK_CLIENT_SECRET
+    PUBG_API_KEY: $TEST_PUBG_API_KEY
+    PEERPLAYS_PAYMENT_ACCOUNT_WIF: $TEST_PEERPLAYS_PAYMENT_ACCOUNT_WIF
+    COINMARKETCAP_API_KEY: $TEST_COINMARKETCAP_API_KEY
   services:
     - postgres:latest
   cache:
@@ -22,6 +31,7 @@ test:
     paths:
       - node_modules
   script:
+    - apk add python make g++
     - npm i
     - npm run test:audit
     - npm run test:lint

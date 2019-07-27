@@ -55,6 +55,8 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} twitch.callbackUrl
  * @property {String} google.clientId
  * @property {String} google.clientSecret
+ * @property {String} facebook.clientId
+ * @property {String} facebook.clientSecret
  * @property {{enabled: Boolean, url: String}} raven
  * @property {String<prod|testnet>} bitcoinNetwork
  * @property {String} backendUrl
@@ -64,7 +66,19 @@ const currentModule = process.env.MODULE || 'api';
  * @property {Number} mailer.port
  * @property {Boolean} mailer.secure
  * @property {{user:String, pass:String}} mailer.auth
- * @property {String} mailer.sender
  * @property {String} peerplays.peerplaysFaucetURL
+ * @property {String} peerplays.peerplaysWS
  * @property {String} peerplays.referrer
+ * @property {String} peerplays.paymentAccountID
+ * @property {String} peerplays.paymentAccountWIF
+ * @property {String} peerplays.sendAssetId
+ * @property {String} peerplays.paymentReceiver
+ * @property {String} paypal.clientId
+ * @property {String} paypal.secret
+ * @property {String} paypal.environment
+ * @property {String} pubg.apiKey
+ * @property {String} coinmarketcap.apiKey
+ * @property {String} s3.bucket
+ * @property {String} cdnUrl
+ * @property {String} pubg.apiKey
  */
