@@ -118,6 +118,10 @@ class UserModel extends Model {
       pubgUsername: this.pubgUsername
     };
   }
+
+  addTwitchLink() {
+    this.dataValues.twitchLink = this.twitchId ? `https://www.twitch.tv/${this.twitchId}/videos` : null;
+  }
 }
 
 module.exports = {
@@ -203,6 +207,10 @@ module.exports = {
       pushNotificationId: {
         type: Sequelize.STRING
       },
+      status: {
+        type: Sequelize.ENUM(Object.keys(profileConstants.status).map((key) => profileConstants.status[key])),
+        defaultValue: profileConstants.status.active
+      },
       steamId: {
         type: Sequelize.STRING
       },
@@ -224,6 +232,7 @@ module.exports = {
     UserModel.hasMany(models.WhitelistedUsers.model);
     UserModel.hasMany(models.WhitelistedGames.model);
     UserModel.hasMany(models.Stream.model);
+    UserModel.hasMany(models.BanHistory.model);
   },
   get model() {
     return UserModel;

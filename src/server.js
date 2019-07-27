@@ -76,6 +76,7 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} paypal.clientId
  * @property {String} paypal.secret
  * @property {String} paypal.environment
+ * @property {String} pubg.apiKey
  * @property {String} coinmarketcap.apiKey
  * @property {String} s3.bucket
  * @property {String} cdnUrl

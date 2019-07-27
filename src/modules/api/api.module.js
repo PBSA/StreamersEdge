@@ -8,7 +8,6 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
 let swaggerDef = require('./swagger-definition.js');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-const path = require('path');
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
@@ -41,6 +40,7 @@ class ApiModule {
 
   /**
    *
+   * @param {AppConfig} opts.config
    * @param {DbConnection} opts.dbConnection
    * @param {SmtpConnection} opts.smtpConnection
    * @param {AuthController} opts.authController
@@ -123,7 +123,6 @@ class ApiModule {
 
       this.app.use(passport.initialize());
       this.app.use(passport.session());
-      this.app.use(express.static(path.join(__dirname, '../../push-notifications')));
 
       passport.serializeUser((user, done) => {
         done(null, user.id);

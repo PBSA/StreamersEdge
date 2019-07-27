@@ -81,6 +81,8 @@
   "devDependencies": {
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^7.6.0",
+    "apidoc": "^0.17.7",
+    "apidoc-markdown": "^0.2.1",
     "audit-ci": "^1.6.0",
     "babel-eslint": "^10.0.2",
     "chai": "^4.2.0",

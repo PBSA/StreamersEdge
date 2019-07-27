@@ -26,7 +26,6 @@ class CoinmarketcapConnection {
   }
 
   async getPPYAmount(usdAmount) {
-
     const result = await this.makeRequest('tools/price-conversion', {
       symbol: 'USD',
       amount: usdAmount,

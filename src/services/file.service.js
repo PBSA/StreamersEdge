@@ -25,7 +25,6 @@ class FileService {
    *
    * @param {Object} req
    * @param {Object} res
-   * @param {Function} done
    * @return Promise<>
    */
   async saveImage(req, res) {
