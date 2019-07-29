@@ -46,7 +46,9 @@ class DbConnection extends BaseConnection {
     Object.keys(models).forEach((name) => {
       models[name].associate(models);
     });
-    await this.sequelize.sync();
+    await this.sequelize.sync({
+      // force: true
+    });
   }
 
   /** @returns {Promise<void>} */

@@ -88,6 +88,8 @@ class UserModel extends Model {
    *            type: string
    *          googleName:
    *            type: string
+   *          facebookUserName:
+   *            type: string
    *          notifications:
    *            type: boolean
    *          invitations:
@@ -106,6 +108,7 @@ class UserModel extends Model {
       email: this.email || '',
       twitchUserName: this.twitchUserName,
       googleName: this.googleName,
+      facebookUserName: this.facebookUserName,
       youtube: this.youtube,
       facebook: this.facebook,
       twitch: this.twitch || '',
@@ -127,96 +130,129 @@ class UserModel extends Model {
 module.exports = {
   init: (sequelize) => {
     UserModel.init({
+      // user username
+      // set during registration by soc. network or manual registration. Cannot be changed
       username: {
         type: Sequelize.STRING,
         unique: true,
         allowNull: true
       },
+      // should be set by user during registration and can be changed later
+      // also set upon authorization by soc. network
       email: {
         type: Sequelize.STRING,
         unique: true,
         allowNull: true
       },
+      // system flag
       isEmailVerified: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
       password: {type: Sequelize.STRING},
+      // URL to avatars file. Updated during registration through soc. network.
+      // Can be manually updated by the user.
       avatar: {type: Sequelize.STRING},
+      // set only when linking a twitch account
       twitchId: {
         type: Sequelize.STRING,
         unique: true,
         allowNull: true
       },
+      // set only when linking a twitch account
       twitchUserName: {
         type: Sequelize.STRING,
         unique: true
       },
+      // set only when linking a google account
       googleId: {
         type: Sequelize.STRING,
         unique: true,
         allowNull: true
       },
+      // set only when linking a google account
+      googleName: {
+        type: Sequelize.STRING
+      },
+      // set only when linking a facebook account
       facebookId: {
         type: Sequelize.STRING,
         unique: true,
         allowNull: true
       },
-      googleName: {
-        type: Sequelize.STRING
+      // set only when linking a facebook account
+      facebookUserName: {
+        type: Sequelize.STRING,
+        unique: true
       },
+      // URL to user youtube channel. Updated during registration through Google Account.
+      // Can be manually updated by the user.
       youtube: {
         type: Sequelize.STRING,
         defaultValue: ''
       },
+      // URL to user facebook profile. Update only manually
       facebook: {
         type: Sequelize.STRING,
         defaultValue: ''
       },
+      // URL to user twitch profile. Update only manually
       twitch: {
         type: Sequelize.STRING,
         defaultValue: ''
       },
+      // Peerplays account name. Update manually only after registration peerplays account method calling
       peerplaysAccountName: {
         type: Sequelize.STRING,
         defaultValue: ''
       },
+      // Peerplays account ID. Set automatically after peerplaysAccountName updating
       peerplaysAccountId: {
         type: Sequelize.STRING,
         defaultValue: ''
       },
+      // Update only manually
       bitcoinAddress: {
         type: Sequelize.STRING,
         defaultValue: ''
       },
+      // are notifications on. Update only manually
       notifications: {
         type: Sequelize.BOOLEAN,
         defaultValue: true
       },
+      // invitations settings. Update only manually
       invitations: {
         type: Sequelize.ENUM(...Object.keys(invitationConstants.invitationStatus)),
         defaultValue: invitationConstants.invitationStatus.all
       },
+      // user type. Update only manually
       userType: {
         type: Sequelize.ENUM(Object.keys(profileConstants.userType).map((key) => profileConstants.userType[key]))
       },
+      // not updated
       applicationType: {
         type: Sequelize.ENUM,
         values: profileConstants.applicationType
       },
+      // not updated
       pushNotificationId: {
         type: Sequelize.STRING
       },
+      // User status. Can be changed only by admin
       status: {
         type: Sequelize.ENUM(Object.keys(profileConstants.status).map((key) => profileConstants.status[key])),
         defaultValue: profileConstants.status.active
       },
+      // set only when linking a steam account
       steamId: {
         type: Sequelize.STRING
       },
+      // updated by user manually
       pubgUsername: {
         type: Sequelize.STRING
       },
+      // set automatically after pubgUsername updating
       pubgId: {
         type: Sequelize.STRING
       }

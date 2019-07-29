@@ -76,7 +76,7 @@ class UserService {
       username: usernameIsUsed ? null : username,
       twitchUserName: network === 'twitch' ? username : '',
       googleName: network === 'google' ? username : '',
-      facebook: network === 'facebook' ? username : '',
+      facebookUserName: network === 'facebook' ? username : '',
       youtube
     });
   }
@@ -94,11 +94,11 @@ class UserService {
     User[`${network}Id`] = id;
 
     switch(network) {
-      case 'twitch': User.twitchUserName = username; 
+      case 'twitch': User.twitchUserName = username;
         break;
-      case 'google': User.googleName = username; 
+      case 'google': User.googleName = username;
         break;
-      case 'facebook': User.facebook = username; 
+      case 'facebook': User.facebookUserName = username;
         break;
       default: throw new RestError(`Unexpected Network ${network}`);
     }

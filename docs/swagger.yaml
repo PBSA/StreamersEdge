@@ -2,10 +2,10 @@ info:
   title: StreamerEdge
   version: '1'
   description: APIs for StreamerEdge
-host: virtserver.swaggerhub.com
+host: 'localhost:3000'
 basePath: /api/v1
 schemes:
-  - https
+  - http
 swagger: '2.0'
 paths:
   /admin/profile:
@@ -1376,8 +1376,12 @@ definitions:
     type: object
     properties:
       avatar:
+        description: >-
+          Url to avatars file. updated during registration through soc. network.
+          Can be manually updated by the user.
         type: string
       youtube:
+        description: Url to avatars file
         type: string
       facebook:
         type: string
@@ -1400,6 +1404,25 @@ definitions:
       email:
         type: string
   User:
+    allOf:
+      - $ref: '#/definitions/UserNew'
+      - type: object
+        properties:
+          id:
+            type: integer
+          username:
+            type: string
+          googleName:
+            type: string
+          notifications:
+            type: boolean
+          invitations:
+            type: string
+            enum:
+              - allnone
+              - users
+              - games
+  UserFull:
     allOf:
       - $ref: '#/definitions/UserNew'
       - type: object
