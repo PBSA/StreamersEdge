@@ -14,18 +14,22 @@ class UserService {
    * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
    * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
    * @param {MailService} opts.mailService
+   * @param {PubgApiRepository} opts.pubgApiRepository
+   * @param {TransactionRepository} opts.transactionRepository
    * @param {FileService} opts.fileService
    * @param {GoogleRepository} opts.googleRepository
    */
   constructor(opts) {
     this.dbConnection = opts.dbConnection;
     this.userRepository = opts.userRepository;
+    this.transactionRepository = opts.transactionRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.mailService = opts.mailService;
+    this.pubgApiRepository = opts.pubgApiRepository;
     this.googleRepository = opts.googleRepository;
 
     this.errors = {
@@ -70,6 +74,9 @@ class UserService {
       email: emailIsUsed ? null : email,
       isEmailVerified: emailIsUsed ? null : true,
       username: usernameIsUsed ? null : username,
+      twitchUserName: network === 'twitch' ? username : '',
+      googleName: network === 'google' ? username : '',
+      facebook: network === 'facebook' ? username : '',
       youtube
     });
   }
@@ -85,6 +92,16 @@ class UserService {
     const usernameIsUsed = username && await this.userRepository.model.count({where: {username}});
 
     User[`${network}Id`] = id;
+
+    switch(network) {
+      case 'twitch': User.twitchUserName = username; 
+        break;
+      case 'google': User.googleName = username; 
+        break;
+      case 'facebook': User.facebook = username; 
+        break;
+      default: throw new RestError(`Unexpected Network ${network}`);
+    }
 
     if (!User.email && !emailIsUsed) {
       User.email = email;
@@ -246,6 +263,11 @@ class UserService {
     await User.save();
 
     return true;
+  }
+
+  async getUserTransactions(userId, skip, limit) {
+    const transactions = await this.transactionRepository.searchTransactions(userId, limit, skip);
+    return Promise.all(transactions.map(async (Tx) => Tx.getPublic()));
   }
 
   /**

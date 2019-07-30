@@ -46,7 +46,8 @@
     "referrer": "1.2.0",
     "sendAssetId": "1.3.0",
     "paymentAccountID": "",
-    "paymentAccountWIF": ""
+    "paymentAccountWIF": "",
+    "paymentReceiver": ""
   },
   "paypal": {
     "clientId": "",

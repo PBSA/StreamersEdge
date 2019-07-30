@@ -54,6 +54,14 @@ class DbConnection extends BaseConnection {
     return this.sequelize.close();
   }
 
+  /**
+   *
+   * @return {null|Sequelize}
+   */
+  getConnection(){
+    return this.sequelize;
+  }
+
 }
 
 module.exports = DbConnection;

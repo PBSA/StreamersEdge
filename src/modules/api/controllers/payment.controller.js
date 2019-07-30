@@ -61,7 +61,6 @@ class PaymentController {
     this.paymentService = opts.paymentService;
     this.authValidator = opts.authValidator;
     this.paymentValidator = opts.paymentValidator;
-    this.authValidator = opts.authValidator;
   }
 
   /**
@@ -100,7 +99,7 @@ class PaymentController {
        *        description: Error form validation
        *        schema:
        *          $ref: '#/definitions/ValidateError'
-       * 
+       *
        */
       [
         'post', '/api/v1/payment',

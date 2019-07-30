@@ -98,7 +98,6 @@ describe('POST /api/v1/payment', () => {
     const orderId = '2C887053J7102740X';
     const response = await agent.post('/api/v1/payment').send({orderId: orderId});
     isSuccess(response);
-    console.log(response.body);
   });
 
 });

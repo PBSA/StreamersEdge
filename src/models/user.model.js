@@ -111,12 +111,16 @@ class UserModel extends Model {
       twitch: this.twitch || '',
       peerplaysAccountName: this.peerplaysAccountName,
       bitcoinAddress: this.bitcoinAddress,
+      userType: this.userType,
       notifications: this.notifications,
       invitations: this.invitations,
-      userType: this.userType,
       avatar: this.avatar || '',
       pubgUsername: this.pubgUsername
     };
+  }
+
+  addTwitchLink() {
+    this.dataValues.twitchLink = this.twitchId ? `https://www.twitch.tv/${this.twitchId}/videos` : null;
   }
 }
 
@@ -203,6 +207,10 @@ module.exports = {
       pushNotificationId: {
         type: Sequelize.STRING
       },
+      status: {
+        type: Sequelize.ENUM(Object.keys(profileConstants.status).map((key) => profileConstants.status[key])),
+        defaultValue: profileConstants.status.active
+      },
       steamId: {
         type: Sequelize.STRING
       },
@@ -224,6 +232,7 @@ module.exports = {
     UserModel.hasMany(models.WhitelistedUsers.model);
     UserModel.hasMany(models.WhitelistedGames.model);
     UserModel.hasMany(models.Stream.model);
+    UserModel.hasMany(models.BanHistory.model);
   },
   get model() {
     return UserModel;
