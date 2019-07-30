@@ -257,6 +257,8 @@ class ProfileController {
           throw new RestError('', 400, {image: [{message: 'File not found'}]});
         case this.fileService.errors.INVALID_IMAGE_FORMAT:
           throw new RestError('', 400, {format: [{message: 'Invalid file format'}]});
+        case this.fileService.errors.FILE_TOO_LARGE:
+          throw new RestError('', 400, {size: [{message: 'Image should be less 1 MB'}]});
         default:
           throw err;
       }

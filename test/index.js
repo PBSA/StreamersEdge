@@ -7,13 +7,15 @@ const SmtpConnection = require('./mock/connections/smtp.connection.mock');
 const WebPushConnection = require('./mock/connections/web-push.connection.mock');
 const PaypalConnection = require('./mock/connections/paypal.connection.mock');
 const CoinmarketcapConnection = require('./mock/connections/coinmarketcap.connection.mock');
+const AwsConnection = require('./mock/connections/aws.connection.mock');
 
 container.register({
   peerplaysConnection: asClass(PeerplaysConnection),
   smtpConnection: asClass(SmtpConnection),
   webPushConnection: asClass(WebPushConnection),
   paypalConnection: asClass(PaypalConnection),
-  coinmarketcapConnection: asClass(CoinmarketcapConnection)
+  coinmarketcapConnection: asClass(CoinmarketcapConnection),
+  awsConnection: asClass(AwsConnection)
 });
 
 describe('ALL TESTS', () => {

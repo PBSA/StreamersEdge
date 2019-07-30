@@ -622,5 +622,6 @@
         }
       }
     }
-  }
+  },
+  "S3UploadLocation": "https://test.com/test.png"
 }

@@ -4,9 +4,7 @@ const request = require('supertest');
 const chai = require('chai');
 chai.use(require('chai-url'));
 const chaiHttp = require('chai-http');
-// const path = require('path');
-// const fs = require('fs');
-// const config = require('config');
+const path = require('path');
 
 const {isSuccess, isError} = require('../helpers/test.response.helper');
 const {login} = require('../helpers/test.login.helper');
@@ -228,46 +226,51 @@ describe('POST /api/v1/profile/peerplays/create-account', () => {
 
 describe('POST /api/v1/profile/avatar', () => {
 
-  // const testImage = path.resolve(__dirname, 'files/test.png');
-  // const testPDF = path.resolve(__dirname, 'files/test.pdf');
-  //
-  // beforeEach(async () => {
-  //   await login(agent, null, apiModule);
-  // });
-  //
-  // it('should forbid, user not logged', async () => {
-  //   await agent.post('/api/v1/auth/logout');
-  //   const response = await agent.post('/api/v1/profile/avatar').send({});
-  //   isError(response, 401);
-  // });
-  //
-  // it('should forbid without file', async () => {
-  //   const response = await agent.post('/api/v1/profile/avatar').send({});
-  //   isError(response, 400);
-  // });
-  //
-  // it('should forbid, invalid file', async () => {
-  //   const response = await agent.post('/api/v1/profile/avatar').attach('file', testPDF);
-  //   isError(response, 400);
-  // });
+  const testImage = path.resolve(__dirname, 'files/test.png');
+  const largeTestImage = path.resolve(__dirname, 'files/earth.jpeg');
+  const testPDF = path.resolve(__dirname, 'files/test.pdf');
 
-  // it('should success if avatar not exists', async () => {
-  //   const response = await agent.post('/api/v1/profile/avatar').attach('file', testImage);
-  //   isSuccess(response);
-  //   const {result} = response.body;
-  //   assert.match(
-  //     result.avatar,
-  //     new RegExp(`${config.backendUrl}/api/images/avatar/\\d+x\\d+/[A-z0-9]+-[A-z0-9]+-[A-z0-9]+.png`),
-  //   );
-  //   const image = await agent.get(result.avatar.replace(new RegExp(config.backendUrl), ''));
-  //   image.should.have.status(200);
-  // });
+  beforeEach(async () => {
+    await login(agent, null, apiModule);
+  });
+
+  it('should forbid, user not logged', async () => {
+    await agent.post('/api/v1/auth/logout');
+    const response = await agent.post('/api/v1/profile/avatar').send({});
+    isError(response, 401);
+  });
+
+  it('should forbid without file', async () => {
+    const response = await agent.post('/api/v1/profile/avatar').send({});
+    isError(response, 400);
+  });
+
+  it('should forbid, invalid file', async () => {
+    const response = await agent.post('/api/v1/profile/avatar').attach('file', testPDF);
+    isError(response, 400);
+  });
+
+  it('should forbid, file size more than 1MB', async () => {
+    const response = await agent.post('/api/v1/profile/avatar').attach('file', largeTestImage);
+    isError(response, 400);
+  });
+
+  it('should success if avatar not exists', async () => {
+    const response = await agent.post('/api/v1/profile/avatar').attach('file', testImage);
+    isSuccess(response);
+    const {result} = response.body;
+
+    assert.match(
+      result.avatar,
+      new RegExp('[A-z0-9]+.png'),
+    );
+  });
 
 });
 
 describe('DELETE /api/v1/profile/avatar', () => {
 
-  // const testImage = path.resolve(__dirname, 'files/test.png');
+  const testImage = path.resolve(__dirname, 'files/test.png');
 
   beforeEach(async () => {
     await login(agent, null, apiModule);
@@ -279,21 +282,11 @@ describe('DELETE /api/v1/profile/avatar', () => {
     isError(response, 401);
   });
 
-  // it('should success delete uploaded avatar', async () => {
-  //   await agent.post('/api/v1/profile/avatar').attach('file', testImage);
-  //   const response = await agent.delete('/api/v1/profile/avatar');
-  //   assert.isEmpty(response.body.result.avatar);
-  // });
-
-  // it('should success even if file does not exists', async () => {
-  //   const {body} = await agent.post('/api/v1/profile/avatar').attach('file', testImage);
-  //   const {avatar} = body.result;
-  //   const avatarFilename = avatar.match(/[A-z0-9]+-[A-z0-9]+-[A-z0-9]+\.png/)[0];
-  //   const file = path.resolve(config.basePath, 'public/images/avatar/original/', avatarFilename);
-  //   fs.unlinkSync(file);
-  //   const response = await agent.delete('/api/v1/profile/avatar');
-  //   assert.isEmpty(response.body.result.avatar);
-  // });
+  it('should success delete uploaded avatar', async () => {
+    await agent.post('/api/v1/profile/avatar').attach('file', testImage);
+    const response = await agent.delete('/api/v1/profile/avatar');
+    assert.isEmpty(response.body.result.avatar);
+  });
 
 });
 
