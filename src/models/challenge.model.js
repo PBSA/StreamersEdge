@@ -75,6 +75,7 @@ class ChallengeModel extends Model {
    *      - game
    *      - accessRule
    *      - ppyAmount
+   *      - depositOp
    *    properties:
    *      name:
    *        type: string
@@ -111,6 +112,8 @@ class ChallengeModel extends Model {
    *            type: array
    *            items:
    *              $ref: '#/definitions/ChallengeConditionNew'
+   *          depositOp:
+   *              $ref: '#/definitions/TransactionObject'
    *
    *  ChallengeCondition:
    *    allOf:
@@ -151,6 +154,51 @@ class ChallengeModel extends Model {
    *               $ref: '#/definitions/User'
    *          user:
    *            $ref: '#/definitions/User'
+   *
+   *  TransactionObject:
+   *    type: object
+   *    required:
+   *      - ref_block_num
+   *      - ref_block_prefix
+   *      - expiration
+   *      - operations
+   *      - signatures
+   *    properties:
+   *      ref_block_num:
+   *        type: integer
+   *      ref_block_prefix:
+   *        type: integer
+   *      expiration:
+   *        type: string
+   *        format: date
+   *      operations:
+   *        type: array
+   *        items:
+   *          type: array
+   *          items: {}
+   *          example:
+   *            - 0
+   *            - {
+   *              fee: {
+   *                "amount": "2000000",
+   *                "asset_id": "1.3.0"
+   *              },
+   *              "from": "1.2.67",
+   *              "to": "1.2.57",
+   *              "amount": {
+   *                "amount": "100",
+   *                "asset_id": "1.3.0"
+   *              },
+   *              "extensions": []
+   *            }
+   *      extensions:
+   *        type: array
+   *        items:
+   *          type: string
+   *      signatures:
+   *        type: array
+   *        items:
+   *          type: string
    *
    */
   getPublic() {
