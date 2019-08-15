@@ -1,5 +1,6 @@
 const Joi = require('./abstract/joi.form');
 const normalizeEmail = require('normalize-email');
+const tldJS = require('tldjs');
 const BaseValidator = require('./abstract/base.validator');
 const ValidateError = require('./../../../errors/validate.error');
 const profileConstants = require('../../../constants/profile');
@@ -81,9 +82,9 @@ class AuthValidator extends BaseValidator {
         });
       }
 
-      if (email.match(/@.+\..+\./)) {
+      if ( email.match(/@.+\..+/) && !tldJS.tldExists(email)) {
         throw new ValidateError(400, 'Validate error', {
-          email: 'Unsupported type of email'
+          email: 'Invalid email'
         });
       }
 
