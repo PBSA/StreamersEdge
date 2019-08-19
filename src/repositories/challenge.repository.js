@@ -1,4 +1,4 @@
-const {model} = require('../models/challenge.model');
+const {model} = require('../db/models/challenge.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class ChallengeRepository extends BasePostgresRepository {

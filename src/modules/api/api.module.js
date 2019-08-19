@@ -119,7 +119,7 @@ class ApiModule {
         store: SessionStore
       }));
 
-      SessionStore.sync();
+      // SessionStore.sync();
 
       this.app.use(passport.initialize());
       this.app.use(passport.session());

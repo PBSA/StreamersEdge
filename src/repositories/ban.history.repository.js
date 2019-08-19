@@ -1,4 +1,4 @@
-const {model} = require('../models/ban.history.model');
+const {model} = require('../db/models/ban.history.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class BanHistoryRepository extends BasePostgresRepository {

@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
-const profileConstants = require('../constants/profile');
-const invitationConstants = require('../constants/invitation');
+const profileConstants = require('../../constants/profile');
+const invitationConstants = require('../../constants/invitation');
 
 /**
  * @typedef {Object} UserPublicObject
@@ -123,106 +123,107 @@ class UserModel extends Model {
     this.dataValues.twitchLink = this.twitchId ? `https://www.twitch.tv/${this.twitchId}/videos` : null;
   }
 }
+const attributes = {
+  username: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: true
+  },
+  email: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: true
+  },
+  isEmailVerified: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+  },
+  password: {type: Sequelize.STRING},
+  avatar: {type: Sequelize.STRING},
+  twitchId: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: true
+  },
+  twitchUserName: {
+    type: Sequelize.STRING,
+    unique: true
+  },
+  googleId: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: true
+  },
+  facebookId: {
+    type: Sequelize.STRING,
+    unique: true,
+    allowNull: true
+  },
+  googleName: {
+    type: Sequelize.STRING
+  },
+  youtube: {
+    type: Sequelize.STRING,
+    defaultValue: ''
+  },
+  facebook: {
+    type: Sequelize.STRING,
+    defaultValue: ''
+  },
+  twitch: {
+    type: Sequelize.STRING,
+    defaultValue: ''
+  },
+  peerplaysAccountName: {
+    type: Sequelize.STRING,
+    defaultValue: ''
+  },
+  peerplaysAccountId: {
+    type: Sequelize.STRING,
+    defaultValue: ''
+  },
+  bitcoinAddress: {
+    type: Sequelize.STRING,
+    defaultValue: ''
+  },
+  notifications: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: true
+  },
+  invitations: {
+    type: Sequelize.ENUM(...Object.keys(invitationConstants.invitationStatus)),
+    defaultValue: invitationConstants.invitationStatus.all
+  },
+  userType: {
+    type: Sequelize.ENUM(Object.keys(profileConstants.userType).map((key) => profileConstants.userType[key]))
+  },
+  applicationType: {
+    type: Sequelize.ENUM,
+    values: profileConstants.applicationType
+  },
+  pushNotificationId: {
+    type: Sequelize.STRING
+  },
+  status: {
+    type: Sequelize.ENUM(Object.keys(profileConstants.status).map((key) => profileConstants.status[key])),
+    defaultValue: profileConstants.status.active
+  },
+  steamId: {
+    type: Sequelize.STRING
+  },
+  pubgUsername: {
+    type: Sequelize.STRING
+  },
+  pubgId: {
+    type: Sequelize.STRING
+  }
+};
 
 module.exports = {
   init: (sequelize) => {
-    UserModel.init({
-      username: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: true
-      },
-      email: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: true
-      },
-      isEmailVerified: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
-      },
-      password: {type: Sequelize.STRING},
-      avatar: {type: Sequelize.STRING},
-      twitchId: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: true
-      },
-      twitchUserName: {
-        type: Sequelize.STRING,
-        unique: true
-      },
-      googleId: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: true
-      },
-      facebookId: {
-        type: Sequelize.STRING,
-        unique: true,
-        allowNull: true
-      },
-      googleName: {
-        type: Sequelize.STRING
-      },
-      youtube: {
-        type: Sequelize.STRING,
-        defaultValue: ''
-      },
-      facebook: {
-        type: Sequelize.STRING,
-        defaultValue: ''
-      },
-      twitch: {
-        type: Sequelize.STRING,
-        defaultValue: ''
-      },
-      peerplaysAccountName: {
-        type: Sequelize.STRING,
-        defaultValue: ''
-      },
-      peerplaysAccountId: {
-        type: Sequelize.STRING,
-        defaultValue: ''
-      },
-      bitcoinAddress: {
-        type: Sequelize.STRING,
-        defaultValue: ''
-      },
-      notifications: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true
-      },
-      invitations: {
-        type: Sequelize.ENUM(...Object.keys(invitationConstants.invitationStatus)),
-        defaultValue: invitationConstants.invitationStatus.all
-      },
-      userType: {
-        type: Sequelize.ENUM(Object.keys(profileConstants.userType).map((key) => profileConstants.userType[key]))
-      },
-      applicationType: {
-        type: Sequelize.ENUM,
-        values: profileConstants.applicationType
-      },
-      pushNotificationId: {
-        type: Sequelize.STRING
-      },
-      status: {
-        type: Sequelize.ENUM(Object.keys(profileConstants.status).map((key) => profileConstants.status[key])),
-        defaultValue: profileConstants.status.active
-      },
-      steamId: {
-        type: Sequelize.STRING
-      },
-      pubgUsername: {
-        type: Sequelize.STRING
-      },
-      pubgId: {
-        type: Sequelize.STRING
-      }
-    }, {
+    UserModel.init(attributes, {
       sequelize,
-      modelName: 'user'
+      modelName: 'users'
     });
   },
   associate: (models) => {

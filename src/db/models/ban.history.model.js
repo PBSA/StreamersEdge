@@ -12,7 +12,6 @@ const {Model} = Sequelize;
 class BanHistoryModel extends Model {
 
 }
-
 module.exports = {
   init: (sequelize) => {
     BanHistoryModel.init({
@@ -32,7 +31,7 @@ module.exports = {
       }
     }, {
       sequelize,
-      modelName: 'ban-history'
+      modelName: 'ban-histories'
     });
   },
   associate(models) {

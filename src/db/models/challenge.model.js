@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
-const challengeConstants = require('../constants/challenge');
+const challengeConstants = require('../../constants/challenge');
 
 /**
  * @typedef {Object} ChallengeModel
@@ -229,41 +229,42 @@ class ChallengeModel extends Model {
     return result;
   }
 }
+const attributes = {
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  startDate: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
+  endDate: {
+    type: Sequelize.DATE,
+    allowNull: true
+  },
+  game: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  accessRule: {
+    type: Sequelize.ENUM(...Object.keys(challengeConstants.accessRules)),
+    allowNull: false
+  },
+  ppyAmount: {
+    type: Sequelize.BIGINT,
+    allowNull: false
+  },
+  conditionsText: {
+    type: Sequelize.TEXT,
+    allowNull: true
+  }
+};
 
 module.exports = {
   init: (sequelize) => {
-    ChallengeModel.init({
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      startDate: {
-        type: Sequelize.DATE,
-        allowNull: true
-      },
-      endDate: {
-        type: Sequelize.DATE,
-        allowNull: true
-      },
-      game: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      accessRule: {
-        type: Sequelize.ENUM(...Object.keys(challengeConstants.accessRules)),
-        allowNull: false
-      },
-      ppyAmount: {
-        type: Sequelize.BIGINT,
-        allowNull: false
-      },
-      conditionsText: {
-        type: Sequelize.TEXT,
-        allowNull: true
-      }
-    }, {
+    ChallengeModel.init(attributes, {
       sequelize,
-      modelName: 'challenge'
+      modelName: 'challenges'
     });
   },
   associate: (models) => {
