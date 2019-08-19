@@ -38,6 +38,10 @@ class ValidateError extends RestError {
     super(message, status, formErrors);
   }
 
+  static validateError(formErrors = null) {
+    return new ValidateError(400, 'Validate error', formErrors);
+  }
+
 }
 
 module.exports = ValidateError;
