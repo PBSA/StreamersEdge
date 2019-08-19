@@ -199,6 +199,17 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
+  async findWithChallengeSubscribed() {
+    return this.model.findAll({
+      where: {
+        challengeSubscribeData: {
+          [Sequelize.Op.ne]: null
+        },
+        notifications: true
+      }
+    });
+  }
+
 }
 
 module.exports = UserRepository;

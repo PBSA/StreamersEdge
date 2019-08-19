@@ -417,6 +417,10 @@ paths:
           description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
+        '422':
+          description: Unable to invite user
+          schema:
+            $ref: '#/definitions/UnProcessableError'
   /auth/facebook:
     get:
       description: Auth by facebook
@@ -853,6 +857,14 @@ definitions:
       error:
         type: string
         example: unauthorized
+  UnProcessableError:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 422
+      error:
+        type: object
   ForbiddenError:
     type: object
     properties:
