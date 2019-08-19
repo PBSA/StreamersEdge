@@ -853,6 +853,14 @@ definitions:
       error:
         type: string
         example: unauthorized
+  UnProcessableError:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 422
+      error:
+        type: object
   ForbiddenError:
     type: object
     properties:

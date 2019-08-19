@@ -100,6 +100,10 @@ class ChallengesController {
        *        description: Error form validation
        *        schema:
        *          $ref: '#/definitions/ValidateError'
+       *      422:
+       *        description: Error unable to sent invitation
+       *        schema:
+       *          $ref: '#/definitions/UnProcessableError'
        */
       [
         'post', '/api/v1/challenges',
@@ -217,6 +221,10 @@ class ChallengesController {
        *        schema:
        *          $ref: '#/definitions/ValidateError'
        *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      402:
        *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
