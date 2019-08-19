@@ -263,6 +263,8 @@ class ChallengesController {
           throw new RestError('', 404, {challengeId: [{message: 'Challenge not found'}]});
         case this.challengeService.errors.DO_NOT_RECEIVE_INVITATIONS:
           throw new RestError('', 422, {challengeId: [{message: 'This is private challenge'}]});
+        case this.errors.UNABLE_TO_INVITE:
+          throw new RestError('', 422, {challengeId: [{message: 'Unable to invite'}]});
         default:
           throw err;
       }

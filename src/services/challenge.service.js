@@ -26,7 +26,8 @@ class ChallengeService {
     this.webPushConnection = opts.webPushConnection;
     this.errors = {
       DO_NOT_RECEIVE_INVITATIONS: 'THIS_IS_PRIVATE_CHALLENGE',
-      CHALLENGE_NOT_FOUND: 'CLASSIC_GAME_NOT_FOUND'
+      CHALLENGE_NOT_FOUND: 'CLASSIC_GAME_NOT_FOUND',
+      UNABLE_TO_INVITE: 'UNABLE_TO_INVITE'
     };
   }
 
@@ -193,7 +194,11 @@ class ChallengeService {
         const isAllowedForUser = await this.whitelistedUsersRepository.isWhitelistedFor(toUserWithId, fromUser.id);
 
         if (isAllowedForUser) {
-          return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+          try{
+            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+          } catch(err) {
+            throw this.errors.UNABLE_TO_INVITE;
+          }
         }
       }
 
@@ -203,13 +208,23 @@ class ChallengeService {
         const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(toUserWithId, challenge.game);
 
         if (isAllowedForGame) {
-          return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+          try{
+            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+          } catch(err) {
+            throw this.errors.UNABLE_TO_INVITE;
+          }
         }
       }
 
         break;
+
       case invitationConstants.invitationStatus.all:
-        return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+        try{
+          return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+        } catch(err) {
+          throw this.errors.UNABLE_TO_INVITE;
+        }
+
       default:
         return;
     }
