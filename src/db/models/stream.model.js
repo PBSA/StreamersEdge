@@ -92,40 +92,42 @@ class StreamModel extends Model {
   }
 }
 
+const attributes = {
+  name: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  game: {
+    type: Sequelize.ENUM,
+    values: ['pubg','fortnite']
+  },
+  sourceName: {
+    type: Sequelize.ENUM,
+    values: ['twitch','youtube']
+  },
+  embedUrl: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  channelId: {type: Sequelize.STRING},
+  views: {
+    type: Sequelize.INTEGER,
+    allowNull: true
+  },
+  isLive: {
+    type: Sequelize.BOOLEAN
+  },
+  startTime: {
+    type: Sequelize.DATE
+  },
+  thumbnailUrl: {
+    type: Sequelize.STRING
+  }
+};
+
 module.exports = {
   init: (sequelize) => {
-    StreamModel.init({
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      game: {
-        type: Sequelize.ENUM,
-        values: ['pubg','fortnite']
-      },
-      sourceName: {
-        type: Sequelize.ENUM,
-        values: ['twitch','youtube']
-      },
-      embedUrl: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      channelId: {type: Sequelize.STRING},
-      views: {
-        type: Sequelize.INTEGER,
-        allowNull: true
-      },
-      isLive: {
-        type: Sequelize.BOOLEAN
-      },
-      startTime: {
-        type: Sequelize.DATE
-      },
-      thumbnailUrl: {
-        type: Sequelize.STRING
-      }
-    }, {
+    StreamModel.init(attributes, {
       sequelize,
       modelName: 'streams'
     });

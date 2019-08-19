@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-const {model} = require('../models/session.model');
+const {model} = require('../db/models/session.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class SessionsRepository extends BasePostgresRepository {

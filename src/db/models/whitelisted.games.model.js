@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
-const allowedGames = require('../constants/games');
+const allowedGames = require('../../constants/games');
 
 /**
  * @typedef {Object} WhitelistedGames

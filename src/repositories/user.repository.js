@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
-const {model} = require('../models/user.model');
-const {model: banHistoryModel} = require('../models/ban.history.model');
+const {model} = require('../db/models/user.model');
+const {model: banHistoryModel} = require('../db/models/ban.history.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 const {status} = require('../constants/profile');
 

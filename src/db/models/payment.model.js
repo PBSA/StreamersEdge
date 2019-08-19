@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
-const {statuses} = require('../constants/payment');
+const {statuses} = require('../../constants/payment');
 
 /**
  * @typedef {Class} PaymentModel
@@ -16,6 +16,7 @@ const {statuses} = require('../constants/payment');
  * @property {Number} blockNumber
  */
 class PaymentModel extends Model {}
+
 
 module.exports = {
   init: (sequelize) => {
@@ -36,7 +37,7 @@ module.exports = {
       blockNumber: {type: Sequelize.INTEGER}
     }, {
       sequelize,
-      modelName: 'payment'
+      modelName: 'payments'
     });
   },
   associate: (models) => {

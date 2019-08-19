@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
-const {types} = require('../constants/transaction');
+const {types} = require('../../constants/transaction');
 
 /**
  * @typedef {Class} TransactionModel
@@ -38,7 +38,7 @@ module.exports = {
       peerplaysToId: {type: Sequelize.STRING}
     }, {
       sequelize,
-      modelName: 'transaction'
+      modelName: 'transactions'
     });
   },
   associate: (models) => {

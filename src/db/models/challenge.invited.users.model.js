@@ -9,7 +9,6 @@ const {Model} = Sequelize;
  */
 
 class ChallengeInvitedUsersModel extends Model {}
-
 module.exports = {
   init: (sequelize) => {
     ChallengeInvitedUsersModel.init({}, {
