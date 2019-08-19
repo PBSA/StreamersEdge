@@ -43,6 +43,8 @@ const invitationConstants = require('../../constants/invitation');
  * @property {String} pushNotificationId
  * @property {String} pubgUsername
  * @property {String} pubgId
+ * @property {JSON} vapidKey
+ * @property {String} challengeSubscribeData
  */
 class UserModel extends Model {
   /**
@@ -216,6 +218,12 @@ const attributes = {
   },
   pubgId: {
     type: Sequelize.STRING
+  },
+  vapidKey: {
+    type: Sequelize.JSON
+  },
+  challengeSubscribeData: {
+    type: Sequelize.JSON
   }
 };
 

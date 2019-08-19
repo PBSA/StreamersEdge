@@ -100,6 +100,10 @@ class ChallengesController {
        *        description: Error form validation
        *        schema:
        *          $ref: '#/definitions/ValidateError'
+       *      422:
+       *        description: Error unable to sent invitation
+       *        schema:
+       *          $ref: '#/definitions/UnProcessableError'
        */
       [
         'post', '/api/v1/challenges',
@@ -220,6 +224,10 @@ class ChallengesController {
        *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
+       *      402:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
        */
       [
         'post', '/api/v1/challenges/invite',
@@ -249,12 +257,8 @@ class ChallengesController {
   }
 
   async subscribeToChallenges(user, data) {
-    const result = await this.challengeService.checkUserSubscribe(user.id);
-
-    this.challengeService.vapidData[user.id] = data;
-
+    const result = await this.challengeService.checkUserSubscribe(user, data);
     return result;
-
   }
 
   async sendInvite(user, {userId, challengeId}) {
@@ -267,6 +271,8 @@ class ChallengesController {
           throw new RestError('', 404, {challengeId: [{message: 'Challenge not found'}]});
         case this.challengeService.errors.DO_NOT_RECEIVE_INVITATIONS:
           throw new RestError('', 422, {challengeId: [{message: 'This is private challenge'}]});
+        case this.errors.UNABLE_TO_INVITE:
+          throw new RestError('', 422, {challengeId: [{message: 'Unable to invite'}]});
         default:
           throw err;
       }
