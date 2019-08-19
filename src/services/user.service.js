@@ -337,7 +337,6 @@ class UserService {
   async getUserYoutubeLink(tokens) {
     return this.googleRepository.getYoutubeLink(tokens);
   }
-
 }
 
 module.exports = UserService;
