@@ -417,6 +417,10 @@ paths:
           description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
+        '422':
+          description: Unable to invite user
+          schema:
+            $ref: '#/definitions/UnProcessableError'
   /auth/facebook:
     get:
       description: Auth by facebook
