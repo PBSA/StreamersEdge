@@ -14,8 +14,15 @@ let agent;
 let apiModule;
 
 before(async () => {
-  apiModule = await ApiModule();
-  agent = request.agent(apiModule.app);
+  try {
+    apiModule = await ApiModule();
+    agent = request.agent(apiModule.app);
+    // await TestDbHelper.truncateAll(apiModule);
+  }catch (e) {
+    console.log('Error occurred');
+    console.error(e);
+  }
+
 });
 
 describe('POST /api/v1/payment', () => {
@@ -44,7 +51,7 @@ describe('POST /api/v1/payment', () => {
   it('should forbid. empty body', async () => {
     await agent.post('/api/v1/auth/logout');
     const res = await agent.post('/api/v1/auth/sign-up').send(validObject);
-    const {token} = await apiModule.dbConnection.sequelize.models['verification-token'].findOne({
+    const {token} = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
       where: {userId: res.body.result.id}
     });
     await agent.get(`/api/v1/auth/confirm-email/${token}`);
