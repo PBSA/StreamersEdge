@@ -7,6 +7,7 @@ const SmtpConnection = require('./mock/connections/smtp.connection.mock');
 const WebPushConnection = require('./mock/connections/web-push.connection.mock');
 const PaypalConnection = require('./mock/connections/paypal.connection.mock');
 const CoinmarketcapConnection = require('./mock/connections/coinmarketcap.connection.mock');
+const TestDbHelper = require('./modules/api/helpers/test.db.helper');
 
 container.register({
   peerplaysConnection: asClass(PeerplaysConnection),
@@ -23,7 +24,7 @@ describe('ALL TESTS', () => {
 
   const logger = getLogger();
 
-  describe('global', () => {
+  describe('global', async () => {
     let dbConnection;
 
     it('init connections', async () => {
@@ -35,12 +36,13 @@ describe('ALL TESTS', () => {
 
           if (name === 'db.connection') {
             dbConnection = connection;
+            await TestDbHelper.truncateAll({dbConnection});
           }
 
           resolve();
         } catch (error) {
           logger.error(`${name} connect error`);
-          throw new Error(error);
+          resolve();
         }
       })));
     });

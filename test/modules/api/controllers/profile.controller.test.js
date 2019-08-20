@@ -20,6 +20,7 @@ let apiModule;
 before(async () => {
   apiModule = await ApiModule();
   agent = request.agent(apiModule.app);
+  // await TestDbHelper.truncateAll(apiModule);
 });
 
 describe('GET /api/v1/profile', () => {

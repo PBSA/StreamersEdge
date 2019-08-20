@@ -14,7 +14,8 @@
     "referrer": "1.2.0",
     "sendAssetId": "1.3.0",
     "paymentAccountID": "JzSZXrnIQNG9GTYoLqfArfSDyX8e8CXHgbSY04AXYdQbmomdtTYE",
-    "paymentAccountWIF": "5Kd6visamEjFoEvATBHzGF5cx6F7Ynyb6YWKLXRrQQEwqVFH8NN"
+    "paymentAccountWIF": "5Kd6visamEjFoEvATBHzGF5cx6F7Ynyb6YWKLXRrQQEwqVFH8NN",
+    "paymentReceiver": "1.2.57"
   },
   "paypal": {
     "clientId": "AYq8duooANktXC0Tu59UbFibBnls8oyOSBKK1Dse4jXKSq-_sMcgTxqnYK2HN-BDQ2ulo23Ltam90cGl",

@@ -20,7 +20,7 @@ module.exports.login = async (agent, validObject, apiModule) => {
 
   await agent.post('/api/v1/auth/logout');
   const {body} = await agent.post('/api/v1/auth/sign-up').send(validObject);
-  const {token} = await apiModule.dbConnection.sequelize.models['verification-token'].findOne({
+  const {token} = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
     where: {userId: body.result.id}
   });
   await agent.get(`/api/v1/auth/confirm-email/${token}`);

@@ -82,7 +82,7 @@ class AuthValidator extends BaseValidator {
         });
       }
 
-      if ( email.match(/@.+\..+/) && !tldJS.tldExists(email)) {
+      if ( email.match(/@.+\..+/) && (!tldJS.tldExists(email) || (email.split('@').pop().split('.').length > 2))) {
         throw new ValidateError(400, 'Validate error', {
           email: 'Invalid email'
         });

@@ -71,9 +71,30 @@ npm run release:pre // cut a pre-release in the format v0.2.1-alpha.0
 npm run release:minor // cut a new release with semantic minor bump
 ```
 
-## Migrations
+## Migrations & Seeds
 
-<!--TODO: Should be described-->
+To run all pending migrations
+```yarn db-migrate-all```
+
+To undo single migrations
+```yarn db-migrate-undo```
+
+To undo all migrations BE CAREFUL
+```yarn db-migrate-undo```
+
+To run all Seeds. Seeds can be run multiple times and should be used for dev only
+```yarn db-seed-all```
+
+To undo single migrations
+```yarn db-seed-undo-all```
+
+## Testing
+
+1. Copy all the required configurations from development.json to test.json
+2. Make sure to point towards different database that development
+3. If this is first time, create a database for test as mentioned in test.json
+4. Run all migrations for test db
+```NODE_ENV=test yarn db-migrate-all```  
 
 ## Docker
 

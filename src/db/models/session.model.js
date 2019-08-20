@@ -25,7 +25,7 @@ module.exports = {
       }
     }, {
       sequelize,
-      modelName: 'sessions'
+      modelName: 'Sessions'
     });
   },
   associate: (models) => {

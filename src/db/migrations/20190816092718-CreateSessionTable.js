@@ -11,10 +11,10 @@ const fields = {
 
 module.exports = {
   up: (queryInterface) => {
-    return queryInterface.createTable('sessions', fields)
+    return queryInterface.createTable('Sessions', fields)
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('sessions');
+    return queryInterface.dropTable('Sessions');
   }
 };

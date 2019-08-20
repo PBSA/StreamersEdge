@@ -3,7 +3,6 @@ const request = require('supertest');
 const chai = require('chai');
 chai.use(require('chai-url'));
 const chaiHttp = require('chai-http');
-
 const {isSuccess, isError} = require('../helpers/test.response.helper');
 const {login} = require('../helpers/test.login.helper');
 const ApiModule = require('../api.module.test');
@@ -105,7 +104,7 @@ describe('POST /api/v1/auth/sign-up', () => {
 
   it('should forbid. deep email', async () => {
     const body = {...validObject};
-    body.email = 'test@test.tet.com';
+    body.email = 'test@test.tet.dev.com';
     const response = await agent.post('/api/v1/auth/sign-up').send(body);
     isError(response, 400, ['email']);
   });
@@ -161,7 +160,7 @@ describe('GET /api/v1/auth/confirm-email/:token', () => {
     const body = {...validObject};
 
     const response = await agent.post('/api/v1/auth/sign-up').send(body);
-    const {token} = await apiModule.dbConnection.sequelize.models['verification-token'].findOne({
+    const {token} = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
       where: {userId: response.body.result.id}
     });
     const confirmResponse = await agent.get(`/api/v1/auth/confirm-email/${token}`);
@@ -182,7 +181,7 @@ describe('POST /api/v1/auth/sign-in', () => {
   before(async () => {
     await agent.post('/api/v1/auth/logout');
     const response = await agent.post('/api/v1/auth/sign-up').send(validObject);
-    const {token} = await apiModule.dbConnection.sequelize.models['verification-token'].findOne({
+    const {token} = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
       where: {userId: response.body.result.id}
     });
     await agent.get(`/api/v1/auth/confirm-email/${token}`);
@@ -255,7 +254,7 @@ describe('POST /api/v1/auth/reset-password', () => {
   before(async () => {
     await agent.post('/api/v1/auth/logout');
     const response = await agent.post('/api/v1/auth/sign-up').send(validObject);
-    const {token} = await apiModule.dbConnection.sequelize.models['verification-token'].findOne({
+    const {token} = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
       where: {userId: response.body.result.id}
     });
     userId = response.body.result.id;
@@ -268,7 +267,7 @@ describe('POST /api/v1/auth/reset-password', () => {
     await agent.post('/api/v1/auth/forgot-password').send({
       email: validObject.email
     });
-    const {token} = await apiModule.dbConnection.sequelize.models['reset-token'].findOne({where: {userId}});
+    const {token} = await apiModule.dbConnection.sequelize.models['reset-tokens'].findOne({where: {userId}});
 
     const failResult = await agent.post('/api/v1/auth/sign-in').send({
       login: validObject.username,
