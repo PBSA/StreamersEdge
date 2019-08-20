@@ -27,8 +27,8 @@ class ChallengeValidator extends BaseValidator {
   createChallenge() {
     const bodySchema = {
       name: Joi.string().max(50).required(),
-      startDate: Joi.date().iso().min('now'),
-      endDate: Joi.date().iso().min('now').required(),
+      startDate: Joi.date().iso().min('now').required(),
+      endDate: Joi.date().iso().min('now'),
       game: Joi.string().valid(challengeConstants.games).required(),
       accessRule: Joi.string().valid(Object.keys(challengeConstants.accessRules)).required(),
       ppyAmount: Joi.number().min(1).required(),
