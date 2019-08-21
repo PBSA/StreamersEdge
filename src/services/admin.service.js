@@ -47,6 +47,25 @@ class AdminService {
     });
   }
 
+  /**
+   *
+   * @param {UserModel} unblocker
+   * @param {Number} userId
+   * @return {Promise<void>}
+   */
+  async unbanUser(unblocker, userId) {
+    return this.dbConnection.getConnection().transaction({
+      isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED
+    }, async (transaction) => {
+      const {id: unblockerId} = unblocker;
+
+      await this.userRepository.changeStatus(userId, profileConstants.status.active, {transaction});
+      await this.banHistoryRepository.updateRecordToUnban(unblockerId, userId, {transaction});
+
+      return true;
+    });
+  }
+
   async getUserInfo(userId) {
     return await this.userRepository.getUserInfo(userId);
   }
