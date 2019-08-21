@@ -57,7 +57,7 @@ class TransactionController {
       /**
        * @swagger
        *
-       * /api/v1/transactions:
+       * /transactions:
        *  get:
        *    description: Get user transactions
        *    produces:

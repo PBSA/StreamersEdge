@@ -38,6 +38,28 @@ class BanHistoryRepository extends BasePostgresRepository {
     });
   }
 
+  /**
+   *
+   * @param {Number} unbannedById the id of admin who has unbanned the user with <userId> id
+   * @param {Number} userId
+   * @return {Promise<BanHistoryModel>}
+   */
+  async updateRecordToUnban(unbannedById, userId, {transaction} = {transaction: undefined}) {
+    return this.model.update({
+      unbannedById,
+      unbanDate: Date.now()
+    }, {
+      limit: 1,
+      where: {
+        userId: userId,
+        unbannedById: null
+      },
+      order: [[ 'id', 'DESC' ]]
+    }, {
+      transaction
+    });
+  }
+
 }
 
 module.exports = BanHistoryRepository;

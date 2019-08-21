@@ -1,7 +1,9 @@
 'use strict';
 const DataTypes = require('sequelize/lib/data-types');
+const MigrationUtil = require('../../utils/migtation.util');
 
 const fields = {
+  ...MigrationUtil.genericRows(),
   pubgId: {type: DataTypes.STRING, unique: true},
   createdAt: {type: DataTypes.DATE},
   duration: {type: DataTypes.INTEGER},

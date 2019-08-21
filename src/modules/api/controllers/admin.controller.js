@@ -153,7 +153,7 @@ class AdminController {
       /**
        * @swagger
        *
-       * /api/v1/admin/users:
+       * /admin/users:
        *  get:
        *    description: Get profiles of all users with their ban status
        *    produces:
@@ -204,7 +204,7 @@ class AdminController {
       /**
        * @swagger
        *
-       * /api/v1/admin/users/ban/:userId:
+       * /admin/users/ban/{userId}:
        *  put:
        *    description: Ban user by id
        *    produces:
@@ -212,7 +212,7 @@ class AdminController {
        *    tags:
        *      - Admin
        *    parameters:
-       *      - name: Ban
+       *      - name: userId
        *        in: path
        *        required: true
        *        type: string
@@ -256,7 +256,61 @@ class AdminController {
         this.userValidator.banUser,
         this.banUser.bind(this)
       ],
-
+      /**
+       * @swagger
+       *
+       * /admin/users/unban/{userId}:
+       *  put:
+       *    description: Uban user by id
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Admin
+       *    parameters:
+       *      - name: userId
+       *        in: path
+       *        required: true
+       *        type: string
+       *    responses:
+       *      200:
+       *        description: Unban result schema
+       *        schema:
+       *          $ref: '#/definitions/SuccessEmptyResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      403:
+       *        description: Error forbidden for this user
+       *        schema:
+       *          $ref: '#/definitions/ForbiddenError'
+       *      400:
+       *        description: Error this user does not exist
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: This user does not exist
+       *      404:
+       *        description: Error user not found
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: User not found
+       */
+      [
+        'put', '/api/v1/admin/users/unban/:userId',
+        this.authValidator.loggedAdminOnly,
+        this.userValidator.unbanUser,
+        this.unbanUser.bind(this)
+      ],
       /**
        * @swagger
        *
@@ -295,6 +349,10 @@ class AdminController {
       ]
     ];
 
+  }
+
+  async unbanUser(user, pure, req) {
+    return this.adminService.unbanUser(user, req.query.userId);
   }
 
   async getProfile(user) {

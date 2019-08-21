@@ -46,12 +46,6 @@ describe('ALL TESTS', () => {
         }
       })));
     });
-
-    it('clear database', async () => {
-      await dbConnection.sequelize.sync({
-        force: true
-      });
-    });
   });
 
   require('./modules/');

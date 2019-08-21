@@ -24,6 +24,7 @@ class UserValidator extends BaseValidator {
     this.getUsersWithBansHistory = this.getUsersWithBansHistory.bind(this);
     this.changeNotificationStatus = this.changeNotificationStatus.bind(this);
     this.changeInvitationStatus = this.changeInvitationStatus.bind(this);
+    this.unbanUser = this.unbanUser.bind(this);
   }
 
   getUser() {
@@ -51,21 +52,7 @@ class UserValidator extends BaseValidator {
 
     return this.validate(querySchema, null, async (req, query) => {
       const {userId} = query;
-
-      const user = await this.userRepository.findByPk(userId);
-
-      if (!user) {
-        throw new ValidateError(404, 'Validate error', {
-          email: 'This user does not exist'
-        });
-      }
-
-      if (user.userType === profileConstants.userType.admin) {
-        throw new ValidateError(403, 'Validate error', {
-          email: 'This user is admin'
-        });
-      }
-
+      await this.getAdminUserById(userId);
       const [alreadyExist] = await this.banHistoryRepository.findLastEntryByUserId(userId);
 
       if (alreadyExist && !alreadyExist.unbannedById) {
@@ -76,6 +63,44 @@ class UserValidator extends BaseValidator {
 
       return userId;
     });
+  }
+
+  unbanUser() {
+    const querySchema = {
+      userId: Joi.number().integer().required()
+    };
+
+    return this.validate(querySchema, null, async (req, query) => {
+      const {userId} = query;
+      await this.getAdminUserById(userId);
+      const [alreadyExist] = await this.banHistoryRepository.findLastEntryByUserId(userId);
+
+      if (!alreadyExist || alreadyExist.unbannedById) {
+        throw new ValidateError(400, 'Validate error', {
+          email: 'This user is not yet ban'
+        });
+      }
+
+      return userId;
+    });
+  }
+
+  async getAdminUserById(userId) {
+    const user = await this.userRepository.findByPk(userId);
+
+    if (!user) {
+      throw new ValidateError(404, 'Validate error', {
+        email: 'This user does not exist'
+      });
+    }
+
+    if (user.userType === profileConstants.userType.admin) {
+      throw new ValidateError(403, 'Validate error', {
+        email: 'This user is admin'
+      });
+    }
+
+    return user;
   }
 
   getUsersWithBansHistory() {

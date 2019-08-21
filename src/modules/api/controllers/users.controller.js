@@ -54,7 +54,7 @@ class UsersController {
        *
        * /users/{id}:
        *  get:
-       *    description: Get user bu id
+       *    description: Get user by id
        *    produces:
        *      - application/json
        *    tags:
