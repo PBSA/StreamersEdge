@@ -95,11 +95,11 @@ class UserService {
     User[`${network}Id`] = id;
 
     switch(network) {
-      case 'twitch': User.twitchUserName = username; 
+      case 'twitch': User.twitchUserName = username;
         break;
-      case 'google': User.googleName = username; 
+      case 'google': User.googleName = username;
         break;
-      case 'facebook': User.facebook = username; 
+      case 'facebook': User.facebook = username;
         break;
       default: throw new RestError(`Unexpected Network ${network}`);
     }
@@ -338,7 +338,7 @@ class UserService {
   async getUserYoutubeLink(tokens) {
     return this.googleRepository.getYoutubeLink(tokens);
   }
-  
+
   /**
    *
    * @param {Number} userId
@@ -347,7 +347,7 @@ class UserService {
    * @return {Promise<*>}
    */
 
-  
+
   async donate(userId, receiverId, donateOp){
     const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(donateOp);
 
@@ -367,7 +367,7 @@ class UserService {
     return true;
   }
 
-  
+
 }
 
 module.exports = UserService;
