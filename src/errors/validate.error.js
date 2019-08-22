@@ -1,22 +1,46 @@
 const RestError = require('./rest.error');
 
+/**
+ * @swagger
+ *
+ * definitions:
+ *  ValidateError:
+ *    type: object
+ *    properties:
+ *      status:
+ *        type: number
+ *        example: 400
+ *      error:
+ *        type: object
+ *  UnauthorizedError:
+ *    type: object
+ *    properties:
+ *      status:
+ *        type: number
+ *        example: 401
+ *      error:
+ *        type: string
+ *        example: unauthorized
+ *  ForbiddenError:
+ *    type: object
+ *    properties:
+ *      status:
+ *        type: number
+ *        example: 403
+ *      error:
+ *        type: string
+ *        example: forbidden
+ */
+
 class ValidateError extends RestError {
 
   constructor(status = 400, message = 'Validate error', formErrors = null) {
     super(message, status, formErrors);
   }
 
-  // add(key, error) {
-  //  if (!error || !error.length) return this;
-  //  if (!this.details || typeof this.details !== 'object') this.details = {};
-  //  if (!this.details[key]) this.details[key] = [];
-  //  this.details[key].push(...(Array.isArray(error) ? error : [error]));
-  //  return this;
-  // }
-  //
-  // isEmpty() {
-  //  return !this.details;
-  // }
+  static validateError(formErrors = null) {
+    return new ValidateError(400, 'Validate error', formErrors);
+  }
 
 }
 

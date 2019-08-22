@@ -1,6 +1,6 @@
 const crypto = require('crypto-random-string');
-const {model} = require('../models/reset.token.model');
-const {model: UserModel} = require('../models/user.model');
+const {model} = require('../db/models/reset.token.model');
+const {model: UserModel} = require('../db/models/user.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class ResetTokenRepository extends BasePostgresRepository {

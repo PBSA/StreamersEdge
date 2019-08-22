@@ -1,5 +1,5 @@
 const crypto = require('crypto-random-string');
-const {model} = require('../models/verification.token.model');
+const {model} = require('../db/models/verification.token.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class VerificationTokenRepository extends BasePostgresRepository {

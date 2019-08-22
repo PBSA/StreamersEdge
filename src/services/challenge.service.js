@@ -42,7 +42,9 @@ class ChallengeService {
       TRANSACTION_ERROR: 'TRANSACTION_ERROR',
       INVALID_TRANSACTION_SENDER: 'INVALID_TRANSACTION_SENDER',
       INVALID_TRANSACTION_RECEIVER: 'INVALID_TRANSACTION_RECEIVER',
-      INVALID_TRANSACTION_AMOUNT: 'INVALID_TRANSACTION_AMOUNT'
+      INVALID_TRANSACTION_AMOUNT: 'INVALID_TRANSACTION_AMOUNT',
+      UNABLE_TO_INVITE: 'UNABLE_TO_INVITE'
+
     };
   }
 
@@ -81,6 +83,7 @@ class ChallengeService {
           userId: id
         });
 
+        const toUser = await this.userRepository.findByPk(id);
         const vapidKeys = this.userVapidKeys[id];
 
         if (!vapidKeys) {
@@ -89,16 +92,23 @@ class ChallengeService {
 
         const invitation = {title: `You invited to ${Challenge.name}`};
 
-        const invitationState = await this.userRepository.findByPk(id);
-
-        switch (invitationState.invitations) {
+        switch (toUser.invitations) {
           case invitationConstants.invitationStatus.all:
-            return await this.webPushConnection.sendNotification(this.vapidData[id], vapidKeys, invitation);
+            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
           case invitationConstants.invitationStatus.users: {
             const isAllowedForUser = await this.whitelistedUsersRepository.isWhitelistedFor(id, creatorId);
 
             if (isAllowedForUser) {
-              return await this.webPushConnection.sendNotification(this.vapidData[id], vapidKeys, invitation);
+              return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+            }
+          }
+
+            break;
+          case invitationConstants.invitationStatus.games: {
+            const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(id, challengeObject.game);
+
+            if (isAllowedForGame) {
+              return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
             }
           }
 
@@ -175,45 +185,42 @@ class ChallengeService {
     }
   }
 
+
   /**
-   * @param userId
-   * @returns {Promise<String>}
-   */
-  async checkUserSubscribe(userId) {
-
-    if (this.userVapidKeys.hasOwnProperty(userId)) {
-      return this.userVapidKeys[userId].publicKey;
-    }
-
-    if (!this.userVapidKeys.hasOwnProperty(userId)) {
+     * @param user
+     * @returns {Promise<String>}
+     */
+  async checkUserSubscribe(user, data) {
+    if(user.vapidKey === null ){
       const vapidKeys = this.webPushConnection.generateVapidKeys();
-      this.userVapidKeys[userId] = {
-        publicKey: vapidKeys.publicKey,
-        privateKey: vapidKeys.privateKey
+      user.vapidKey = {
+        ...vapidKeys
       };
-
-      return this.userVapidKeys[userId].publicKey;
     }
 
+    user.challengeSubscribeData = data;
+    user.save();
+    return user.vapidKey.publicKey;
   }
 
   /**
-   * @param fromUser
-   * @param toUserWithId
-   * @param challengeId
-   * @returns {Promise<Object>}
-   */
+     * @param fromUser
+     * @param toUserWithId
+     * @param challengeId
+     * @returns {Promise<Object>}
+     */
   async sendInvite(fromUser, toUserWithId, challengeId) {
+
     const challenge = await this.challengeRepository.findByPk(challengeId);
 
     if (!challenge) {
       throw this.errors.CHALLENGE_NOT_FOUND;
     }
 
-    const vapidKeys = this.userVapidKeys[toUserWithId];
-    const invitation = {title: `You invited to ${challenge.name}`};
+    const toUser = await this.userRepository.findByPk(toUserWithId);
 
-    const accessStatus = await this.userRepository.findByPk(toUserWithId);
+    const vapidKeys = toUser.vapidKey;
+    const invitation = {title: `You invited to ${challenge.name}`};
 
     const isInvited = await this.challengeInvitedUsersRepository.isUserInvited(challengeId, toUserWithId);
 
@@ -221,31 +228,45 @@ class ChallengeService {
       throw this.errors.DO_NOT_RECEIVE_INVITATIONS;
     }
 
-    switch (accessStatus.invitations) {
+    switch (toUser.invitations) {
       case invitationConstants.invitationStatus.users: {
         const isAllowedForUser = await this.whitelistedUsersRepository.isWhitelistedFor(toUserWithId, fromUser.id);
 
         if (isAllowedForUser) {
-          return await this.webPushConnection.sendNotification(this.vapidData[toUserWithId], vapidKeys, invitation);
+          try{
+            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+          } catch(err) {
+            throw this.errors.UNABLE_TO_INVITE;
+          }
         }
       }
 
         break;
       case invitationConstants.invitationStatus.games: {
-        const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(toUserWithId, challengeId);
+
+        const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(toUserWithId, challenge.game);
 
         if (isAllowedForGame) {
-          return await this.webPushConnection.sendNotification(this.vapidData[toUserWithId], vapidKeys, invitation);
+          try{
+            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+          } catch(err) {
+            throw this.errors.UNABLE_TO_INVITE;
+          }
         }
       }
 
         break;
+
       case invitationConstants.invitationStatus.all:
-        return await this.webPushConnection.sendNotification(this.vapidData[toUserWithId], vapidKeys, invitation);
+        try{
+          return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+        } catch(err) {
+          throw this.errors.UNABLE_TO_INVITE;
+        }
+
       default:
         return;
     }
-
   }
 
   async getAllChallenges(userId) {

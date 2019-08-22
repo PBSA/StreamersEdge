@@ -4,10 +4,17 @@ const {getLogger} = require('log4js');
 const {container} = require('./../src/awilix');
 const PeerplaysConnection = require('./mock/connections/peerplays.connection.mock');
 const SmtpConnection = require('./mock/connections/smtp.connection.mock');
+const WebPushConnection = require('./mock/connections/web-push.connection.mock');
+const PaypalConnection = require('./mock/connections/paypal.connection.mock');
+const CoinmarketcapConnection = require('./mock/connections/coinmarketcap.connection.mock');
+const TestDbHelper = require('./modules/api/helpers/test.db.helper');
 
 container.register({
   peerplaysConnection: asClass(PeerplaysConnection),
-  smtpConnection: asClass(SmtpConnection)
+  smtpConnection: asClass(SmtpConnection),
+  webPushConnection: asClass(WebPushConnection),
+  paypalConnection: asClass(PaypalConnection),
+  coinmarketcapConnection: asClass(CoinmarketcapConnection)
 });
 
 describe('ALL TESTS', () => {
@@ -17,7 +24,7 @@ describe('ALL TESTS', () => {
 
   const logger = getLogger();
 
-  describe('global', () => {
+  describe('global', async () => {
     let dbConnection;
 
     it('init connections', async () => {
@@ -29,20 +36,15 @@ describe('ALL TESTS', () => {
 
           if (name === 'db.connection') {
             dbConnection = connection;
+            await TestDbHelper.truncateAll({dbConnection});
           }
 
           resolve();
         } catch (error) {
           logger.error(`${name} connect error`);
-          throw new Error(error);
+          resolve();
         }
       })));
-    });
-
-    it('clear database', async () => {
-      await dbConnection.sequelize.sync({
-        force: true
-      });
     });
   });
 

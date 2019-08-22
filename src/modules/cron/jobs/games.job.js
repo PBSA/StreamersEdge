@@ -121,3 +121,4 @@ class GamesJob {
 }
 
 module.exports = GamesJob;
+
