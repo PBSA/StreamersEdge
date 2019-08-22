@@ -339,7 +339,7 @@ class UserService {
     return this.googleRepository.getYoutubeLink(tokens);
   }
   
-    /**
+  /**
    *
    * @param {Number} userId
    * @param {Number} receiverId
@@ -348,7 +348,7 @@ class UserService {
    */
 
   
-    async donate(userId, receiverId, donateOp){
+  async donate(userId, receiverId, donateOp){
     const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(donateOp);
 
     await this.transactionRepository.create({
