@@ -20,13 +20,15 @@ class ChallengeValidator extends BaseValidator {
     this.config = opts.config;
     this.createChallenge = this.createChallenge.bind(this);
     this.validateGetChallenge = this.validateGetChallenge.bind(this);
+    this.subscribe = this.subscribe.bind(this);
+    this.invite = this.invite.bind(this);
   }
 
   createChallenge() {
     const bodySchema = {
       name: Joi.string().max(50).required(),
-      startDate: Joi.date().iso().min('now'),
-      endDate: Joi.date().iso().min('now').required(),
+      startDate: Joi.date().iso().min('now').required(),
+      endDate: Joi.date().iso().min('now'),
       game: Joi.string().valid(challengeConstants.games).required(),
       accessRule: Joi.string().valid(Object.keys(challengeConstants.accessRules)).required(),
       ppyAmount: Joi.number().min(1).required(),
@@ -103,6 +105,28 @@ class ChallengeValidator extends BaseValidator {
     };
 
     return this.validate(querySchema, null, (req, query) => query.id);
+  }
+
+  subscribe() {
+    const bodySchema = {
+      endpoint: Joi.string().required(),
+      expirationTime: Joi.number().allow(null),
+      keys: Joi.object({
+        p256dh: Joi.string().required(),
+        auth: Joi.string().required()
+      }).required()
+    };
+
+    return this.validate(null, bodySchema, (req, query, body) => body);
+  }
+
+  invite() {
+    const bodySchema = {
+      userId: Joi.number().required(),
+      challengeId: Joi.number().required()
+    };
+
+    return this.validate(null, bodySchema, (req, query, body) => body);
   }
 
 }

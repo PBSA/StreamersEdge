@@ -34,8 +34,8 @@ class DbConnection extends BaseConnection {
 
   async initModels() {
     const models = {};
-    await Promise.all(fs.readdirSync('src/models').map(async (file) => {
-      const Model = require(`../models/${file}`);
+    await Promise.all(fs.readdirSync('src/db/models').map(async (file) => {
+      const Model = require(`../db/models/${file}`);
       Model.init(this.sequelize);
       const name = file.replace(/\.model\.js/, '').toLowerCase()
         .split('.')
@@ -46,12 +46,20 @@ class DbConnection extends BaseConnection {
     Object.keys(models).forEach((name) => {
       models[name].associate(models);
     });
-    await this.sequelize.sync();
+    // await this.sequelize.sync();
   }
 
   /** @returns {Promise<void>} */
   disconnect() {
     return this.sequelize.close();
+  }
+
+  /**
+   *
+   * @return {null|Sequelize}
+   */
+  getConnection(){
+    return this.sequelize;
   }
 
 }

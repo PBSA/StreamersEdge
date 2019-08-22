@@ -1,5 +1,56 @@
 const RestError = require('../../../errors/rest.error');
 
+/**
+ * @swagger
+ *
+ * definitions:
+ *  ChallengeSubscribe:
+ *    type: object
+ *    required:
+ *      - endpoint
+ *      - keys
+ *    properties:
+ *      endpoint:
+ *        type: string
+ *      expirationTime:
+ *        type: number
+ *      keys:
+ *        type: object
+ *        properties:
+ *          p256dh:
+ *            type: string
+ *          auth:
+ *            type: string
+ *  ChallengeInvite:
+ *    type: object
+ *    required:
+ *      - userId
+ *      - challengeId
+ *    properties:
+ *      userId:
+ *        type: number
+ *      challengeId:
+ *        type: number
+ *
+ *  ChallengeResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/Challenge'
+ *
+ *  ChallengeSubscribeResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            type: string
+ *
+ */
+
+
 class ChallengesController {
 
   /**
@@ -20,88 +71,39 @@ class ChallengesController {
   getRoutes() {
     return [
       /**
-       * @apiDefine ChallengeObjectResponse
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *  "result": {
-       *    "id": 11,
-       *    "name": "test",
-       *    "createdAt": "2019-06-02T06:11:44.866Z",
-       *    "startDate": "2019-07-04T08:32:19.818Z",
-       *    "endDate": null,
-       *    "game": "pubg",
-       *    "accessRule": "anyone",
-       *    "ppyAmount": "1",
-       *    "conditionsText": "test",
-       *    "user": {
-       *      "id": 1,
-       *      "username": "username",
-       *      "youtube": "",
-       *      "facebook": "",
-       *      "peerplaysAccountName": "",
-       *      "bitcoinAddress": ""
-       *    },
-       *    "conditions": [{
-       *      "id": 4,
-       *      "param": "resultPlace",
-       *      "operator": ">",
-       *      "value": 1,
-       *      "join": "OR",
-       *      "createdAt": "2019-06-02T06:11:44.874Z",
-       *      "updatedAt": "2019-06-02T06:11:44.874Z",
-       *      "challengeId": 11
-       *    }, {
-       *      "id": 5,
-       *      "param": "resultPlace",
-       *      "operator": ">",
-       *      "value": 1,
-       *      "join": "END",
-       *      "createdAt": "2019-06-02T06:11:44.875Z",
-       *      "updatedAt": "2019-06-02T06:11:44.875Z",
-       *      "challengeId": 11
-       *    }],
-       *    "invitedUsers": []
-       *  },
-       *  "status": 200
-       * }
-       */
-
-      /**
-       * @api {post} /api/v1/challenges Create new challenge
-       * @apiName CreateChallenge
-       * @apiGroup Challenges
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "name": "Test name",
-       *   "startDate": "2019-04-04T08:32:19.818Z",
-       *   "endDate": "2019-04-04T08:32:19.818Z",
-       *   "game": "pubg",
-       *   "accessRule": "anyone",
-       *   "ppyAmount": 100,
-       *   "invitedAccounts": [],
-       *   "conditionsText": [],
-       *   "conditions": [{
-       *     "param": "resultPlace",
-       *     "operator": ">",
-       *     "value": 1,
-       *     "join": "END"
-       *   }]
-       * }
-       * @apiParam {String} name Name of challenge
-       * @apiParam {Date} [startDate] Date of start challenge in ISO format
-       * @apiParam {Date} [endDate] Date of end challenge in ISO format
-       * @apiParam {String} game Type of challenge game. Now can be 'pubg' only
-       * @apiParam {String} accessRule Type of access - anyone or invite
-       * @apiParam {Number} ppyAmount PPY Amount for challenge in "satoshis"
-       * @apiParam {String} [conditionsText] Required only if conditions is empty
-       * @apiParam {Object[]} [conditions] Conditions array
-       * @apiParam {String} [conditions.param] result_place, win_time, frags
-       * @apiParam {String} [conditions.operator] \>, <, =, >=, <=
-       * @apiParam {Number} [conditions.value] Can be integer number
-       * @apiParam {String} [conditions.join] AND, OR or END. END can be used once
-       * @apiUse ChallengeObjectResponse
+       * @swagger
+       *
+       * /challenges:
+       *  post:
+       *    description: Create new challenge
+       *    summary: Create new challenge
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Challenge
+       *    parameters:
+       *      - name: challenge
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/ChallengeFullNew'
+       *    responses:
+       *      200:
+       *        description: Challenge response
+       *        schema:
+       *          $ref: '#/definitions/ChallengeResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      422:
+       *        description: Error unable to sent invitation
+       *        schema:
+       *          $ref: '#/definitions/UnProcessableError'
        */
       [
         'post', '/api/v1/challenges',
@@ -110,17 +112,128 @@ class ChallengesController {
         this.createChallenge.bind(this)
       ],
       /**
-       * @api {get} /api/v1/challenges/:id Get challenge by id
-       * @apiName GetChallenge
-       * @apiGroup Challenges
-       * @apiVersion 0.1.0
-       * @apiUse ChallengeObjectResponse
+       * @swagger
+       *
+       * /challenges/{id}:
+       *  get:
+       *    description: Get challenge by id
+       *    summary: Get challenge by id
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Challenge
+       *    parameters:
+       *      - name: id
+       *        in: path
+       *        required: true
+       *        type: string
+       *    responses:
+       *      200:
+       *        description: Challenge response
+       *        schema:
+       *         $ref: '#/definitions/ChallengeResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      404:
+       *        description: Error challenge not found
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: Challenge not found
        */
       [
         'get', '/api/v1/challenges/:id',
         this.authValidator.loggedOnly,
         this.challengeValidator.validateGetChallenge,
         this.getChallenge.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /challenges/subscribe:
+       *  post:
+       *    description: Subscribe to new notification
+       *    summary: Subscribe to new notification
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Challenge
+       *    parameters:
+       *      - name: ChallengeSubscribe
+       *        in: body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/ChallengeSubscribe'
+       *    responses:
+       *      200:
+       *        description: Subscribe response
+       *        schema:
+       *         $ref: '#/definitions/ChallengeSubscribeResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       */
+      [
+        'post', '/api/v1/challenges/subscribe',
+        this.authValidator.loggedOnly,
+        this.challengeValidator.subscribe,
+        this.subscribeToChallenges.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /challenges/invite:
+       *  post:
+       *    description: Invite user to new challenge
+       *    summary: Invite user to new challenge
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Challenge
+       *    parameters:
+       *      - name: ChallengeInvite
+       *        in: body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/ChallengeInvite'
+       *    responses:
+       *      200:
+       *        description: Invite response
+       *        schema:
+       *         $ref: '#/definitions/SuccessEmptyResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      402:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       */
+      [
+        'post', '/api/v1/challenges/invite',
+        this.authValidator.loggedOnly,
+        this.challengeValidator.invite,
+        this.sendInvite.bind(this)
       ]
     ];
   }
@@ -141,6 +254,31 @@ class ChallengesController {
     }
 
     return challenge;
+  }
+
+  async subscribeToChallenges(user, data) {
+    const result = await this.challengeService.checkUserSubscribe(user, data);
+    return result;
+  }
+
+  async sendInvite(user, {userId, challengeId}) {
+    try {
+      await this.challengeService.sendInvite(user, userId, challengeId);
+      return true;
+    } catch (err) {
+      switch (err) {
+        case this.challengeService.errors.CHALLENGE_NOT_FOUND:
+          throw new RestError('', 404, {challengeId: [{message: 'Challenge not found'}]});
+        case this.challengeService.errors.DO_NOT_RECEIVE_INVITATIONS:
+          throw new RestError('', 422, {challengeId: [{message: 'This is private challenge'}]});
+        case this.errors.UNABLE_TO_INVITE:
+          throw new RestError('', 422, {challengeId: [{message: 'Unable to invite'}]});
+        default:
+          throw err;
+      }
+
+    }
+
   }
 
 }

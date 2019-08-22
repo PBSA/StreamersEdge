@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
-const {operators, joinTypes} = require('../constants/challenge');
+const {operators, joinTypes} = require('../../constants/challenge');
 
 /**
  * @typedef {Object} ChallengeConditionModel
@@ -44,7 +44,7 @@ module.exports = {
       }
     }, {
       sequelize,
-      modelName: 'challenge-condition'
+      modelName: 'challenge-conditions'
     });
   },
   associate: (models) => {

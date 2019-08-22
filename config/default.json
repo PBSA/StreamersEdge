@@ -18,6 +18,10 @@
     "clientId": "",
     "clientSecret": ""
   },
+  "facebook": {
+    "clientId": "",
+    "clientSecret": ""
+  },
   "raven": {
     "enabled": true,
     "url": ""
@@ -45,9 +49,6 @@
     "paymentAccountWIF": "",
     "paymentReceiver": ""
   },
-  "pubg": {
-    "apiKey": ""
-  },
   "paypal": {
     "clientId": "",
     "secret": "",
@@ -55,5 +56,21 @@
   },
   "coinmarketcap": {
     "apiKey": ""
+  },
+  "vapid": {
+    "publicKey": "",
+    "privateKey": ""
+  },
+  "streamersEdgeServiceEmail": "",
+  "s3": {
+    "bucket": ""
+  },
+  "cdnUrl": "",
+  "pubg": {
+    "apiKey": ""
+  },
+  "swagger": {
+    "host": "virtserver.swaggerhub.com",
+    "schemes": ["https"]
   }
 }

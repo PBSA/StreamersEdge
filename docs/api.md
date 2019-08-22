@@ -2,6 +2,12 @@
 
 Backend module for StreamersEdge application
 
+- [Admin](#admin)
+	- [Get authorized admin profile](#get-authorized-admin-profile)
+	- [Ban user by id](#ban-user-by-id)
+	- [get user info by id](#get-user-info-by-id)
+	- [Get users with their status](#get-users-with-their-status)
+	
 - [Auth](#auth)
 	- [Confirm email](#confirm-email)
 	- [Logout](#logout)
@@ -13,6 +19,11 @@ Backend module for StreamersEdge application
 - [Challenges](#challenges)
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
+	- [Invite user to new challenge](#invite-user-to-new-challenge)
+	- [Subscribe to new notification](#subscribe-to-new-notification)
+	
+- [Facebook](#facebook)
+	- [Auth by facebook](#auth-by-facebook)
 	
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
@@ -22,8 +33,10 @@ Backend module for StreamersEdge application
 	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
+	- [Delete profile avatar](#delete-profile-avatar)
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
+	- [Add or change account avatar](#add-or-change-account-avatar)
 	
 - [Stream](#stream)
 	- [Get stream](#get-stream)
@@ -31,18 +44,141 @@ Backend module for StreamersEdge application
 	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
 	
 - [Transactions](#transactions)
-	- [Watch for donate transaction](#watch-for-donate-transaction)
 	- [Get user transactions](#get-user-transactions)
 	
 - [Twitch](#twitch)
 	- [Auth by twitch](#auth-by-twitch)
 	
 - [Users](#users)
+	- [Change notification status](#change-notification-status)
 	- [Get user by id](#get-user-by-id)
 	- [Get users list](#get-users-list)
 	
 
 
+# Admin
+
+## Get authorized admin profile
+
+<p>Get profile of authorized admin</p>
+
+	GET /api/v1/admin/profile
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": "5cc315041ec568398b99d7ca",
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "avatar": "",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer"
+  }
+}
+```
+## Ban user by id
+
+
+
+	POST /api/v1/admin/users/ban/:userId
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": true,
+ "status": 200
+}
+```
+## get user info by id
+
+
+
+	GET /api/v1/admin/users/ban/:userId
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "status": 200
+ "result": {
+    "id": "1",
+    "username": "test",
+    "youtube": "",
+    "facebook": "",
+    "peerplaysAccountName": "",
+    "twitchId": "42342",
+    "twitchLink": "https://www.twitch.tv/42342/videos",
+  }
+}
+```
+## Get users with their status
+
+<p>Get profiles of all users with their ban status</p>
+
+	GET /api/v1/admin/users
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| offset			| Number			| **optional** <p>Number of rows to skip</p>							|
+| limit			| Number			|  							|
+| flag			| String			| **optional** <p>Filter param to fetch users by status</p>							|
+| search			| String			| **optional** <p>Filter by username / email</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+[
+  {
+    "status": 200,
+    "result": {
+      "id": "1",
+      "username": "test",
+      "email": "test@email.com",
+      "isEmailVerified": true,
+      "twitchUserName": "",
+      "twitchId": "",
+      "googleId": "",
+      "googleName": "",
+      "avatar": "",
+      "youtube": "",
+      "facebook": "",
+      "peerplaysAccountName": "",
+      "bitcoinAddress": "",
+      "userType": "viewer",
+      "status": "banned",
+      "ban-histories.bannedById": "2"
+      "ban-histories.bannedAt": "2019-06-29T12:26:56.453Z"
+    }
+  }
+]
+```
 # Auth
 
 ## Confirm email
@@ -306,6 +442,84 @@ HTTP/1.1 200 OK
  "status": 200
 }
 ```
+## Invite user to new challenge
+
+
+
+	POST /api/v1/challenges/invite
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| userId			| Number			|  <p>Invited user Id</p>							|
+| challengeId			| Number			|  <p>Id of of challenge</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "userId": "6",
+  "challengeId": "107",
+}
+```
+
+## Subscribe to new notification
+
+
+
+	POST /api/v1/challenges/subscribe
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| endpoint			| String			|  <p>url for user</p>							|
+| expirationTime			| Number			|  <p>time of expiration</p>							|
+| keys			| Object			|  <p>object</p>							|
+| keys.p256dh			| String			| **optional** <p>string in p256dh</p>							|
+| keys.auth			| String			| **optional** <p>auth string</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  endpoint: 'https://fcm.googleapis.com/...lbTgv66-WEEWWK9bxZ_ksHhV_Z49vBvnYZdeS6cL6kk',
+  expirationTime: null,
+  keys:
+   {
+     p256dh: 'BOQWqnde....j7Dk-o',
+     auth: 'EYFQS0dh2KaPMXx9nmVPww'
+   }
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": "BOQWqndev7VP-UCLv9QIqDtkcNwRjyu4QBPDTCymL6ILHWklqWP1XxXRLmAYywsfgGs7K8Yub_6jQKiN0j7Dk-o",
+ "status": 200
+}
+```
+# Facebook
+
+## Auth by facebook
+
+
+
+	GET /api/v1/auth/facebook
+
+
 # Google
 
 ## Auth by google
@@ -354,17 +568,49 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": {
-    "id": "5cc315041ec568398b99d7ca",
+    "id": 7,
     "username": "test",
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
-    "avatar": "",
     "youtube": "",
     "facebook": "",
+    "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
-    "userType": "viewer"
+    "userType": "viewer",
+    "avatar": ""
+ }
+}
+```
+## Delete profile avatar
+
+
+
+	DELETE /api/v1/profile/avatar
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": 7,
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "youtube": "",
+    "facebook": "",
+    "twitch": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer",
+    "avatar": ""
  }
 }
 ```
@@ -384,18 +630,19 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": {
-    "id": "5cc315041ec568398b99d7ca",
+    "id": 7,
     "username": "test",
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
-    "avatar": "",
     "youtube": "",
     "facebook": "",
+    "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
-    "userType": "viewer"
-  }
+    "userType": "viewer",
+    "avatar": ""
+ }
 }
 ```
 ## Update authorized user profile
@@ -429,17 +676,57 @@ HTTP/1.1 200 OK
 {
   "status": 200,
   "result": {
-    "id": "5cc315041ec568398b99d7ca",
+    "id": 7,
     "username": "test",
     "email": "test@email.com",
     "twitchUserName": "",
     "googleName": "",
-    "avatar": "",
     "youtube": "",
     "facebook": "",
+    "twitch": "",
     "peerplaysAccountName": "",
     "bitcoinAddress": "",
-    "userType": "viewer"
+    "userType": "viewer",
+    "avatar": ""
+ }
+}
+```
+## Add or change account avatar
+
+
+
+	POST /api/v1/profile/avatar
+
+
+### Examples
+
+Request-Example:
+
+```
+"file": ...file...
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "status": 200,
+  "result": {
+    "id": 7,
+    "username": "test",
+    "email": "test@email.com",
+    "twitchUserName": "",
+    "googleName": "",
+    "youtube": "",
+    "facebook": "",
+    "twitch": "",
+    "peerplaysAccountName": "",
+    "bitcoinAddress": "",
+    "userType": "viewer",
+    "avatar": ""
  }
 }
 ```
@@ -549,60 +836,6 @@ HTTP/1.1 200 OK
 ```
 # Transactions
 
-## Watch for donate transaction
-
-
-
-	GET /api/v1/donate
-
-
-### Examples
-
-Request-Example:
-
-```
-{
-  "receiverId": "testaccount",
-  "donateOp": {
-     "ref_block_num": 52650,
-     "ref_block_prefix": 4002977493,
-	    "expiration": "2019-07-01T09:59:32",
-     "operations": [
-       [ 0,
-         {
-          "fee": {
-             "amount": "2000000",
-             "asset_id": "1.3.0"
-          },
-          "from": "1.2.33",
-          "to": "1.2.22",
-          "amount": {
-            "amount": "100",
-            "asset_id": "1.3.0"
-            },
-            }
-          ]
-       ],
-  "extensions": [],
-  "signatures": [
-      "1f034e960ec8a809f26923748a32bdd6e2fc2ebe4e8051ec3b1e53409f37eff3cc24063f37539814dc05206794fbe6562d5db51cffa662357e3ca7de0710a0d187"
-    ]
-   ]
- },
-}
-```
-
-### Success Response
-
-Success-Response:
-
-```
-HTTP/1.1 200 OK
-{
- "status": 200
- "result": true
-}
-```
 ## Get user transactions
 
 
@@ -650,6 +883,30 @@ HTTP/1.1 200 OK
 
 # Users
 
+## Change notification status
+
+
+
+	PATCH /api/v1/users/setNotification
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| set			| Boolean			|  <p>notification for user</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": [1],
+  "status": 200
+}
+```
 ## Get user by id
 
 

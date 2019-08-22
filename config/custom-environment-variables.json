@@ -15,6 +15,10 @@
     "clientId": "GOOGLE_CLIENT_ID",
     "clientSecret": "GOOGLE_CLIENT_SECRET"
   },
+  "facebook": {
+    "clientId": "FACEBOOK_CLIENT_ID",
+    "clientSecret": "FACEBOOK_CLIENT_SECRET"
+  },
   "raven": {
     "url": "RAVEN_URL"
   },
@@ -25,9 +29,6 @@
       "user": "MAILER_AUTH_USER",
       "pass": "MAILER_AUTH_PASS"
     }
-  },
-  "pubg": {
-    "apiKey": "PUBG_API_KEY"
   },
   "paypal": {
     "clientId": "PAYPAL_CLIENT_ID",
@@ -41,5 +42,12 @@
     "paymentAccountID": "PEERPLAYS_PAYMENT_ACCOUNT_ID",
     "paymentAccountWIF": "PEERPLAYS_PAYMENT_ACCOUNT_WIF",
     "paymentReceiver": "PEERPLAYS_PAYMENT_RECEIVER"
+  },
+  "vapid": {
+    "publicKey": "VAPID_PUBLIC_KEY",
+    "privateKey": "VAPID_PRIVATE_KEY"
+  },
+  "pubg": {
+    "apiKey": "PUBG_API_KEY"
   }
 }

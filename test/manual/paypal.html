@@ -15,15 +15,15 @@
         alert('Transaction completed by ' + details.payer.name.given_name);
         console.log(data.orderID);
         // Call your server to save the transaction
-        // return fetch('/paypal-transaction-complete', {
-        //   method: 'post',
-        //   headers: {
-        //     'content-type': 'application/json'
-        //   },
-        //   body: JSON.stringify({
-        //     orderID: data.orderID
-        //   })
-        // });
+        return fetch('/paypal-transaction-complete', {
+          method: 'post',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            orderID: data.orderID
+          })
+        });
       });
     }
   }).render('body');
