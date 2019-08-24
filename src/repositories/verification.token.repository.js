@@ -1,6 +1,7 @@
 const crypto = require('crypto-random-string');
 const {model} = require('../db/models/verification.token.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
+const Sequelize = require('sequelize');
 
 class VerificationTokenRepository extends BasePostgresRepository {
 
@@ -19,7 +20,10 @@ class VerificationTokenRepository extends BasePostgresRepository {
     return this.model.findOne({
       where: {
         isActive: true,
-        token
+        token,
+        createdAt:{
+          $lte: Sequelize.literal('NOW() - INTERVAL "10 minute"')
+        }
       }
     });
   }

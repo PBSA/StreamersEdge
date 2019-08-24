@@ -8,7 +8,7 @@
     "database": "streamers-edge"
   },
   "sessionSecret": "sessionSecret",
-  "cors": false,
+  "cors": true,
   "port": 3000,
   "twitch": {
     "clientId": "",
@@ -33,12 +33,13 @@
   "mailer": {
     "host": "",
     "port": 587,
+    "service": "gmail",
     "secure": false,
     "auth": {
-      "user": "",
-      "pass": ""
+      "user": "o.bari@pbsa.info",
+      "pass": "Bismillah@786"
     },
-    "sender": ""
+    "sender": "o.bari@pbsa.info"
   },
   "peerplays": {
     "peerplaysWS": "wss://api.ppy.blckchnd.com",
