@@ -205,6 +205,7 @@ class UserService {
   }
 
   async confirmEmail(ActiveToken) {
+ 
     const User = await this.userRepository.findByPk(ActiveToken.userId);
     User.isEmailVerified = true;
     await User.save();
