@@ -448,20 +448,17 @@ class ChallengesController {
       const result = await this.challengeService.getCleanObject(challengeId);
       const isUserInvited = await this.challengeInvitedUsersRepository.isUserInvited(result.id, user.id);
 
-      if (result.accessRule === accessRules.invite && result.userId !== user.id) {
-
-        if (!isUserInvited) {
-          throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
-        }
+      if (result.accessRule === accessRules.invite && result.userId !== user.id && !isUserInvited) {
+        throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
       }
 
       return result;
     } catch (err) {
       if (err === this.challengeService.errors.CHALLENGE_NOT_FOUND) {
         throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
-      } else {
-        throw err;
       }
+
+      throw err;
     }
   }
 
