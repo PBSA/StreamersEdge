@@ -6,19 +6,19 @@ const {types: txTypes} = require('../constants/transaction');
 class ChallengeService {
 
   /**
-   * @param {AppConfig} opts.config
-   * @param {ChallengeRepository} opts.challengeRepository
-   * @param {ChallengeConditionRepository} opts.challengeConditionRepository
-   * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
-   * @param {UserRepository} opts.userRepository
-   * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
-   * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
-   * @param {JoinedUsersRepository} opts.joinedUsersRepository
-   * @param {WebPushConnection} opts.webPushConnection
-   * @param {PeerplaysRepository} opts.peerplaysRepository
-   * @param {PeerplaysConnection} opts.peerplaysConnection
-   * @param {DbConnection} opts.dbConnection
-   */
+     * @param {AppConfig} opts.config
+     * @param {ChallengeRepository} opts.challengeRepository
+     * @param {ChallengeConditionRepository} opts.challengeConditionRepository
+     * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
+     * @param {UserRepository} opts.userRepository
+     * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
+     * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
+     * @param {JoinedUsersRepository} opts.joinedUsersRepository
+     * @param {WebPushConnection} opts.webPushConnection
+     * @param {PeerplaysRepository} opts.peerplaysRepository
+     * @param {PeerplaysConnection} opts.peerplaysConnection
+     * @param {DbConnection} opts.dbConnection
+     */
   constructor(opts) {
     this.config = opts.config;
     this.challengeRepository = opts.challengeRepository;
@@ -28,11 +28,8 @@ class ChallengeService {
     this.userRepository = opts.userRepository;
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
-    this.joinedUsersRepository = opts.joinedUsersRepository;
     this.webPushConnection = opts.webPushConnection;
     this.dbConnection = opts.dbConnection;
-    this.vapidData = {};
-    this.userVapidKeys = {};
     this.peerplaysRepository = opts.peerplaysRepository;
     this.transactionRepository = opts.transactionRepository;
     this.peerplaysConnection = opts.peerplaysConnection;
@@ -49,11 +46,11 @@ class ChallengeService {
   }
 
   /**
-   *
-   * @param creatorId
-   * @param challengeObject
-   * @returns {Promise<ChallengePublicObject>}
-   */
+     *
+     * @param creatorId
+     * @param challengeObject
+     * @returns {Promise<ChallengePublicObject>}
+     */
   async createChallenge(creatorId, challengeObject) {
     const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
 
@@ -76,7 +73,6 @@ class ChallengeService {
     }));
 
     if (challengeObject.accessRule === challengeConstants.accessRules.invite) {
-
       await Promise.all(challengeObject.invitedAccounts.map(async (id) => {
         await this.challengeInvitedUsersRepository.create({
           challengeId: Challenge.id,
@@ -84,11 +80,6 @@ class ChallengeService {
         });
 
         const toUser = await this.userRepository.findByPk(id);
-        const vapidKeys = this.userVapidKeys[id];
-
-        if (!vapidKeys) {
-          return;
-        }
 
         const invitation = {title: `You invited to ${Challenge.name}`};
 
@@ -122,13 +113,11 @@ class ChallengeService {
 
     if (challengeObject.accessRule === challengeConstants.accessRules.anyone) {
 
-      await Promise.all(Object.keys(this.vapidData).map(async (userId) => {
-        const notificationsState = await this.userRepository.findByPk(userId);
-
-        if (notificationsState.notifications === true) {
-          const vapidKeys = this.userVapidKeys[userId];
+      const users = await this.userRepository.findWithChallengeSubscribed();
+      await Promise.all(users.map(async (toUser) => {
+        if (toUser.notifications === true) {
           const notification = {title: `Challenge ${Challenge.name} appeared`};
-          await this.webPushConnection.sendNotification(this.vapidData[userId], vapidKeys, notification);
+          await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, notification);
         }
       }));
 
@@ -145,14 +134,14 @@ class ChallengeService {
       peerplaysFromId: challengeObject.depositOp.operations[0][1].from,
       peerplaysToId: challengeObject.depositOp.operations[0][1].to
     });
-
-    return this.getCleanObject(Challenge.id);
+    return this.getCleanObject(Challenge.id, challengeObject.invitedAccounts || creatorId);
   }
 
   /**
-   * @param challengeId
-   * @returns {Promise<ChallengePublicObject>}
-   */
+     * @param challengeId
+     * @param userId
+     * @returns {Promise<ChallengePublicObject>}
+     */
   async getCleanObject(challengeId, userId) {
     const Challenge = await this.challengeRepository.findByPk(challengeId, {
       include: [{
@@ -186,12 +175,8 @@ class ChallengeService {
   }
 
 
-  /**
-     * @param user
-     * @returns {Promise<String>}
-     */
   async checkUserSubscribe(user, data) {
-    if(user.vapidKey === null ){
+    if (user.vapidKey === null) {
       const vapidKeys = this.webPushConnection.generateVapidKeys();
       user.vapidKey = {
         ...vapidKeys
@@ -274,6 +259,7 @@ class ChallengeService {
   }
 
   async joinToChallenge(userId, challengeId, bcTx) {
+    const operation = bcTx.operations[0][1];
     return await this.dbConnection.sequelize.transaction(async (dbTx) => {
       if (operation.to !== this.config.peerplays.paymentReceiver) {
         throw new Error(this.errors.INVALID_TRANSACTION_RECEIVER);
@@ -288,10 +274,9 @@ class ChallengeService {
         this.challengeRepository.findByPk(challengeId, {transaction: dbTx})
       ]);
 
-      const operation = bcTx.operations[0][1];
-
       if (user.peerplaysAccountId === '') {
-        await this.userRepository.setPeerplaysAccountId(userId, operation.from);
+      //  await this.userRepository.setPeerplaysAccountId(userId, operation.from);
+        await this.userRepository.setAccountId(userId,operation.from);
       } else if (operation.from !== user.peerplaysAccountId) {
         throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
       }
@@ -314,7 +299,7 @@ class ChallengeService {
             reject(error);
           });
       });
-      await this.joinedUsersRepository.joinToChallenge(userId, challengeId, {transaction: dbTx});
+      await this.challengeInvitedUsersRepository.joinToChallenge(userId, challengeId,{transaction: dbTx});
       return res;
     });
 

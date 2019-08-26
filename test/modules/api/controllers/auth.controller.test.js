@@ -21,8 +21,8 @@ describe('POST /api/v1/auth/logout', () => {
   const validObject = {
     email: 'testlogout@email.com',
     username: 'test-testlogout',
-    password: 'MyPassword^',
-    repeatPassword: 'MyPassword^'
+    password: 'My1Password^',
+    repeatPassword: 'My1Password^'
   };
 
   beforeEach(async () => {
@@ -51,8 +51,8 @@ describe('POST /api/v1/auth/sign-up', () => {
   const validObject = {
     email: 'test@email.com',
     username: 'test-username',
-    password: 'MyPassword^',
-    repeatPassword: 'MyPassword^'
+    password: 'My1Password^',
+    repeatPassword: 'My1Password^'
   };
 
   it('should forbid. empty body', async () => {
@@ -147,8 +147,8 @@ describe('GET /api/v1/auth/confirm-email/:token', () => {
   const validObject = {
     email: 'test2@email.com',
     username: 'test-username-2',
-    password: 'MyPassword^',
-    repeatPassword: 'MyPassword^'
+    password: 'My1Password^',
+    repeatPassword: 'My1Password^'
   };
 
   it('should forbid. invalid token', async () => {
@@ -174,8 +174,8 @@ describe('POST /api/v1/auth/sign-in', () => {
   const validObject = {
     email: 'test3@email.com',
     username: 'test-username-3',
-    password: 'MyPassword^',
-    repeatPassword: 'MyPassword^'
+    password: 'My1Password^',
+    repeatPassword: 'My1Password^'
   };
 
   before(async () => {
@@ -191,8 +191,8 @@ describe('POST /api/v1/auth/sign-in', () => {
     const body = {
       email: 'test4@email.com',
       username: 'test-username-4',
-      password: 'MyPassword^',
-      repeatPassword: 'MyPassword^'
+      password: 'My1Password^',
+      repeatPassword: 'My1Password^'
     };
     await agent.post('/api/v1/auth/sign-up').send(body);
 
@@ -243,8 +243,8 @@ describe('POST /api/v1/auth/reset-password', () => {
   const validObject = {
     email: 'test5@email.com',
     username: 'test-username-5',
-    password: 'MyPassword^',
-    repeatPassword: 'MyPassword^'
+    password: 'My1Password^',
+    repeatPassword: 'My1Password^'
   };
 
   const newPassword = 'MyNewPassword';

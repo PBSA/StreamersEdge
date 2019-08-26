@@ -4,8 +4,8 @@ module.exports.login = async (agent, validObject, apiModule) => {
     validObject = {
       email: 'testglobal@email.com',
       username: 'test-global',
-      password: 'MyPassword^',
-      repeatPassword: 'MyPassword^'
+      password: 'My1Password^',
+      repeatPassword: 'My1Password^'
     };
   }
 
@@ -19,7 +19,8 @@ module.exports.login = async (agent, validObject, apiModule) => {
   }
 
   await agent.post('/api/v1/auth/logout');
-  const {body} = await agent.post('/api/v1/auth/sign-up').send(validObject);
+  const res = await agent.post('/api/v1/auth/sign-up').send(validObject);
+  const {body} = res;
   const {token} = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
     where: {userId: body.result.id}
   });

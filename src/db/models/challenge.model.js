@@ -257,6 +257,10 @@ const attributes = {
   conditionsText: {
     type: Sequelize.TEXT,
     allowNull: true
+  },
+  status: {
+    type: Sequelize.ENUM(Object.keys(challengeConstants.status).map((key) => challengeConstants.status[key])),
+    defaultValue: challengeConstants.status.open
   }
 };
 

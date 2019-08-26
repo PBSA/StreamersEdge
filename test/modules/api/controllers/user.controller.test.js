@@ -4,10 +4,11 @@ const request = require('supertest');
 const chai = require('chai');
 chai.use(require('chai-url'));
 const chaiHttp = require('chai-http');
-const constants = require('../../../constants.json');
+
 const {isSuccess, isError} = require('../helpers/test.response.helper');
 const {login} = require('../helpers/test.login.helper');
 const ApiModule = require('../api.module.test');
+const constants = require('../../../constants.json');
 
 chai.use(chaiHttp);
 let agent;
@@ -56,8 +57,8 @@ describe('GET /api/v1/users', () => {
   const validObject = {
     email: 'test@test.com',
     username: 'test123',
-    password: 'testtesttest',
-    repeatPassword: 'testtesttest'
+    password: 'My1Password^',
+    repeatPassword: 'My1Password^'
   };
 
   const validSingInObj = {

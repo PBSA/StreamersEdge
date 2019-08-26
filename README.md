@@ -91,10 +91,12 @@ To undo single migrations
 ## Testing
 
 1. Copy all the required configurations from development.json to test.json
-2. Make sure to point towards different database that development
+2. Make sure to point towards different database than development
 3. If this is first time, create a database for test as mentioned in test.json
 4. Run all migrations for test db
 ```NODE_ENV=test yarn db-migrate-all```  
+5. Run the test cases
+```yarn test:mocha```
 
 ## Docker
 

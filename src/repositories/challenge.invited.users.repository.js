@@ -36,6 +36,19 @@ class ChallengeInvitedUsersRepository extends BasePostgresRepository {
     }));
   }
 
+  /**
+   * @param user
+   * @param challengeId
+   * @param [options]
+   * @returns {Promise<ChallengeModel>}
+   */
+  async joinToChallenge(user, challengeId, options) {
+    return super.create({
+      challengeId: challengeId,
+      userId: user
+    }, options);
+  }
+
 }
 
 module.exports = ChallengeInvitedUsersRepository;

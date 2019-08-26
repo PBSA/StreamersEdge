@@ -112,8 +112,8 @@ class GamesJob {
         pubg."createdAt" as "createdAt"
       FROM "pubgs" as pubg 
       LEFT JOIN "pubg-participants" as participants ON pubg.id = "participants"."pubgId" 
-      LEFT JOIN "joined-users" AS joined ON joined."challengeId" = $1
-      LEFT JOIN "users" ON users."pubgUsername" = "participants"."name" AND users.id = joined."userId"
+      LEFT JOIN "challenge-invited-users" AS challengeInvitedUsers ON challengeInvitedUsers."challengeId" = $1
+      LEFT JOIN "users" ON users."pubgUsername" = "participants"."name" AND users.id = challenge-invited-users."userId"
       WHERE ${whereString}
       ORDER BY pubg."createdAt"
       LIMIT 1`;

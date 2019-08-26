@@ -19,6 +19,11 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false
+      },
+      joinedAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW
       }
     }, {
       sequelize,

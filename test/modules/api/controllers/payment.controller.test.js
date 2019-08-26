@@ -30,8 +30,8 @@ describe('POST /api/v1/payment', () => {
   const validObject = {
     email: 'test@testnew.com',
     username: 'test1234',
-    password: 'testtesttest',
-    repeatPassword: 'testtesttest'
+    password: 'My1Password^',
+    repeatPassword: 'My1Password^'
   };
 
   const validSingInObj = {

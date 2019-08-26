@@ -22,6 +22,58 @@ const {accessRules} = require('../../../constants/challenge');
  *            type: string
  *          auth:
  *            type: string
+ *  Challenge:
+ *    type: object
+ *    properties:
+ *      id:
+ *        type: number
+ *      name:
+ *        type: string
+ *      startDate:
+ *        type: string
+ *      endDate:
+ *        type: string
+ *      game:
+ *        type: string
+ *      accessRule:
+ *        type: number
+ *      ppyAmount:
+ *        type: number
+ *      conditionsText:
+ *        type: string
+ *      status:
+ *        type: string
+ *      userId:
+ *        type: string
+ *  Operation:
+ *    type: object
+ *    properties:
+ *      fee:
+ *        type: object
+ *        properties:
+ *          amount:
+ *            type: string
+ *            example: '20000'
+ *          asset_id:
+ *            type: string
+ *            example: '1.3.0'
+ *      from:
+ *        type: string
+ *        example: '1.2.67'
+ *      to:
+ *        type: string
+ *        example: '1.2.57'
+ *      amount:
+ *        type: object
+ *        properties:
+ *          amount:
+ *            type: string
+ *            example: '1000'
+ *          asset_id:
+ *            type: string
+ *            example: '1.3.0'
+ *      extensions:
+ *        type: array
  *  ChallengeInvite:
  *    type: object
  *    required:
@@ -32,7 +84,83 @@ const {accessRules} = require('../../../constants/challenge');
  *        type: number
  *      challengeId:
  *        type: number
- *
+ *  ChallengeJoin:
+ *    type: object
+ *    required:
+ *      - challengeId
+ *      - tx
+ *      - user
+ *    properties:
+ *      challengeId:
+ *        type: number
+ *        example: 11
+ *      tx:
+ *        type: object
+ *        properties:
+ *            ref_block_num:
+ *              type: number
+ *              example: 37792
+ *            ref_block_prefix:
+ *              type: number
+ *              example: 37792
+ *            expiration:
+ *              type: string
+ *              example:  '2019-06-28T14:17:57'
+ *            operations:
+ *               type: array
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   fee:
+ *                     type: object
+ *                     properties:
+ *                       amount:
+ *                         type: string
+ *                       asset_id:
+ *                         type: string
+ *                   from:
+ *                     type: string
+ *                   to:
+ *                     type: string
+ *                   amount:
+ *                     type: object
+ *                     properties:
+ *                       amount:
+ *                         type: string
+ *                       asset_id:
+ *                         type: string
+ *                       extensions:
+ *                         type: array
+ *                 example:
+ *                   - 0
+ *                   - fee:
+ *                       amount: '20000'
+ *                       asset_id: '1'
+ *                     from: '1.2.67'
+ *                     to: '1.2.57'
+ *                     amount:
+ *                      amount: '1000'
+ *                      asset_id: '1.3.0'
+ *                     extensions: []
+ *            extensions:
+ *              type: array
+ *              example: []
+ *            signatures:
+ *              type: array
+ *              example: [jhvjhhj787878gghjjh]
+ *  JoinSuccessResponse:
+ *    type: object
+ *    properties:
+ *      joinedAt:
+ *        type: string
+ *      isPlayed:
+ *        type: boolean
+ *      id:
+ *        type: number
+ *      challengeId:
+ *        type: number
+ *      userId:
+ *        type: number
  *  ChallengeResponse:
  *    allOf:
  *      - $ref: '#/definitions/SuccessResponse'
@@ -240,64 +368,65 @@ class ChallengesController {
       ],
 
       /**
-       * @api {get} /api/v1/challenges Get all challenges
-       * @apiName GetChallenges
-       * @apiGroup Challenges
-       * @apiVersion 0.1.0
-       * @apiUse ChallengeObjectResponse
+       * @swagger
+       *
+       * /challenges:
+       *  get:
+       *    description: Get all challenges
+       *    produces:
+       *      - application/json
+       *    tags:
+       *     - Challenge
+       *    responses:
+       *      200:
+       *        description: Get list of all challenge
+       *        schema:
+       *          $ref: '#/definitions/ChallengeResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
        */
       [
         'get', '/api/v1/challenges',
         this.authValidator.loggedOnly,
         this.getAllChallenges.bind(this)
       ],
+
+      /**
+       * @swagger
+       * /challenges/join:
+       *  post:
+       *    description:  Join user to challenge
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Challenge
+       *    parameters:
+       *      - name: ChallengeJoin
+       *        in: body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/ChallengeJoin'
+       *    responses:
+       *      200:
+       *        description: Join Success response
+       *        schema:
+       *         $ref: '#/definitions/JoinSuccessResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       */
       [
-        /**
-         * @api {post} /api/v1/challenges/join Join user to challenge
-         * @apiName JoinToChallenge
-         * @apiGroup Challenges
-         * @apiVersion 0.1.0
-         * @apiUse ChallengeObjectResponse
-         * @apiExample {json} Request-Example:
-         * {
-         *   "challengeId": "107",
-         *   "tx": {
-         *     {
-         *       ref_block_num: 37792,
-         *       ref_block_prefix: 2533853773,
-         *       expiration: '2019-06-28T14:17:57',
-         *       operations:
-         *         [0,
-         *           {
-         *             fee: {amount: '2000000', asset_id: '1.3.0'},
-         *             from: '1.2.54',
-         *             to: '1.2.55',
-         *             amount: {amount: '10000', asset_id: '1.3.0'},
-         *             memo: undefined,
-         *             extensions: []
-         *           }],
-         *       extensions: [],
-         *       signatures: ['1f2baa40114f8ed62ec1d3979b5...343716bd033262']
-         *     }
-         *   }
-         * }
-         * @apiParam {Number} challengeId User join to this challenge
-         * @apiParam {Object} tx transaction for this challenge
-         * @apiSuccessExample {json} Success-Response:
-         * HTTP/1.1 200 OK
-         * {
-         *  "result": {
-         *    "joinedAt": "2019-06-26T14:46:29.415Z",
-         *    "isPayed": false,
-         *    "id": 4,
-         *    "challengeId": 15,
-         *    "userId": 6,
-         *    "updatedAt": "2019-06-26T14:46:29.416Z",
-         *    "createdAt": "2019-06-26T14:46:29.416Z"
-         *  }
-         *  "status": 200
-         * }
-         */
         'post', '/api/v1/challenges/join',
         this.authValidator.loggedOnly,
         this.challengeValidator.joinToChallenge,
@@ -338,9 +467,7 @@ class ChallengesController {
   }
 
   async subscribeToChallenges(user, data) {
-    const result = await this.challengeService.checkUserSubscribe(user.id);
-    this.challengeService.vapidData[user.id] = data;
-
+    const result = await this.challengeService.checkUserSubscribe(user, data);
     return result;
 
   }
@@ -396,6 +523,7 @@ class ChallengesController {
           throw err;
       }
     }
+
   }
 
 }

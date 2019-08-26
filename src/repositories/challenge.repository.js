@@ -36,7 +36,7 @@ class ChallengeRepository extends BasePostgresRepository {
           required:false
         }
       ],
-      group: ['challenge.id','challenge-invited-users.id'],
+      group: ['challenges.id','challenge-invited-users.id'],
       order: ['id']
     });
   }
