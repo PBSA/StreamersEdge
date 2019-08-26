@@ -2,6 +2,8 @@ const crypto = require('crypto-random-string');
 const {model} = require('../db/models/reset.token.model');
 const {model: UserModel} = require('../db/models/user.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
+const {Op} = require('sequelize');
+const moment = require('moment');
 
 class ResetTokenRepository extends BasePostgresRepository {
 
@@ -20,7 +22,10 @@ class ResetTokenRepository extends BasePostgresRepository {
     return this.model.findOne({
       where: {
         isActive: true,
-        token
+        token,
+        createdAt:{
+          [Op.gte]: moment(new Date()).subtract(10, 'minutes')
+        }
       },
       include: {model: UserModel, required: true}
     });

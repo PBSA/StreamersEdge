@@ -116,8 +116,8 @@ class AuthValidator extends BaseValidator {
     const querySchema = {
       token: Joi.string().required()
     };
-
     return this.validate(querySchema, null, async (req, query) => {
+     
       const {token} = query;
 
       const ActiveToken = await this.verificationTokenRepository.findActive(token);
