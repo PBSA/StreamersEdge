@@ -33,13 +33,13 @@
   "mailer": {
     "host": "",
     "port": 587,
-    "service": "gmail",
+    "service": "",
     "secure": false,
     "auth": {
-      "user": "o.bari@pbsa.info",
-      "pass": "Bismillah@786"
+      "user": "",
+      "pass": ""
     },
-    "sender": "o.bari@pbsa.info"
+    "sender": ""
   },
   "peerplays": {
     "peerplaysWS": "wss://api.ppy.blckchnd.com",
