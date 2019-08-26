@@ -14,9 +14,10 @@ class GoogleRepository {
 
     if (profile.data.items.length === 1 && profile.data.items[0].status.privacyStatus === 'public') {
       return `https://www.youtube.com/channel/${profile.data.items[0].id}`;
+    } else {
+      return new Error('User does not have Youtube channel');
     }
 
-    return '';
   }
 
 }
