@@ -112,17 +112,15 @@ class AuthValidator extends BaseValidator {
     });
   }
 
-  validateConfirmEmail(user) {
+  validateConfirmEmail() {
     const querySchema = {
       token: Joi.string().required()
     };
-    console.log(user);
     return this.validate(querySchema, null, async (req, query) => {
      
       const {token} = query;
 
       const ActiveToken = await this.verificationTokenRepository.findActive(token);
-      console.log(ActiveToken);
 
       if (!ActiveToken) {
         throw new ValidateError(404, 'Token not found');
