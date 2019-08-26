@@ -183,11 +183,11 @@ const {accessRules} = require('../../../constants/challenge');
 class ChallengesController {
 
   /**
-   * @param {AuthValidator} opts.authValidator
-   * @param {ChallengeValidator} opts.challengeValidator
-   * @param {ChallengeService} opts.challengeService
-   * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
-   */
+     * @param {AuthValidator} opts.authValidator
+     * @param {ChallengeValidator} opts.challengeValidator
+     * @param {ChallengeService} opts.challengeService
+     * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
+     */
   constructor(opts) {
     this.authValidator = opts.authValidator;
     this.challengeService = opts.challengeService;
@@ -196,46 +196,46 @@ class ChallengesController {
   }
 
   /**
-   * Array of routes processed by this controller
-   * @returns {*[]}
-   */
+     * Array of routes processed by this controller
+     * @returns {*[]}
+     */
   getRoutes() {
     return [
       /**
-       * @swagger
-       *
-       * /challenges:
-       *  post:
-       *    description: Create new challenge
-       *    summary: Create new challenge
-       *    produces:
-       *      - application/json
-       *    tags:
-       *      - Challenge
-       *    parameters:
-       *      - name: challenge
-       *        in:  body
-       *        required: true
-       *        schema:
-       *          $ref: '#/definitions/ChallengeFullNew'
-       *    responses:
-       *      200:
-       *        description: Challenge response
-       *        schema:
-       *          $ref: '#/definitions/ChallengeResponse'
-       *      401:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       *      400:
-       *        description: Error form validation
-       *        schema:
-       *          $ref: '#/definitions/ValidateError'
-       *      422:
-       *        description: Error unable to sent invitation
-       *        schema:
-       *          $ref: '#/definitions/UnProcessableError'
-       */
+             * @swagger
+             *
+             * /challenges:
+             *  post:
+             *    description: Create new challenge
+             *    summary: Create new challenge
+             *    produces:
+             *      - application/json
+             *    tags:
+             *      - Challenge
+             *    parameters:
+             *      - name: challenge
+             *        in:  body
+             *        required: true
+             *        schema:
+             *          $ref: '#/definitions/ChallengeFullNew'
+             *    responses:
+             *      200:
+             *        description: Challenge response
+             *        schema:
+             *          $ref: '#/definitions/ChallengeResponse'
+             *      401:
+             *        description: Error user unauthorized
+             *        schema:
+             *          $ref: '#/definitions/UnauthorizedError'
+             *      400:
+             *        description: Error form validation
+             *        schema:
+             *          $ref: '#/definitions/ValidateError'
+             *      422:
+             *        description: Error unable to sent invitation
+             *        schema:
+             *          $ref: '#/definitions/UnProcessableError'
+             */
       [
         'post', '/api/v1/challenges',
         this.authValidator.loggedOnly,
@@ -243,45 +243,45 @@ class ChallengesController {
         this.createChallenge.bind(this)
       ],
       /**
-       * @swagger
-       *
-       * /challenges/{id}:
-       *  get:
-       *    description: Get challenge by id
-       *    summary: Get challenge by id
-       *    produces:
-       *      - application/json
-       *    tags:
-       *      - Challenge
-       *    parameters:
-       *      - name: id
-       *        in: path
-       *        required: true
-       *        type: string
-       *    responses:
-       *      200:
-       *        description: Challenge response
-       *        schema:
-       *         $ref: '#/definitions/ChallengeResponse'
-       *      400:
-       *        description: Error form validation
-       *        schema:
-       *          $ref: '#/definitions/ValidateError'
-       *      401:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       *      404:
-       *        description: Error challenge not found
-       *        schema:
-       *          properties:
-       *            status:
-       *              type: number
-       *              example: 404
-       *            error:
-       *              type: string
-       *              example: Challenge not found
-       */
+             * @swagger
+             *
+             * /challenges/{id}:
+             *  get:
+             *    description: Get challenge by id
+             *    summary: Get challenge by id
+             *    produces:
+             *      - application/json
+             *    tags:
+             *      - Challenge
+             *    parameters:
+             *      - name: id
+             *        in: path
+             *        required: true
+             *        type: string
+             *    responses:
+             *      200:
+             *        description: Challenge response
+             *        schema:
+             *         $ref: '#/definitions/ChallengeResponse'
+             *      400:
+             *        description: Error form validation
+             *        schema:
+             *          $ref: '#/definitions/ValidateError'
+             *      401:
+             *        description: Error user unauthorized
+             *        schema:
+             *          $ref: '#/definitions/UnauthorizedError'
+             *      404:
+             *        description: Error challenge not found
+             *        schema:
+             *          properties:
+             *            status:
+             *              type: number
+             *              example: 404
+             *            error:
+             *              type: string
+             *              example: Challenge not found
+             */
       [
         'get', '/api/v1/challenges/:id',
         this.authValidator.loggedOnly,
@@ -289,36 +289,36 @@ class ChallengesController {
         this.getChallenge.bind(this)
       ],
       /**
-       * @swagger
-       *
-       * /challenges/subscribe:
-       *  post:
-       *    description: Subscribe to new notification
-       *    summary: Subscribe to new notification
-       *    produces:
-       *      - application/json
-       *    tags:
-       *      - Challenge
-       *    parameters:
-       *      - name: ChallengeSubscribe
-       *        in: body
-       *        required: true
-       *        schema:
-       *          $ref: '#/definitions/ChallengeSubscribe'
-       *    responses:
-       *      200:
-       *        description: Subscribe response
-       *        schema:
-       *         $ref: '#/definitions/ChallengeSubscribeResponse'
-       *      400:
-       *        description: Error form validation
-       *        schema:
-       *          $ref: '#/definitions/ValidateError'
-       *      401:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       */
+             * @swagger
+             *
+             * /challenges/subscribe:
+             *  post:
+             *    description: Subscribe to new notification
+             *    summary: Subscribe to new notification
+             *    produces:
+             *      - application/json
+             *    tags:
+             *      - Challenge
+             *    parameters:
+             *      - name: ChallengeSubscribe
+             *        in: body
+             *        required: true
+             *        schema:
+             *          $ref: '#/definitions/ChallengeSubscribe'
+             *    responses:
+             *      200:
+             *        description: Subscribe response
+             *        schema:
+             *         $ref: '#/definitions/ChallengeSubscribeResponse'
+             *      400:
+             *        description: Error form validation
+             *        schema:
+             *          $ref: '#/definitions/ValidateError'
+             *      401:
+             *        description: Error user unauthorized
+             *        schema:
+             *          $ref: '#/definitions/UnauthorizedError'
+             */
       [
         'post', '/api/v1/challenges/subscribe',
         this.authValidator.loggedOnly,
@@ -326,40 +326,40 @@ class ChallengesController {
         this.subscribeToChallenges.bind(this)
       ],
       /**
-       * @swagger
-       *
-       * /challenges/invite:
-       *  post:
-       *    description: Invite user to new challenge
-       *    summary: Invite user to new challenge
-       *    produces:
-       *      - application/json
-       *    tags:
-       *      - Challenge
-       *    parameters:
-       *      - name: ChallengeInvite
-       *        in: body
-       *        required: true
-       *        schema:
-       *          $ref: '#/definitions/ChallengeInvite'
-       *    responses:
-       *      200:
-       *        description: Invite response
-       *        schema:
-       *         $ref: '#/definitions/SuccessEmptyResponse'
-       *      400:
-       *        description: Error form validation
-       *        schema:
-       *          $ref: '#/definitions/ValidateError'
-       *      401:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       *      402:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       */
+             * @swagger
+             *
+             * /challenges/invite:
+             *  post:
+             *    description: Invite user to new challenge
+             *    summary: Invite user to new challenge
+             *    produces:
+             *      - application/json
+             *    tags:
+             *      - Challenge
+             *    parameters:
+             *      - name: ChallengeInvite
+             *        in: body
+             *        required: true
+             *        schema:
+             *          $ref: '#/definitions/ChallengeInvite'
+             *    responses:
+             *      200:
+             *        description: Invite response
+             *        schema:
+             *         $ref: '#/definitions/SuccessEmptyResponse'
+             *      400:
+             *        description: Error form validation
+             *        schema:
+             *          $ref: '#/definitions/ValidateError'
+             *      401:
+             *        description: Error user unauthorized
+             *        schema:
+             *          $ref: '#/definitions/UnauthorizedError'
+             *      402:
+             *        description: Error user unauthorized
+             *        schema:
+             *          $ref: '#/definitions/UnauthorizedError'
+             */
       [
         'post', '/api/v1/challenges/invite',
         this.authValidator.loggedOnly,
@@ -368,29 +368,29 @@ class ChallengesController {
       ],
 
       /**
-       * @swagger
-       *
-       * /challenges:
-       *  get:
-       *    description: Get all challenges
-       *    produces:
-       *      - application/json
-       *    tags:
-       *     - Challenge
-       *    responses:
-       *      200:
-       *        description: Get list of all challenge
-       *        schema:
-       *          $ref: '#/definitions/ChallengeResponse'
-       *      400:
-       *        description: Error form validation
-       *        schema:
-       *          $ref: '#/definitions/ValidateError'
-       *      401:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       */
+             * @swagger
+             *
+             * /challenges:
+             *  get:
+             *    description: Get all challenges
+             *    produces:
+             *      - application/json
+             *    tags:
+             *     - Challenge
+             *    responses:
+             *      200:
+             *        description: Get list of all challenge
+             *        schema:
+             *          $ref: '#/definitions/ChallengeResponse'
+             *      400:
+             *        description: Error form validation
+             *        schema:
+             *          $ref: '#/definitions/ValidateError'
+             *      401:
+             *        description: Error user unauthorized
+             *        schema:
+             *          $ref: '#/definitions/UnauthorizedError'
+             */
       [
         'get', '/api/v1/challenges',
         this.authValidator.loggedOnly,
@@ -398,34 +398,34 @@ class ChallengesController {
       ],
 
       /**
-       * @swagger
-       * /challenges/join:
-       *  post:
-       *    description:  Join user to challenge
-       *    produces:
-       *      - application/json
-       *    tags:
-       *      - Challenge
-       *    parameters:
-       *      - name: ChallengeJoin
-       *        in: body
-       *        required: true
-       *        schema:
-       *          $ref: '#/definitions/ChallengeJoin'
-       *    responses:
-       *      200:
-       *        description: Join Success response
-       *        schema:
-       *         $ref: '#/definitions/JoinSuccessResponse'
-       *      400:
-       *        description: Error form validation
-       *        schema:
-       *          $ref: '#/definitions/ValidateError'
-       *      401:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       */
+             * @swagger
+             * /challenges/join:
+             *  post:
+             *    description:  Join user to challenge
+             *    produces:
+             *      - application/json
+             *    tags:
+             *      - Challenge
+             *    parameters:
+             *      - name: ChallengeJoin
+             *        in: body
+             *        required: true
+             *        schema:
+             *          $ref: '#/definitions/ChallengeJoin'
+             *    responses:
+             *      200:
+             *        description: Join Success response
+             *        schema:
+             *         $ref: '#/definitions/JoinSuccessResponse'
+             *      400:
+             *        description: Error form validation
+             *        schema:
+             *          $ref: '#/definitions/ValidateError'
+             *      401:
+             *        description: Error user unauthorized
+             *        schema:
+             *          $ref: '#/definitions/UnauthorizedError'
+             */
       [
         'post', '/api/v1/challenges/join',
         this.authValidator.loggedOnly,
@@ -446,22 +446,21 @@ class ChallengesController {
   async getChallenge(user, challengeId) {
     try {
       const result = await this.challengeService.getCleanObject(challengeId);
+      const isUserInvited = await this.challengeInvitedUsersRepository.isUserInvited(result.id, user.id);
 
       if (result.accessRule === accessRules.invite && result.userId !== user.id) {
 
-        if (!await this.challengeInvitedUsersRepository.isUserInvited(result.id, user.id)) {
+        if (!isUserInvited) {
           throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
         }
       }
 
       return result;
     } catch (err) {
-      switch (err) {
-        case this.challengeService.errors.CHALLENGE_NOT_FOUND:
-          throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
-
-        default:
-          throw err;
+      if (err === this.challengeService.errors.CHALLENGE_NOT_FOUND) {
+        throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
+      } else {
+        throw err;
       }
     }
   }

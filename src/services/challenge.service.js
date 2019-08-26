@@ -269,28 +269,7 @@ class ChallengeService {
         throw new Error(this.errors.INVALID_TRANSACTION_AMOUNT);
       }
 
-      const [user, challenge] = await Promise.all([
-        this.userRepository.findByPk(userId, {transaction: dbTx}),
-        this.challengeRepository.findByPk(challengeId, {transaction: dbTx})
-      ]);
-
-      if (user.peerplaysAccountId === '') {
-      //  await this.userRepository.setPeerplaysAccountId(userId, operation.from);
-        await this.userRepository.setAccountId(userId,operation.from);
-      } else if (operation.from !== user.peerplaysAccountId) {
-        throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
-      }
-
-      if (!challenge) {
-        throw new Error(this.errors.CHALLENGE_NOT_FOUND);
-      }
-
-      if (challenge.accessRule === challengeConstants.accessRules.invite) {
-        if (!await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
-          throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
-        }
-      }
-
+      await this.validateUserChallengeTransaction(userId, challengeId, dbTx, operation);
       const res = await new Promise(async (resolve, reject) => {
         await this.peerplaysConnection.networkAPI.exec('broadcast_transaction_with_callback', [resolve, bcTx])
           .catch((err) => {
@@ -303,6 +282,29 @@ class ChallengeService {
       return res;
     });
 
+  }
+  async validateUserChallengeTransaction(userId, challengeId, dbTx, operation) {
+
+    const [user, challenge] = await Promise.all([
+      this.userRepository.findByPk(userId, {transaction: dbTx}),
+      this.challengeRepository.findByPk(challengeId, {transaction: dbTx})
+    ]);
+
+    if (user.peerplaysAccountId === '') {
+      await this.userRepository.setAccountId(userId,operation.from);
+    } else if (operation.from !== user.peerplaysAccountId) {
+      throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
+    }
+
+    if (!challenge) {
+      throw new Error(this.errors.CHALLENGE_NOT_FOUND);
+    }
+
+    if (challenge.accessRule === challengeConstants.accessRules.invite) {
+      if (!await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
+        throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
+      }
+    }
   }
 
 }
