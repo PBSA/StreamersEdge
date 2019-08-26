@@ -25,7 +25,7 @@ class DbConnection extends BaseConnection {
     logger.trace('Start connect to db');
 
     this.sequelize = new Sequelize(this._url, {
-      logging: false
+      logging: true
     });
     logger.info('DB is connected');
     await this.initModels();

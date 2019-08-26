@@ -312,6 +312,10 @@ class AuthController {
   }
 
   async confirmEmail(user, ActiveToken) {
+    if (user && user.id != ActiveToken.id) {
+      throw new ValidateError(401, 'unauthorized');
+    }
+
     await this.userService.confirmEmail(ActiveToken);
     return true;
   }
