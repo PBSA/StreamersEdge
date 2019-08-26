@@ -42,7 +42,7 @@ class UserRepository extends BasePostgresRepository {
 
   async searchUsers(search, limit, offset) {
     const filter = search ? {
-      peerplaysAccountName: {
+      username: {
         [Sequelize.Op.like]: `%${search}%`
       }
     } : null;
