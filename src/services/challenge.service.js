@@ -300,10 +300,9 @@ class ChallengeService {
       throw new Error(this.errors.CHALLENGE_NOT_FOUND);
     }
 
-    if (challenge.accessRule === challengeConstants.accessRules.invite) {
-      if (!await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
-        throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
-      }
+    if (challenge.accessRule === challengeConstants.accessRules.invite &&
+        !await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
+      throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
     }
   }
 
