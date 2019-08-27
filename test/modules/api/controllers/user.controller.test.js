@@ -57,8 +57,8 @@ describe('GET /api/v1/users', () => {
   const validObject = {
     email: 'test@test.com',
     username: 'test123',
-    password: 'testtesttest',
-    repeatPassword: 'testtesttest'
+    password: 'testtesttesT@7',
+    repeatPassword: 'testtesttesT@7'
   };
 
   const validSingInObj = {
