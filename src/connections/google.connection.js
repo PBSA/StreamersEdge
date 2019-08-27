@@ -27,7 +27,7 @@ class GoogleConnection extends BaseConnection {
     const youtubeService = google.youtube('v3');
     return youtubeService.channels.list({
       auth: auth,
-      part: 'snippet',
+      part: 'snippet,status',
       mine: true
     });
   }

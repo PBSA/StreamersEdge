@@ -66,7 +66,8 @@ class PeerplaysConnection extends BaseConnection {
     });
   }
 
-  disconnect() {}
+  disconnect() {
+  }
 
 }
 

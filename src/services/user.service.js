@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const RestError = require('../errors/rest.error');
+const {types: txTypes} = require('../constants/transaction');
 const invitationConstants = require('../constants/invitation');
 
 class UserService {
@@ -94,11 +95,11 @@ class UserService {
     User[`${network}Id`] = id;
 
     switch(network) {
-      case 'twitch': User.twitchUserName = username; 
+      case 'twitch': User.twitchUserName = username;
         break;
-      case 'google': User.googleName = username; 
+      case 'google': User.googleName = username;
         break;
-      case 'facebook': User.facebook = username; 
+      case 'facebook': User.facebook = username;
         break;
       default: throw new RestError(`Unexpected Network ${network}`);
     }
@@ -204,6 +205,7 @@ class UserService {
   }
 
   async confirmEmail(ActiveToken) {
+ 
     const User = await this.userRepository.findByPk(ActiveToken.userId);
     User.isEmailVerified = true;
     await User.save();
@@ -337,6 +339,36 @@ class UserService {
   async getUserYoutubeLink(tokens) {
     return this.googleRepository.getYoutubeLink(tokens);
   }
+
+  /**
+   *
+   * @param {Number} userId
+   * @param {Number} receiverId
+   * @param signTx
+   * @return {Promise<*>}
+   */
+
+
+  async donate(userId, receiverId, donateOp){
+    const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(donateOp);
+
+    await this.transactionRepository.create({
+      txId: broadcastResult[0].id,
+      blockNum: broadcastResult[0].block_num,
+      trxNum: broadcastResult[0].trx_num,
+      ppyAmountValue: donateOp.operations[0][1].amount.amount,
+      type: txTypes.donate,
+      userId,
+      receiverUserId: receiverId,
+      challengeId: null,
+      peerplaysFromId: donateOp.operations[0][1].from,
+      peerplaysToId: donateOp.operations[0][1].to
+    });
+
+    return true;
+  }
+
+
 }
 
 module.exports = UserService;

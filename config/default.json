@@ -33,6 +33,7 @@
   "mailer": {
     "host": "",
     "port": 587,
+    "service": "",
     "secure": false,
     "auth": {
       "user": "",
