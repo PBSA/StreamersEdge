@@ -98,6 +98,11 @@ class TransactionController {
     skip = skip || 0;
     return await this.userService.getUserTransactions(user.id, skip, limit);
   }
+  
+  async createDonateTransaction(user, {receiverId, donateOp}) {
+    return await this.userService.donate(user.id, receiverId, donateOp);
+  }
+
 
 }
 

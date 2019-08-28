@@ -4,8 +4,8 @@ module.exports.login = async (agent, validObject, apiModule) => {
     validObject = {
       email: 'testglobal@email.com',
       username: 'test-global',
-      password: 'My1Password^',
-      repeatPassword: 'My1Password^'
+      password: 'MyPassword^007',
+      repeatPassword: 'MyPassword^007'
     };
   }
 

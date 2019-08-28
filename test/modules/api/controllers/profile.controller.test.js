@@ -155,8 +155,8 @@ describe('PATCH /api/v1/profile', () => {
     await login(agent, {
       email: 'newchangeemailtest@email.com',
       username: 'test-changeemailtest',
-      password: 'My1Password^',
-      repeatPassword: 'My1Password^'
+      password: 'MyPassword^007',
+      repeatPassword: 'MyPassword^007'
     }, apiModule);
     const profileResponse = await agent.get('/api/v1/profile');
     const profile = profileResponse.body.result;
