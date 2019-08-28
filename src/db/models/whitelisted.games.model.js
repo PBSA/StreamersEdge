@@ -25,7 +25,7 @@ class WhitelistedGames extends Model {
   getPublic() {
     return {
       id: this.id,
-      fromUser: this.fromUser,
+      fromGame: this.fromGame,
       toUser: this.toUser
     };
   }

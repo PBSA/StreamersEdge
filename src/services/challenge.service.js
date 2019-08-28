@@ -160,7 +160,7 @@ class ChallengeService {
 
     switch (Challenge.accessRule) {
       case challengeConstants.accessRules.invite: {
-        const checkAccess = await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId);
+        const checkAccess = await this.challengeInvitedUsersRepository.isUserInvited(challengeId, userId);
 
         if (!checkAccess) {
           throw this.errors.DO_NOT_RECEIVE_INVITATIONS;
@@ -301,7 +301,7 @@ class ChallengeService {
     }
 
     if (challenge.accessRule === challengeConstants.accessRules.invite &&
-        !await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
+        !await this.challengeInvitedUsersRepository.isUserInvited(challengeId, userId)) {
       throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
     }
   }

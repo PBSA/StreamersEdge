@@ -27,14 +27,14 @@ class WhitelistedGamesRepository extends BasePostgresRepository {
 
   /**
    * @param toUserId
-   * @param fromChallengeId
+   * @param fromGame
    * @returns {Promise<Boolean>}
    */
-  async isWhitelistedFor(toUserId, fromChallengeId) {
+  async isWhitelistedFor(toUserId, fromGame) {
     return !!(await this.model.findOne({
       where: {
         toUser: toUserId,
-        fromUser: fromChallengeId
+        fromGame: fromGame
       }
     }));
   }

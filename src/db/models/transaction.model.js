@@ -35,7 +35,8 @@ module.exports = {
       ppyAmountValue: {type: Sequelize.INTEGER},
       type: {type: Sequelize.ENUM(Object.keys(types).map((key) => types[key]))},
       peerplaysFromId: {type: Sequelize.STRING},
-      peerplaysToId: {type: Sequelize.STRING}
+      peerplaysToId: {type: Sequelize.STRING},
+      receiverUserId: {type: Sequelize.INTEGER}
     }, {
       sequelize,
       modelName: 'transactions'
