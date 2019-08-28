@@ -23,8 +23,8 @@ class StreamValidator extends BaseValidator {
   validateGetStreams() {
     const querySchema = {
       search: Joi.string().regex(/^[a-zA-Z0-9.-]+$/).allow('').max(254),
-      limit: Joi.number().max(100).default(20),
-      skip: Joi.number().default(0),
+      limit: Joi.number().min(1).max(100).default(20),
+      skip: Joi.number().integer().min(0).default(0),
       orderBy: Joi.string().valid(streamConstants.orderByTypes).default('id'),
       isAscending: Joi.bool().default(true),
       isActive: Joi.bool().default(true)

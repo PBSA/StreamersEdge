@@ -40,8 +40,8 @@ class ChallengeService {
       INVALID_TRANSACTION_SENDER: 'INVALID_TRANSACTION_SENDER',
       INVALID_TRANSACTION_RECEIVER: 'INVALID_TRANSACTION_RECEIVER',
       INVALID_TRANSACTION_AMOUNT: 'INVALID_TRANSACTION_AMOUNT',
-      UNABLE_TO_INVITE: 'UNABLE_TO_INVITE'
-
+      UNABLE_TO_INVITE: 'UNABLE_TO_INVITE',
+      INVITED_USER_NOT_FOUND: 'INVITED_USER_NOT_FOUND'
     };
   }
 
@@ -203,6 +203,19 @@ class ChallengeService {
     }
 
     const toUser = await this.userRepository.findByPk(toUserWithId);
+
+    if(!toUser){
+      throw this.errors.INVITED_USER_NOT_FOUND;
+    }
+
+    if(!toUser.vapidKey){
+      const vapidKeys = this.webPushConnection.generateVapidKeys();
+      toUser.vapidKey = {
+        ...vapidKeys
+      };
+    }
+
+    toUser.save();
 
     const vapidKeys = toUser.vapidKey;
     const invitation = {title: `You invited to ${challenge.name}`};

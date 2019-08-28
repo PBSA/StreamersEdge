@@ -16,8 +16,8 @@ class TransactionValidator extends BaseValidator {
 
   getTransactions() {
     const querySchema = {
-      limit: Joi.number().required().max(100),
-      skip: Joi.number()
+      limit: Joi.number().required().min(1).max(100).default(20),
+      skip: Joi.number().integer().min(0).default(0)
     };
 
     return this.validate(querySchema, null, (req, query) => query);

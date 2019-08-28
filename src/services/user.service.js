@@ -7,19 +7,19 @@ const invitationConstants = require('../constants/invitation');
 class UserService {
 
   /**
-   * @param {DbConnection} opts.dbConnection
-   * @param {UserRepository} opts.userRepository
-   * @param {PeerplaysRepository} opts.peerplaysRepository
-   * @param {VerificationTokenRepository} opts.verificationTokenRepository
-   * @param {ResetTokenRepository} opts.resetTokenRepository
-   * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
-   * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
-   * @param {MailService} opts.mailService
-   * @param {PubgApiRepository} opts.pubgApiRepository
-   * @param {TransactionRepository} opts.transactionRepository
-   * @param {FileService} opts.fileService
-   * @param {GoogleRepository} opts.googleRepository
-   */
+     * @param {DbConnection} opts.dbConnection
+     * @param {UserRepository} opts.userRepository
+     * @param {PeerplaysRepository} opts.peerplaysRepository
+     * @param {VerificationTokenRepository} opts.verificationTokenRepository
+     * @param {ResetTokenRepository} opts.resetTokenRepository
+     * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
+     * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
+     * @param {MailService} opts.mailService
+     * @param {PubgApiRepository} opts.pubgApiRepository
+     * @param {TransactionRepository} opts.transactionRepository
+     * @param {FileService} opts.fileService
+     * @param {GoogleRepository} opts.googleRepository
+     */
   constructor(opts) {
     this.dbConnection = opts.dbConnection;
     this.userRepository = opts.userRepository;
@@ -35,6 +35,7 @@ class UserService {
 
     this.errors = {
       USER_NOT_FOUND: 'USER_NOT_FOUND',
+      NOTIFICATION_PREFERENCE_NOT_FOUND: 'NOTIFICATION_PREFERENCE_NOT_FOUND',
       TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS'
     };
 
@@ -42,12 +43,12 @@ class UserService {
   }
 
   /**
-   * Find user by network account id and create row if not exists
-   * @param {String} network
-   * @param account
-   * @param {UserModel|null} LoggedUser
-   * @returns {Promise<UserModel>}
-   */
+     * Find user by network account id and create row if not exists
+     * @param {String} network
+     * @param account
+     * @param {UserModel|null} LoggedUser
+     * @returns {Promise<UserModel>}
+     */
   async getUserBySocialNetworkAccount(network, account, LoggedUser = null) {
 
     const {id, email, picture, username, youtube} = account;
@@ -94,14 +95,18 @@ class UserService {
 
     User[`${network}Id`] = id;
 
-    switch(network) {
-      case 'twitch': User.twitchUserName = username;
+    switch (network) {
+      case 'twitch':
+        User.twitchUserName = username;
         break;
-      case 'google': User.googleName = username;
+      case 'google':
+        User.googleName = username;
         break;
-      case 'facebook': User.facebook = username;
+      case 'facebook':
+        User.facebook = username;
         break;
-      default: throw new RestError(`Unexpected Network ${network}`);
+      default:
+        throw new RestError(`Unexpected Network ${network}`);
     }
 
     if (!User.email && !emailIsUsed) {
@@ -129,19 +134,19 @@ class UserService {
   }
 
   /**
-   * @param {UserModel} User
-   * @returns {Promise<UserPublicObject>}
-   */
+     * @param {UserModel} User
+     * @returns {Promise<UserPublicObject>}
+     */
   async getCleanUser(User) {
     return User.getPublic();
   }
 
   /**
-   * @param {UserModel} User
-   * @param updateObject
-   * @param getClean
-   * @returns {Promise<UserModel>}
-   */
+     * @param {UserModel} User
+     * @param updateObject
+     * @param getClean
+     * @returns {Promise<UserModel>}
+     */
   async patchProfile(User, updateObject, getClean = true) {
     Object.keys(updateObject).forEach((field) => {
       User[field] = updateObject[field];
@@ -161,12 +166,12 @@ class UserService {
   }
 
   /**
-   * @param {UserModel} User
-   * @param name
-   * @param activeKey
-   * @param ownerKey
-   * @returns {Promise<UserModel>}
-   */
+     * @param {UserModel} User
+     * @param name
+     * @param activeKey
+     * @param ownerKey
+     * @returns {Promise<UserModel>}
+     */
   async createPeerplaysAccount(User, {name, activeKey, ownerKey}) {
     try {
       await this.peerplaysRepository.createPeerplaysAccount(name, ownerKey, activeKey);
@@ -180,13 +185,13 @@ class UserService {
   }
 
   /**
-   * Get a list of users corresponding to the specified parameters
-   *
-   * @param search
-   * @param limit
-   * @param skip
-   * @returns {Promise<[UserModel]>}
-   */
+     * Get a list of users corresponding to the specified parameters
+     *
+     * @param search
+     * @param limit
+     * @param skip
+     * @returns {Promise<[UserModel]>}
+     */
   async searchUsers(search, limit, skip) {
     const users = await this.userRepository.searchUsers(search, limit, skip);
     return Promise.all(users.map(async (User) => this.getCleanUser(User)));
@@ -205,7 +210,7 @@ class UserService {
   }
 
   async confirmEmail(ActiveToken) {
- 
+
     const User = await this.userRepository.findByPk(ActiveToken.userId);
     User.isEmailVerified = true;
     await User.save();
@@ -273,17 +278,26 @@ class UserService {
   }
 
   /**
-   * Change notification status of user
-   *
-   * @param user
-   * @param notifications
-   * @returns {Promise<Array>}
-   */
+     * Change notification status of user
+     *
+     * @param user
+     * @param notifications
+     * @returns {Promise<Array>}
+     */
   async changeNotificationStatus(user, {notifications}) {
+
+    if (notifications !== true || notifications !== false) {
+      if (parseInt(notifications, 10) === 1 || notifications.toLowerCase() === 'yes' || notifications.toLowerCase() === 'true') {
+        notifications = true;
+      } else if (parseInt(notifications, 10) === 0 || notifications.toLowerCase() === 'no' || notifications.toLowerCase() === 'false') {
+        notifications = false;
+      }
+    }
+
     const updatedNotification = await this.userRepository.updateNotification(user.id, notifications);
 
     if (!updatedNotification[0]) {
-      throw new Error(this.errors.USER_NOT_FOUND);
+      throw new Error(this.errors.NOTIFICATION_PREFERENCE_NOT_FOUND);
     }
 
     return updatedNotification;
@@ -291,12 +305,12 @@ class UserService {
   }
 
   /**
-   * Change invitation status of user
-   *
-   * @param user
-   * @param status
-   * @returns {Promise<Array>}
-   */
+     * Change invitation status of user
+     *
+     * @param user
+     * @param status
+     * @returns {Promise<Array>}
+     */
   async changeInvitationStatus(user, status) {
     return await this.dbConnection.sequelize.transaction(async (tx) => {
       const updatedInvitation = await this.userRepository.updateInvitation(user.id, status.invitations);
@@ -341,15 +355,15 @@ class UserService {
   }
 
   /**
-   *
-   * @param {Number} userId
-   * @param {Number} receiverId
-   * @param signTx
-   * @return {Promise<*>}
-   */
+     *
+     * @param {Number} userId
+     * @param {Number} receiverId
+     * @param signTx
+     * @return {Promise<*>}
+     */
 
 
-  async donate(userId, receiverId, donateOp){
+  async donate(userId, receiverId, donateOp) {
     const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(donateOp);
 
     await this.transactionRepository.create({
