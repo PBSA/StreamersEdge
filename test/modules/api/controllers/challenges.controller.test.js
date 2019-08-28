@@ -109,7 +109,7 @@ describe('POST /api/v1/challenges', () => {
     body.depositOp = secondTx;
     body.invitedAccounts = [user.body.result.id];
     const response = await agent.post('/api/v1/challenges').send(body);
-    isSuccess(response);
+    isError(response, 400);
   });
 
 });
