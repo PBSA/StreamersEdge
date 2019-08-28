@@ -121,6 +121,14 @@ class UserModel extends Model {
     };
   }
 
+  getPublicMinimal() {
+    return {
+      id: this.id,
+      username: this.username || '',
+      peerplaysAccountName: this.peerplaysAccountName
+    };
+  }
+
   addTwitchLink() {
     this.dataValues.twitchLink = this.twitchId ? `https://www.twitch.tv/${this.twitchId}/videos` : null;
   }

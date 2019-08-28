@@ -179,6 +179,15 @@ class UserService {
     return this.getCleanUser(User);
   }
 
+
+  /**
+   * @param {UserModel} User
+   * @returns {Promise<UserPublicObject>}
+   */
+  async getCleanUserForSearch(User) {
+    return User.getPublicMinimal();
+  }
+
   /**
    * Get a list of users corresponding to the specified parameters
    *
@@ -189,7 +198,7 @@ class UserService {
    */
   async searchUsers(search, limit, skip) {
     const users = await this.userRepository.searchUsers(search, limit, skip);
-    return Promise.all(users.map(async (User) => this.getCleanUser(User)));
+    return Promise.all(users.map(async (User) => this.getCleanUserForSearch(User)));
   }
 
   async signUpWithPassword(email, username, password) {
