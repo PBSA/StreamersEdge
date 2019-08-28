@@ -478,8 +478,10 @@ class ChallengesController {
           throw new RestError('', 404, {challengeId: [{message: 'Challenge not found'}]});
         case this.challengeService.errors.DO_NOT_RECEIVE_INVITATIONS:
           throw new RestError('', 422, {challengeId: [{message: 'This is private challenge'}]});
-        case this.errors.UNABLE_TO_INVITE:
+        case this.challengeService.errors.UNABLE_TO_INVITE:
           throw new RestError('', 422, {challengeId: [{message: 'Unable to invite'}]});
+        case this.challengeService.errors.INVITED_USER_NOT_FOUND:
+          throw new RestError('', 422, {userId: [{message: 'Invited user not found'}]});
         default:
           throw err;
       }
