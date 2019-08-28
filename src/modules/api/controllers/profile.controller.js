@@ -172,15 +172,14 @@ class ProfileController {
        *    tags:
        *      - Profile
        *    parameters:
-       *      - name: file
-       *        in:  body
-       *        required: true
-       *        schema:
-       *          type: object
-       *          required:
-       *            - file
-       *          properties:
-       *            file:
+       *      - in: formData
+       *        name: upfile
+       *        type: file
+       *        description: The file to upload.
+       *    requestBody:
+       *        content:
+       *          image/png:
+       *            schema:
        *              type: string
        *              format: binary
        *    responses:
@@ -252,19 +251,26 @@ class ProfileController {
       const location = await this.fileService.saveImage(req, res);
       return await this.userService.patchProfile(user, {avatar: location});
     } catch (err) {
-      switch (err.message) {
-        case this.fileService.errors.FILE_NOT_FOUND:
-          throw new RestError('', 400, {image: [{message: 'File not found'}]});
-        case this.fileService.errors.INVALID_IMAGE_FORMAT:
-          throw new RestError('', 400, {format: [{message: 'Invalid file format'}]});
-        default:
-          throw err;
-      }
+      this.handleError(err);
     }
   }
 
   async deleteAvatar(user) {
     return await this.userService.patchProfile(user, {avatar: null});
+  }
+
+  handleError(err){
+    if (err.message === this.fileService.errors.FILE_NOT_FOUND) {
+      throw new RestError('', 400, {image: [{message: 'File not found'}]});
+    } else if (err.message === this.fileService.errors.INVALID_IMAGE_FORMAT) {
+      throw new RestError('', 400, {format: [{message: 'Invalid file format'}]});
+    } else if (err.message === this.fileService.errors.IMAGE_STRING_TOO_LONG) {
+      throw new RestError('', 400, {image: [{message: 'Image String too long'}]});
+    } else if (err.message.toLowerCase().startsWith('invalid url'))  {
+      throw new RestError('', 400, {format: [{message: 'Invalid URL'}]});
+    }else {
+      throw err;
+    }
   }
 
 }

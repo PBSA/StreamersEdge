@@ -38,8 +38,8 @@ class UserValidator extends BaseValidator {
   getUsers() {
     const querySchema = {
       search: Joi.string().regex(/^[a-zA-Z0-9.-]+$/).allow('').max(254),
-      limit: Joi.number().required().max(100),
-      skip: Joi.number()
+      limit: Joi.number().required().min(1).max(100).default(20),
+      skip: Joi.number().integer().min(0).default(0)
     };
 
     return this.validate(querySchema, null, (req, query) => query);
@@ -115,7 +115,7 @@ class UserValidator extends BaseValidator {
       flag: Joi.string().valid([banned, active]),
       search: Joi.string().regex(/^[a-zA-Z0-9.-@]+$/).allow('').max(254),
       offset: Joi.number().integer().min(0),
-      limit: Joi.number().integer().min(1).max(100)
+      limit: Joi.number().integer().min(1).max(100).default(20)
     };
 
     return this.validate(querySchema, null, (req, query) => query);
@@ -123,7 +123,7 @@ class UserValidator extends BaseValidator {
 
   changeNotificationStatus() {
     return this.validate(null,
-      {notifications: Joi.boolean()},
+      {notifications: Joi.alternatives().try(Joi.string(), Joi.number().integer(), Joi.boolean()).required()},
       (req, query, body) => body);
   }
 

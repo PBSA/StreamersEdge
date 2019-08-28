@@ -225,8 +225,15 @@ class UsersController {
     return await this.userService.searchUsers(search, limit, skip);
   }
 
+
   async changeNotificationStatus(user, status) {
-    return await this.userService.changeNotificationStatus(user, status);
+    try{
+      return await this.userService.changeNotificationStatus(user, status);
+    } catch (e) {
+      if (e.message === this.userService.errors.NOTIFICATION_PREFERENCE_NOT_FOUND) {
+        throw new RestError('', 400, {image: [{message: 'Notification Preference Required'}]});
+      }
+    }
   }
 
   async changeInvitationStatus(user, status) {
