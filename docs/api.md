@@ -19,7 +19,9 @@ Backend module for StreamersEdge application
 - [Challenges](#challenges)
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
+	- [Get all challenges](#get-all-challenges)
 	- [Invite user to new challenge](#invite-user-to-new-challenge)
+	- [Join user to challenge](#join-user-to-challenge)
 	- [Subscribe to new notification](#subscribe-to-new-notification)
 	
 - [Facebook](#facebook)
@@ -247,7 +249,7 @@ Request-Example:
 {
   "email": "test@test.com",
   "username": "test",
-  "password": "testtest"
+  "password": "testtest",
   "repeatPassword": "testtest"
 }
 ```
@@ -442,6 +444,63 @@ HTTP/1.1 200 OK
  "status": 200
 }
 ```
+## Get all challenges
+
+
+
+	GET /api/v1/challenges
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "conditionsText": "test",
+   "user": {
+     "id": 1,
+     "username": "username",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
+   },
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
+   "invitedUsers": []
+ },
+ "status": 200
+}
+```
+
 ## Invite user to new challenge
 
 

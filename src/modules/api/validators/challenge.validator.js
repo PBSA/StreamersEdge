@@ -22,6 +22,7 @@ class ChallengeValidator extends BaseValidator {
     this.validateGetChallenge = this.validateGetChallenge.bind(this);
     this.subscribe = this.subscribe.bind(this);
     this.invite = this.invite.bind(this);
+    this.joinToChallenge = this.joinToChallenge.bind(this);
   }
 
   createChallenge() {
@@ -127,6 +128,15 @@ class ChallengeValidator extends BaseValidator {
     };
 
     return this.validate(null, bodySchema, (req, query, body) => body);
+  }
+
+  joinToChallenge() {
+    return this.validate(null,
+      {
+        challengeId: Joi.number().integer().required(),
+        tx: operationSchema
+      },
+      (req, query, body) => body);
   }
 
 }

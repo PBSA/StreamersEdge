@@ -73,5 +73,8 @@
   "swagger": {
     "host": "virtserver.swaggerhub.com",
     "schemes": ["https"]
+  },
+  "challenge": {
+    "joinFee": "100"
   }
 }

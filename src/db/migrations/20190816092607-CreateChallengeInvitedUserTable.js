@@ -3,7 +3,7 @@ const MigrationUtil = require('../../utils/migtation.util');
 
 const fields = {
     ...MigrationUtil.genericRows(),
-    ...MigrationUtil.createForeignFields(['challengeId', 'userId'])
+    ...MigrationUtil.createForeignFields(['challengeId', 'userId']),
 };
 module.exports = {
   up: (queryInterface) => {

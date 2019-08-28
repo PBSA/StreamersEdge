@@ -94,12 +94,20 @@ describe('POST /api/v1/challenges', () => {
     isSuccess(response);
   });
 
-  it('should forbit create challenge with un-subscribed invites', async () => {
+  it('should success create challenge with invites', async () => {
+    const validObject = {
+      email: 'test1@email.com',
+      username: 'test1-username',
+      password: 'My1Password^',
+      repeatPassword: 'My1Password^'
+    };
+    const bodyUser = {...validObject};
+    const user = await agent.post('/api/v1/auth/sign-up').send(bodyUser);
     await agent.post('/api/v1/challenges/subscribe').send(subscribe);
     const body = {...validRequest};
     body.accessRule = 'invite';
     body.depositOp = secondTx;
-    body.invitedAccounts = [-1];
+    body.invitedAccounts = [user.body.result.id];
     const response = await agent.post('/api/v1/challenges').send(body);
     isError(response, 400);
   });

@@ -27,7 +27,7 @@ class WhitelistedGamesRepository extends BasePostgresRepository {
 
   /**
    * @param toUserId
-   * @param fromChallengeId
+   * @param fromGame
    * @returns {Promise<Boolean>}
    */
   async isWhitelistedFor(toUserId, fromGame) {

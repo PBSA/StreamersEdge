@@ -1,6 +1,8 @@
 const {TransactionBuilder, PrivateKey, ChainConfig, Apis} = require('peerplaysjs-lib');
 const config = require('config');
 
+const isMain = !module.parent;
+
 ChainConfig.setPrefix('TEST');
 
 const privateKey = PrivateKey.fromWif(config.peerplays.paymentAccountWIF);
@@ -22,7 +24,24 @@ const buildTx = async () => {
   tr.set_expire_seconds(parseInt(new Date().getTime() / 1000) + 100);
   await tr.finalize();
   tr.sign();
-  console.log('serialized transaction:', JSON.stringify(tr.serialize(), null, 2));
+  const result = tr.serialize();
+
+  if (isMain) {
+    console.log('serialized transaction:', JSON.stringify(result, null, 2));
+  }
+
+  return result;
 };
 
-buildTx().catch((e) => console.log(e));
+module.exports = buildTx;
+
+if (isMain) {
+  buildTx()
+  // eslint-disable-next-line no-process-exit
+    .then(() => process.exit(0))
+    .catch((e) => {
+      console.log(e);
+      // eslint-disable-next-line no-process-exit
+      process.exit(1);
+    });
+}
