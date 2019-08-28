@@ -99,7 +99,7 @@ describe('POST /api/v1/challenges', () => {
     const body = {...validRequest};
     body.accessRule = 'invite';
     body.depositOp = secondTx;
-    body.invitedAccounts = [1];
+    body.invitedAccounts = [-1];
     const response = await agent.post('/api/v1/challenges').send(body);
     isError(response, 400);
   });
