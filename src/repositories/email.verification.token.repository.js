@@ -10,7 +10,8 @@ class EmailVerificationTokenRepository extends BasePostgresRepository {
     super(model);
   }
 
-  async createToken(userId,email) {
+  async createToken(userId, email) {
+    await this.model.update({isActive: false}, {where: {userId: userId}});
     return this.model.create({
       userId,
       email: email,
