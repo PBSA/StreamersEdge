@@ -44,18 +44,22 @@ class MailService {
   }
 
   async sendMailForChangeEmail(email, uniqueLink) {
-    const sourceHTML = fs.readFileSync(`${__dirname}/templates/change-email.handlebars`).toString();
-    const templateHTML = Handlebars.compile(sourceHTML);
-    const url = `${this.config.frontendUrl}/change-email/${uniqueLink}`;
-    const resultHtml = templateHTML({url});
+    try {
+      const sourceHTML = fs.readFileSync(`${__dirname}/templates/change-email.handlebars`).toString();
+      const templateHTML = Handlebars.compile(sourceHTML);
+      const url = `${this.config.frontendUrl}/change-email/${uniqueLink}`;
+      const resultHtml = templateHTML({url});
 
-    const options = {
-      to: email,
-      from: this.config.mailer.sender,
-      subject: 'Streamers Edge Change Email',
-      html: resultHtml
-    };
-    await this.smtpConnection.sendMail(options);
+      const options = {
+        to: email,
+        from: this.config.mailer.sender,
+        subject: 'Streamers Edge Change Email',
+        html: resultHtml
+      };
+      await this.smtpConnection.sendMail(options);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
 }

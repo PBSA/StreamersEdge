@@ -140,18 +140,21 @@ class UserService {
      * @returns {Promise<UserModel>}
      */
   async patchProfile(User, updateObject, getClean = true) {
-    console.log('USER ID', User);
-    Object.keys(updateObject).forEach(async (field) => {
+    try {
+      Object.keys(updateObject).forEach(async (field) => {
+        if (field === 'email') {
+          User['isEmailVerified'] = false;
+          const {token} = await this.emailVerificationTokenRepository.createToken(User.id, updateObject[field]);
+          await this.mailService.sendMailForChangeEmail(updateObject[field], token);
+        } else {
+          User[field] = updateObject[field];
+        }
+      });
+      await User.save();
+    } catch (err) {
+      throw new Error('Something went wrong');
+    }
 
-      if (field === 'email') {
-        User['isEmailVerified'] = false;
-        const {token} = await this.emailVerificationTokenRepository.createToken(User.id, updateObject[field]);
-        await this.mailService.sendMailForChangeEmail(updateObject[field], token);
-      }
-
-      User[field] = updateObject[field];
-    });
-    await User.save();
     return getClean ? this.getCleanUser(User) : User;
   }
 
