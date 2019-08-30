@@ -18,6 +18,7 @@ class UserService {
      * @param {TransactionRepository} opts.transactionRepository
      * @param {FileService} opts.fileService
      * @param {GoogleRepository} opts.googleRepository
+     * @param {EmailVerificationTokenRepository} opts.emailVerificationTokenRepository
      */
   constructor(opts) {
     this.dbConnection = opts.dbConnection;
@@ -30,6 +31,7 @@ class UserService {
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.mailService = opts.mailService;
     this.googleRepository = opts.googleRepository;
+    this.emailVerificationTokenRepository = opts.emailVerificationTokenRepository;
 
     this.errors = {
       USER_NOT_FOUND: 'USER_NOT_FOUND',
@@ -138,7 +140,15 @@ class UserService {
      * @returns {Promise<UserModel>}
      */
   async patchProfile(User, updateObject, getClean = true) {
-    Object.keys(updateObject).forEach((field) => {
+    console.log('USER ID', User);
+    Object.keys(updateObject).forEach(async (field) => {
+
+      if (field === 'email') {
+        User['isEmailVerified'] = false;
+        const {token} = await this.emailVerificationTokenRepository.createToken(User.id,updateObject[field]);
+        await this.mailService.sendMailForChangeEmail(updateObject[field], token);
+      }
+
       User[field] = updateObject[field];
     });
     await User.save();

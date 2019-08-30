@@ -8,7 +8,7 @@
     "database": "streamers-edge"
   },
   "sessionSecret": "sessionSecret",
-  "cors": false,
+  "cors": true,
   "port": 3000,
   "twitch": {
     "clientId": "",
@@ -31,15 +31,15 @@
   "backendUrl": "",
   "twitchUrl":"https://api.twitch.tv/helix/streams",
   "mailer": {
-    "host": "",
+    "host": "smtp.gmail.com",
     "port": 587,
     "service": "",
     "secure": false,
     "auth": {
-      "user": "",
-      "pass": ""
+      "user": "o.bari@pbsa.info",
+      "pass": "Bismillah@786"
     },
-    "sender": ""
+    "sender": "o.bari@pbsa.info"
   },
   "peerplays": {
     "peerplaysWS": "wss://api.ppy.blckchnd.com",
