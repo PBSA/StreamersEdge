@@ -143,7 +143,6 @@ class UserService {
     try {
       Object.keys(updateObject).forEach(async (field) => {
         if (field === 'email') {
-          User['isEmailVerified'] = false;
           const {token} = await this.emailVerificationTokenRepository.createToken(User.id, updateObject[field]);
           await this.mailService.sendMailForChangeEmail(updateObject[field], token);
         } else {
