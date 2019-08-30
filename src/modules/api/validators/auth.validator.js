@@ -4,6 +4,7 @@ const tldJS = require('tldjs');
 const BaseValidator = require('./abstract/base.validator');
 const ValidateError = require('./../../../errors/validate.error');
 const profileConstants = require('../../../constants/profile');
+const tokenConstants = require('../../../constants/token');
 
 class AuthValidator extends BaseValidator {
 
@@ -126,7 +127,7 @@ class AuthValidator extends BaseValidator {
       const ActiveToken = await this.verificationTokenRepository.findActive(token);
 
       if (!ActiveToken) {
-        throw new ValidateError(404, 'Token not found');
+        throw new ValidateError(404, tokenConstants.tokenNotFound);
       }
 
       return ActiveToken;
@@ -177,7 +178,7 @@ class AuthValidator extends BaseValidator {
       const ResetToken = await this.resetTokenRepository.findActive(token);
 
       if (!ResetToken) {
-        throw new ValidateError(404, 'Token not found');
+        throw new ValidateError(404, tokenConstants.tokenNotFound);
       }
 
       return {ResetToken, password};
@@ -195,7 +196,7 @@ class AuthValidator extends BaseValidator {
       const ActiveToken = await this.emailVerificationTokenRepository.findActive(token);
 
       if (!ActiveToken) {
-        throw new ValidateError(404, 'Token not found');
+        throw new ValidateError(404, tokenConstants.tokenNotFound);
       }
 
       return ActiveToken;

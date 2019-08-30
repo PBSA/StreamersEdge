@@ -313,7 +313,7 @@ class ProfileController {
 
   async changeEmail(user, ActiveToken) {
     try {
-      if (user && user.id != ActiveToken.id) {
+      if (user && user.id !== ActiveToken.id) {
         throw new ValidateError(401, 'unauthorized');
       }
 
