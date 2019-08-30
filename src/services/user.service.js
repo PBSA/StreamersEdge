@@ -145,7 +145,7 @@ class UserService {
 
       if (field === 'email') {
         User['isEmailVerified'] = false;
-        const {token} = await this.emailVerificationTokenRepository.createToken(User.id,updateObject[field]);
+        const {token} = await this.emailVerificationTokenRepository.createToken(User.id, updateObject[field]);
         await this.mailService.sendMailForChangeEmail(updateObject[field], token);
       }
 
@@ -218,7 +218,6 @@ class UserService {
   }
 
   async confirmEmail(ActiveToken) {
-
     const User = await this.userRepository.findByPk(ActiveToken.userId);
     User.isEmailVerified = true;
     await User.save();
@@ -386,6 +385,16 @@ class UserService {
     });
 
     return true;
+  }
+
+  async changeEmail(ActiveToken) {
+    const User = await this.userRepository.findByPk(ActiveToken.userId);
+    User.isEmailVerified = true;
+    User.email = ActiveToken.email;
+
+    await User.save();
+    ActiveToken.isActive = false;
+    await ActiveToken.save();
   }
 
 

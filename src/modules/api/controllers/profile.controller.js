@@ -1,4 +1,5 @@
 const RestError = require('../../../errors/rest.error');
+const ValidateError = require('./../../../errors/validate.error');
 
 /**
  * @swagger
@@ -223,9 +224,46 @@ class ProfileController {
        *          $ref: '#/definitions/UnauthorizedError'
        */
       [
-        'delete', '/api/v1/profile/avatar',
+        'get', '/api/v1/profile/change-email/:token',
+        this.authValidator.validateChangeEmail,
+        this.changeEmail.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /profile/peerplays/create-account:
+       *  get:
+       *    description: Create peerplays account for authorized user
+       *    summary: Create peerplays account for authorized user
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    parameters:
+       *      - name: ProfileCreatePeerplaysAccount
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/ProfileCreatePeerplaysAccount'
+       *    responses:
+       *      200:
+       *        description: Create-account response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       */
+      [
+        'post', '/api/v1/profile/peerplays/create-account',
         this.authValidator.loggedOnly,
-        this.deleteAvatar.bind(this)
+        this.profileValidator.createPeerplaysAccount,
+        this.createPeerplaysAccount.bind(this)
       ]
     ];
   }
@@ -259,17 +297,30 @@ class ProfileController {
     return await this.userService.patchProfile(user, {avatar: null});
   }
 
-  handleError(err){
+  handleError(err) {
     if (err.message === this.fileService.errors.FILE_NOT_FOUND) {
       throw new RestError('', 400, {image: [{message: 'File not found'}]});
     } else if (err.message === this.fileService.errors.INVALID_IMAGE_FORMAT) {
       throw new RestError('', 400, {format: [{message: 'Invalid file format'}]});
     } else if (err.message === this.fileService.errors.IMAGE_STRING_TOO_LONG) {
       throw new RestError('', 400, {image: [{message: 'Image String too long'}]});
-    } else if (err.message.toLowerCase().startsWith('invalid url'))  {
+    } else if (err.message.toLowerCase().startsWith('invalid url')) {
       throw new RestError('', 400, {format: [{message: 'Invalid URL'}]});
-    }else {
+    } else {
       throw err;
+    }
+  }
+
+  async changeEmail(user, ActiveToken) {
+    try {
+      if (user && user.id != ActiveToken.id) {
+        throw new ValidateError(401, 'unauthorized');
+      }
+
+      await this.userService.changeEmail(ActiveToken);
+      return true;
+    } catch (err) {
+      this.handleError(err);
     }
   }
 

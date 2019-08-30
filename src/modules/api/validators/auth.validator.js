@@ -11,6 +11,7 @@ class AuthValidator extends BaseValidator {
    * @param {UserRepository} opts.userRepository
    * @param {VerificationTokenRepository} opts.verificationTokenRepository
    * @param {ResetTokenRepository} opts.resetTokenRepository
+   * @param {EmailVerificationTokenRepository} opts.emailVerificationTokenRepository
    */
   constructor(opts) {
     super();
@@ -18,6 +19,7 @@ class AuthValidator extends BaseValidator {
     this.userRepository = opts.userRepository;
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
+    this.emailVerificationTokenRepository = opts.emailVerificationTokenRepository;
 
     this.validateAuthCode = this.validateAuthCode.bind(this);
     this.validateSignUp = this.validateSignUp.bind(this);
@@ -27,6 +29,7 @@ class AuthValidator extends BaseValidator {
     this.validateResetPassword = this.validateResetPassword.bind(this);
     this.loggedOnly = this.loggedOnly.bind(this);
     this.loggedAdminOnly = this.loggedAdminOnly.bind(this);
+    this.validateChangeEmail = this.validateChangeEmail.bind(this);
   }
 
   loggedOnly() {
@@ -82,7 +85,7 @@ class AuthValidator extends BaseValidator {
         });
       }
 
-      if ( email.match(/@.+\..+/) && (!tldJS.tldExists(email) || (email.split('@').pop().split('.').length > 2))) {
+      if (email.match(/@.+\..+/) && (!tldJS.tldExists(email) || (email.split('@').pop().split('.').length > 2))) {
         throw new ValidateError(400, 'Validate error', {
           email: 'Invalid email'
         });
@@ -117,7 +120,7 @@ class AuthValidator extends BaseValidator {
       token: Joi.string().required()
     };
     return this.validate(querySchema, null, async (req, query) => {
-     
+
       const {token} = query;
 
       const ActiveToken = await this.verificationTokenRepository.findActive(token);
@@ -136,12 +139,12 @@ class AuthValidator extends BaseValidator {
       password: Joi.string().required()
     };
 
-    return this.validate(null, bodySchema,async (req, query, body) => {
+    return this.validate(null, bodySchema, async (req, query, body) => {
       const {login} = body;
 
       const user = await this.userRepository.getByLogin(login);
 
-      if(user && user.status === profileConstants.status.banned){
+      if (user && user.status === profileConstants.status.banned) {
         throw new ValidateError(403, 'You have been banned. Please contact our admins for potential unban.');
       }
 
@@ -178,6 +181,24 @@ class AuthValidator extends BaseValidator {
       }
 
       return {ResetToken, password};
+    });
+  }
+
+  validateChangeEmail() {
+    const querySchema = {
+      token: Joi.string().required()
+    };
+    return this.validate(querySchema, null, async (req, query) => {
+
+      const {token} = query;
+
+      const ActiveToken = await this.emailVerificationTokenRepository.findActive(token);
+
+      if (!ActiveToken) {
+        throw new ValidateError(404, 'Token not found');
+      }
+
+      return ActiveToken;
     });
   }
 

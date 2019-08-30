@@ -8,7 +8,7 @@
     "database": "streamers-edge"
   },
   "sessionSecret": "sessionSecret",
-  "cors": true,
+  "cors": false,
   "port": 3000,
   "twitch": {
     "clientId": "",
@@ -29,17 +29,17 @@
   "bitcoinNetwork": "prod",
   "frontendUrl": "",
   "backendUrl": "",
-  "twitchUrl":"https://api.twitch.tv/helix/streams",
+  "twitchUrl": "https://api.twitch.tv/helix/streams",
   "mailer": {
-    "host": "smtp.gmail.com",
+    "host": "",
     "port": 587,
     "service": "",
     "secure": false,
     "auth": {
-      "user": "o.bari@pbsa.info",
-      "pass": "Bismillah@786"
+      "user": "",
+      "pass": ""
     },
-    "sender": "o.bari@pbsa.info"
+    "sender": ""
   },
   "peerplays": {
     "peerplaysWS": "wss://api.ppy.blckchnd.com",
@@ -72,7 +72,9 @@
   },
   "swagger": {
     "host": "virtserver.swaggerhub.com",
-    "schemes": ["https"]
+    "schemes": [
+      "https"
+    ]
   },
   "challenge": {
     "joinFee": "100"
