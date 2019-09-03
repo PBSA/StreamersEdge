@@ -13,12 +13,15 @@ class FileService {
     this.awsConnection = awsConnection;
     this.config = config;
 
-    this.IMAGE_FORMATS = ['jpeg', 'png', 'gif'];
+    this.IMAGE_FORMATS = ['jpeg', 'png'];
+    this.FILE_SIZE_LIMIT = 1048576;
+
 
     this.errors = {
       INVALID_IMAGE_FORMAT: 'Invalid image format',
       FILE_NOT_FOUND: 'File not found',
-      IMAGE_STRING_TOO_LONG: 'value too long for type character varying(255)'
+      IMAGE_STRING_TOO_LONG: 'value too long for type character varying(255)',
+      FILE_TOO_LARGE: 'File too large, Image file restrictions: JPEG or PNG and < 1MB'
     };
   }
 
@@ -29,6 +32,14 @@ class FileService {
    * @return Promise<>
    */
   async saveImage(req, res) {
+
+    if (!req.file) {
+      throw new Error(this.errors.FILE_NOT_FOUND);
+    }
+
+    if (req.file.size > this.FILE_SIZE_LIMIT) {
+      throw new Error(this.errors.FILE_TOO_LARGE);
+    }
 
     const upload = multer({
       storage: multerS3({
