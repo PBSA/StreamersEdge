@@ -13,12 +13,16 @@ class FileService {
     this.awsConnection = awsConnection;
     this.config = config;
 
-    this.IMAGE_FORMATS = ['jpeg', 'png', 'gif'];
+    this.IMAGE_FORMATS = ['jpeg', 'png'];
+    this.FILE_SIZE_LIMIT = 1048576;
+
 
     this.errors = {
       INVALID_IMAGE_FORMAT: 'Invalid image format',
       FILE_NOT_FOUND: 'File not found',
-      IMAGE_STRING_TOO_LONG: 'value too long for type character varying(255)'
+      IMAGE_STRING_TOO_LONG: 'value too long for type character varying(255)',
+      FILE_TOO_LARGE: 'File too large',
+      INVALID_REQUEST: 'Invalid request'
     };
   }
 
@@ -36,11 +40,16 @@ class FileService {
         bucket: this.config.s3.bucket,
         key: this._filename
       }),
-      fileFilter: this._imageFilter.bind(this)
+      fileFilter: this._imageFilter.bind(this),
+      limits: {fileSize: this.FILE_SIZE_LIMIT}
     }).single('file');
 
     await new Promise((success, fail) => {
-      upload(req, res, (err, res) => err ? fail(err) : success(res));
+      if (!req.file) {
+        fail({message: this.errors.INVALID_REQUEST});
+      } else {
+        upload(req, res, (err, res) => err ? fail(err) : success(res));
+      }
     });
     return this.config.cdnUrl + new URL(req.file.location).pathname;
   }

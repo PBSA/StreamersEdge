@@ -202,6 +202,7 @@ class ProfileController {
         this.authValidator.loggedOnly,
         this.uploadAvatar.bind(this)
       ],
+
       /**
        * @swagger
        *
@@ -224,10 +225,11 @@ class ProfileController {
        *          $ref: '#/definitions/UnauthorizedError'
        */
       [
-        'get', '/api/v1/profile/change-email/:token',
-        this.authValidator.validateChangeEmail,
-        this.changeEmail.bind(this)
+        'delete', '/api/v1/profile/avatar',
+        this.authValidator.loggedOnly,
+        this.deleteAvatar.bind(this)
       ],
+
       /**
        * @swagger
        *
@@ -264,6 +266,33 @@ class ProfileController {
         this.authValidator.loggedOnly,
         this.profileValidator.createPeerplaysAccount,
         this.createPeerplaysAccount.bind(this)
+      ],
+
+      /**
+       * @swagger
+       *
+       * /profile/avatar:
+       *  get:
+       *    description: Change user email
+       *    summary: Change user email
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    responses:
+       *      200:
+       *        description: Change user email response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       */
+      [
+        'get', '/api/v1/profile/change-email/:token',
+        this.authValidator.validateChangeEmail,
+        this.changeEmail.bind(this)
       ]
     ];
   }
@@ -304,6 +333,8 @@ class ProfileController {
       throw new RestError('', 400, {format: [{message: 'Invalid file format'}]});
     } else if (err.message === this.fileService.errors.IMAGE_STRING_TOO_LONG) {
       throw new RestError('', 400, {image: [{message: 'Image String too long'}]});
+    } else if (err.message === this.fileService.errors.INVALID_REQUEST) {
+      throw new RestError('', 400, {image: [{message: 'Invalid Request'}]});
     } else if (err.message.toLowerCase().startsWith('invalid url')) {
       throw new RestError('', 400, {format: [{message: 'Invalid URL'}]});
     } else {
