@@ -34,6 +34,14 @@ class FileService {
    */
   async saveImage(req, res) {
 
+    if (!req.file) {
+      throw new Error(this.errors.FILE_NOT_FOUND);
+    }
+
+    if (req.file.size > this.FILE_SIZE_LIMIT) {
+      throw new Error(this.errors.FILE_TOO_LARGE);
+    }
+
     const upload = multer({
       storage: multerS3({
         s3: this.awsConnection.s3,
