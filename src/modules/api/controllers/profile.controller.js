@@ -233,44 +233,6 @@ class ProfileController {
       /**
        * @swagger
        *
-       * /profile/peerplays/create-account:
-       *  get:
-       *    description: Create peerplays account for authorized user
-       *    summary: Create peerplays account for authorized user
-       *    produces:
-       *      - application/json
-       *    tags:
-       *      - Profile
-       *    parameters:
-       *      - name: ProfileCreatePeerplaysAccount
-       *        in:  body
-       *        required: true
-       *        schema:
-       *          $ref: '#/definitions/ProfileCreatePeerplaysAccount'
-       *    responses:
-       *      200:
-       *        description: Create-account response
-       *        schema:
-       *          $ref: '#/definitions/ProfileResponse'
-       *      401:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       *      400:
-       *        description: Error form validation
-       *        schema:
-       *          $ref: '#/definitions/ValidateError'
-       */
-      [
-        'post', '/api/v1/profile/peerplays/create-account',
-        this.authValidator.loggedOnly,
-        this.profileValidator.createPeerplaysAccount,
-        this.createPeerplaysAccount.bind(this)
-      ],
-
-      /**
-       * @swagger
-       *
        * /profile/avatar:
        *  get:
        *    description: Change user email
