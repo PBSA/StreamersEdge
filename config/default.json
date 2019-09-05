@@ -33,6 +33,7 @@
   "mailer": {
     "host": "",
     "port": 587,
+    "service": "",
     "secure": false,
     "auth": {
       "user": "",
@@ -49,14 +50,6 @@
     "paymentAccountWIF": "",
     "paymentReceiver": ""
   },
-  "vapid": {
-    "publicKey": "",
-    "privateKey": ""
-  },
-  "streamersEdgeServiceEmail": "",
-  "pubg": {
-    "apiKey": ""
-  },
   "paypal": {
     "clientId": "",
     "secret": "",
@@ -64,6 +57,22 @@
   },
   "coinmarketcap": {
     "apiKey": ""
+  },
+  "vapid": {
+    "publicKey": "",
+    "privateKey": ""
+  },
+  "streamersEdgeServiceEmail": "",
+  "s3": {
+    "bucket": ""
+  },
+  "cdnUrl": "",
+  "pubg": {
+    "apiKey": ""
+  },
+  "swagger": {
+    "host": "virtserver.swaggerhub.com",
+    "schemes": ["https"]
   },
   "challenge": {
     "joinFee": "100"

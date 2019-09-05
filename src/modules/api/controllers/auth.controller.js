@@ -1,6 +1,81 @@
 const ValidateError = require('../../../errors/validate.error');
 const RestError = require('../../../errors/rest.error');
 
+/**
+ * @swagger
+ *
+ * definitions:
+ *  AuthSignUpUser:
+ *    type: object
+ *    required:
+ *      - email
+ *      - username
+ *      - password
+ *      - repeatPassword
+ *    properties:
+ *      email:
+ *        type: string
+ *        format: email
+ *      username:
+ *        type: string
+ *      password:
+ *        type: string
+ *        format: password
+ *      repeatPassword:
+ *        type: string
+ *        format: password
+ *  AuthSignInUser:
+ *    type: object
+ *    required:
+ *      - login
+ *      - password
+ *    properties:
+ *      login:
+ *        type: string
+ *      password:
+ *        type: string
+ *        format: password
+ *  AuthForgotPassword:
+ *    type: object
+ *    required:
+ *      - email
+ *    properties:
+ *      email:
+ *        type: string
+ *        format: email
+ *  AuthResetPassword:
+ *    type: object
+ *    required:
+ *      - token
+ *      - password
+ *      - repeatPassword
+ *    properties:
+ *      token:
+ *        type: string
+ *      password:
+ *        type: string
+ *        format: password
+ *      repeatPassword:
+ *        type: string
+ *        format: password
+ *  UserResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/User'
+ *  UsersResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            type: array
+ *            items:
+ *              $ref: '#/definitions/User'
+ */
+
 class AuthController {
 
   /**
@@ -19,42 +94,83 @@ class AuthController {
   getRoutes() {
     return [
       /**
-       * @api {post} /api/v1/auth/logout Logout
-       * @apiName AuthLogout
+       * @swagger
        *
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {}
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": true
-       * }
+       * /auth/logout:
+       *  post:
+       *    description: Logout
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    responses:
+       *      200:
+       *        description: Logout response
+       *        schema:
+       *          $ref: '#/definitions/SuccessEmptyResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *
        */
       ['post', '/api/v1/auth/logout', this.authValidator.loggedOnly, this.logout.bind(this)],
       /**
-       * @api {post} /api/v1/auth/sign-up Sign up
-       * @apiName AuthSignUp
+       * @swagger
        *
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "email": "test@test.com",
-       *   "username": "test",
-       *   "password": "testtest",
-       *   "repeatPassword": "testtest"
-       * }
+       * /auth/sign-up:
+       *  post:
+       *    description: Sign up
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    parameters:
+       *      - name: user
+       *        description: User object
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/AuthSignUpUser'
+       *    responses:
+       *      200:
+       *        description: User response
+       *        schema:
+       *          $ref: '#/definitions/UserResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       ['post', '/api/v1/auth/sign-up', this.authValidator.validateSignUp, this.signUp.bind(this)],
       /**
-       * @api {get} /api/v1/auth/confirm-email/:token Confirm email
-       * @apiName AuthConfirmEmail
+       * @swagger
        *
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
+       * /auth/confirm-email/{token}:
+       *  post:
+       *    description: Confirm email
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    parameters:
+       *      - name: token
+       *        in:  path
+       *        required: true
+       *        type: string
+       *    responses:
+       *      200:
+       *        description: Confirm-email response
+       *        schema:
+       *         $ref: '#/definitions/SuccessEmptyResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'get',
@@ -63,28 +179,77 @@ class AuthController {
         this.confirmEmail.bind(this)
       ],
       /**
-       * @api {post} /api/v1/auth/sign-in Sign in
-       * @apiName AuthSignIn
+       * @swagger
        *
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "login": "test@test.com",
-       *   "password": "testtest"
-       * }
+       * /auth/sign-in:
+       *  post:
+       *    description: Sign in
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    parameters:
+       *      - name: token
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/AuthSignInUser'
+       *    responses:
+       *      200:
+       *        description: Sign in response
+       *        schema:
+       *          $ref: '#/definitions/UserResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       ['post', '/api/v1/auth/sign-in', this.authValidator.validateSignIn, this.signIn.bind(this)],
       /**
-       * @api {post} /api/v1/auth/forgot-password Forgot password
-       * @apiName ForgotPassword
+       * @swagger
        *
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "email": "test@test.com"
-       * }
+       * /auth/forgot-password:
+       *  post:
+       *    description: Forgot password
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    parameters:
+       *      - name: token
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/AuthForgotPassword'
+       *    responses:
+       *      200:
+       *        description: Forgot-password response
+       *        schema:
+       *         $ref: '#/definitions/SuccessEmptyResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      404:
+       *        description: Error user not found
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: User not found
+       *      429:
+       *        description: Error too many requests
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 429
+       *            error:
+       *              type: string
+       *              example: Too many requests
        */
       [
         'post',
@@ -93,17 +258,40 @@ class AuthController {
         this.forgotPassword.bind(this)
       ],
       /**
-       * @api {post} /api/v1/auth/reset-password Reset password
-       * @apiName ResetPassword
+       * @swagger
        *
-       * @apiGroup Auth
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "token": "fb7ce9c3913ed08a0dfd45d4bc",
-       *   "password": "testpass",
-       *   "repeatPassword": "testpass"
-       * }
+       * /auth/reset-password:
+       *  post:
+       *    description: Forgot password
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    parameters:
+       *      - name: token
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/AuthResetPassword'
+       *    responses:
+       *      200:
+       *        description: Reset-password response
+       *        schema:
+       *         $ref: '#/definitions/SuccessEmptyResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      404:
+       *        description: Error token not found
+       *        schema:
+       *          properties:
+       *            status:
+       *              type: number
+       *              example: 404
+       *            error:
+       *              type: string
+       *              example: Token not found
        */
       [
         'post',
@@ -124,6 +312,10 @@ class AuthController {
   }
 
   async confirmEmail(user, ActiveToken) {
+    if (user && user.id != ActiveToken.id) {
+      throw new ValidateError(401, 'unauthorized');
+    }
+
     await this.userService.confirmEmail(ActiveToken);
     return true;
   }

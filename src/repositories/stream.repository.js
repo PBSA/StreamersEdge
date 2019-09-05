@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const {model} = require('../models/stream.model');
+const {model} = require('../db/models/stream.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class StreamRepository extends BasePostgresRepository {

@@ -31,7 +31,9 @@ class CoinmarketcapConnection {
       amount: usdAmount,
       convert: 'PPY'
     });
+
     return result.data.quote.PPY.price;
+
   }
 
   disconnect() {}

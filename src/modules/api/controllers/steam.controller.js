@@ -18,10 +18,19 @@ class SteamController {
    */
   getRoutes(app) {
     /**
-     * @api {get} /api/v1/auth/google Auth by google
-     * @apiName GoogleAuth
-     * @apiGroup Google
-     * @apiVersion 0.1.0
+     * @swagger
+     *
+     * /auth/steam:
+     *  get:
+     *    description: Auth by steam
+     *    summary: Auth by steam
+     *    produces:
+     *      - application/json
+     *    tags:
+     *      - SocNetwork
+     *    responses:
+     *      302:
+     *        description: Redirect to steam
      */
     this.initializePassport();
     app.get('/api/v1/auth/steam', (req, res, next) => {

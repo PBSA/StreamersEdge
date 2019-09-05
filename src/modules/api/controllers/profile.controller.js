@@ -1,16 +1,57 @@
 const RestError = require('../../../errors/rest.error');
 
+/**
+ * @swagger
+ *
+ * definitions:
+ *  ProfileCreatePeerplaysAccount:
+ *    type: object
+ *    required:
+ *      - name
+ *      - activeKey
+ *      - ownerKey
+ *    properties:
+ *      name:
+ *        type: string
+ *      activeKey:
+ *        type: string
+ *      ownerKey:
+ *        type: string
+ *  ProfileAvatar:
+ *    type: object
+ *    required:
+ *      - name
+ *      - activeKey
+ *      - ownerKey
+ *    properties:
+ *      name:
+ *        type: string
+ *      activeKey:
+ *        type: string
+ *      ownerKey:
+ *        type: string
+ *  ProfileResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/User'
+ */
+
 class ProfileController {
 
   /**
    * @param {AuthValidator} opts.authValidator
    * @param {ProfileValidator} opts.profileValidator
    * @param {UserService} opts.userService
+   * @param {FileService} opts.fileService
    */
   constructor(opts) {
     this.authValidator = opts.authValidator;
     this.profileValidator = opts.profileValidator;
     this.userService = opts.userService;
+    this.fileService = opts.fileService;
   }
 
   /**
@@ -20,29 +61,25 @@ class ProfileController {
   getRoutes() {
     return [
       /**
-       * @api {get} /api/v1/profile Get authorized user profile
-       * @apiName ProfileGet
-       * @apiDescription Get profile of authorized user
-       * @apiGroup Profile
-       * @apiVersion 0.1.0
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "email": "test@email.com",
-       *     "twitchUserName": "",
-       *     "googleName": "",
-       *     "avatar": "",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": "",
-       *     "userType": "viewer"
-       *   }
-       * }
+       * @swagger
+       *
+       * /profile:
+       *  get:
+       *    description: Get authorized user profile
+       *    summary: Get authorized user profile
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    responses:
+       *      200:
+       *        description: Profile response
+       *        schema:
+       *         $ref: '#/definitions/UserResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
        */
       [
         'get', '/api/v1/profile',
@@ -50,37 +87,35 @@ class ProfileController {
         this.getProfile.bind(this)
       ],
       /**
-       * @api {patch} /api/v1/profile Update authorized user profile
-       * @apiName ProfilePatch
-       * @apiGroup Profile
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "avatar": "",
-       *   "youtube": "",
-       *   "facebook": "",
-       *   "peerplaysAccountName": "",
-       *   "bitcoinAddress": "",
-       *   "userType": "viewer"
-       * }
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "email": "test@email.com",
-       *     "twitchUserName": "",
-       *     "googleName": "",
-       *     "avatar": "",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": "",
-       *     "userType": "viewer"
-       *  }
-       * }
+       * @swagger
+       *
+       * /profile:
+       *  patch:
+       *    description: Update authorized user profile
+       *    summary: Update authorized user profile
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    parameters:
+       *      - name: profile
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/UserNew'
+       *    responses:
+       *      200:
+       *        description: Profile response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'patch', '/api/v1/profile',
@@ -89,40 +124,108 @@ class ProfileController {
         this.patchProfile.bind(this)
       ],
       /**
-       * @api {post} /api/v1/profile/peerplays/create-account Create peerplays account for authorized user
-       * @apiName ProfileCreatePPAccount
-       * @apiGroup Profile
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "name": "testaccount",
-       *   "activeKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
-       *   "ownerKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
-       * }
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": "5cc315041ec568398b99d7ca",
-       *     "username": "test",
-       *     "email": "test@email.com",
-       *     "twitchUserName": "",
-       *     "googleName": "",
-       *     "avatar": "",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": "",
-       *     "userType": "viewer"
-       *  }
-       * }
+       * @swagger
+       *
+       * /profile/peerplays/create-account:
+       *  post:
+       *    description: Create peerplays account for authorized user
+       *    summary: Create peerplays account for authorized user
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    parameters:
+       *      - name: ProfileCreatePeerplaysAccount
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/ProfileCreatePeerplaysAccount'
+       *    responses:
+       *      200:
+       *        description: Create-account response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'post', '/api/v1/profile/peerplays/create-account',
         this.authValidator.loggedOnly,
         this.profileValidator.createPeerplaysAccount,
         this.createPeerplaysAccount.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /profile/avatar:
+       *  post:
+       *    description: Add or change account avatar
+       *    summary: Add or change account avatar
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    parameters:
+       *      - in: formData
+       *        name: upfile
+       *        type: file
+       *        description: The file to upload.
+       *    requestBody:
+       *        content:
+       *          image/png:
+       *            schema:
+       *              type: string
+       *              format: binary
+       *    responses:
+       *      200:
+       *        description: Profile avatar response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       */
+      [
+        'post', '/api/v1/profile/avatar',
+        this.authValidator.loggedOnly,
+        this.uploadAvatar.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /profile/avatar:
+       *  delete:
+       *    description: Delete profile avatar
+       *    summary: Delete profile avatar
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    responses:
+       *      200:
+       *        description: Delete profile avatar response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       */
+      [
+        'delete', '/api/v1/profile/avatar',
+        this.authValidator.loggedOnly,
+        this.deleteAvatar.bind(this)
       ]
     ];
   }
@@ -140,6 +243,33 @@ class ProfileController {
       return await this.userService.createPeerplaysAccount(user, data);
     } catch (e) {
       throw new RestError(e.message, 400, e.details);
+    }
+  }
+
+  async uploadAvatar(user, data, req, res) {
+    try {
+      const location = await this.fileService.saveImage(req, res);
+      return await this.userService.patchProfile(user, {avatar: location});
+    } catch (err) {
+      this.handleError(err);
+    }
+  }
+
+  async deleteAvatar(user) {
+    return await this.userService.patchProfile(user, {avatar: null});
+  }
+
+  handleError(err){
+    if (err.message === this.fileService.errors.FILE_NOT_FOUND) {
+      throw new RestError('', 400, {image: [{message: 'File not found'}]});
+    } else if (err.message === this.fileService.errors.INVALID_IMAGE_FORMAT) {
+      throw new RestError('', 400, {format: [{message: 'Invalid file format'}]});
+    } else if (err.message === this.fileService.errors.IMAGE_STRING_TOO_LONG) {
+      throw new RestError('', 400, {image: [{message: 'Image String too long'}]});
+    } else if (err.message.toLowerCase().startsWith('invalid url'))  {
+      throw new RestError('', 400, {format: [{message: 'Invalid URL'}]});
+    }else {
+      throw err;
     }
   }
 

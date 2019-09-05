@@ -1,8 +1,10 @@
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const {model} = require('../models/challenge.model');
-const invitedUsersModel = require('../models/challenge.invited.users.model').model;
+const invitedUsersModel = require('../db/models/challenge.invited.users.model').model;
+const challengeConditionModel = require('../db/models/challenge.condition.model').model;
+const {model} = require('../db/models/challenge.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
+const consts = require('../constants/challenge');
 
 class ChallengeRepository extends BasePostgresRepository {
 
@@ -34,8 +36,27 @@ class ChallengeRepository extends BasePostgresRepository {
           required:false
         }
       ],
-      group: ['challenge.id','challenge-invited-users.id'],
+      group: ['challenges.id','challenge-invited-users.id'],
       order: ['id']
+    });
+  }
+
+  async findWaitToResolve() {
+    return this.model.findAll({
+      where: {
+        status: consts.status.open,
+        endDate: {
+          [Op.lte]: new Date()
+        }
+      },
+      include: [{
+        model: invitedUsersModel,
+        as: 'challenge-invited-users',
+        required: false
+      }, {
+        model: challengeConditionModel,
+        required: false
+      }]
     });
   }
 
