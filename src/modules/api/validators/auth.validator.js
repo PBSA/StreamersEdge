@@ -12,7 +12,6 @@ class AuthValidator extends BaseValidator {
    * @param {UserRepository} opts.userRepository
    * @param {VerificationTokenRepository} opts.verificationTokenRepository
    * @param {ResetTokenRepository} opts.resetTokenRepository
-   * @param {EmailVerificationTokenRepository} opts.emailVerificationTokenRepository
    */
   constructor(opts) {
     super();
@@ -20,7 +19,6 @@ class AuthValidator extends BaseValidator {
     this.userRepository = opts.userRepository;
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
-    this.emailVerificationTokenRepository = opts.emailVerificationTokenRepository;
 
     this.validateAuthCode = this.validateAuthCode.bind(this);
     this.validateSignUp = this.validateSignUp.bind(this);
@@ -193,7 +191,7 @@ class AuthValidator extends BaseValidator {
 
       const {token} = query;
 
-      const ActiveToken = await this.emailVerificationTokenRepository.findActive(token);
+      const ActiveToken = await this.verificationTokenRepository.findActive(token);
 
       if (!ActiveToken) {
         throw new ValidateError(404, tokenConstants.tokenNotFound);

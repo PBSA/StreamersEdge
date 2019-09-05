@@ -18,7 +18,6 @@ class UserService {
      * @param {TransactionRepository} opts.transactionRepository
      * @param {FileService} opts.fileService
      * @param {GoogleRepository} opts.googleRepository
-     * @param {EmailVerificationTokenRepository} opts.emailVerificationTokenRepository
      */
   constructor(opts) {
     this.dbConnection = opts.dbConnection;
@@ -31,7 +30,6 @@ class UserService {
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.mailService = opts.mailService;
     this.googleRepository = opts.googleRepository;
-    this.emailVerificationTokenRepository = opts.emailVerificationTokenRepository;
 
     this.errors = {
       USER_NOT_FOUND: 'USER_NOT_FOUND',
@@ -143,7 +141,7 @@ class UserService {
     try {
       Object.keys(updateObject).forEach(async (field) => {
         if (field === 'email') {
-          const {token} = await this.emailVerificationTokenRepository.createToken(User.id, updateObject[field]);
+          const {token} = await this.verificationTokenRepository.createToken(User.id, updateObject[field]);
           await this.mailService.sendMailForChangeEmail(updateObject[field], token);
         } else {
           User[field] = updateObject[field];
@@ -213,7 +211,7 @@ class UserService {
     const User = await this.userRepository.model.create({
       email, username, password
     });
-    const {token} = await this.verificationTokenRepository.createToken(User.id);
+    const {token} = await this.verificationTokenRepository.createToken(User.id, email);
 
     await this.mailService.sendMailAfterRegistration(email, token);
     return this.getCleanUser(User);
