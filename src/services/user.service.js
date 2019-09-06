@@ -201,9 +201,14 @@ class UserService {
 
   async signUpWithPassword(email, username, password) {
 
-    const peerplaysAccountUsername = 'SE-tguwye' + username;
+    const peerplaysAccountUsername = 'SE-' + username;
     const peerplaysAccountPassword = await bcrypt.hash('SE-' + password + (new Date()).getTime(), 10);
-    const keys = Login.generateKeys(peerplaysAccountUsername, peerplaysAccountPassword);
+    const keys = Login.generateKeys(
+      peerplaysAccountUsername,
+      peerplaysAccountPassword,
+      ['owner', 'active'],
+      IS_PRODUCTION ? 'PPY' : 'TEST'
+    );
     const ownerKey = keys.pubKeys.owner;
     const activeKey = keys.pubKeys.active;
 
@@ -215,11 +220,7 @@ class UserService {
 
     await this.mailService.sendMailAfterRegistration(email, token);
 
-    await this.peerplaysRepository.createPeerplaysAccount(
-      peerplaysAccountUsername,
-      IS_PRODUCTION ? ownerKey :  ownerKey.replace('PPY', 'TEST'),
-      IS_PRODUCTION ? activeKey : activeKey.replace('PPY', 'TEST')
-    );
+    await this.peerplaysRepository.createPeerplaysAccount(peerplaysAccountUsername,ownerKey, activeKey);
 
     return this.getCleanUser(User);
   }
