@@ -3,6 +3,9 @@ const moment = require('moment');
 const RestError = require('../errors/rest.error');
 const {types: txTypes} = require('../constants/transaction');
 const invitationConstants = require('../constants/invitation');
+const {Login} = require('peerplaysjs-lib');
+
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 class UserService {
 
@@ -209,6 +212,18 @@ class UserService {
   }
 
   async signUpWithPassword(email, username, password) {
+
+    const peerplaysAccountUsername = 'SE-' + username;
+    const peerplaysAccountPassword = await bcrypt.hash('SE-' + password + (new Date()).getTime(), 10);
+    const keys = Login.generateKeys(
+      peerplaysAccountUsername,
+      peerplaysAccountPassword,
+      ['owner', 'active'],
+      IS_PRODUCTION ? 'PPY' : 'TEST'
+    );
+    const ownerKey = keys.pubKeys.owner;
+    const activeKey = keys.pubKeys.active;
+
     password = await bcrypt.hash(password, 10);
     const User = await this.userRepository.model.create({
       email, username, password
@@ -216,6 +231,9 @@ class UserService {
     const {token} = await this.verificationTokenRepository.createToken(User.id, email);
 
     await this.mailService.sendMailAfterRegistration(email, token);
+
+    await this.peerplaysRepository.createPeerplaysAccount(peerplaysAccountUsername,ownerKey, activeKey);
+
     return this.getCleanUser(User);
   }
 
