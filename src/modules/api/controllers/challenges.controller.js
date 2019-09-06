@@ -436,29 +436,28 @@ class ChallengesController {
   }
 
   async createChallenge(user, challenge) {
-    try {
-      return await this.challengeService.createChallenge(user.id, challenge);
-    } catch (e) {
-      throw new RestError(e.message, 404);
-    }
+    return await this.challengeService.createChallenge(user.id, challenge);
   }
 
   async getChallenge(user, challengeId) {
     try {
       const result = await this.challengeService.getCleanObject(challengeId);
-      const isUserInvited = await this.challengeInvitedUsersRepository.isUserInvited(result.id, user.id);
 
-      if (result.accessRule === accessRules.invite && result.userId !== user.id && !isUserInvited) {
-        throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
+      if (result.accessRule === accessRules.invite && result.userId !== user.id) {
+
+        if (!await this.challengeInvitedUsersRepository.isUserInvited(result.id, user.id)) {
+          throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
+        }
       }
 
       return result;
     } catch (err) {
-      if (err === this.challengeService.errors.CHALLENGE_NOT_FOUND) {
-        throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
+      switch (err) {
+        case this.challengeService.errors.CHALLENGE_NOT_FOUND:
+          throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
+        default:
+          throw err;
       }
-
-      throw err;
     }
   }
 

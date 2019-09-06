@@ -302,6 +302,8 @@ class ProfileController {
       throw new RestError('', 400, {image: [{message: 'Invalid Request'}]});
     } else if (err.message.toLowerCase().startsWith('invalid url')) {
       throw new RestError('', 400, {format: [{message: 'Invalid URL'}]});
+    } else if (err.message === this.fileService.errors.FILE_TOO_LARGE) {
+      throw new RestError('', 400, {image: [{message: 'File too large, Image file restrictions: JPEG or PNG and < 1MB'}]});
     } else {
       throw err;
     }

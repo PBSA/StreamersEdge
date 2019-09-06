@@ -211,7 +211,8 @@ class ChallengeModel extends Model {
       game: this.game,
       accessRule: this.accessRule,
       ppyAmount: this.ppyAmount,
-      conditionsText: this.conditionsText
+      conditionsText: this.conditionsText,
+      userId: this.userId
     };
 
     if (this.user) {
@@ -275,6 +276,7 @@ module.exports = {
     ChallengeModel.belongsTo(models.User.model);
     ChallengeModel.hasMany(models.ChallengeCondition.model);
     ChallengeModel.hasMany(models.ChallengeInvitedUsers.model);
+    ChallengeModel.hasMany(models.JoinedUsers.model);
   },
   get model() {
     return ChallengeModel;

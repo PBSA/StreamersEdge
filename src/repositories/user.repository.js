@@ -210,6 +210,15 @@ class UserRepository extends BasePostgresRepository {
       }
     });
   }
+  
+  
+  async setPeerplaysAccountId(userId, accountId) {
+    return await this.model.update(
+      {peerplaysAccountId: accountId},
+      {where: {id: userId}},
+    );
+  }
+
 
 }
 

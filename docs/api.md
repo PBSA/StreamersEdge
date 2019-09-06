@@ -526,6 +526,168 @@ Request-Example:
 }
 ```
 
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "conditionsText": "test",
+   "user": {
+     "id": 1,
+     "username": "username",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
+   },
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
+   "invitedUsers": []
+ },
+ "status": 200
+}
+```
+
+## Join user to challenge
+
+
+
+	POST /api/v1/challenges/join
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| challengeId			| Number			|  <p>User join to this challenge</p>							|
+| tx			| Object			|  <p>transaction for this challenge</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "challengeId": "107",
+  "tx": {
+    {
+      ref_block_num: 37792,
+      ref_block_prefix: 2533853773,
+      expiration: '2019-06-28T14:17:57',
+      operations:
+        [0,
+          {
+            fee: {amount: '2000000', asset_id: '1.3.0'},
+            from: '1.2.54',
+            to: '1.2.55',
+            amount: {amount: '10000', asset_id: '1.3.0'},
+            memo: undefined,
+            extensions: []
+          }],
+      extensions: [],
+      signatures: ['1f2baa40114f8ed62ec1d3979b5...343716bd033262']
+    }
+  }
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "joinedAt": "2019-06-26T14:46:29.415Z",
+   "isPayed": false,
+   "id": 4,
+   "challengeId": 15,
+   "userId": 6,
+   "updatedAt": "2019-06-26T14:46:29.416Z",
+   "createdAt": "2019-06-26T14:46:29.416Z"
+ }
+ "status": 200
+}
+```
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "conditionsText": "test",
+   "user": {
+     "id": 1,
+     "username": "username",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
+   },
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
+   "invitedUsers": []
+ },
+ "status": 200
+}
+```
+
+
 ## Subscribe to new notification
 
 
