@@ -327,7 +327,6 @@ class UserService {
             'fromUser': userId
           }));
           await Promise.all([this.whitelistedUsersRepository.destroyByToUserId(user.id, tx),
-            this.whitelistedUsersRepository.destroyByToUserId(user.id, tx),
             this.whitelistedUsersRepository.bulkCreateFromUsers(users, tx)]);
 
           return updatedInvitation;
