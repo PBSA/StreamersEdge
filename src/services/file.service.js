@@ -21,7 +21,7 @@ class FileService {
       INVALID_IMAGE_FORMAT: 'Invalid image format',
       FILE_NOT_FOUND: 'File not found',
       IMAGE_STRING_TOO_LONG: 'value too long for type character varying(255)',
-      FILE_TOO_LARGE: 'File too large, Image file restrictions: JPEG or PNG and < 1MB'
+      FILE_TOO_LARGE: 'File too large'
     };
   }
 
@@ -33,26 +33,31 @@ class FileService {
    */
   async saveImage(req, res) {
 
-    if (!req.file) {
+    try {
+      const upload = multer({
+        storage: multerS3({
+          s3: this.awsConnection.s3,
+          bucket: this.config.s3.bucket,
+          key: this._filename
+        }),
+        limits: {
+          files: 1, // allow only 1 file per request
+          fileSize: this.FILE_SIZE_LIMIT // 1 MB (max file size)
+        },
+        fileFilter: this._imageFilter.bind(this)
+      }).single('file');
+
+      await new Promise((success, fail) => {
+        upload(req, res, (err, res) => err ? fail(err) : success(res));
+      });
+    } catch (e) {
+      throw new Error(e.message);
+    }
+
+    if(!req.file) {
       throw new Error(this.errors.FILE_NOT_FOUND);
     }
 
-    if (req.file.size > this.FILE_SIZE_LIMIT) {
-      throw new Error(this.errors.FILE_TOO_LARGE);
-    }
-
-    const upload = multer({
-      storage: multerS3({
-        s3: this.awsConnection.s3,
-        bucket: this.config.s3.bucket,
-        key: this._filename
-      }),
-      fileFilter: this._imageFilter.bind(this)
-    }).single('file');
-
-    await new Promise((success, fail) => {
-      upload(req, res, (err, res) => err ? fail(err) : success(res));
-    });
     return this.config.cdnUrl + new URL(req.file.location).pathname;
   }
 

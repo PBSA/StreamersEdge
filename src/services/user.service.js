@@ -33,6 +33,7 @@ class UserService {
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.mailService = opts.mailService;
     this.googleRepository = opts.googleRepository;
+    this.pubgApiRepository = opts.pubgApiRepository;
 
     this.errors = {
       USER_NOT_FOUND: 'USER_NOT_FOUND',
@@ -345,6 +346,7 @@ class UserService {
           }));
           await Promise.all([this.whitelistedUsersRepository.destroyByToUserId(user.id, tx),
             this.whitelistedUsersRepository.bulkCreateFromUsers(users, tx)]);
+
           return updatedInvitation;
         }
 
@@ -354,6 +356,7 @@ class UserService {
             'fromGame': game
           }));
           await Promise.all([this.whitelistedGamesRepository.destroyByToUserId(user.id, tx),
+            this.whitelistedUsersRepository.destroyByToUserId(user.id, tx),
             this.whitelistedGamesRepository.bulkCreateFromGames(games, tx)]);
           return updatedInvitation;
         }
@@ -395,8 +398,6 @@ class UserService {
 
     return true;
   }
-
-
 }
 
 module.exports = UserService;
