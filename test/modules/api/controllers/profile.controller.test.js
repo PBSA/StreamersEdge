@@ -158,20 +158,24 @@ describe('PATCH /api/v1/profile', () => {
       password: 'MyPassword^007',
       repeatPassword: 'MyPassword^007'
     }, apiModule);
-    const profileResponse = await agent.get('/api/v1/profile');
-    const profile = profileResponse.body.result;
+    // const profileResponse = await agent.get('/api/v1/profile');
+    // const profile = profileResponse.body.result;
     const response = await agent.patch('/api/v1/profile').send({
       email: changeEmailTest
     });
-    isSuccess(response);
-    //email will change after email confirmation only
-    profile.email = 'newchangeemailtest@email.com'; 
-    assert.deepEqual(response.body.result.email, profile.email);
+    const {token} = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
+      where: {userId: response.body.result.id, isActive: true}
+    });
+    const confirmResponse = await agent.get(`/api/v1/profile/change-email/${token}`);
+    isSuccess(confirmResponse);
+    const profileResponseUpdated = await agent.get('/api/v1/profile');
+    isSuccess(profileResponseUpdated);
+    assert.deepEqual(profileResponseUpdated.body.result.email, changeEmailTest);
   });
 
   it('should forbid, email already used', async () => {
     const response = await agent.patch('/api/v1/profile').send({
-      email: 'newchangeemailtest@email.com'
+      email: changeEmailTest
     });
     isError(response, 400);
   });
@@ -232,22 +236,22 @@ describe('POST /api/v1/profile/avatar', () => {
 
   //const testImage = path.resolve(__dirname, 'files/test.png');
   const testPDF = path.resolve(__dirname, 'files/test.pdf');
-  
+
   beforeEach(async () => {
     await login(agent, null, apiModule);
   });
-  
+
   it('should forbid, user not logged', async () => {
     await agent.post('/api/v1/auth/logout');
     const response = await agent.post('/api/v1/profile/avatar').send({});
     isError(response, 401);
   });
-  
+
   it('should forbid without file', async () => {
     const response = await agent.post('/api/v1/profile/avatar').send({});
     isError(response, 400);
   });
-  
+
   it('should forbid, invalid file', async () => {
     const response = await agent.post('/api/v1/profile/avatar').attach('file', testPDF);
     isError(response, 400);
@@ -298,6 +302,8 @@ describe('DELETE /api/v1/profile/avatar', () => {
   // });
 
 });
+
+
 
 
 after(async () => {

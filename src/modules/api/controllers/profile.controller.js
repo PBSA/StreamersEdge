@@ -202,7 +202,6 @@ class ProfileController {
         this.authValidator.loggedOnly,
         this.uploadAvatar.bind(this)
       ],
-
       /**
        * @swagger
        *
@@ -229,11 +228,10 @@ class ProfileController {
         this.authValidator.loggedOnly,
         this.deleteAvatar.bind(this)
       ],
-
       /**
        * @swagger
        *
-       * /profile/avatar:
+       * /profile/change-email/{token}:
        *  get:
        *    description: Change user email
        *    summary: Change user email
@@ -241,6 +239,11 @@ class ProfileController {
        *      - application/json
        *    tags:
        *      - Profile
+       *    parameters:
+       *      - name: token
+       *        in:  path
+       *        required: true
+       *        type: string
        *    responses:
        *      200:
        *        description: Change user email response

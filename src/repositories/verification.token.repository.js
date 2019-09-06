@@ -30,6 +30,13 @@ class VerificationTokenRepository extends BasePostgresRepository {
     });
   }
 
+  async makeDeactive(userId) {
+    return this.model.update(
+      {isActive: false},
+      {where: {userId: userId}}
+    );
+  }
+
 }
 
 module.exports = VerificationTokenRepository;
