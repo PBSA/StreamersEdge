@@ -256,7 +256,7 @@ class ProfileController {
        */
       [
         'get', '/api/v1/profile/change-email/:token',
-        this.authValidator.validateChangeEmail,
+        this.authValidator.validateConfirmEmail,
         this.changeEmail.bind(this)
       ]
     ];

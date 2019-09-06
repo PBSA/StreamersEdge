@@ -28,7 +28,6 @@ class AuthValidator extends BaseValidator {
     this.validateResetPassword = this.validateResetPassword.bind(this);
     this.loggedOnly = this.loggedOnly.bind(this);
     this.loggedAdminOnly = this.loggedAdminOnly.bind(this);
-    this.validateChangeEmail = this.validateChangeEmail.bind(this);
   }
 
   loggedOnly() {
@@ -182,25 +181,6 @@ class AuthValidator extends BaseValidator {
       return {ResetToken, password};
     });
   }
-
-  validateChangeEmail() {
-    const querySchema = {
-      token: Joi.string().required()
-    };
-    return this.validate(querySchema, null, async (req, query) => {
-
-      const {token} = query;
-
-      const ActiveToken = await this.verificationTokenRepository.findActive(token);
-
-      if (!ActiveToken) {
-        throw new ValidateError(404, tokenConstants.tokenNotFound);
-      }
-
-      return ActiveToken;
-    });
-  }
-
 }
 
 module.exports = AuthValidator;
