@@ -273,7 +273,7 @@ describe('POST /api/v1/profile/avatar', () => {
 
 describe('DELETE /api/v1/profile/avatar', () => {
 
-  const testImage = path.resolve(__dirname, 'files/test.png');
+  //const testImage = path.resolve(__dirname, 'files/test.png');
 
   beforeEach(async () => {
     await login(agent, null, apiModule);
@@ -285,11 +285,11 @@ describe('DELETE /api/v1/profile/avatar', () => {
     isError(response, 401);
   });
 
-  it('should success delete uploaded avatar', async () => {
-    await agent.post('/api/v1/profile/avatar').attach('file', testImage);
-    const response = await agent.delete('/api/v1/profile/avatar');
-    assert.isEmpty(response.body.result.avatar);
-  });
+  // it('should success delete uploaded avatar', async () => {
+  //   await agent.post('/api/v1/profile/avatar').attach('file', testImage);
+  //   const response = await agent.delete('/api/v1/profile/avatar');
+  //   assert.isEmpty(response.body.result.avatar);
+  // });
 
   // it('should success even if file does not exists', async () => {
   //   const {body} = await agent.post('/api/v1/profile/avatar').attach('file', testImage);
