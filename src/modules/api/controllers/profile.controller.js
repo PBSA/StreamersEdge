@@ -176,12 +176,8 @@ class ProfileController {
        *        name: upfile
        *        type: file
        *        description: The file to upload.
-       *    requestBody:
-       *        content:
-       *          image/png:
-       *            schema:
-       *              type: string
-       *              format: binary
+       *    consumes:
+       *      - multipart/form-data
        *    responses:
        *      200:
        *        description: Profile avatar response
