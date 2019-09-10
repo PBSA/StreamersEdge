@@ -41,7 +41,7 @@ class UserService {
       TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS'
     };
 
-    this.RESET_TOKEN_TIME_INTERVAL = 300;
+    this.RESET_TOKEN_TIME_INTERVAL = 10;
   }
 
   /**
