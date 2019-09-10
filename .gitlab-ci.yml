@@ -1,7 +1,7 @@
 stages:
   - test
-  - build
   - deploy
+  - swagger
 
 test:
   image: node:10.16-alpine
@@ -30,6 +30,9 @@ test:
     key: $CI_COMMIT_REF_NAME
     paths:
       - node_modules
+  artifcats:
+    paths:
+      - docs/
   script:
     - apk add python make g++
     - npm i
@@ -37,6 +40,7 @@ test:
     - npm run test:audit
     - npm run test:lint
     - npm run test:coverage
+    - npm run build:doc
   tags:
     - docker
   only:
@@ -58,3 +62,11 @@ deployToStaging:
     - bash deploy/deployToStaging.sh
   when: manual
 
+swagger:
+  stage: swagger
+  dependencies:
+    - test
+  script:
+    - cp /docs/swagger.yaml /var/www/swagger/$CI_COMMIT_REF_NAME/CI_COMMIT_SHORT_SHA
+  tags:
+    - swagger
