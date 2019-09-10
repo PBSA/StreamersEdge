@@ -30,7 +30,7 @@ test:
     key: $CI_COMMIT_REF_NAME
     paths:
       - node_modules
-  artifcats:
+  artifacts:
     paths:
       - docs/
   script:
