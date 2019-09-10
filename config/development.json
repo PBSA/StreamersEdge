@@ -43,7 +43,9 @@
   },
   "swagger": {
     "host": "localhost:3000",
-    "schemes": ["http"]
+    "schemes": [
+      "http"
+    ]
   },
   "db": {
     "database": "streamersedge"
