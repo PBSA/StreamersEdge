@@ -163,10 +163,10 @@ describe('PATCH /api/v1/profile', () => {
     const response = await agent.patch('/api/v1/profile').send({
       email: changeEmailTest
     }); 
-    const {token} = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
+    const dbResponse = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
       where: {userId: response.body.result.id, isActive: true}
     });
-    const confirmResponse = await agent.get(`/api/v1/profile/change-email/${token}`);
+    const confirmResponse = await agent.get(`/api/v1/profile/change-email/${dbResponse.token}`);
     isSuccess(confirmResponse);
     const profileResponseUpdated = await agent.get('/api/v1/profile');
     isSuccess(profileResponseUpdated);
