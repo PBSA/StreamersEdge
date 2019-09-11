@@ -74,6 +74,7 @@ const {accessRules} = require('../../../constants/challenge');
  *            example: '1.3.0'
  *      extensions:
  *        type: array
+ *        items: {}
  *  ChallengeInvite:
  *    type: object
  *    required:
@@ -107,46 +108,53 @@ const {accessRules} = require('../../../constants/challenge');
  *              type: string
  *              example:  '2019-06-28T14:17:57'
  *            operations:
- *               type: array
- *               items:
- *                 type: array
- *                 items:
- *                   fee:
- *                     type: object
- *                     properties:
- *                       amount:
- *                         type: string
- *                       asset_id:
- *                         type: string
- *                   from:
- *                     type: string
- *                   to:
- *                     type: string
- *                   amount:
- *                     type: object
- *                     properties:
- *                       amount:
- *                         type: string
- *                       asset_id:
- *                         type: string
- *                       extensions:
- *                         type: array
- *                 example:
- *                   - 0
- *                   - fee:
- *                       amount: '20000'
- *                       asset_id: '1'
- *                     from: '1.2.67'
- *                     to: '1.2.57'
- *                     amount:
+ *              type: array
+ *              items:
+ *                type: array
+ *                items:
+ *                  allOf:
+ *                    - type: number
+ *                    - type: object
+ *                      properties:
+ *                        fee:
+ *                          type: object
+ *                          properties:
+ *                            amount:
+ *                              type: string
+ *                            asset_id:
+ *                              type: string
+ *                        from:
+ *                          type: string
+ *                        to:
+ *                          type: string
+ *                        amount:
+ *                          type: object
+ *                          properties:
+ *                            amount:
+ *                              type: string
+ *                            asset_id:
+ *                              type: string
+ *                            extensions:
+ *                              type: array
+ *                              items: {}
+ *                example:
+ *                  - 0
+ *                  - fee:
+ *                      amount: '20000'
+ *                      asset_id: '1'
+ *                    from: '1.2.67'
+ *                    to: '1.2.57'
+ *                    amount:
  *                      amount: '1000'
  *                      asset_id: '1.3.0'
- *                     extensions: []
+ *                    extensions: []
  *            extensions:
  *              type: array
+ *              items: {}
  *              example: []
  *            signatures:
  *              type: array
+ *              items: {}
  *              example: [jhvjhhj787878gghjjh]
  *  JoinSuccessResponse:
  *    type: object
