@@ -351,6 +351,11 @@ class AuthController {
   }
 
   async resetPassword(_, {ResetToken, password}) {
+
+    if (_ && _.id !== ResetToken.userId) {
+      throw new ValidateError(401, 'unauthorized');
+    }
+
     await this.userService.resetPassword(ResetToken.user, password);
     await ResetToken.deactivate();
 
