@@ -67,6 +67,7 @@ swagger:
   dependencies:
     - test
   script:
-    - cp docs/swagger.yaml /var/www/swagger/$CI_COMMIT_REF_NAME/CI_COMMIT_SHORT_SHA
+    - mkdir -p /var/www/swagger/$CI_COMMIT_REF_NAME/$CI_COMMIT_SHORT_SHA
+    - cp docs/swagger.yaml /var/www/swagger/$CI_COMMIT_REF_NAME/$CI_COMMIT_SHORT_SHA
   tags:
     - swagger
