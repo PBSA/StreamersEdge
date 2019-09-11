@@ -163,6 +163,7 @@ describe('PATCH /api/v1/profile', () => {
     const response = await agent.patch('/api/v1/profile').send({
       email: changeEmailTest
     }); 
+    
     const dbResponse = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
       where: {userId: response.body.result.id, isActive: true}
     });
