@@ -164,7 +164,7 @@ describe('PATCH /api/v1/profile', () => {
       email: changeEmailTest
     }); 
 
-    await sleep(3000);
+    await sleep(300);
     
     const dbResponse = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
       where: {userId: response.body.result.id, isActive: true}
