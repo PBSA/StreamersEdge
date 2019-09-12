@@ -192,6 +192,10 @@ const attributes = {
     type: Sequelize.STRING,
     defaultValue: ''
   },
+  peerplaysMasterPassword: {
+    type: Sequelize.STRING,
+    defaultValue: ''
+  },
   bitcoinAddress: {
     type: Sequelize.STRING,
     defaultValue: ''
