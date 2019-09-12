@@ -21,6 +21,7 @@ class FileService {
       INVALID_IMAGE_FORMAT: 'Invalid image format',
       FILE_NOT_FOUND: 'File not found',
       IMAGE_STRING_TOO_LONG: 'value too long for type character varying(255)',
+      INVALID_REQUEST: 'Invalid request',
       FILE_TOO_LARGE: 'File too large'
     };
   }

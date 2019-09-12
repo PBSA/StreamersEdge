@@ -4,6 +4,7 @@ const tldJS = require('tldjs');
 const BaseValidator = require('./abstract/base.validator');
 const ValidateError = require('./../../../errors/validate.error');
 const profileConstants = require('../../../constants/profile');
+const tokenConstants = require('../../../constants/token');
 
 class AuthValidator extends BaseValidator {
 
@@ -82,7 +83,7 @@ class AuthValidator extends BaseValidator {
         });
       }
 
-      if ( email.match(/@.+\..+/) && (!tldJS.tldExists(email) || (email.split('@').pop().split('.').length > 2))) {
+      if (email.match(/@.+\..+/) && (!tldJS.tldExists(email) || (email.split('@').pop().split('.').length > 2))) {
         throw new ValidateError(400, 'Validate error', {
           email: 'Invalid email'
         });
@@ -117,13 +118,13 @@ class AuthValidator extends BaseValidator {
       token: Joi.string().required()
     };
     return this.validate(querySchema, null, async (req, query) => {
-     
+
       const {token} = query;
 
       const ActiveToken = await this.verificationTokenRepository.findActive(token);
 
       if (!ActiveToken) {
-        throw new ValidateError(404, 'Token not found');
+        throw new ValidateError(404, tokenConstants.tokenNotFound);
       }
 
       return ActiveToken;
@@ -136,7 +137,7 @@ class AuthValidator extends BaseValidator {
       password: Joi.string().required()
     };
 
-    return this.validate(null, bodySchema,async (req, query, body) => {
+    return this.validate(null, bodySchema, async (req, query, body) => {
       const {login} = body;
 
       const user = await this.userRepository.getByLogin(login, normalizeEmail(login));
@@ -145,7 +146,7 @@ class AuthValidator extends BaseValidator {
         throw new ValidateError(403, 'Please verify your email address first');
       }
 
-      if(user && user.status === profileConstants.status.banned){
+      if (user && user.status === profileConstants.status.banned) {
         throw new ValidateError(403, 'You have been banned. Please contact our admins for potential unban.');
       }
 
@@ -178,13 +179,12 @@ class AuthValidator extends BaseValidator {
       const ResetToken = await this.resetTokenRepository.findActive(token);
 
       if (!ResetToken) {
-        throw new ValidateError(404, 'Token not found');
+        throw new ValidateError(404, tokenConstants.tokenNotFound);
       }
 
       return {ResetToken, password};
     });
   }
-
 }
 
 module.exports = AuthValidator;

@@ -312,7 +312,7 @@ class AuthController {
   }
 
   async confirmEmail(user, ActiveToken) {
-    if (user && user.id != ActiveToken.id) {
+    if (user && user.id !== ActiveToken.userId) {
       throw new ValidateError(401, 'unauthorized');
     }
 
@@ -351,6 +351,11 @@ class AuthController {
   }
 
   async resetPassword(_, {ResetToken, password}) {
+
+    if (_ && _.id !== ResetToken.userId) {
+      throw new ValidateError(401, 'unauthorized');
+    }
+
     await this.userService.resetPassword(ResetToken.user, password);
     await ResetToken.deactivate();
 

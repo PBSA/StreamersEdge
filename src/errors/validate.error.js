@@ -30,6 +30,15 @@ const RestError = require('./rest.error');
  *      error:
  *        type: string
  *        example: forbidden
+ *  UnProcessableError:
+ *    type: object
+ *    properties:
+ *      status:
+ *        type: number
+ *        example: 422
+ *      error:
+ *        type: string
+ *        example: unprocessable
  */
 
 class ValidateError extends RestError {

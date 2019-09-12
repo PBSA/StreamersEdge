@@ -42,7 +42,7 @@ class UserService {
       TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS'
     };
 
-    this.RESET_TOKEN_TIME_INTERVAL = 300;
+    this.RESET_TOKEN_TIME_INTERVAL = 10;
   }
 
   /**
@@ -143,10 +143,21 @@ class UserService {
      * @returns {Promise<UserModel>}
      */
   async patchProfile(User, updateObject, getClean = true) {
-    Object.keys(updateObject).forEach((field) => {
-      User[field] = updateObject[field];
-    });
-    await User.save();
+    try {
+      Object.keys(updateObject).forEach(async (field) => {
+        if (field === 'email') {
+          await this.verificationTokenRepository.makeDeactive(User.id);
+          const {token} = await this.verificationTokenRepository.createToken(User.id, updateObject[field]);
+          await this.mailService.sendMailForChangeEmail(updateObject[field], token);
+        } else {
+          User[field] = updateObject[field];
+        }
+      });
+      await User.save();
+    } catch (err) {
+      throw new Error('Something went wrong');
+    }
+
     return getClean ? this.getCleanUser(User) : User;
   }
 
@@ -226,7 +237,7 @@ class UserService {
     const User = await this.userRepository.model.create({
       email, username, password
     });
-    const {token} = await this.verificationTokenRepository.createToken(User.id);
+    const {token} = await this.verificationTokenRepository.createToken(User.id, email);
 
     await this.mailService.sendMailAfterRegistration(email, token);
 
@@ -236,7 +247,6 @@ class UserService {
   }
 
   async confirmEmail(ActiveToken) {
-
     const User = await this.userRepository.findByPk(ActiveToken.userId);
     User.isEmailVerified = true;
     await User.save();
@@ -411,6 +421,17 @@ class UserService {
 
     return true;
   }
+
+  async changeEmail(ActiveToken) {
+    const User = await this.userRepository.findByPk(ActiveToken.userId);
+    User.isEmailVerified = true;
+    User.email = ActiveToken.email;
+
+    await User.save();
+    ActiveToken.isActive = false;
+    await ActiveToken.save();
+  }
+
 }
 
 module.exports = UserService;
