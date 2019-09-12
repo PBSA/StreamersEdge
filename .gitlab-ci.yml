@@ -1,6 +1,6 @@
 stages:
   - test
-  - build
+  - swagger
   - deploy
 
 test:
@@ -30,6 +30,9 @@ test:
     key: $CI_COMMIT_REF_NAME
     paths:
       - node_modules
+  artifacts:
+    paths:
+      - docs/
   script:
     - apk add python make g++
     - npm i
@@ -37,6 +40,7 @@ test:
     - npm run test:audit
     - npm run test:lint
     - npm run test:coverage
+    - npm run build:doc
   tags:
     - docker
   only:
@@ -44,6 +48,17 @@ test:
     - develop
     - master
     - web
+
+swagger:
+  stage: swagger
+  dependencies:
+    - test
+  script:
+    - mkdir -p "/var/www/swagger/$CI_COMMIT_REF_NAME/$CI_COMMIT_SHORT_SHA"
+    - cp docs/swagger.yaml "/var/www/swagger/$CI_COMMIT_REF_NAME/$CI_COMMIT_SHORT_SHA"
+    - cp docs/swagger.yaml "/var/www/swagger/$CI_COMMIT_REF_NAME"
+  tags:
+    - swagger
 
 deployToDev:
   stage: deploy
@@ -57,4 +72,3 @@ deployToStaging:
   script:
     - bash deploy/deployToStaging.sh
   when: manual
-
