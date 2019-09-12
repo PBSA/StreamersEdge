@@ -7,7 +7,6 @@ const chaiHttp = require('chai-http');
 
 const {isSuccess, isError} = require('../helpers/test.response.helper');
 const ApiModule = require('../api.module.test');
-const constants = require('../../../constants.json');
 
 chai.use(chaiHttp);
 let agent;
