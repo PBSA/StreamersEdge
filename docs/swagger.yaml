@@ -793,6 +793,37 @@ paths:
           description: getUsersWithStatus response
           schema:
             $ref: '#/definitions/TransactionResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /donate:
+    post:
+      description: Create a Donate Transaction
+      produces:
+        - application/json
+      tags:
+        - Transactions
+      parameters:
+        - name: donate
+          description: donate transaction created in frontend and the receiverId
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Donation'
+      responses:
+        '200':
+          description: Payment response
+          schema:
+            $ref: '#/definitions/PaymentResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
         '401':
           description: Error user unauthorized
           schema:
@@ -1454,6 +1485,16 @@ definitions:
         type: number
       challengeId:
         type: number
+  Donation:
+    type: object
+    required:
+      - receiverId
+      - donateOp
+    properties:
+      receiverId:
+        type: string
+      donateOp:
+        $ref: '#/definitions/TransactionObject'
   UsersChangeNotificationsStatus:
     type: object
     required:
