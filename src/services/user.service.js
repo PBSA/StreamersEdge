@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const moment = require('moment');
+const normalizeEmail = require('normalize-email');
 const RestError = require('../errors/rest.error');
 const {types: txTypes} = require('../constants/transaction');
 const invitationConstants = require('../constants/invitation');
@@ -170,7 +171,15 @@ class UserService {
     try {
       await this.peerplaysRepository.createPeerplaysAccount(name, ownerKey, activeKey);
     } catch (details) {
-      throw new RestError('Request error', 400, details);
+      let error = details;
+
+      if(error.base){
+        error = {
+          message: error.base.length > 0 ? error.base : 'Invalid active or owner key. '
+        };
+      }
+
+      throw new RestError('Request error', 400, error);
     }
 
     User.peerplaysAccountName = name;
@@ -236,10 +245,14 @@ class UserService {
   }
 
   async getSignInUser(login, password) {
-    const User = await this.userRepository.getByLogin(login);
+    const User = await this.userRepository.getByLogin(login, normalizeEmail(login));
 
     if (!User) {
       throw new Error('User not found');
+    }
+
+    if(User && User.isEmailVerified === false){
+      throw new Error('Please verify your email address first');
     }
 
     if (!await bcrypt.compare(password, User.password)) {
