@@ -140,7 +140,11 @@ class AuthValidator extends BaseValidator {
     return this.validate(null, bodySchema, async (req, query, body) => {
       const {login} = body;
 
-      const user = await this.userRepository.getByLogin(login);
+      const user = await this.userRepository.getByLogin(login, normalizeEmail(login));
+
+      if(user && user.isEmailVerified === false){
+        throw new ValidateError(403, 'Please verify your email address first');
+      }
 
       if (user && user.status === profileConstants.status.banned) {
         throw new ValidateError(403, 'You have been banned. Please contact our admins for potential unban.');

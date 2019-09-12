@@ -27,15 +27,14 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
-  async getByLogin(login) {
+  async getByLogin(login, normalizeLogin) {
     return this.model.findOne({
       where: {
         [Sequelize.Op.or]: [{
-          email: login
+          email: normalizeLogin
         }, {
           username: login
-        }],
-        isEmailVerified: true
+        }]
       }
     });
   }

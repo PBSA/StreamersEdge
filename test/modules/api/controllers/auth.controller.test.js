@@ -200,7 +200,7 @@ describe('POST /api/v1/auth/sign-in', () => {
       login: body.email,
       password: body.password
     });
-    isError(response, 400);
+    isError(response, 403);
   });
 
   it('should forbid. invalid login', async () => {
