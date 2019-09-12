@@ -4,7 +4,7 @@ const request = require('supertest');
 const chai = require('chai');
 chai.use(require('chai-url'));
 const chaiHttp = require('chai-http');
-// const path = require('path');
+const path = require('path');
 // const fs = require('fs');
 // const config = require('config');
 
@@ -158,14 +158,23 @@ describe('PATCH /api/v1/profile', () => {
       password: 'MyPassword^007',
       repeatPassword: 'MyPassword^007'
     }, apiModule);
-    const profileResponse = await agent.get('/api/v1/profile');
-    const profile = profileResponse.body.result;
+    // const profileResponse = await agent.get('/api/v1/profile');
+    // const profile = profileResponse.body.result;
     const response = await agent.patch('/api/v1/profile').send({
       email: changeEmailTest
+    }); 
+
+    await sleep(300);
+    
+    const dbResponse = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
+      where: {userId: response.body.result.id, isActive: true}
     });
-    isSuccess(response);
-    profile.email = changeEmailTest;
-    assert.deepEqual(response.body.result, profile);
+    
+    const confirmResponse = await agent.get(`/api/v1/profile/change-email/${dbResponse['token']}`);
+    isSuccess(confirmResponse);
+    const profileResponseUpdated = await agent.get('/api/v1/profile');
+    isSuccess(profileResponseUpdated);
+    assert.deepEqual(profileResponseUpdated.body.result.email, changeEmailTest);
   });
 
   it('should forbid, email already used', async () => {
@@ -229,28 +238,28 @@ describe('POST /api/v1/profile/peerplays/create-account', () => {
 
 describe('POST /api/v1/profile/avatar', () => {
 
-  // const testImage = path.resolve(__dirname, 'files/test.png');
-  // const testPDF = path.resolve(__dirname, 'files/test.pdf');
-  //
-  // beforeEach(async () => {
-  //   await login(agent, null, apiModule);
-  // });
-  //
-  // it('should forbid, user not logged', async () => {
-  //   await agent.post('/api/v1/auth/logout');
-  //   const response = await agent.post('/api/v1/profile/avatar').send({});
-  //   isError(response, 401);
-  // });
-  //
-  // it('should forbid without file', async () => {
-  //   const response = await agent.post('/api/v1/profile/avatar').send({});
-  //   isError(response, 400);
-  // });
-  //
-  // it('should forbid, invalid file', async () => {
-  //   const response = await agent.post('/api/v1/profile/avatar').attach('file', testPDF);
-  //   isError(response, 400);
-  // });
+  //const testImage = path.resolve(__dirname, 'files/test.png');
+  const testPDF = path.resolve(__dirname, 'files/test.pdf');
+
+  beforeEach(async () => {
+    await login(agent, null, apiModule);
+  });
+
+  it('should forbid, user not logged', async () => {
+    await agent.post('/api/v1/auth/logout');
+    const response = await agent.post('/api/v1/profile/avatar').send({});
+    isError(response, 401);
+  });
+
+  it('should forbid without file', async () => {
+    const response = await agent.post('/api/v1/profile/avatar').send({});
+    isError(response, 400);
+  });
+
+  it('should forbid, invalid file', async () => {
+    const response = await agent.post('/api/v1/profile/avatar').attach('file', testPDF);
+    isError(response, 400);
+  });
 
   // it('should success if avatar not exists', async () => {
   //   const response = await agent.post('/api/v1/profile/avatar').attach('file', testImage);
@@ -268,7 +277,7 @@ describe('POST /api/v1/profile/avatar', () => {
 
 describe('DELETE /api/v1/profile/avatar', () => {
 
-  // const testImage = path.resolve(__dirname, 'files/test.png');
+  //const testImage = path.resolve(__dirname, 'files/test.png');
 
   beforeEach(async () => {
     await login(agent, null, apiModule);
@@ -299,6 +308,13 @@ describe('DELETE /api/v1/profile/avatar', () => {
 });
 
 
+
+
 after(async () => {
   await apiModule.close();
 });
+
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

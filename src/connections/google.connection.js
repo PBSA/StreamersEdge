@@ -20,7 +20,7 @@ class GoogleConnection extends BaseConnection {
     const auth = new google.auth.OAuth2(
       this.config.google.clientId,
       this.config.google.clientSecret,
-      this.config.google.callbackUrl,
+      this.config.google.callbackUrl
     );
     auth.setCredentials(tokens);
 

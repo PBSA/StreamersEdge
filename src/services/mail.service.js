@@ -43,6 +43,25 @@ class MailService {
     await this.smtpConnection.sendMail(options);
   }
 
+  async sendMailForChangeEmail(email, uniqueLink) {
+    try {
+      const sourceHTML = fs.readFileSync(`${__dirname}/templates/change-email.handlebars`).toString();
+      const templateHTML = Handlebars.compile(sourceHTML);
+      const url = `${this.config.frontendUrl}/change-email/${uniqueLink}`;
+      const resultHtml = templateHTML({url});
+
+      const options = {
+        to: email,
+        from: this.config.mailer.sender,
+        subject: 'Streamers Edge Change Email',
+        html: resultHtml
+      };
+      await this.smtpConnection.sendMail(options);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
 }
 
 module.exports = MailService;
