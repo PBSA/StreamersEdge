@@ -7,8 +7,9 @@ const {Model} = Sequelize;
  * @property {String} userId
  * @property {String} token
  * @property {Boolean} isActive
+ * @property {Boolean} email
  */
-class VerificationTokenModel extends Model {}
+class VerificationTokenModel extends Model { }
 
 module.exports = {
   init: (sequelize) => {
@@ -20,6 +21,10 @@ module.exports = {
       isActive: {
         type: Sequelize.BOOLEAN,
         defaultValue: true
+      },
+      email: {
+        type: Sequelize.STRING,
+        defaultValue: ''
       }
     }, {
       sequelize,
