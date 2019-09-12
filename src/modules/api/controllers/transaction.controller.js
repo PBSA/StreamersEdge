@@ -35,6 +35,17 @@ class TransactionController {
    *        type: number
    *      challengeId:
    *        type: number
+   * 
+   *  Donation:
+   *    type: object
+   *    required:
+   *      - receiverId
+   *      - donateOp
+   *    properties:
+   *      receiverId: 
+   *        type: string
+   *      donateOp:
+   *        $ref: '#/definitions/TransactionObject'
    */
 
   /**
@@ -84,12 +95,53 @@ class TransactionController {
        *        description: Error user unauthorized
        *        schema:
        *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'get', '/api/v1/transactions',
         this.authValidator.loggedOnly,
         this.transactionValidator.getTransactions,
         this.getTransactions.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /donate:
+       *  post:
+       *    description: Create a Donate Transaction
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Transactions
+       *    parameters:
+       *      - name: donate
+       *        description: donate transaction created in frontend and the receiverId
+       *        in: body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/Donation'
+       *    responses:
+       *      200:
+       *        description: Payment response
+       *        schema:
+       *          $ref: '#/definitions/PaymentResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       */
+      [
+        'post', '/api/v1/donate',
+        this.authValidator.loggedOnly,
+        this.transactionValidator.donate,
+        this.createDonateTransaction.bind(this)
       ]
     ];
   }
