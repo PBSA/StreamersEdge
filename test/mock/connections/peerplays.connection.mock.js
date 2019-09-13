@@ -93,7 +93,7 @@ class PeerplaysConnectionMock {
 
   async request(form) {
 
-    if (form.account.name !== constants.modules.api.profile.validPeerplaysName && !form.account.name.startsWith('SE-')) {
+    if (form.account.name !== constants.modules.api.profile.validPeerplaysName && !form.account.name.startsWith('se-')) {
       throw new Error('Invalid account name');
     }
 

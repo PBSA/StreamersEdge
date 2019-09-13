@@ -222,8 +222,8 @@ class UserService {
 
   async signUpWithPassword(email, username, password) {
 
-    const peerplaysAccountUsername = 'SE-' + username;
-    const peerplaysAccountPassword = await bcrypt.hash('SE-' + password + (new Date()).getTime(), 10);
+    const peerplaysAccountUsername = 'se-' + username;
+    const peerplaysAccountPassword = await bcrypt.hash('se-' + password + (new Date()).getTime(), 10);
     const keys = Login.generateKeys(
       peerplaysAccountUsername,
       peerplaysAccountPassword,
@@ -242,6 +242,10 @@ class UserService {
     await this.mailService.sendMailAfterRegistration(email, token);
 
     await this.peerplaysRepository.createPeerplaysAccount(peerplaysAccountUsername,ownerKey, activeKey);
+
+    User.peerplaysAccountName = peerplaysAccountUsername;
+    User.peerplaysMasterPassword = peerplaysAccountPassword;
+    await User.save();
 
     return this.getCleanUser(User);
   }
