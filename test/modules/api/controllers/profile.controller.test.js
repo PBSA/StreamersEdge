@@ -52,7 +52,7 @@ describe('GET /api/v1/profile', () => {
       youtube: '',
       twitch: '',
       facebook: '',
-      peerplaysAccountName: '',
+      peerplaysAccountName: 'se-test-global',
       bitcoinAddress: ''
     });
   });

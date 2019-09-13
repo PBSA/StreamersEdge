@@ -7,7 +7,6 @@ const chaiHttp = require('chai-http');
 
 const {isSuccess, isError} = require('../helpers/test.response.helper');
 const ApiModule = require('../api.module.test');
-const constants = require('../../../constants.json');
 
 chai.use(chaiHttp);
 let agent;
@@ -72,26 +71,30 @@ describe('POST /api/v1/payment', () => {
     isError(response, 400);
   });
 
-  it('should success with error. User does not have peerplays account', async () => {
-    const orderId = '7D983959BX7281444';
-    const response = await agent.post('/api/v1/payment').send({orderId: orderId});
-    isSuccess(response);
-    assert.strictEqual(response.body.result[0].error, 'User does not have peerplays account');
-  });
+  //Since we are creating a peerplays account on signup, the user will always have a peerplays account.
+  //Can be uncommented if we revert the automatic creation of peerplays account.
+  // it('should success with error. User does not have peerplays account', async () => {
+  //   const orderId = '7D983959BX7281444';
+  //   const response = await agent.post('/api/v1/payment').send({orderId: orderId});
+  //   isSuccess(response);
+  //   assert.strictEqual(response.body.result[0].error, 'User does not have peerplays account');
+  // });
 
-  it('should success. valid request after adding account', async () => {
-    const orderId = '2MU795672V989411N';
-    const res = await agent.post('/api/v1/payment').send({orderId: orderId});
-    assert.strictEqual(res.body.result[0].error, 'User does not have peerplays account');
-    await agent.post('/api/v1/profile/peerplays/create-account').send({
-      name: constants.modules.api.profile.validPeerplaysName,
-      activeKey: constants.modules.api.profile.validPeerplaysKey,
-      ownerKey: constants.modules.api.profile.validPeerplaysKey
-    });
-    const orderI = '9777786734429090V';
-    const response = await agent.post('/api/v1/payment').send({orderId: orderI});
-    isSuccess(response);
-  });
+  //Invalid test case since the peerplays account is created automatically at sign up. 
+  //Can be uncommented if we revert the automatic creation of peerplays account.
+  // it('should success. valid request after adding account', async () => {
+  //   const orderId = '2MU795672V989411N';
+  //   const res = await agent.post('/api/v1/payment').send({orderId: orderId});
+  //   assert.strictEqual(res.body.result[0].error, 'User does not have peerplays account');
+  //   await agent.post('/api/v1/profile/peerplays/create-account').send({
+  //     name: constants.modules.api.profile.validPeerplaysName,
+  //     activeKey: constants.modules.api.profile.validPeerplaysKey,
+  //     ownerKey: constants.modules.api.profile.validPeerplaysKey
+  //   });
+  //   const orderI = '9777786734429090V';
+  //   const response = await agent.post('/api/v1/payment').send({orderId: orderI});
+  //   isSuccess(response);
+  // });
 
   it('should forbid. Purchase already processed', async () => {
     const orderId = '9777786734429090V';
