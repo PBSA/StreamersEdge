@@ -262,7 +262,7 @@ describe('POST /api/v1/profile/avatar', () => {
   });
 
   it('should success if avatar not exists', async () => {
-    const response = await agent.post('/api/v1/profile/avatar').attach('file', testImage);
+    const response = await agent.post('/api/v1/profile/avatar').attach('file', fs.readFileSync(testImage), testImage);
     isSuccess(response);
     const {result} = response.body;
     assert.match(
@@ -290,13 +290,13 @@ describe('DELETE /api/v1/profile/avatar', () => {
   });
 
   it('should success delete uploaded avatar', async () => {
-    await agent.post('/api/v1/profile/avatar').attach('file', testImage);
+    await agent.post('/api/v1/profile/avatar').attach('file', fs.readFileSync(testImage), testImage);
     const response = await agent.delete('/api/v1/profile/avatar');
     assert.isEmpty(response.body.result.avatar);
   });
 
   it('should success even if file does not exists', async () => {
-    const {body} = await agent.post('/api/v1/profile/avatar').attach('file', testImage);
+    const {body} = await agent.post('/api/v1/profile/avatar').attach('file', fs.readFileSync(testImage), testImage);
     const {avatar} = body.result;
     const avatarFilename = avatar.match(/[A-z0-9]+-[A-z0-9]+-[A-z0-9]+\.png/)[0];
     const file = path.resolve(config.basePath, 'public/images/avatar/original/', avatarFilename);
