@@ -174,7 +174,7 @@ class ProfileController {
        *      - Profile
        *    parameters:
        *      - in: formData
-       *        name: upfile
+       *        name: file
        *        type: file
        *        description: The file to upload.
        *    consumes:
