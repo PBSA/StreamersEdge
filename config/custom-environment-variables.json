@@ -30,6 +30,20 @@
       "pass": "MAILER_AUTH_PASS"
     }
   },
+  "paypal": {
+    "clientId": "PAYPAL_CLIENT_ID",
+    "secret": "PAYPAL_SECRET",
+    "environment": "PAYPAL_ENV"
+  },
+  "coinmarketcap": {
+    "apiKey": "COINMARKETCAP_API_KEY"
+  },
+  "peerplays": {
+    "paymentAccountID": "PEERPLAYS_PAYMENT_ACCOUNT_ID",
+    "paymentAccountWIF": "PEERPLAYS_PAYMENT_ACCOUNT_WIF",
+    "paymentReceiver": "PEERPLAYS_PAYMENT_RECEIVER",
+    "peerplaysWS": "PEERPLAYS_WS"
+  },
   "vapid": {
     "publicKey": "VAPID_PUBLIC_KEY",
     "privateKey": "VAPID_PRIVATE_KEY"

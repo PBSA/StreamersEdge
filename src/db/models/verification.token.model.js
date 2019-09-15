@@ -2,24 +2,18 @@ const Sequelize = require('sequelize');
 const {Model} = Sequelize;
 
 /**
- * @typedef {Class} ResetTokenModel
+ * @typedef {Class} VerificationTokenModel
  * @property {Number} id
  * @property {String} userId
  * @property {String} token
  * @property {Boolean} isActive
+ * @property {Boolean} email
  */
-class ResetTokenModel extends Model {
-
-  async deactivate() {
-    this.isActive = false;
-    await this.save();
-  }
-
-}
+class VerificationTokenModel extends Model { }
 
 module.exports = {
   init: (sequelize) => {
-    ResetTokenModel.init({
+    VerificationTokenModel.init({
       token: {
         type: Sequelize.STRING,
         unique: true
@@ -27,16 +21,20 @@ module.exports = {
       isActive: {
         type: Sequelize.BOOLEAN,
         defaultValue: true
+      },
+      email: {
+        type: Sequelize.STRING,
+        defaultValue: ''
       }
     }, {
       sequelize,
-      modelName: 'reset-token'
+      modelName: 'verification-tokens'
     });
   },
   associate: (models) => {
-    ResetTokenModel.belongsTo(models.User.model);
+    VerificationTokenModel.belongsTo(models.User.model);
   },
   get model() {
-    return ResetTokenModel;
+    return VerificationTokenModel;
   }
 };

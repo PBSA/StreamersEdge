@@ -3,11 +3,14 @@ const moment = require('moment');
 const BaseValidator = require('./abstract/base.validator');
 const challengeConstants = require('../../../constants/challenge');
 const ValidateError = require('../../../errors/validate.error');
+const operationSchema = require('./abstract/operation.schema');
+const BigNumber = require('bignumber.js');
 
 class ChallengeValidator extends BaseValidator {
 
   /**
    * @param {UserRepository} opts.userRepository
+   * @param {AppConfig} opts.config
    */
   constructor(opts) {
     super();
@@ -19,13 +22,14 @@ class ChallengeValidator extends BaseValidator {
     this.validateGetChallenge = this.validateGetChallenge.bind(this);
     this.subscribe = this.subscribe.bind(this);
     this.invite = this.invite.bind(this);
+    this.joinToChallenge = this.joinToChallenge.bind(this);
   }
 
   createChallenge() {
     const bodySchema = {
       name: Joi.string().max(50).required(),
-      startDate: Joi.date().iso().min('now'),
-      endDate: Joi.date().iso().min('now').required(),
+      startDate: Joi.date().iso().min('now').required(),
+      endDate: Joi.date().iso().min('now'),
       game: Joi.string().valid(challengeConstants.games).required(),
       accessRule: Joi.string().valid(Object.keys(challengeConstants.accessRules)).required(),
       ppyAmount: Joi.number().min(1).required(),
@@ -36,7 +40,8 @@ class ChallengeValidator extends BaseValidator {
         operator: Joi.string().valid(challengeConstants.operators).required(),
         value: Joi.number().integer().required(),
         join: Joi.string().valid(challengeConstants.joinTypes).required()
-      })).default([], 'empty array')
+      })).default([], 'empty array'),
+      depositOp: operationSchema
     };
 
     return this.validate(null, bodySchema, async (req, query, body) => {
@@ -79,6 +84,18 @@ class ChallengeValidator extends BaseValidator {
         });
       }
 
+      if (body.depositOp.operations[0][1].to !== this.config.peerplays.paymentReceiver) {
+        throw new ValidateError(400, 'Validate error', {
+          depositOp: 'Invalid tx receiver'
+        });
+      }
+
+      if (!new BigNumber(body.depositOp.operations[0][1].amount.amount).isEqualTo(body.ppyAmount)) {
+        throw new ValidateError(400, 'Validate error', {
+          depositOp: 'Tx amount should be the same as ppyAmount'
+        });
+      }
+
       return body;
     });
   }
@@ -92,14 +109,33 @@ class ChallengeValidator extends BaseValidator {
   }
 
   subscribe() {
-    return this.validate(null,
-      {endpoint: Joi.string(), expirationTime: Joi.number().allow(null), keys: Joi.object({p256dh: Joi.string(), auth: Joi.string()})},
-      (req, query, body) => body);
+    const bodySchema = {
+      endpoint: Joi.string().required(),
+      expirationTime: Joi.number().allow(null),
+      keys: Joi.object({
+        p256dh: Joi.string().required(),
+        auth: Joi.string().required()
+      }).required()
+    };
+
+    return this.validate(null, bodySchema, (req, query, body) => body);
   }
 
   invite() {
+    const bodySchema = {
+      userId: Joi.number().required(),
+      challengeId: Joi.number().required()
+    };
+
+    return this.validate(null, bodySchema, (req, query, body) => body);
+  }
+
+  joinToChallenge() {
     return this.validate(null,
-      {userId: Joi.number(), challengeId: Joi.number()},
+      {
+        challengeId: Joi.number().integer().required(),
+        tx: operationSchema
+      },
       (req, query, body) => body);
   }
 

@@ -20,14 +20,14 @@ class GoogleConnection extends BaseConnection {
     const auth = new google.auth.OAuth2(
       this.config.google.clientId,
       this.config.google.clientSecret,
-      this.config.google.callbackUrl,
+      this.config.google.callbackUrl
     );
     auth.setCredentials(tokens);
 
     const youtubeService = google.youtube('v3');
     return youtubeService.channels.list({
       auth: auth,
-      part: 'snippet',
+      part: 'snippet,status',
       mine: true
     });
   }

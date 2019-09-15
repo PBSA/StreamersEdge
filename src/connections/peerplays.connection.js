@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 const request = require('request');
+const {Apis, TransactionBuilder} = require('peerplaysjs-lib');
 
 const BaseConnection = require('./abstracts/base.connection');
 
@@ -12,9 +13,19 @@ class PeerplaysConnection extends BaseConnection {
     super();
 
     this.config = opts.config;
+    this.dbAPI = null;
+
+    this.asset = null;
   }
 
-  connect() {}
+  async connect() {
+    await Apis.instance(this.config.peerplays.peerplaysWS, true).init_promise;
+
+    this.dbAPI = Apis.instance().db_api();
+    this.networkAPI = Apis.instance().network_api();
+    [this.asset] = await this.dbAPI.exec('get_assets', [[this.config.peerplays.sendAssetId]]);
+    this.TransactionBuilder = TransactionBuilder;
+  }
 
   async request(form) {
     const options = {
@@ -25,6 +36,7 @@ class PeerplaysConnection extends BaseConnection {
 
     return new Promise((success, fail) => {
       request(options, (err, res, body) => {
+
         if (err) {
           fail(err.message);
           return;
@@ -54,7 +66,8 @@ class PeerplaysConnection extends BaseConnection {
     });
   }
 
-  disconnect() {}
+  disconnect() {
+  }
 
 }
 

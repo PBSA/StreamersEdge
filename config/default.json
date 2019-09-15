@@ -29,10 +29,11 @@
   "bitcoinNetwork": "prod",
   "frontendUrl": "",
   "backendUrl": "",
-  "twitchUrl":"https://api.twitch.tv/helix/streams",
+  "twitchUrl": "https://api.twitch.tv/helix/streams",
   "mailer": {
     "host": "",
     "port": 587,
+    "service": "",
     "secure": false,
     "auth": {
       "user": "",
@@ -41,17 +42,41 @@
     "sender": ""
   },
   "peerplays": {
+    "peerplaysWS": "wss://api.ppy.blckchnd.com",
     "peerplaysFaucetURL": "https://beatrice-faucet.peerplays.download/faucet",
-    "referrer": "1.2.0"
+    "referrer": "1.2.0",
+    "sendAssetId": "1.3.0",
+    "paymentAccountID": "",
+    "paymentAccountWIF": "",
+    "paymentReceiver": ""
+  },
+  "paypal": {
+    "clientId": "",
+    "secret": "",
+    "environment": "live"
+  },
+  "coinmarketcap": {
+    "apiKey": ""
   },
   "vapid": {
     "publicKey": "",
     "privateKey": ""
   },
+  "streamersEdgeServiceEmail": "",
   "s3": {
     "bucket": ""
   },
+  "cdnUrl": "",
   "pubg": {
     "apiKey": ""
+  },
+  "swagger": {
+    "host": "virtserver.swaggerhub.com",
+    "schemes": [
+      "https"
+    ]
+  },
+  "challenge": {
+    "joinFee": "100"
   }
 }

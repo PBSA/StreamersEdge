@@ -7,13 +7,23 @@ You can find API documentation here - [/docs/api.md](/docs/api.md)
 Also you can build the HTML version of documentation. Just run npm run `build:apidoc`
 and documentation will be built into `apidoc` folder.
 
+## Dependency
+1. Docker & Docker-Compose
+
+2. NVM <br>
+https://github.com/nvm-sh/nvm
+
+3. Start the dependencies (Postgres) 
+```bash 
+   docker-compose -f docker_dependencies.yml up
+```
+
 ## Development
 
 For development you can use nodemon. Clone this project into your folder and run the following commands to run the backend:
 
 ```bash
-npm i # install dependencies
-npm run migrate # run database migrations
+nvm use  # switch to node version as in .nvmrc file
 npm run serve # start server with nodemon
 ```
 
@@ -61,9 +71,32 @@ npm run release:pre // cut a pre-release in the format v0.2.1-alpha.0
 npm run release:minor // cut a new release with semantic minor bump
 ```
 
-## Migrations
+## Migrations & Seeds
 
-<!--TODO: Should be described-->
+To run all pending migrations
+```yarn db-migrate-all```
+
+To undo single migrations
+```yarn db-migrate-undo```
+
+To undo all migrations BE CAREFUL
+```yarn db-migrate-undo```
+
+To run all Seeds. Seeds can be run multiple times and should be used for dev only
+```yarn db-seed-all```
+
+To undo single migrations
+```yarn db-seed-undo-all```
+
+## Testing
+
+1. Copy all the required configurations from development.json to test.json
+2. Make sure to point towards different database than development
+3. If this is first time, create a database for test as mentioned in test.json
+4. Run all migrations for test db
+```NODE_ENV=test yarn db-migrate-all```  
+5. Run the test cases
+```yarn test:mocha```
 
 ## Docker
 

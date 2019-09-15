@@ -20,7 +20,7 @@ module.exports = {
       titleId: {type: Sequelize.STRING}
     }, {
       sequelize,
-      modelName: 'pubg'
+      modelName: 'pubgs'
     });
   },
   associate: (models) => {

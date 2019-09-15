@@ -63,6 +63,8 @@ config/local.json
 config/local-test.json
 
 apidoc
+config/local-test.json
 public/images
 public/video
 .idea/
+.DS_Store

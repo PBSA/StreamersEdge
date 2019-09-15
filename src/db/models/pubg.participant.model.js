@@ -16,7 +16,7 @@ module.exports = {
       isWin: {type: Sequelize.BOOLEAN}
     }, {
       sequelize,
-      modelName: 'pubg-participant'
+      modelName: 'pubg-participants'
     });
   },
   associate: (models) => {

@@ -4,11 +4,33 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+let swaggerDef = require('./swagger-definition.js');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
-
+/**
+ * @swagger
+ *
+ * definitions:
+ *  SuccessResponse:
+ *    type: object
+ *    properties:
+ *      status:
+ *        type: number
+ *        default: 200
+ *        example: 200
+ *  SuccessEmptyResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            type: boolean
+ *            example: true
+ */
 /**
  * A namespace.
  * @namespace api
@@ -29,9 +51,11 @@ class ApiModule {
    * @param {FacebookController} opts.facebookController
    * @param {UserRepository} opts.userRepository
    * @param {ChallengesController} opts.challengesController
+   * @param {PaymentController} opts.paymentController
    * @param {AdminController} opts.adminController
    * @param {ReportController} opts.reportController
    * @param {SteamController} opts.steamController
+   * @param {TransactionController} opts.transactionController
    */
   constructor(opts) {
     this.config = opts.config;
@@ -47,10 +71,13 @@ class ApiModule {
     this.facebookController = opts.facebookController;
     this.googleController = opts.googleController;
     this.challengesController = opts.challengesController;
+    this.paymentController = opts.paymentController;
     this.streamController = opts.streamController;
     this.adminController = opts.adminController;
     this.reportController = opts.reportController;
     this.steamController = opts.steamController;
+    this.transactionController = opts.transactionController;
+    this.adminController = opts.adminController;
 
     this.userRepository = opts.userRepository;
   }
@@ -95,7 +122,7 @@ class ApiModule {
         store: SessionStore
       }));
 
-      SessionStore.sync();
+      // SessionStore.sync();
 
       this.app.use(passport.initialize());
       this.app.use(passport.session());
@@ -112,6 +139,13 @@ class ApiModule {
           done(null, _user);
         });
       });
+
+      if (process.env.NODE_ENV != 'production') {
+        this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc({
+          definition: swaggerDef,
+          apis: swaggerDef.apis
+        })));
+      }
 
       this.server = this.app.listen(this.config.port, () => {
         logger.info(`API APP REST listen ${this.config.port} Port`);
@@ -135,10 +169,12 @@ class ApiModule {
       this.facebookController,
       this.googleController,
       this.challengesController,
+      this.paymentController,
       this.streamController,
       this.reportController,
-      this.adminController,
-      this.steamController
+      this.steamController,
+      this.transactionController,
+      this.adminController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
       this.addRestHandler(...route);
     }));

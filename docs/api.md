@@ -21,7 +21,9 @@ Backend module for StreamersEdge application
 - [Challenges](#challenges)
 	- [Create new challenge](#create-new-challenge)
 	- [Get challenge by id](#get-challenge-by-id)
+	- [Get all challenges](#get-all-challenges)
 	- [Invite user to new challenge](#invite-user-to-new-challenge)
+	- [Join user to challenge](#join-user-to-challenge)
 	- [Subscribe to new notification](#subscribe-to-new-notification)
 	
 - [Facebook](#facebook)
@@ -29,6 +31,9 @@ Backend module for StreamersEdge application
 	
 - [Google](#google)
 	- [Auth by google](#auth-by-google)
+	
+- [PayPal](#paypal)
+	- [Process payment paypal](#process-payment-paypal)
 	
 - [Profile](#profile)
 	- [Create peerplays account for authorized user](#create-peerplays-account-for-authorized-user)
@@ -46,10 +51,14 @@ Backend module for StreamersEdge application
 	- [Get streams](#get-streams)
 	- [Get Streams for users from Twitch](#get-streams-for-users-from-twitch)
 	
+- [Transactions](#transactions)
+	- [Get user transactions](#get-user-transactions)
+	
 - [Twitch](#twitch)
 	- [Auth by twitch](#auth-by-twitch)
 	
 - [Users](#users)
+	- [Change notification status](#change-notification-status)
 	- [Get user by id](#get-user-by-id)
 	- [Get users list](#get-users-list)
 	
@@ -94,12 +103,6 @@ HTTP/1.1 200 OK
 	POST /api/v1/admin/users/ban/:userId
 
 
-### Parameters
-
-| Name    | Type      | Description                          |
-|---------|-----------|--------------------------------------|
-| userId			| Number			|  <p>User id</p>							|
-
 ### Success Response
 
 Success-Response:
@@ -110,66 +113,6 @@ HTTP/1.1 200 OK
  "result": true,
  "status": 200
 }
-```
-## Unban user by id
-
-
-
-	POST /api/v1/admin/users/unban/:userId
-
-
-### Parameters
-
-| Name    | Type      | Description                          |
-|---------|-----------|--------------------------------------|
-| userId			| Number			|  <p>User id</p>							|
-
-### Success Response
-
-Success-Response:
-
-```
-HTTP/1.1 200 OK
-{
- "result": true,
- "status": 200
-}
-```
-## get all reports
-
-
-
-	GET /api/v1/admin/reports
-
-
-### Success Response
-
-Success-Response:
-
-```
-HTTP/1.1 200 OK
- {
-  "result": [
-      {
-          "id": 1,
-          "reportedUserId": 1,
-          "reportedByUserId": 2,
-          "reason": "offendsMyReligiousSentiments",
-          "description": "bad bad bad",
-          "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-          "reporter": {
-              "username": "kokoko"
-          },
-          "troublemaker": {
-              "email": "ww@mail.com",
-              "username": "koko",
-              "userType": null,
-              "avatar": null
-          }
-      }
-  ],
-  "status": 200
- }
 ```
 ## get user info by id
 
@@ -312,7 +255,7 @@ Request-Example:
 {
   "email": "test@test.com",
   "username": "test",
-  "password": "testtest"
+  "password": "testtest",
   "repeatPassword": "testtest"
 }
 ```
@@ -507,6 +450,63 @@ HTTP/1.1 200 OK
  "status": 200
 }
 ```
+## Get all challenges
+
+
+
+	GET /api/v1/challenges
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "conditionsText": "test",
+   "user": {
+     "id": 1,
+     "username": "username",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
+   },
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
+   "invitedUsers": []
+ },
+ "status": 200
+}
+```
+
 ## Invite user to new challenge
 
 
@@ -531,6 +531,168 @@ Request-Example:
   "challengeId": "107",
 }
 ```
+
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "conditionsText": "test",
+   "user": {
+     "id": 1,
+     "username": "username",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
+   },
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
+   "invitedUsers": []
+ },
+ "status": 200
+}
+```
+
+## Join user to challenge
+
+
+
+	POST /api/v1/challenges/join
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| challengeId			| Number			|  <p>User join to this challenge</p>							|
+| tx			| Object			|  <p>transaction for this challenge</p>							|
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "challengeId": "107",
+  "tx": {
+    {
+      ref_block_num: 37792,
+      ref_block_prefix: 2533853773,
+      expiration: '2019-06-28T14:17:57',
+      operations:
+        [0,
+          {
+            fee: {amount: '2000000', asset_id: '1.3.0'},
+            from: '1.2.54',
+            to: '1.2.55',
+            amount: {amount: '10000', asset_id: '1.3.0'},
+            memo: undefined,
+            extensions: []
+          }],
+      extensions: [],
+      signatures: ['1f2baa40114f8ed62ec1d3979b5...343716bd033262']
+    }
+  }
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "joinedAt": "2019-06-26T14:46:29.415Z",
+   "isPayed": false,
+   "id": 4,
+   "challengeId": 15,
+   "userId": 6,
+   "updatedAt": "2019-06-26T14:46:29.416Z",
+   "createdAt": "2019-06-26T14:46:29.416Z"
+ }
+ "status": 200
+}
+```
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "result": {
+   "id": 11,
+   "name": "test",
+   "createdAt": "2019-06-02T06:11:44.866Z",
+   "startDate": "2019-07-04T08:32:19.818Z",
+   "endDate": null,
+   "game": "pubg",
+   "accessRule": "anyone",
+   "ppyAmount": "1",
+   "conditionsText": "test",
+   "user": {
+     "id": 1,
+     "username": "username",
+     "youtube": "",
+     "facebook": "",
+     "peerplaysAccountName": "",
+     "bitcoinAddress": ""
+   },
+   "conditions": [{
+     "id": 4,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "OR",
+     "createdAt": "2019-06-02T06:11:44.874Z",
+     "updatedAt": "2019-06-02T06:11:44.874Z",
+     "challengeId": 11
+   }, {
+     "id": 5,
+     "param": "resultPlace",
+     "operator": ">",
+     "value": 1,
+     "join": "END",
+     "createdAt": "2019-06-02T06:11:44.875Z",
+     "updatedAt": "2019-06-02T06:11:44.875Z",
+     "challengeId": 11
+   }],
+   "invitedUsers": []
+ },
+ "status": 200
+}
+```
+
 
 ## Subscribe to new notification
 
@@ -592,6 +754,15 @@ HTTP/1.1 200 OK
 
 
 	GET /api/v1/auth/google
+
+
+# PayPal
+
+## Process payment paypal
+
+
+
+	POST /api/v1/payment
 
 
 # Profile
@@ -971,6 +1142,44 @@ HTTP/1.1 200 OK
   "result": true
 }
 ```
+# Transactions
+
+## Get user transactions
+
+
+
+	GET /api/v1/transactions
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| limit			| String			|  							|
+| skip			| String			| **optional** 							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+ "status": 200
+ "result": [{
+   "id": 1,
+   "txId": "8ed2756c1b26883585f6259eca90ad0e44be04a2",
+   "blockNum": 901602,
+   "trxNum": 0,
+   "ppyAmountValue": 100,
+   "type": "challengeCreation",
+   "createdAt": "2019-07-01T07:25:33.100Z",
+   "updatedAt": "2019-07-01T07:25:33.100Z",
+   "userId": 1,
+   "challengeId": 3
+ }]
+}
+```
 # Twitch
 
 ## Auth by twitch
@@ -982,6 +1191,30 @@ HTTP/1.1 200 OK
 
 # Users
 
+## Change notification status
+
+
+
+	PATCH /api/v1/users/setNotification
+
+
+### Parameters
+
+| Name    | Type      | Description                          |
+|---------|-----------|--------------------------------------|
+| set			| Boolean			|  <p>notification for user</p>							|
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+{
+  "result": [1],
+  "status": 200
+}
+```
 ## Get user by id
 
 

@@ -9,10 +9,23 @@ const {Model} = Sequelize;
  */
 
 class ChallengeInvitedUsersModel extends Model {}
-
 module.exports = {
   init: (sequelize) => {
-    ChallengeInvitedUsersModel.init({}, {
+    ChallengeInvitedUsersModel.init({
+      challengeId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      joinedAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW
+      }
+    }, {
       sequelize,
       modelName: 'challenge-invited-users'
     });

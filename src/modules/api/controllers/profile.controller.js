@@ -1,4 +1,44 @@
 const RestError = require('../../../errors/rest.error');
+const ValidateError = require('./../../../errors/validate.error');
+
+/**
+ * @swagger
+ *
+ * definitions:
+ *  ProfileCreatePeerplaysAccount:
+ *    type: object
+ *    required:
+ *      - name
+ *      - activeKey
+ *      - ownerKey
+ *    properties:
+ *      name:
+ *        type: string
+ *      activeKey:
+ *        type: string
+ *      ownerKey:
+ *        type: string
+ *  ProfileAvatar:
+ *    type: object
+ *    required:
+ *      - name
+ *      - activeKey
+ *      - ownerKey
+ *    properties:
+ *      name:
+ *        type: string
+ *      activeKey:
+ *        type: string
+ *      ownerKey:
+ *        type: string
+ *  ProfileResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/User'
+ */
 
 class ProfileController {
 
@@ -22,35 +62,25 @@ class ProfileController {
   getRoutes() {
     return [
       /**
-       * @apiDefine AccountObjectResponse
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *   "status": 200,
-       *   "result": {
-       *     "id": 7,
-       *     "username": "test",
-       *     "email": "test@email.com",
-       *     "twitchUserName": "",
-       *     "googleName": "",
-       *     "youtube": "",
-       *     "facebook": "",
-       *     "twitch": "",
-       *     "peerplaysAccountName": "",
-       *     "bitcoinAddress": "",
-       *     "userType": "viewer",
-       *     "avatar": ""
-       *  }
-       * }
-       */
-
-      /**
-       * @api {get} /api/v1/profile Get authorized user profile
-       * @apiName ProfileGet
-       * @apiDescription Get profile of authorized user
-       * @apiGroup Profile
-       * @apiVersion 0.1.0
-       * @apiUse AccountObjectResponse
+       * @swagger
+       *
+       * /profile:
+       *  get:
+       *    description: Get authorized user profile
+       *    summary: Get authorized user profile
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    responses:
+       *      200:
+       *        description: Profile response
+       *        schema:
+       *         $ref: '#/definitions/UserResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
        */
       [
         'get', '/api/v1/profile',
@@ -58,20 +88,35 @@ class ProfileController {
         this.getProfile.bind(this)
       ],
       /**
-       * @api {patch} /api/v1/profile Update authorized user profile
-       * @apiName ProfilePatch
-       * @apiGroup Profile
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "avatar": "",
-       *   "youtube": "",
-       *   "facebook": "",
-       *   "peerplaysAccountName": "",
-       *   "bitcoinAddress": "",
-       *   "userType": "viewer"
-       * }
-       * @apiUse AccountObjectResponse
+       * @swagger
+       *
+       * /profile:
+       *  patch:
+       *    description: Update authorized user profile
+       *    summary: Update authorized user profile
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    parameters:
+       *      - name: profile
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/UserNew'
+       *    responses:
+       *      200:
+       *        description: Profile response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'patch', '/api/v1/profile',
@@ -80,17 +125,35 @@ class ProfileController {
         this.patchProfile.bind(this)
       ],
       /**
-       * @api {post} /api/v1/profile/peerplays/create-account Create peerplays account for authorized user
-       * @apiName ProfileCreatePPAccount
-       * @apiGroup Profile
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       * {
-       *   "name": "testaccount",
-       *   "activeKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
-       *   "ownerKey": "PPY5iePa6MU4QHGyY5tk1XjngDG1j9jRWLspXxLKUqxSc4sh51ZS4",
-       * }
-       * @apiUse AccountObjectResponse
+       * @swagger
+       *
+       * /profile/peerplays/create-account:
+       *  post:
+       *    description: Create peerplays account for authorized user
+       *    summary: Create peerplays account for authorized user
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    parameters:
+       *      - name: ProfileCreatePeerplaysAccount
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/ProfileCreatePeerplaysAccount'
+       *    responses:
+       *      200:
+       *        description: Create-account response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'post', '/api/v1/profile/peerplays/create-account',
@@ -99,13 +162,36 @@ class ProfileController {
         this.createPeerplaysAccount.bind(this)
       ],
       /**
-       * @api {post} /api/v1/profile/avatar Add or change account avatar
-       * @apiName ProfileUploadAvatar
-       * @apiGroup Profile
-       * @apiVersion 0.1.0
-       * @apiExample {form-data} Request-Example:
-       * "file": ...file...
-       * @apiUse AccountObjectResponse
+       * @swagger
+       *
+       * /profile/avatar:
+       *  post:
+       *    description: Add or change account avatar
+       *    summary: Add or change account avatar
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    parameters:
+       *      - in: formData
+       *        name: upfile
+       *        type: file
+       *        description: The file to upload.
+       *    consumes:
+       *      - multipart/form-data
+       *    responses:
+       *      200:
+       *        description: Profile avatar response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'post', '/api/v1/profile/avatar',
@@ -113,16 +199,61 @@ class ProfileController {
         this.uploadAvatar.bind(this)
       ],
       /**
-       * @api {delete} /api/v1/profile/avatar Delete profile avatar
-       * @apiName ProfileDeleteAvatar
-       * @apiGroup Profile
-       * @apiVersion 0.1.0
-       * @apiUse AccountObjectResponse
+       * @swagger
+       *
+       * /profile/avatar:
+       *  delete:
+       *    description: Delete profile avatar
+       *    summary: Delete profile avatar
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    responses:
+       *      200:
+       *        description: Delete profile avatar response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
        */
       [
         'delete', '/api/v1/profile/avatar',
         this.authValidator.loggedOnly,
         this.deleteAvatar.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /profile/change-email/{token}:
+       *  get:
+       *    description: Change user email
+       *    summary: Change user email
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    parameters:
+       *      - name: token
+       *        in:  path
+       *        required: true
+       *        type: string
+       *    responses:
+       *      200:
+       *        description: Change user email response
+       *        schema:
+       *          $ref: '#/definitions/ProfileResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       */
+      [
+        'get', '/api/v1/profile/change-email/:token',
+        this.authValidator.validateConfirmEmail,
+        this.changeEmail.bind(this)
       ]
     ];
   }
@@ -154,12 +285,47 @@ class ProfileController {
   }
 
   async uploadAvatar(user, data, req, res) {
-    const location = await this.fileService.saveImage(req, res);
-    return await this.userService.patchProfile(user, {avatar: location});
+    try {
+      const location = await this.fileService.saveImage(req, res);
+      return await this.userService.patchProfile(user, {avatar: location});
+    } catch (err) {
+      this.handleError(err);
+    }
   }
 
   async deleteAvatar(user) {
     return await this.userService.patchProfile(user, {avatar: null});
+  }
+
+  handleError(err) {
+    if (err.message === this.fileService.errors.FILE_NOT_FOUND) {
+      throw new RestError('', 400, {image: [{message: 'File not found'}]});
+    } else if (err.message === this.fileService.errors.INVALID_IMAGE_FORMAT) {
+      throw new RestError('', 400, {format: [{message: 'Invalid file format'}]});
+    } else if (err.message === this.fileService.errors.IMAGE_STRING_TOO_LONG) {
+      throw new RestError('', 400, {image: [{message: 'Image String too long'}]});
+    } else if (err.message === this.fileService.errors.INVALID_REQUEST) {
+      throw new RestError('', 400, {image: [{message: 'Invalid Request'}]});
+    } else if (err.message.toLowerCase().startsWith('invalid url')) {
+      throw new RestError('', 400, {format: [{message: 'Invalid URL'}]});
+    } else if (err.message === this.fileService.errors.FILE_TOO_LARGE) {
+      throw new RestError('', 400, {image: [{message: 'File too large, Image file restrictions: JPEG or PNG and < 1MB'}]});
+    } else {
+      throw err;
+    }
+  }
+
+  async changeEmail(user, ActiveToken) {
+    try {
+      if (user && user.id !== ActiveToken.userId) {
+        throw new ValidateError(401, 'unauthorized');
+      }
+
+      await this.userService.changeEmail(ActiveToken);
+      return true;
+    } catch (err) {
+      this.handleError(err);
+    }
   }
 
 }

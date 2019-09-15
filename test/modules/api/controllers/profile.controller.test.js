@@ -20,6 +20,7 @@ let apiModule;
 before(async () => {
   apiModule = await ApiModule();
   agent = request.agent(apiModule.app);
+  // await TestDbHelper.truncateAll(apiModule);
 });
 
 describe('GET /api/v1/profile', () => {
@@ -44,11 +45,14 @@ describe('GET /api/v1/profile', () => {
       googleName: null,
       twitchUserName: null,
       userType: null,
+      pubgUsername: null,
       avatar: '',
+      invitations: 'all',
+      notifications: true,
       youtube: '',
       twitch: '',
       facebook: '',
-      peerplaysAccountName: '',
+      peerplaysAccountName: 'se-test-global',
       bitcoinAddress: ''
     });
   });
@@ -151,17 +155,26 @@ describe('PATCH /api/v1/profile', () => {
     await login(agent, {
       email: 'newchangeemailtest@email.com',
       username: 'test-changeemailtest',
-      password: 'MyPassword^',
-      repeatPassword: 'MyPassword^'
+      password: 'MyPassword^007',
+      repeatPassword: 'MyPassword^007'
     }, apiModule);
-    const profileResponse = await agent.get('/api/v1/profile');
-    const profile = profileResponse.body.result;
+    // const profileResponse = await agent.get('/api/v1/profile');
+    // const profile = profileResponse.body.result;
     const response = await agent.patch('/api/v1/profile').send({
       email: changeEmailTest
+    }); 
+
+    await sleep(300);
+    
+    const dbResponse = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
+      where: {userId: response.body.result.id, isActive: true}
     });
-    isSuccess(response);
-    profile.email = changeEmailTest;
-    assert.deepEqual(response.body.result, profile);
+    
+    const confirmResponse = await agent.get(`/api/v1/profile/change-email/${dbResponse['token']}`);
+    isSuccess(confirmResponse);
+    const profileResponseUpdated = await agent.get('/api/v1/profile');
+    isSuccess(profileResponseUpdated);
+    assert.deepEqual(profileResponseUpdated.body.result.email, changeEmailTest);
   });
 
   it('should forbid, email already used', async () => {
@@ -225,7 +238,7 @@ describe('POST /api/v1/profile/peerplays/create-account', () => {
 
 describe('POST /api/v1/profile/avatar', () => {
 
-  // const testImage = path.resolve(__dirname, 'files/test.png');
+  //const testImage = path.resolve(__dirname, 'files/test.png');
   const testPDF = path.resolve(__dirname, 'files/test.pdf');
 
   beforeEach(async () => {
@@ -264,7 +277,7 @@ describe('POST /api/v1/profile/avatar', () => {
 
 describe('DELETE /api/v1/profile/avatar', () => {
 
-  // const testImage = path.resolve(__dirname, 'files/test.png');
+  //const testImage = path.resolve(__dirname, 'files/test.png');
 
   beforeEach(async () => {
     await login(agent, null, apiModule);
@@ -295,6 +308,13 @@ describe('DELETE /api/v1/profile/avatar', () => {
 });
 
 
+
+
 after(async () => {
   await apiModule.close();
 });
+
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
-const {model} = require('../models/user.model');
-const {model: banHistoryModel} = require('../models/ban.history.model');
+const {model} = require('../db/models/user.model');
+const {model: banHistoryModel} = require('../db/models/ban.history.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 const {status} = require('../constants/profile');
 
@@ -27,22 +27,21 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
-  async getByLogin(login) {
+  async getByLogin(login, normalizeLogin) {
     return this.model.findOne({
       where: {
         [Sequelize.Op.or]: [{
-          email: login
+          email: normalizeLogin
         }, {
           username: login
-        }],
-        isEmailVerified: true
+        }]
       }
     });
   }
 
   async searchUsers(search, limit, offset) {
     const filter = search ? {
-      peerplaysAccountName: {
+      username: {
         [Sequelize.Op.like]: `%${search}%`
       }
     } : null;
@@ -130,11 +129,43 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
+  /**
+   * @param values
+   * @param options
+   * @returns {Promise<Array>}
+   */
+  async updateNotification(values, options) {
+    return this.model.update(
+      {notifications: options},
+      {where: {id: values}}
+    );
+  }
+
+  /**
+   * @param values
+   * @param options
+   * @returns {Promise<Array>}
+   */
+  async updateInvitation(values, options) {
+    return this.model.update(
+      {invitations: options},
+      {where: {id: values}}
+    );
+  }
+
   async getByTwitchId(searchtwitchId) {
     return this.model.findOne({
       where: {twitchId:searchtwitchId}
     });
   }
+
+  async setAccountId(userId, accountId) {
+    return this.model.update(
+      {peerplaysAccountId: accountId},
+      {where: {id: userId}}
+    );
+  }
+
 
   /**
    *
@@ -167,6 +198,26 @@ class UserRepository extends BasePostgresRepository {
       }
     });
   }
+
+  async findWithChallengeSubscribed() {
+    return this.model.findAll({
+      where: {
+        challengeSubscribeData: {
+          [Sequelize.Op.ne]: null
+        },
+        notifications: true
+      }
+    });
+  }
+
+
+  async setPeerplaysAccountId(userId, accountId) {
+    return await this.model.update(
+      {peerplaysAccountId: accountId},
+      {where: {id: userId}}
+    );
+  }
+
 
 }
 
