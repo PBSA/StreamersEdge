@@ -99,13 +99,13 @@ class AuthValidator extends BaseValidator {
 
       if (alreadyExists && alreadyExists.email === email) {
         throw new ValidateError(400, 'Validate error', {
-          email: 'This email already is used'
+          email: 'This email is already used'
         });
       }
 
       if (alreadyExists && alreadyExists.username === username) {
         throw new ValidateError(400, 'Validate error', {
-          username: 'This username already is used'
+          username: 'This username is already used'
         });
       }
 
