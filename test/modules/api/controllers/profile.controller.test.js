@@ -261,6 +261,7 @@ describe('POST /api/v1/profile/avatar', () => {
     isError(response, 400);
   });
 
+  //TODO: Need to fix failing tests
   // it('should success if avatar not exists', async () => {
   //   const response = await agent.post('/api/v1/profile/avatar').attach('file', testImage);
   //   isSuccess(response);
@@ -289,6 +290,7 @@ describe('DELETE /api/v1/profile/avatar', () => {
     isError(response, 401);
   });
 
+  //TODO: Need to fix failing tests
   // it('should success delete uploaded avatar', async () => {
   //   await agent.post('/api/v1/profile/avatar').attach('file', testImage);
   //   const response = await agent.delete('/api/v1/profile/avatar');

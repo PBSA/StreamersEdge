@@ -2,6 +2,7 @@ const multerS3 = require('multer-s3');
 const multer = require('multer');
 const path = require('path');
 const randomString = require('randomstring');
+const ValidateError = require('./../errors/validate.error');
 
 class FileService {
 
@@ -52,7 +53,7 @@ class FileService {
         upload(req, res, (err, res) => err ? fail(err) : success(res));
       });
     } catch (e) {
-      throw new Error(e.message);
+      throw ValidateError.validateError({file: e.message});
     }
 
     if(!req.file) {
