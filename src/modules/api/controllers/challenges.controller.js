@@ -14,6 +14,14 @@ class ChallengesController {
     this.challengeService = opts.challengeService;
     this.challengeValidator = opts.challengeValidator;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
+
+    this.CHALLENGE_SERVICE_ERROR_MESSAGE = {
+      [this.challengeService.errors.CHALLENGE_NOT_FOUND] : {challenge: [{message: 'This challenge not found'}]},
+      [this.challengeService.errors.DO_NOT_RECEIVE_INVITATIONS]: {challenge: [{message: 'This is private challenge'}]},
+      [this.challengeService.errors.INVALID_TRANSACTION_SENDER]: {tx: [{from: 'Invalid transaction sender'}]},
+      [this.challengeService.errors.INVALID_TRANSACTION_RECEIVER]:  {tx: [{to: 'Invalid transaction receiver'}]},
+      [this.challengeService.errors.INVALID_TRANSACTION_AMOUNT]: {tx: [{amount: 'Invalid transaction amount'}]}
+    };
   }
 
   /**
@@ -248,18 +256,23 @@ class ChallengesController {
     return await this.challengeService.createChallenge(user.id, challenge);
   }
 
+
+  async getAndCheckChallende(user, challengeId) {
+    const result = await this.challengeService.getCleanObject(challengeId);
+
+    if (result.accessRule === accessRules.invite && result.userId !== user.id) {
+
+      if (!await this.challengeInvitedUsersRepository.isUserInvited(result.id, user.id)) {
+        throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
+      }
+    }
+
+    return result;
+  }
+
   async getChallenge(user, challengeId) {
     try {
-      const result = await this.challengeService.getCleanObject(challengeId);
-
-      if (result.accessRule === accessRules.invite && result.userId !== user.id) {
-
-        if (!await this.challengeInvitedUsersRepository.isUserInvited(result.id, user.id)) {
-          throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
-        }
-      }
-
-      return result;
+      return this.createChallenge(user, challengeId);
     } catch (err) {
       switch (err) {
         case this.challengeService.errors.CHALLENGE_NOT_FOUND:
@@ -306,28 +319,25 @@ class ChallengesController {
     return allChallenges;
   }
 
+
   async joinToChallenge(user, {challengeId, tx}) {
     try {
       return await this.challengeService.joinToChallenge(user.id, challengeId, tx);
     } catch (err) {
       switch (err.message) {
         case this.challengeService.errors.CHALLENGE_NOT_FOUND:
-          throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
+          throw new RestError('', 404, this.CHALLENGE_SERVICE_ERROR_MESSAGE[err.message] );
         case this.challengeService.errors.DO_NOT_RECEIVE_INVITATIONS:
-          throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
         case this.challengeService.errors.INVALID_TRANSACTION_SENDER:
-          throw new RestError('', 422, {tx: [{from: 'Invalid transaction sender'}]});
         case this.challengeService.errors.INVALID_TRANSACTION_RECEIVER:
-          throw new RestError('', 422, {tx: [{to: 'Invalid transaction receiver'}]});
         case this.challengeService.errors.INVALID_TRANSACTION_AMOUNT:
-          throw new RestError('', 422, {tx: [{amount: 'Invalid transaction amount'}]});
+          throw new RestError('', 422, this.CHALLENGE_SERVICE_ERROR_MESSAGE[err.message]);
         case this.challengeService.errors.TRANSACTION_ERROR:
           throw new RestError('', 422, {tx: [{signature: err.data.message}]});
         default:
           throw err;
       }
     }
-
   }
 
 }

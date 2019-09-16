@@ -70,12 +70,8 @@ class GamesJob {
     await Challenge.save();
   }
 
-  prepareQuery(Challenge) {
-    const conditions = Challenge.toJSON()['challenge-conditions'].sort((a, b) => a.id - b.id);
 
-    const startDate = moment(Challenge.startDate || Challenge.createdAt).format();
-    const endDate = moment(Challenge.endDate).format();
-
+  buildWhereQuery (startDate, endDate, conditions) {
     let whereString = `pubg."createdAt" between '${startDate}' and '${endDate}' AND (`;
 
     conditions.forEach((condition) => {
@@ -105,6 +101,17 @@ class GamesJob {
     });
 
     whereString += ') AND users.id IS NOT NULL';
+
+    return whereString;
+  }
+
+  prepareQuery(Challenge) {
+    const conditions = Challenge.toJSON()['challenge-conditions'].sort((a, b) => a.id - b.id);
+
+    const startDate = moment(Challenge.startDate || Challenge.createdAt).format();
+    const endDate = moment(Challenge.endDate).format();
+
+    const whereString = this.buildWhereQuery(startDate, endDate, conditions);
 
     return `SELECT
         users.id as "userId", 
