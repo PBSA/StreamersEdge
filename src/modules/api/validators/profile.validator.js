@@ -53,7 +53,7 @@ class ProfileValidator extends BaseValidator {
         const exist = await this.userRepository.model.findOne({where: {email: body.email}});
 
         if (exist) {
-          throw ValidateError.validateError({email: 'Already is used'});
+          throw ValidateError.validateError({email: 'Already used'});
         }
       }
 
