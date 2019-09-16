@@ -678,6 +678,28 @@ paths:
           description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
+  '/profile/change-email/{token}':
+    get:
+      description: Change user email
+      summary: Change user email
+      produces:
+        - application/json
+      tags:
+        - Profile
+      parameters:
+        - name: token
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Change user email response
+          schema:
+            $ref: '#/definitions/ProfileResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
   /auth/steam:
     get:
       description: Auth by steam

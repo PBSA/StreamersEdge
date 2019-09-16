@@ -22,7 +22,8 @@ class FileService {
       FILE_NOT_FOUND: 'File not found',
       IMAGE_STRING_TOO_LONG: 'value too long for type character varying(255)',
       INVALID_REQUEST: 'Invalid request',
-      FILE_TOO_LARGE: 'File too large'
+      FILE_TOO_LARGE: 'File too large',
+      INVALID_VIDEO_FORMAT: 'Invalid video format'
     };
   }
 
@@ -46,6 +47,33 @@ class FileService {
           fileSize: this.FILE_SIZE_LIMIT // 1 MB (max file size)
         },
         fileFilter: this._imageFilter.bind(this)
+      }).single('file');
+
+      await new Promise((success, fail) => {
+        upload(req, res, (err, res) => err ? fail(err) : success(res));
+      });
+    } catch (e) {
+      throw new Error(e.message);
+    }
+
+    if(!req.file) {
+      throw new Error(this.errors.FILE_NOT_FOUND);
+    }
+
+    return this.config.cdnUrl + new URL(req.file.location).pathname;
+  }
+
+
+  async saveVideo(req, res) {
+
+    try {
+      const upload = multer({
+        storage: multerS3({
+          s3: this.awsConnection.s3,
+          bucket: this.config.s3.bucket,
+          key: this._filename
+        }),
+        fileFilter: this._videoFilter.bind(this)
       }).single('file');
 
       await new Promise((success, fail) => {
@@ -87,6 +115,16 @@ class FileService {
 
     if (!mimeMatch) {
       done(new Error(this.errors.INVALID_IMAGE_FORMAT));
+    }
+
+    done(null, mimeMatch);
+  }
+
+  _videoFilter(req, file, done) {
+    const mimeMatch = file.mimetype.match(new RegExp(`(${this.VIDEO_FORMATS.join('|')})$`));
+
+    if (!mimeMatch) {
+      done(new Error(this.errors.INVALID_VIDEO_FORMAT));
     }
 
     done(null, mimeMatch);

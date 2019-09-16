@@ -1,4 +1,66 @@
 const RestError = require('../../../errors/rest.error');
+
+/**
+ * @swagger
+ *
+ * definitions:
+ *  ReportVideoResponse:
+ *    type: object
+ *    required:
+ *      - video
+ *    properties:
+ *      status:
+ *        type: number
+ *        example: 200
+ *      result:
+ *        type: string
+ *        example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
+ *
+ *  ReportUser:
+ *    type: object
+ *    required:
+ *      - reportedUserId
+ *      - reason
+ *      - description
+ *    properties:
+ *      reportedUserId:
+ *        type: number
+ *      reason:
+ *        type: string
+ *      description:
+ *        type: string
+ *      videoUrl:
+ *        type: string
+ *
+ *  ReportUserResponse:
+ *    type: object
+ *    properties:
+ *      status:
+ *        type: number
+ *        example: 200
+ *      result:
+ *        type: object
+ *        properties:
+ *          id:
+ *            type: number
+ *            example: 1
+ *          reportedUserId:
+ *            type: number
+ *            example: 2
+ *          reportedByUserId:
+ *            type: number
+ *            example: 1
+ *          reason:
+ *            type: string
+ *            example: vulgarity-on-stream
+ *          description:
+ *            type: string
+ *          videoUrl:
+ *            type: string
+ *            example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
+ *
+ */
+
 class ReportController {
   /**
    * @param {AuthValidator} opts.authValidator
@@ -21,47 +83,65 @@ class ReportController {
   getRoutes() {
     return [
       /**
-       * @api {post} /api/v1/report/video-proof Upload report video
-       * @apiName ReportUploadVideo
-       * @apiGroup Report
-       * @apiVersion 0.1.0
-       * @apiExample {form-data} Request-Example:
-       * "file": ...file...
-       * @apiUse AccountObjectResponse
+       * @swagger
+       *
+       * /report/video-proof:
+       *  post:
+       *    description: Report upload video
+       *    summary: Report video
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Report
+       *    parameters:
+       *      - in: formData
+       *        name: file
+       *        type: file
+       *        description: The file to upload.
+       *    consumes:
+       *      - multipart/form-data
+       *    responses:
+       *      200:
+       *        description: Report Video response
+       *        schema:
+       *         $ref: '#/definitions/ReportVideoResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
        */
       [
         'post', '/api/v1/report/video-proof',
-        this.authValidator.loggedOnly,    
+        this.authValidator.loggedOnly,
         this.uploadReportVideo.bind(this)
       ],
       /**
-       * @api {post} /api/v1/report Report user
-       * @apiName ReportUser
-       * @apiGroup Report
-       * @apiVersion 0.1.0
-       * @apiExample {json} Request-Example:
-       *   {
-       *     "reportedUserId": 2,
-       *     "reason": "vulgarity-on-stream",
-       *     "description": "bad, very bad",
-       *     "videoUrl": "url"
-       *   }
-       * 
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       *   {
-       *   "result": {
-       *       "id": 2,
-       *       "reportedUserId": 2,
-       *       "reportedByUserId": 1,
-       *       "reason": "vulgarity-on-stream",
-       *       "description": "bad, very bad",
-       *       "videoUrl": "url",
-       *       "updatedAt": "2019-07-01T14:16:05.933Z",
-       *       "createdAt": "2019-07-01T14:16:05.933Z"
-       *     },
-       *     "status": 200
-       *   }
+       * @swagger
+       *
+       * /report:
+       *  post:
+       *   description: ReportUser
+       *   summary: Report User
+       *   produces:
+       *     - application/json
+       *   tags:
+       *     - Report
+       *   parameters:
+       *      - name: report
+       *        description: Report object
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/ReportUser'
+       *   responses:
+       *      200:
+       *        description: Report User response
+       *        schema:
+       *         $ref: '#/definitions/ReportUserResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
        */
       [
         'post', '/api/v1/report',

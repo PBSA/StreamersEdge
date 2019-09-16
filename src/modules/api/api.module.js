@@ -170,9 +170,9 @@ class ApiModule {
       this.googleController,
       this.challengesController,
       this.paymentController,
-      this.streamController,
-      this.reportController,
       this.steamController,
+      this.reportController,
+      this.streamController,
       this.transactionController,
       this.adminController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {

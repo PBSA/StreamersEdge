@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
-const profileConstants = require('../constants/profile');
+const profileConstants = require('../../constants/profile');
 
 /**
  * @typedef {Class} BanHistoryModel
@@ -37,7 +37,7 @@ module.exports = {
       }
     }, {
       sequelize,
-      modelName: 'report'
+      modelName: 'reports'
     });
   },
   associate(models) {

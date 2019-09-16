@@ -1,5 +1,5 @@
-const {model} = require('../models/report.model');
-const {model: UserModel} = require('../models/user.model');
+const {model} = require('../db/models/report.model');
+const {model: UserModel} = require('../db/models/user.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class ReportRepository extends BasePostgresRepository {
@@ -17,7 +17,7 @@ class ReportRepository extends BasePostgresRepository {
       videoUrl
     });
   }
-  
+
   async fetchAll(){
     return this.model.findAll({
       include: [
@@ -39,6 +39,5 @@ class ReportRepository extends BasePostgresRepository {
   }
 
 }
-  
+
 module.exports = ReportRepository;
-  

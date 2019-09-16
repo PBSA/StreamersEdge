@@ -13,15 +13,8 @@ class ReportValidator extends BaseValidator {
   }
 
   createReportValidation() {
-    const {
-      reportType: {
-        vulgarity,
-        sexist,
-        religious,
-        profilePic
-      }
-    } = profileConstants;
-    
+    const {reportType: {vulgarity, sexist, religious, profilePic}} = profileConstants;
+
     const bodySchema = {
       reportedUserId: Joi.number().integer().required(),
       reason: Joi.string().valid([vulgarity, sexist, religious, profilePic]).required(),
@@ -31,19 +24,15 @@ class ReportValidator extends BaseValidator {
 
     return this.validate(null, bodySchema, async (req, query, body) => {
       const {reportedUserId} = body;
-  
+
       const reportedUser = await this.userRepository.findByPk(reportedUserId);
 
       if (reportedUserId === req.user.id) {
-        throw new ValidateError(400, 'Validate error', {
-          email: 'There are no chance to report your account'
-        });
+        throw new ValidateError(400, 'Validate error', {email: 'There are no chance to report your account'});
       }
 
       if (!reportedUser) {
-        throw new ValidateError(404, 'Validate error', {
-          email: 'Reported user does not exist'
-        });
+        throw new ValidateError(404, 'Validate error', {email: 'Reported user does not exist'});
       }
 
       return body;
