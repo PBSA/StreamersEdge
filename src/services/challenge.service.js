@@ -252,39 +252,43 @@ class ChallengeService {
     return await this.challengeRepository.findAllChallenges(userId);
   }
 
+  async _checkJoinToChallenge (userId, challengeId, bcTx, dbTx) {
+    const operation = bcTx.operations[0][1];
+
+    if (operation.to !== this.config.peerplays.paymentReceiver) {
+      throw new Error(this.errors.INVALID_TRANSACTION_RECEIVER);
+    }
+
+    if (!new BigNumber(operation.amount.amount).eq(this.config.challenge.joinFee)) {
+      throw new Error(this.errors.INVALID_TRANSACTION_AMOUNT);
+    }
+
+    const [user, challenge] = await Promise.all([
+      this.userRepository.findByPk(userId, {transaction: dbTx}),
+      this.challengeRepository.findByPk(challengeId, {transaction: dbTx})
+    ]);
+
+    if (user.peerplaysAccountId === '') {
+      await this.userRepository.setPeerplaysAccountId(userId, operation.from);
+    } else if (operation.from !== user.peerplaysAccountId) {
+      throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
+    }
+
+    if (!challenge) {
+      throw new Error(this.errors.CHALLENGE_NOT_FOUND);
+    }
+
+    if (challenge.accessRule === challengeConstants.accessRules.invite) {
+      if (!await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
+        throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
+      }
+    }
+  }
+
   async joinToChallenge(userId, challengeId, bcTx) {
     return await this.dbConnection.sequelize.transaction(async (dbTx) => {
-      if (operation.to !== this.config.peerplays.paymentReceiver) {
-        throw new Error(this.errors.INVALID_TRANSACTION_RECEIVER);
-      }
 
-      if (!new BigNumber(operation.amount.amount).eq(this.config.challenge.joinFee)) {
-        throw new Error(this.errors.INVALID_TRANSACTION_AMOUNT);
-      }
-
-      const [user, challenge] = await Promise.all([
-        this.userRepository.findByPk(userId, {transaction: dbTx}),
-        this.challengeRepository.findByPk(challengeId, {transaction: dbTx})
-      ]);
-
-      const operation = bcTx.operations[0][1];
-
-      if (user.peerplaysAccountId === '') {
-        await this.userRepository.setPeerplaysAccountId(userId, operation.from);
-      } else if (operation.from !== user.peerplaysAccountId) {
-        throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
-      }
-
-      if (!challenge) {
-        throw new Error(this.errors.CHALLENGE_NOT_FOUND);
-      }
-
-      if (challenge.accessRule === challengeConstants.accessRules.invite) {
-        if (!await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
-          throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
-        }
-      }
-
+      await this._checkJoinToChallenge(userId, challengeId, bcTx, dbTx);
       const res = await new Promise(async (resolve, reject) => {
         await this.peerplaysConnection.networkAPI.exec('broadcast_transaction_with_callback', [resolve, bcTx])
           .catch((err) => {

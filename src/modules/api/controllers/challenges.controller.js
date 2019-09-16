@@ -339,7 +339,6 @@ class ChallengesController {
       }
     }
   }
-
 }
 
 module.exports = ChallengesController;
