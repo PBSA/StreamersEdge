@@ -77,7 +77,7 @@ class UserService {
       email: emailIsUsed ? null : email,
       isEmailVerified: emailIsUsed ? null : true,
       username: usernameIsUsed ? null : username,
-      twitchUserName: network === 'twitch' ? username : '',
+      twitchUserName: network === 'twitch' ? username : null,
       googleName: network === 'google' ? username : '',
       facebook: network === 'facebook' ? username : '',
       youtube

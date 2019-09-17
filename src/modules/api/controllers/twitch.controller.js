@@ -1,5 +1,5 @@
 const passport = require('passport');
-const twitchStrategy = require('passport-twitch').Strategy;
+const twitchStrategy = require('passport-twitch-helix').Strategy;
 
 class TwitchController {
 

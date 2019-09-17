@@ -1,7 +1,7 @@
 {
   "logLevel": "info",
   "backendUrl": "http://localhost:3000",
-  "frontendUrl": "http://localhost:3001",
+  "frontendUrl": "http://localhost:8082",
   "paypal": {
     "environment": "sandbox"
   },
