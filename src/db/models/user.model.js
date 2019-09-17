@@ -157,7 +157,8 @@ const attributes = {
   },
   twitchUserName: {
     type: Sequelize.STRING,
-    unique: true
+    unique: true,
+    allowNull:true
   },
   googleId: {
     type: Sequelize.STRING,
