@@ -15,6 +15,7 @@ class CronModule {
     new CronJob('0 0 * * * *', () => this.gamesJob.runJob(), null, true, 'America/Los_Angeles');
     new CronJob('0 30 * * * *', () => this.paymentsJob.runJob(), null, true, 'America/Los_Angeles');
     this.paymentsJob.runJob();
+    this.gamesJob.runJob();  
   }
 }
 

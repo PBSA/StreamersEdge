@@ -1,4 +1,4 @@
-const {model} = require('../models/whitelisted.games.model');
+const {model} = require('../db/models/whitelisted.games.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class WhitelistedGamesRepository extends BasePostgresRepository {
@@ -27,14 +27,14 @@ class WhitelistedGamesRepository extends BasePostgresRepository {
 
   /**
    * @param toUserId
-   * @param fromChallengeId
+   * @param fromGame
    * @returns {Promise<Boolean>}
    */
-  async isWhitelistedFor(toUserId, fromChallengeId) {
+  async isWhitelistedFor(toUserId, fromGame) {
     return !!(await this.model.findOne({
       where: {
         toUser: toUserId,
-        fromUser: fromChallengeId
+        fromGame: fromGame
       }
     }));
   }

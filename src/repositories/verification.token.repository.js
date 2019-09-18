@@ -1,6 +1,8 @@
 const crypto = require('crypto-random-string');
-const {model} = require('../models/verification.token.model');
+const {model} = require('../db/models/verification.token.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
+const {Op} = require('sequelize');
+const moment = require('moment');
 
 class VerificationTokenRepository extends BasePostgresRepository {
 
@@ -8,10 +10,11 @@ class VerificationTokenRepository extends BasePostgresRepository {
     super(model);
   }
 
-  async createToken(userId) {
+  async createToken(userId, email) {
     return this.model.create({
       userId,
-      token: crypto({length: 26})
+      token: crypto({length: 26}),
+      email: email
     });
   }
 
@@ -19,9 +22,19 @@ class VerificationTokenRepository extends BasePostgresRepository {
     return this.model.findOne({
       where: {
         isActive: true,
-        token
+        token,
+        createdAt: {
+          [Op.gte]: moment(new Date()).subtract(10, 'minutes')
+        }
       }
     });
+  }
+
+  async makeDeactive(userId) {
+    return this.model.update(
+      {isActive: false},
+      {where: {userId: userId}}
+    );
   }
 
 }

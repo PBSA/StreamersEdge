@@ -1,6 +1,54 @@
 class TransactionController {
 
   /**
+   * @swagger
+   *
+   * definitions:
+   *  TransactionResponse:
+   *    allOf:
+   *      - $ref: '#/definitions/TransactionResponse'
+   *      - type: object
+   *        properties:
+   *          result:
+   *            $ref: '#/definitions/Transaction'
+   *
+   *  Transaction:
+   *    type: object
+   *    properties:
+   *      id:
+   *        type: number
+   *      txId:
+   *        type: string
+   *      blockNum:
+   *        type: number
+   *      trxNum:
+   *        type: number
+   *      ppyAmountValue:
+   *        type: number
+   *      type:
+   *        type: string
+   *      createdAt:
+   *        type: string
+   *      updatedAt:
+   *        type: string
+   *      userId:
+   *        type: number
+   *      challengeId:
+   *        type: number
+   * 
+   *  Donation:
+   *    type: object
+   *    required:
+   *      - receiverId
+   *      - donateOp
+   *    properties:
+   *      receiverId: 
+   *        type: string
+   *      donateOp:
+   *        $ref: '#/definitions/TransactionObject'
+   */
+
+  /**
    * @param {AuthValidator} opts.authValidator
    * @param {TransactionValidator} opts.transactionValidator
    * @param {UserService} opts.userService
@@ -18,35 +66,82 @@ class TransactionController {
   getRoutes() {
     return [
       /**
-       * @api {get} /api/v1/transactions Get user transactions
-       * @apiName TransactionsGet
-       * @apiGroup Transactions
-       * @apiVersion 0.1.0
-       * @apiParam {String} limit
-       * @apiParam {String} [skip]
-       * @apiSuccessExample {json} Success-Response:
-       * HTTP/1.1 200 OK
-       * {
-       *  "status": 200
-       *  "result": [{
-       *    "id": 1,
-       *    "txId": "8ed2756c1b26883585f6259eca90ad0e44be04a2",
-       *    "blockNum": 901602,
-       *    "trxNum": 0,
-       *    "ppyAmountValue": 100,
-       *    "type": "challengeCreation",
-       *    "createdAt": "2019-07-01T07:25:33.100Z",
-       *    "updatedAt": "2019-07-01T07:25:33.100Z",
-       *    "userId": 1,
-       *    "challengeId": 3
-       *  }]
-       * }
+       * @swagger
+       *
+       * /transactions:
+       *  get:
+       *    description: Get user transactions
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Transactions
+       *    parameters:
+       *      - name: limit
+       *        description: Limit of rows
+       *        in: query
+       *        required: true
+       *        type: integer
+       *      - name: skip
+       *        description: Number of rows to skip
+       *        in: query
+       *        required: false
+       *        type: integer
+       *    responses:
+       *      200:
+       *        description: getUsersWithStatus response
+       *        schema:
+       *          $ref: '#/definitions/TransactionResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
        */
       [
         'get', '/api/v1/transactions',
         this.authValidator.loggedOnly,
         this.transactionValidator.getTransactions,
         this.getTransactions.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /donate:
+       *  post:
+       *    description: Create a Donate Transaction
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Transactions
+       *    parameters:
+       *      - name: donate
+       *        description: donate transaction created in frontend and the receiverId
+       *        in: body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/Donation'
+       *    responses:
+       *      200:
+       *        description: Payment response
+       *        schema:
+       *          $ref: '#/definitions/PaymentResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       */
+      [
+        'post', '/api/v1/donate',
+        this.authValidator.loggedOnly,
+        this.transactionValidator.donate,
+        this.createDonateTransaction.bind(this)
       ]
     ];
   }
@@ -55,6 +150,11 @@ class TransactionController {
     skip = skip || 0;
     return await this.userService.getUserTransactions(user.id, skip, limit);
   }
+  
+  async createDonateTransaction(user, {receiverId, donateOp}) {
+    return await this.userService.donate(user.id, receiverId, donateOp);
+  }
+
 
 }
 

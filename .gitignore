@@ -65,3 +65,4 @@ config/local-test.json
 apidoc
 config/local-test.json
 .idea/
+.DS_Store
