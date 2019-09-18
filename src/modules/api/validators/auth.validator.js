@@ -67,7 +67,7 @@ class AuthValidator extends BaseValidator {
   validateSignUp() {
     const bodySchema = {
       email: Joi.string().email().required(),
-      username: Joi.string().regex(/^[a-z][a-z0-9-]+[a-z0-9]$/).min(3).max(63).required(),
+      username: Joi.string().regex(/^[a-z][a-z0-9-]+[a-z0-9]$/).min(3).max(60).required(),
       password: Joi.string().regex(/^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])[a-zA-Z0-9!@#\$%\^&\*]+$/).min(6).max(60).required(),
       repeatPassword: Joi.string().required()
     };

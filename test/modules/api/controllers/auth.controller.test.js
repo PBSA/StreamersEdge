@@ -130,6 +130,13 @@ describe('POST /api/v1/auth/sign-up', () => {
     isError(response, 400, ['username']);
   });
 
+  it('should forbid. username is longer than 60 chars', async () => {
+    const body = {...validObject};
+    body.username = 'q'.repeat(61);
+    const response = await agent.post('/api/v1/auth/sign-up').send(body);
+    isError(response, 400, ['username']);
+  });
+
   it('should success. valid request', async () => {
     const body = {...validObject};
     const response = await agent.post('/api/v1/auth/sign-up').send(body);
