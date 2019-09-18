@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const normalizeEmail = require('normalize-email');
@@ -5,6 +6,7 @@ const RestError = require('../errors/rest.error');
 const {types: txTypes} = require('../constants/transaction');
 const invitationConstants = require('../constants/invitation');
 const {Login} = require('peerplaysjs-lib');
+const PeerplaysNameExistsError = require('./../errors/peerplays-name-exists.error');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -46,13 +48,74 @@ class UserService {
   }
 
   /**
+   * 
+   * @param {String} username
+   * @param {Number} numRetries
+   */
+  async createUserForSocialNetwork(username, numRetries = 0) {
+    const MAX_RETRIES = 5;
+
+    if (numRetries >= MAX_RETRIES) {
+      throw new Error('failed to create user, too many retries');
+    }
+
+    const randomString = `${Math.floor(Math.min(1000 + Math.random() * 9000, 9999))}`; // random 4 digit number
+
+    try {
+      return await this.userRepository.model.create({
+        username: numRetries === 0 ? username : `${username}-${randomString}`
+      });
+    } catch (err) {
+      return this.createUserForSocialNetwork(username, numRetries + 1);
+    }
+  }
+
+  /**
+     * @param {String} username
+     * @param {String} password
+     * @param {Number} numRetries
+     */
+  async createPeerplaysAccountForSocialNetwork(username, password, numRetries = 0) {
+    const MAX_RETRIES = 5;
+
+    if (numRetries >= MAX_RETRIES) {
+      throw new Error('failed to create peerplays account, too many retries');
+    }
+
+    const hash = crypto.createHash('sha256').digest(username).toString('hex').slice(0, 32);
+    const randomString = `${Math.floor(Math.min(1000 + Math.random() * 9000, 9999))}`; // random 4 digit number
+    const seUsername = numRetries === 0 ? `se-${hash}` : `se-${hash}-${randomString}`;
+
+    const keys = Login.generateKeys(
+      seUsername,
+      password,
+      ['owner', 'active'],
+      IS_PRODUCTION ? 'PPY' : 'TEST'
+    );
+
+    const ownerKey = keys.pubKeys.owner;
+    const activeKey = keys.pubKeys.active;
+
+    try {
+      return await this.peerplaysRepository.createPeerplaysAccount(seUsername, ownerKey, activeKey);
+    } catch (err) {
+      if (err instanceof PeerplaysNameExistsError) {
+        return await this.createPeerplaysAccountForSocialNetwork(username, password, numRetries + 1);
+      }
+      
+      throw err;
+    }
+  }
+
+  /**
      * Find user by network account id and create row if not exists
      * @param {String} network
      * @param account
+     * @param {String} accessToken
      * @param {UserModel|null} LoggedUser
      * @returns {Promise<UserModel>}
      */
-  async getUserBySocialNetworkAccount(network, account, LoggedUser = null) {
+  async getUserBySocialNetworkAccount(network, account, accessToken, LoggedUser = null) {
     const {id, email, picture, username, youtube} = account;
     let UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
 
@@ -69,18 +132,24 @@ class UserService {
     }
 
     const emailIsUsed = email && await this.userRepository.model.count({where: {email}});
-    const usernameIsUsed = username && await this.userRepository.model.count({where: {username}});
-    return await this.userRepository.create({
-      [`${network}Id`]: id,
-      avatar: picture,
-      email: emailIsUsed ? null : email,
-      isEmailVerified: emailIsUsed ? null : true,
-      username: usernameIsUsed ? null : username,
-      twitchUserName: network === 'twitch' ? username : null,
-      googleName: network === 'google' ? username : '',
-      facebook: network === 'facebook' ? username : '',
-      youtube
-    });
+    const User = await this.createUserForSocialNetwork(username);
+
+    User[`${network}Id`] = id;
+    User.avatar = picture;
+    User.email = emailIsUsed ? null : email;
+    User.isEmailVerified = emailIsUsed ? null : true;
+    User.twitchUserName = network === 'twitch' ? username : null;
+    User.googleName = network === 'google' ? username : '';
+    User.facebook = network === 'facebook' ? username : '';
+    User.youtube = youtube;
+
+    const peerplaysPassword = `${User.username}-${accessToken}`;
+    const peerplaysAccount = await this.createPeerplaysAccountForSocialNetwork(User.username, peerplaysPassword);
+    
+    User.peerplaysAccountName = peerplaysAccount.name;
+    User.peerplaysMasterPassword = peerplaysPassword;
+
+    return await User.save();
   }
 
   async connectSocialNetwork(network, account, User) {

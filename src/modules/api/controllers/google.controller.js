@@ -81,7 +81,7 @@ class GoogleController {
           ...profile._json,
           username: profile._json.email.replace(/@.+/, ''),
           youtube
-        }, req.user).then((User) => {
+        }, accessToken, req.user).then((User) => {
           this.userService.getCleanUser(User).then((user) => done(null, user));
         }).catch((error) => {
           done(error);
