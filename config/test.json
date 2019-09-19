@@ -52,5 +52,8 @@
   "swagger": {
     "host": "localhost:3000",
     "schemes": ["http"]
+  },
+  "s3": {
+    "bucket": "streamersedge/profile_images"
   }
 }
