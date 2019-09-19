@@ -144,20 +144,21 @@ class UserService {
      * @returns {Promise<UserModel>}
      */
   async patchProfile(User, updateObject, getClean = true) {
-    try {
-      Object.keys(updateObject).forEach(async (field) => {
-        if (field === 'email') {
-          await this.verificationTokenRepository.makeDeactive(User.id);
-          const {token} = await this.verificationTokenRepository.createToken(User.id, updateObject[field]);
-          await this.mailService.sendMailForChangeEmail(updateObject[field], token);
-        } else {
-          User[field] = updateObject[field];
-        }
-      });
-      await User.save();
-    } catch (err) {
-      throw new Error('Something went wrong');
+    const newEmail = updateObject.email;
+
+    if (newEmail && newEmail !== User.email) {
+      // whenever the email address is changed issue a new verification token and send a verification email
+      const {token} = await this.verificationTokenRepository.createToken(User.id, newEmail);
+      await this.mailService.sendMailForChangeEmail(newEmail, token);
+      // delete the email property as we want to change the email only after it has been verified
+      delete updateObject.email;
     }
+
+    // copy over properties from updateObject to the User
+    Object.assign(User, updateObject);
+
+    // save any changes
+    await User.save();
 
     return getClean ? this.getCleanUser(User) : User;
   }
@@ -254,6 +255,7 @@ class UserService {
   async confirmEmail(ActiveToken) {
     const User = await this.userRepository.findByPk(ActiveToken.userId);
     User.isEmailVerified = true;
+    // User.email = ActiveToken.email;
     await User.save();
     ActiveToken.isActive = false;
     await ActiveToken.save();
