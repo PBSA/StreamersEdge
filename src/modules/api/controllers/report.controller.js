@@ -1,21 +1,8 @@
-const RestError = require('../../../errors/rest.error');
 
 /**
  * @swagger
  *
  * definitions:
- *  ReportVideoResponse:
- *    type: object
- *    required:
- *      - video
- *    properties:
- *      status:
- *        type: number
- *        example: 200
- *      result:
- *        type: string
- *        example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
- *
  *  ReportUser:
  *    type: object
  *    required:
@@ -85,39 +72,6 @@ class ReportController {
       /**
        * @swagger
        *
-       * /report/video-proof:
-       *  post:
-       *    description: Report upload video
-       *    summary: Report video
-       *    produces:
-       *      - application/json
-       *    tags:
-       *      - Report
-       *    parameters:
-       *      - in: formData
-       *        name: file
-       *        type: file
-       *        description: The file to upload.
-       *    consumes:
-       *      - multipart/form-data
-       *    responses:
-       *      200:
-       *        description: Report Video response
-       *        schema:
-       *         $ref: '#/definitions/ReportVideoResponse'
-       *      401:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       */
-      [
-        'post', '/api/v1/report/video-proof',
-        this.authValidator.loggedOnly,
-        this.uploadReportVideo.bind(this)
-      ],
-      /**
-       * @swagger
-       *
        * /report:
        *  post:
        *   description: ReportUser
@@ -154,14 +108,6 @@ class ReportController {
 
   async createReport(user, {reportedUserId, reason, description, videoUrl}) {
     return this.reportService.createReport(reportedUserId, user.id, reason, description, videoUrl);
-  }
-
-  async uploadReportVideo(user, data, req) {
-    try {
-      return await this.fileService.saveVideo(req, 'report');
-    } catch (e) {
-      throw new RestError(e.message, 400);
-    }
   }
 
 }
