@@ -94,6 +94,14 @@ describe('POST /api/v1/challenges', () => {
     isSuccess(response);
   });
 
+  it('should success create challenge (no depositOp)', async () => {
+    await agent.post('/api/v1/challenges/subscribe').send(subscribe);
+    const body = {...validRequest};
+    body.depositOp = undefined;
+    const response = await agent.post('/api/v1/challenges').send(body);
+    isSuccess(response);
+  });
+
   it('should success create challenge with invites', async () => {
     const validObject = {
       email: 'test1@email.com',

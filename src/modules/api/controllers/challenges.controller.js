@@ -201,6 +201,7 @@ class ChallengesController {
     this.challengeService = opts.challengeService;
     this.challengeValidator = opts.challengeValidator;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
+    this.userService = opts.userService;
   }
 
   /**
@@ -444,7 +445,16 @@ class ChallengesController {
   }
 
   async createChallenge(user, challenge) {
-    return await this.challengeService.createChallenge(user.id, challenge);
+    try {
+      return await this.challengeService.createChallenge(user.id, challenge);
+    } catch (err) {
+      switch (err.message) {
+        case this.userService.errors.INVALID_PPY_AMOUNT:
+          throw new RestError('', 400, {ppyAmount: [{message: 'Invalid value'}]});
+        default:
+          throw err;
+      }
+    }
   }
 
   async getChallenge(user, challengeId) {
