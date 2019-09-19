@@ -73,7 +73,6 @@ class ApiModule {
     this.challengesController = opts.challengesController;
     this.paymentController = opts.paymentController;
     this.streamController = opts.streamController;
-    this.adminController = opts.adminController;
     this.reportController = opts.reportController;
     this.steamController = opts.steamController;
     this.transactionController = opts.transactionController;
@@ -127,10 +126,6 @@ class ApiModule {
       this.app.use(passport.initialize());
       this.app.use(passport.session());
 
-      // backend can process file requests but in production you should
-      // process files directly by nginx
-      this.app.use('/api/images/', express.static('public/images/'));
-
       passport.serializeUser((user, done) => {
         done(null, user.id);
       });
@@ -160,7 +155,6 @@ class ApiModule {
    */
   _initRestRoutes() {
     [
-      this.adminController,
       this.authController,
       this.profileController,
       this.usersController,

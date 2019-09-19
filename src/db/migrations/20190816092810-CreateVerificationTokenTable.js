@@ -7,7 +7,6 @@ const fields = {
   ...MigrationUtil.genericRows(),
   ...MigrationUtil.createForeignFields(['userId']),
   token: { type: DataTypes.STRING, unique: true },
-  email: { type: DataTypes.STRING, defaultValue: "" },
   isActive: { type: DataTypes.BOOLEAN, defaultValue: true }
 };
 
