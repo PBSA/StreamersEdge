@@ -258,16 +258,6 @@ class ProfileController {
     ];
   }
 
-  _uploadAvatarMiddleware() {
-    return async (req) => {
-      try {
-        req.uploadedFile = await this.fileService.saveImage(req, 'avatar');
-      } catch (e) {
-        throw new RestError(e.message, 400);
-      }
-    };
-  }
-
   async getProfile(user) {
     return this.userService.getCleanUser(user);
   }

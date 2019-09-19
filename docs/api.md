@@ -43,7 +43,6 @@ Backend module for StreamersEdge application
 	- [Add or change account avatar](#add-or-change-account-avatar)
 	
 - [Report](#report)
-	- [Upload report video](#upload-report-video)
 	- [Report user](#report-user)
 	
 - [Stream](#stream)
@@ -959,48 +958,8 @@ HTTP/1.1 200 OK
 ```
 # Report
 
-## Upload report video
 
-
-
-	POST /api/v1/report/video-proof
-
-
-### Examples
-
-Request-Example:
-
-```
-"file": ...file...
-```
-
-### Success Response
-
-Success-Response:
-
-```
-HTTP/1.1 200 OK
-{
-  "status": 200,
-  "result": {
-    "id": 7,
-    "username": "test",
-    "email": "test@email.com",
-    "twitchUserName": "",
-    "googleName": "",
-    "youtube": "",
-    "facebook": "",
-    "twitch": "",
-    "peerplaysAccountName": "",
-    "bitcoinAddress": "",
-    "userType": "viewer",
-    "avatar": ""
- }
-}
-```
 ## Report user
-
-
 
 	POST /api/v1/report
 
