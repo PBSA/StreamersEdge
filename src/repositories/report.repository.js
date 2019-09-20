@@ -23,13 +23,13 @@ class ReportRepository extends BasePostgresRepository {
       include: [
         {
           model: UserModel,
-          attributes: ['username'],
-          as: 'reporter'
+          attributes: ['email', 'username', 'userType', 'avatar'],
+          as: 'troublemaker'
         },
         {
           model: UserModel,
-          attributes: ['email', 'username', 'userType', 'avatar'],
-          as: 'troublemaker'
+          attributes: ['username'],
+          as: 'reporter'
         }
       ],
       attributes: {
