@@ -48,7 +48,7 @@
     ]
   },
   "db": {
-    "database": "streamersedge"
+    "database": "streamers-edge"
   },
   "s3": {
     "bucket": "streamersedge/profile_images"

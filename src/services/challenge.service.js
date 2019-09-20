@@ -147,8 +147,7 @@ class ChallengeService {
   async getCleanObject(challengeId, userId) {
     const Challenge = await this.challengeRepository.findByPk(challengeId, {
       include: [{
-        model: this.userRepository.model,
-        required: true
+        model: this.userRepository.model
       }, {
         model: this.challengeConditionRepository.model
       }, {
