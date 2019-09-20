@@ -41,8 +41,8 @@ module.exports = {
     });
   },
   associate(models) {
-    ReportModel.belongsTo(models.User.model, {foreignKey : 'reportedUserId', targetKey: 'id', as: 'reporter'});
-    ReportModel.belongsTo(models.User.model, {foreignKey : 'reportedByUserId', targetKey: 'id', as: 'troublemaker'});
+    ReportModel.belongsTo(models.User.model, {foreignKey : 'reportedUserId', targetKey: 'id', as: 'troublemaker'});
+    ReportModel.belongsTo(models.User.model, {foreignKey : 'reportedByUserId', targetKey: 'id', as: 'reporter'});
   },
   get model() {
     return ReportModel;
