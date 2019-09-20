@@ -41,7 +41,7 @@ test:
       - docs/
   script:
     - apk add python make g++
-    - npm i
+    - npm ci
     - npm run db-migrate-all
     - npm run test:audit
     - npm run test:lint
