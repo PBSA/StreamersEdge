@@ -98,6 +98,50 @@ class AdminController {
    *      ban-histories.bannedAt:
    *        type: string
    *
+   *  ReportResponse:
+   *    type: array
+   *    items:
+   *      type: object
+   *      properties:
+   *          id:
+   *            type: number
+   *            example: 1
+   *          reportedUserId:
+   *            type: number
+   *            example: 2
+   *          reportedByUserId:
+   *            type: number
+   *            example: 1
+   *          reason:
+   *            type: string
+   *            example: vulgarity-on-stream
+   *          description:
+   *            type: string
+   *          videoUrl:
+   *            type: string
+   *            example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
+   *          reporter:
+   *            type: object
+   *            properties:
+   *              username:
+   *                type: string
+   *                example: abc
+   *          troublemaker:
+   *            type: object
+   *            properties:
+   *              email:
+   *                type: string
+   *                example: abc@pbsa.info
+   *              username:
+   *                type: string
+   *                example: abc
+   *              userType:
+   *                type: string
+   *                example: admin
+   *              avatar:
+   *                type: string
+   *                example: /profile_images/81vg5oejxn-BoDgqJ1Bm1cXY-soctGdMU.jpg
+   *
    */
 
   /**
@@ -113,6 +157,7 @@ class AdminController {
     this.userValidator = opts.userValidator;
     this.userService = opts.userService;
     this.adminService = opts.adminService;
+    this.userService = opts.userService;
   }
 
   /**
@@ -314,7 +359,7 @@ class AdminController {
       /**
        * @swagger
        *
-       * /api/v1/admin/users/info/{id}:
+       * /admin/users/info/{id}:
        *  get:
        *    description: Get user info by id
        *    produces:
@@ -346,6 +391,34 @@ class AdminController {
         this.authValidator.loggedAdminOnly,
         this.userValidator.getUser,
         this.getUserInfo.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /admin/reports/:
+       *  get:
+       *    description: Get all reports
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Admin
+       *    responses:
+       *      200:
+       *        description: Report result schema
+       *        schema:
+       *          $ref: '#/definitions/ReportResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      403:
+       *        description: Error forbidden for this user
+       *        schema:
+       *          $ref: '#/definitions/ForbiddenError'
+       */
+      ['get', '/api/v1/admin/reports',
+        this.authValidator.loggedAdminOnly,
+        this.getAllReports.bind(this)
       ]
     ];
 
@@ -369,6 +442,10 @@ class AdminController {
 
   async getUserInfo(user, pure, req) {
     return this.adminService.getUserInfo(req.query.id);
+  }
+
+  async getAllReports() {
+    return this.adminService.getReports();
   }
 
 }

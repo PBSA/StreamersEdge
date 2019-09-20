@@ -8,6 +8,7 @@ class ProfileValidator extends BaseValidator {
 
   /**
    * @param {AppConfig} opts.config
+   * @param {AppConfig} opts.config
    * @param {PeerplaysRepository} opts.peerplaysRepository
    * @param {UserRepository} opts.userRepository
    * @param {PubgApiRepository} opts.pubgApiRepository

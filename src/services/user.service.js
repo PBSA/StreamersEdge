@@ -35,6 +35,7 @@ class UserService {
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.mailService = opts.mailService;
+    this.fileService = opts.fileService;
     this.googleRepository = opts.googleRepository;
     this.pubgApiRepository = opts.pubgApiRepository;
 

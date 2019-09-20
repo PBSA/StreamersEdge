@@ -10,6 +10,12 @@ module.exports = {
     banned: 'banned',
     active: 'active'
   },
+  reportType: {
+    vulgarity: 'vulgarity-on-stream',
+    sexist: 'sexist-comments-on-stream',
+    religious: 'offends-my-religious-sentiments',
+    profilePic: 'offensive-profile-pic'
+  },
   applicationType: ['mac','windows','web','electron','mobile','ios'],
   gamer:'gamer',
   viewer: 'viewer',
