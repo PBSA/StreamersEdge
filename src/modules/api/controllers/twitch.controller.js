@@ -68,7 +68,7 @@ class TwitchController {
         username: profile.username,
         email: profile.email,
         picture: profile._json.logo
-      }, req.user).then((User) => {
+      }, accessToken, req.user).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {
         done(error);

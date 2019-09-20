@@ -3,6 +3,8 @@ const {PrivateKey} = require('peerplaysjs-lib');
 const BigNumber = require('bignumber.js');
 BigNumber.config({ROUNDING_MODE: BigNumber.ROUND_FLOOR});
 
+const PeerplaysNameExistsError = require('./../errors/peerplays-name-exists.error');
+
 class PeerplaysRepository {
 
   /**
@@ -17,17 +19,28 @@ class PeerplaysRepository {
   }
 
   async createPeerplaysAccount(name, ownerKey, activeKey) {
-    const {account} = await this.peerplaysConnection.request({
-      account: {
-        name,
-        active_key: activeKey,
-        memo_key: activeKey,
-        owner_key: ownerKey,
-        refcode: '',
-        referrer: this.config.peerplays.referrer
+    try {
+      const {account} = await this.peerplaysConnection.request({
+        account: {
+          name,
+          active_key: activeKey,
+          memo_key: activeKey,
+          owner_key: ownerKey,
+          refcode: '',
+          referrer: this.config.peerplays.referrer
+        }
+      });
+
+      return {name, ...account};
+    } catch (err) {
+      if (err.base && err.base[0]) {
+        if (err.base[0] === 'Account exists') {
+          throw new PeerplaysNameExistsError(`an account with name "${name}" already exists`);
+        }
       }
-    });
-    return account;
+
+      throw err;
+    }
   }
 
   async sendPPY(accountId, amount) {
