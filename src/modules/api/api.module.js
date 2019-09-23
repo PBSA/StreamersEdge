@@ -53,6 +53,7 @@ class ApiModule {
    * @param {ChallengesController} opts.challengesController
    * @param {PaymentController} opts.paymentController
    * @param {AdminController} opts.adminController
+   * @param {ReportController} opts.reportController
    * @param {SteamController} opts.steamController
    * @param {TransactionController} opts.transactionController
    */
@@ -72,6 +73,7 @@ class ApiModule {
     this.challengesController = opts.challengesController;
     this.paymentController = opts.paymentController;
     this.streamController = opts.streamController;
+    this.reportController = opts.reportController;
     this.steamController = opts.steamController;
     this.transactionController = opts.transactionController;
     this.adminController = opts.adminController;
@@ -163,6 +165,7 @@ class ApiModule {
       this.challengesController,
       this.paymentController,
       this.steamController,
+      this.reportController,
       this.streamController,
       this.transactionController,
       this.adminController

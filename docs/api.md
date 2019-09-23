@@ -5,6 +5,8 @@ Backend module for StreamersEdge application
 - [Admin](#admin)
 	- [Get authorized admin profile](#get-authorized-admin-profile)
 	- [Ban user by id](#ban-user-by-id)
+	- [Unban user by id](#unban-user-by-id)
+	- [get all reports](#get-all-reports)
 	- [get user info by id](#get-user-info-by-id)
 	- [Get users with their status](#get-users-with-their-status)
 	
@@ -39,6 +41,9 @@ Backend module for StreamersEdge application
 	- [Get authorized user profile](#get-authorized-user-profile)
 	- [Update authorized user profile](#update-authorized-user-profile)
 	- [Add or change account avatar](#add-or-change-account-avatar)
+	
+- [Report](#report)
+	- [Report user](#report-user)
 	
 - [Stream](#stream)
 	- [Get stream](#get-stream)
@@ -950,6 +955,47 @@ HTTP/1.1 200 OK
     "avatar": ""
  }
 }
+```
+# Report
+
+
+## Report user
+
+	POST /api/v1/report
+
+
+### Examples
+
+Request-Example:
+
+```
+{
+  "reportedUserId": 2,
+  "reason": "vulgarity-on-stream",
+  "description": "bad, very bad",
+  "videoUrl": "url"
+}
+```
+
+### Success Response
+
+Success-Response:
+
+```
+HTTP/1.1 200 OK
+  {
+  "result": {
+      "id": 2,
+      "reportedUserId": 2,
+      "reportedByUserId": 1,
+      "reason": "vulgarity-on-stream",
+      "description": "bad, very bad",
+      "videoUrl": "url",
+      "updatedAt": "2019-07-01T14:16:05.933Z",
+      "createdAt": "2019-07-01T14:16:05.933Z"
+    },
+    "status": 200
+  }
 ```
 # Stream
 

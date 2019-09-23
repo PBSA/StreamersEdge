@@ -1,7 +1,10 @@
 {
   "logLevel": "info",
   "backendUrl": "http://localhost:3000",
-  "frontendUrl": "http://localhost:3001",
+  "frontendUrl": "http://localhost:8082",
+  "paypal": {
+    "environment": "sandbox"
+  },
   "pubg": {
     "apiKey": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlNzI1NDM2MC04MDkxLTAxMzctOWRkZC0yMzYxNTcxOGIyZmMiLCJpc3MiOiJnYW1lbG9ja2VyIiwiaWF0IjoxNTYyMjQ4Nzg1LCJwdWIiOiJibHVlaG9sZSIsInRpdGxlIjoicHViZyIsImFwcCI6ImRldnMtcGJzYS1pbmZvIn0.r4um-L6PNmusR1Fh32b4JVJLefeggvF8TKjXsxTSA4s"
   },

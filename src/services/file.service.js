@@ -17,7 +17,6 @@ class FileService {
     this.IMAGE_FORMATS = ['jpeg', 'png'];
     this.FILE_SIZE_LIMIT = 1048576;
 
-
     this.errors = {
       INVALID_IMAGE_FORMAT: 'Invalid image format',
       FILE_NOT_FOUND: 'File not found',

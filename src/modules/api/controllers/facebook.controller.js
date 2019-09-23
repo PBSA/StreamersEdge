@@ -66,7 +66,7 @@ class FacebookController {
       this.userService.getUserBySocialNetworkAccount('facebook', {
         ...profile._json,
         picture: profile._json.picture.data.url
-      }, req.user).then((User) => {
+      }, token, req.user).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {
         done(error);
