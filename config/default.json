@@ -29,10 +29,11 @@
   "bitcoinNetwork": "prod",
   "frontendUrl": "",
   "backendUrl": "",
-  "twitchUrl":"https://api.twitch.tv/helix/streams",
+  "twitchUrl": "https://api.twitch.tv/helix/streams",
   "mailer": {
     "host": "",
     "port": 587,
+    "service": "",
     "secure": false,
     "auth": {
       "user": "",
@@ -70,5 +71,12 @@
   "userRewardPercent": 0.95,
   "challenge": {
     "joinFee": "100"
-  }
+  },
+  "swagger": {
+    "host": "virtserver.swaggerhub.com",
+    "schemes": [
+      "https"
+    ]
+  },
+  "cdnUrl": ""
 }

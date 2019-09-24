@@ -18,10 +18,19 @@ class FacebookController {
    */
   getRoutes(app) {
     /**
-     * @api {get} /api/v1/auth/facebook Auth by facebook
-     * @apiName FacebookAuth
-     * @apiGroup Facebook
-     * @apiVersion 0.1.0
+     * @swagger
+     *
+     * /auth/facebook:
+     *  get:
+     *    description: Auth by facebook
+     *    summary: Auth by facebook
+     *    produces:
+     *      - application/json
+     *    tags:
+     *      - SocNetwork
+     *    responses:
+     *      302:
+     *        description: Redirect to facebook
      */
     this.initializePassport();
     app.get('/api/v1/auth/facebook', passport.authenticate('facebook'));
@@ -48,15 +57,16 @@ class FacebookController {
 
   initializePassport() {
     passport.use(new FacebookStrategy({
+      passReqToCallback: true,
       clientID: this.config.facebook.clientId,
       clientSecret: this.config.facebook.clientSecret,
       callbackURL: `${this.config.backendUrl}/api/v1/auth/facebook/callback`,
       profileFields: ['id', 'name', 'picture', 'email']
-    }, (token, tokenSecret, profile, done) => {
+    }, (req, token, tokenSecret, profile, done) => {
       this.userService.getUserBySocialNetworkAccount('facebook', {
         ...profile._json,
         picture: profile._json.picture.data.url
-      }).then((User) => {
+      }, token, req.user).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {
         done(error);

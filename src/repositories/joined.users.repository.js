@@ -1,4 +1,4 @@
-const {model} = require('../models/joined.users.model');
+const {model} = require('../db/models/joined.users.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class JoinedUsersRepository extends BasePostgresRepository {

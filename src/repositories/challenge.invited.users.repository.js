@@ -1,4 +1,4 @@
-const {model} = require('../models/challenge.invited.users.model');
+const {model} = require('../db/models/challenge.invited.users.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class ChallengeInvitedUsersRepository extends BasePostgresRepository {
@@ -23,6 +23,20 @@ class ChallengeInvitedUsersRepository extends BasePostgresRepository {
   }
 
   /**
+   * @param user
+   * @param challengeId
+   * @param [options]
+   * @returns {Promise<ChallengeModel>}
+   */
+  async joinToChallenge(user, challengeId, options) {
+    return super.create({
+      challengeId: challengeId,
+      userId: user
+    }, options);
+  }
+  
+  
+  /**
    * @param challengeId
    * @param userId
    * @returns {Promise<Boolean>}
@@ -35,6 +49,7 @@ class ChallengeInvitedUsersRepository extends BasePostgresRepository {
       }
     }));
   }
+
 
 }
 

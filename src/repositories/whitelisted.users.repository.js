@@ -1,4 +1,4 @@
-const {model} = require('../models/whitelisted.users.model');
+const {model} = require('../db/models/whitelisted.users.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
 class WhitelistedUsersRepository extends BasePostgresRepository {

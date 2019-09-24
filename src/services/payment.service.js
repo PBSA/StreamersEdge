@@ -8,12 +8,14 @@ class PaymentService {
    * @param {PaymentRepository} opts.paymentRepository
    * @param {CoinmarketcapRepository} opts.coinmarketcapRepository
    * @param {PeerplaysRepository} opts.peerplaysRepository
+   * @param {UserRepository} opts.userRepository
    */
   constructor(opts) {
     this.paypalRepository = opts.paypalRepository;
     this.paymentRepository = opts.paymentRepository;
     this.coinmarketcapRepository = opts.coinmarketcapRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
+    this.userRepository = opts.userRepository;
   }
 
   async processPayment(User, orderId) {
@@ -29,43 +31,51 @@ class PaymentService {
       throw new Error('Invalid order status');
     }
 
+    if (!User.peerplaysAccountId && User.peerplaysAccountName) {
+      User.peerplaysAccountId = await this.peerplaysRepository.getAccountId(User.peerplaysAccountName);
+      await this.userRepository.setAccountId(User.id, User.peerplaysAccountId);
+    }
+
     return await Promise.all(order.purchase_units.map(async (unit) => {
-      const paymentObject = await this.processPurchaseUnit(User.id, User.peerplaysAccountId, orderId, unit);
-      return await this.paymentRepository.model.create(paymentObject);
+      return this.processPurchaseUnit(User.id, User.peerplaysAccountId, orderId, unit);
     }));
   }
 
   async processPurchaseUnit(userId, peerplaysAccountId, orderId, unit) {
-    const payment = {
-      userId,
-      orderId,
-      amountCurrency: unit.amount.currency_code,
-      amountValue: unit.amount.value,
-      ppyAmountValue: await this.coinmarketcapRepository.getPPYAmount(unit.amount.value),
-      status: statuses.SUCCESS,
-      error: '',
-      txId: '',
-      blockNumber: ''
-    };
+    let payment = await this.paymentRepository.model.findOne({where: {orderId, status: statuses.ERROR}});
 
-    if (!peerplaysAccountId) {
-      payment.status = statuses.ERROR;
-      payment.error = 'User does not have peerplays account';
-      return payment;
+    if (!payment) {
+      payment = this.paymentRepository.model.build({
+        userId,
+        orderId,
+        amountCurrency: unit.amount.currency_code,
+        amountValue: unit.amount.value,
+        ppyAmountValue: await this.coinmarketcapRepository.getPPYAmount(unit.amount.value),
+        status: statuses.SUCCESS,
+        error: '',
+        txId: '',
+        blockNumber: 0
+      });
+    } else {
+      payment.error = '';
+      payment.status = statuses.SUCCESS;
     }
 
     try {
-      const result = await this.peerplaysRepository.sendPPYFromPaymentAccount(peerplaysAccountId, payment.ppyAmountValue);
+      if (!peerplaysAccountId) {
+        throw new Error('User does not have peerplays account');
+      }
+
+      const result = await this.peerplaysRepository.sendPPY(peerplaysAccountId, payment.ppyAmountValue);
       payment.txId = result.id;
       payment.blockNumber = result.block_num;
       payment.ppyAmountValue = result.amount;
     } catch (e) {
       payment.status = statuses.ERROR;
-      payment.error = e.message;
-      return payment;
+      payment.error = e.message.length > 255 ? e.message.substr(0, 254) : e.message;
     }
 
-    return payment;
+    return payment.save();
   }
 
 }

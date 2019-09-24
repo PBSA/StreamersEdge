@@ -4,11 +4,33 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
 const passport = require('passport');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+let swaggerDef = require('./swagger-definition.js');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
-
+/**
+ * @swagger
+ *
+ * definitions:
+ *  SuccessResponse:
+ *    type: object
+ *    properties:
+ *      status:
+ *        type: number
+ *        default: 200
+ *        example: 200
+ *  SuccessEmptyResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            type: boolean
+ *            example: true
+ */
 /**
  * A namespace.
  * @namespace api
@@ -29,8 +51,10 @@ class ApiModule {
    * @param {FacebookController} opts.facebookController
    * @param {UserRepository} opts.userRepository
    * @param {ChallengesController} opts.challengesController
-   * @param {SteamController} opts.steamController
    * @param {PaymentController} opts.paymentController
+   * @param {AdminController} opts.adminController
+   * @param {ReportController} opts.reportController
+   * @param {SteamController} opts.steamController
    * @param {TransactionController} opts.transactionController
    */
   constructor(opts) {
@@ -49,8 +73,10 @@ class ApiModule {
     this.challengesController = opts.challengesController;
     this.paymentController = opts.paymentController;
     this.streamController = opts.streamController;
+    this.reportController = opts.reportController;
     this.steamController = opts.steamController;
     this.transactionController = opts.transactionController;
+    this.adminController = opts.adminController;
 
     this.userRepository = opts.userRepository;
   }
@@ -95,7 +121,7 @@ class ApiModule {
         store: SessionStore
       }));
 
-      SessionStore.sync();
+      // SessionStore.sync();
 
       this.app.use(passport.initialize());
       this.app.use(passport.session());
@@ -108,6 +134,13 @@ class ApiModule {
           done(null, _user);
         });
       });
+
+      if (process.env.NODE_ENV != 'production') {
+        this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc({
+          definition: swaggerDef,
+          apis: swaggerDef.apis
+        })));
+      }
 
       this.server = this.app.listen(this.config.port, () => {
         logger.info(`API APP REST listen ${this.config.port} Port`);
@@ -130,10 +163,14 @@ class ApiModule {
       this.facebookController,
       this.googleController,
       this.challengesController,
+      this.paymentController,
       this.steamController,
+      this.reportController,
       this.streamController,
       this.transactionController,
-      this.paymentController
+      this.adminController
+
+
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => this.addRestHandler(...route)));
     this.addRestHandler('use', '*', () => {
       throw new MethodNotAllowedError();
@@ -156,7 +193,7 @@ class ApiModule {
           return handler()(req, res);
         }, Promise.resolve());
 
-        const result = await action(req.user, req.pure, req);
+        const result = await action(req.user, req.pure, req, res);
         return res.status(200).json({
           result: result || null,
           status: 200

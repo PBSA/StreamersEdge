@@ -1,5 +1,5 @@
 const passport = require('passport');
-const twitchStrategy = require('passport-twitch').Strategy;
+const twitchStrategy = require('passport-twitch-helix').Strategy;
 
 class TwitchController {
 
@@ -18,10 +18,19 @@ class TwitchController {
    */
   getRoutes(app) {
     /**
-     * @api {get} /api/v1/auth/twitch Auth by twitch
-     * @apiName TwitchAuth
-     * @apiGroup Twitch
-     * @apiVersion 0.1.0
+     * @swagger
+     *
+     * /auth/twitch:
+     *  get:
+     *    description: Auth by twitch
+     *    summary: Auth by twitch
+     *    produces:
+     *      - application/json
+     *    tags:
+     *      - SocNetwork
+     *    responses:
+     *      302:
+     *        description: Redirect to twitch
      */
     this.initializePassword();
     app.get('/api/v1/auth/twitch', passport.authenticate('twitch'));
@@ -48,17 +57,18 @@ class TwitchController {
 
   initializePassword() {
     passport.use(new twitchStrategy({
+      passReqToCallback: true,
       clientID: this.config.twitch.clientId,
       clientSecret: this.config.twitch.clientSecret,
       callbackURL: `${this.config.backendUrl}/api/v1/auth/twitch/callback`,
       scope: 'user_read'
-    }, (accessToken, refreshToken, profile, done) => {
+    }, (req, accessToken, refreshToken, profile, done) => {
       this.userService.getUserBySocialNetworkAccount('twitch', {
         id: profile.id.toString(),
         username: profile.username,
         email: profile.email,
         picture: profile._json.logo
-      }).then((User) => {
+      }, accessToken, req.user).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {
         done(error);

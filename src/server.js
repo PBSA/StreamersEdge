@@ -75,12 +75,12 @@ const currentModule = process.env.MODULE || 'api';
  * @property {String} peerplays.paymentAccountWIF
  * @property {String} peerplays.sendAssetId
  * @property {String} peerplays.paymentReceiver
- * @property {String} peerplays.paymentReceiverWIF
- * @property {String} peerplays.feeReceiver
  * @property {String} paypal.clientId
  * @property {String} paypal.secret
  * @property {String} paypal.environment
+ * @property {String} pubg.apiKey
  * @property {String} coinmarketcap.apiKey
- * @property {Number} userRewardPercent
+ * @property {String} s3.bucket
+ * @property {String} cdnUrl
  * @property {{ joinFee: string }} challenge
  */

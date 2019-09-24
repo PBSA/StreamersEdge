@@ -70,12 +70,10 @@ class GamesJob {
     await Challenge.save();
   }
 
-  prepareQuery(Challenge) {
+  async prepareWhereString(Challenge){
     const conditions = Challenge.toJSON()['challenge-conditions'].sort((a, b) => a.id - b.id);
-
     const startDate = moment(Challenge.startDate || Challenge.createdAt).format();
     const endDate = moment(Challenge.endDate).format();
-
     let whereString = `pubg."createdAt" between '${startDate}' and '${endDate}' AND (`;
 
     conditions.forEach((condition) => {
@@ -84,17 +82,12 @@ class GamesJob {
       switch (condition.param) {
 
         case challengeConstants.paramTypes.winTime:
-          key = 'pubg.duration';
-          break;
+          key = 'pubg.duration'; break;
         case challengeConstants.paramTypes.frags:
-          key = 'participants.kill';
-          break;
-
+          key = 'participants.kill'; break;
         case challengeConstants.paramTypes.resultPlace:
-          key = 'participants.rank';
-          break;
+          key = 'participants.rank'; break;
         default:
-
       }
 
       whereString += `(${key} ${condition.operator} ${condition.value})`;
@@ -105,6 +98,11 @@ class GamesJob {
     });
 
     whereString += ') AND users.id IS NOT NULL';
+    return whereString;
+  }
+
+  async prepareQuery(Challenge) {
+    const whereString = await this.prepareWhereString(Challenge);
 
     return `SELECT
         users.id as "userId", 
@@ -112,8 +110,8 @@ class GamesJob {
         pubg."createdAt" as "createdAt"
       FROM "pubgs" as pubg 
       LEFT JOIN "pubg-participants" as participants ON pubg.id = "participants"."pubgId" 
-      LEFT JOIN "joined-users" AS joined ON joined."challengeId" = $1
-      LEFT JOIN "users" ON users."pubgUsername" = "participants"."name" AND users.id = joined."userId"
+      LEFT JOIN "challenge-invited-users" AS challengeInvitedUsers ON challengeInvitedUsers."challengeId" = $1
+      LEFT JOIN "users" ON users."pubgUsername" = "participants"."name" AND users.id = challenge-invited-users."userId"
       WHERE ${whereString}
       ORDER BY pubg."createdAt"
       LIMIT 1`;
@@ -121,3 +119,4 @@ class GamesJob {
 }
 
 module.exports = GamesJob;
+

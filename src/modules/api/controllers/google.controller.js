@@ -13,7 +13,8 @@ class GoogleController {
 
     this.DEFAULT_SCOPE = [
       'https://www.googleapis.com/auth/userinfo.profile',
-      'https://www.googleapis.com/auth/userinfo.email'
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/youtube.readonly'
     ];
   }
 
@@ -23,10 +24,19 @@ class GoogleController {
    */
   getRoutes(app) {
     /**
-     * @api {get} /api/v1/auth/google Auth by google
-     * @apiName GoogleAuth
-     * @apiGroup Google
-     * @apiVersion 0.1.0
+     * @swagger
+     *
+     * /auth/google:
+     *  get:
+     *    description: Auth by google
+     *    summary: Auth by google
+     *    produces:
+     *      - application/json
+     *    tags:
+     *      - SocNetwork
+     *    responses:
+     *      302:
+     *        description: Redirect to google
      */
     this.initializePassport();
     app.get('/api/v1/auth/google', passport.authenticate('google', {
@@ -56,18 +66,26 @@ class GoogleController {
 
   initializePassport() {
     passport.use(new GoogleStrategy({
+      passReqToCallback: true,
       clientID: this.config.google.clientId,
       clientSecret: this.config.google.clientSecret,
       callbackURL: `${this.config.backendUrl}/api/v1/auth/google/callback`
-    }, (accessToken, refreshToken, profile, done) => {
-      this.userService.getUserBySocialNetworkAccount('google', {
-        id: profile.id,
-        ...profile._json,
-        username: profile._json.email.replace(/@.+/, '')
-      }).then((User) => {
-        this.userService.getCleanUser(User).then((user) => done(null, user));
-      }).catch((error) => {
-        done(error);
+    }, (req, accessToken, refreshToken, profile, done) => {
+
+      this.userService.getUserYoutubeLink({
+        access_token: accessToken,
+        refresh_token: refreshToken
+      }).then((youtube) => {
+        this.userService.getUserBySocialNetworkAccount('google', {
+          id: profile.id,
+          ...profile._json,
+          username: profile._json.email.replace(/@.+/, ''),
+          youtube
+        }, accessToken, req.user).then((User) => {
+          this.userService.getCleanUser(User).then((user) => done(null, user));
+        }).catch((error) => {
+          done(error);
+        });
       });
     }));
   }
