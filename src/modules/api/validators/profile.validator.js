@@ -31,7 +31,9 @@ class ProfileValidator extends BaseValidator {
       youtube: Joi.string().regex(/^https:\/\/www\.youtube\.com/).uri().allow('').max(254),
       facebook: Joi.string().regex(/^https:\/\/www\.facebook\.com/).uri().allow('').max(254),
       twitch: Joi.string().regex(/^https:\/\/www\.twitch\.tv\/[A-Za-z0-9]+$/).uri().allow('').max(254),
-      peerplaysAccountName: Joi.string().allow('').max(254),
+      peerplaysAccountName: Joi.string().allow('').max(63),
+      googleName: Joi.string().allow(''),
+      twitchUserName: Joi.string().allow(''),
       bitcoinAddress: Joi.string().bitcoinAddress().allow(''),
       pubgUsername: Joi.string().allow(''),
       userType: Joi.string().valid(profileConstants.gamer, profileConstants.viewer, profileConstants.sponsor),
@@ -55,6 +57,22 @@ class ProfileValidator extends BaseValidator {
 
         if (exist) {
           throw ValidateError.validateError({email: 'Already used'});
+        }
+      }
+
+      if (body.googleName && req.user.googleName !== body.googleName) {
+        const exist = await this.userRepository.model.findOne({where: {googleName: body.googleName}});
+
+        if (exist) {
+          throw ValidateError.validateError({googleName: 'Already used'});
+        }
+      }
+
+      if (body.twitchUserName && req.user.twitchUserName !== body.twitchUserName) {
+        const exist = await this.userRepository.model.findOne({where: {twitchUserName: body.twitchUserName}});
+
+        if (exist) {
+          throw ValidateError.validateError({twitchUserName: 'Already used'});
         }
       }
 
