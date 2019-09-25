@@ -225,6 +225,10 @@ class UserService {
 
     // copy over properties from updateObject to the User
     Object.assign(User, updateObject);
+    
+    if (User.twitchUserName === '') {
+      User.twitchUserName = null;
+    }
 
     // save any changes
     await User.save();
