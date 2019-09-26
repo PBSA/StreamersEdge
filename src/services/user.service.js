@@ -435,7 +435,7 @@ class UserService {
      */
   async changeInvitationStatus(user, status) {
     return await this.dbConnection.sequelize.transaction(async (tx) => {
-      const updatedInvitation = await this.userRepository.updateInvitation(user.id, status.invitations);
+      const updatedInvitation = await this.userRepository.updateInvitation(user.id, status.invitations, status.minBounty);
 
       if (!updatedInvitation[0]) {
         throw new Error(this.errors.USER_NOT_FOUND);

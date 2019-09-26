@@ -76,12 +76,16 @@ class ChallengeService {
     if (challengeObject.accessRule === challengeConstants.accessRules.invite) {
 
       await Promise.all(challengeObject.invitedAccounts.map(async (id) => {
+        const toUser = await this.userRepository.findByPk(id);
+
+        if (toUser.minInvitationBounty > challengeObject.ppyAmount) {
+          return;
+        }
+
         await this.challengeInvitedUsersRepository.create({
           challengeId: Challenge.id,
           userId: id
         });
-
-        const toUser = await this.userRepository.findByPk(id);
 
         const invitation = {title: `You invited to ${Challenge.name}`};
 
