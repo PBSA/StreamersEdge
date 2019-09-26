@@ -316,7 +316,7 @@ class AuthController {
       throw new ValidateError(401, 'unauthorized');
     }
 
-    await this.userService.confirmEmail(ActiveToken);
+    await this.userService.changeEmail(ActiveToken);
     return true;
   }
 

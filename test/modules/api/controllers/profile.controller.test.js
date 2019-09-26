@@ -150,17 +150,22 @@ describe('PATCH /api/v1/profile', () => {
   const changeEmailTest = 'change-email@test.com';
 
   it('should success, email only', async () => {
-    await login(agent, {
+    const loginOpts = {
       email: 'newchangeemailtest@email.com',
       username: 'test-changeemailtest',
       password: 'MyPassword^007',
       repeatPassword: 'MyPassword^007'
-    }, apiModule);
-    // const profileResponse = await agent.get('/api/v1/profile');
-    // const profile = profileResponse.body.result;
+    };
+
+    await login(agent, loginOpts, apiModule);
+    
     const response = await agent.patch('/api/v1/profile').send({
       email: changeEmailTest
     });
+
+    const profileResponse = await agent.get('/api/v1/profile');
+    console.log(profileResponse.body.result);
+    assert.deepEqual(profileResponse.body.result.email, loginOpts.email);
 
     const dbResponse = await apiModule.dbConnection.sequelize.models['verification-tokens'].findOne({
       where: {userId: response.body.result.id, isActive: true}
