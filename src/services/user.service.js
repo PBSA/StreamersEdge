@@ -325,6 +325,15 @@ class UserService {
     return this.getCleanUser(User);
   }
 
+  async confirmEmail(ActiveToken) {
+    const User = await this.userRepository.findByPk(ActiveToken.userId);
+    User.isEmailVerified = true;
+    // User.email = ActiveToken.email;
+    await User.save();
+    ActiveToken.isActive = false;
+    await ActiveToken.save();
+  }
+
   async getSignInUser(login, password) {
     const User = await this.userRepository.getByLogin(login, normalizeEmail(login));
 
