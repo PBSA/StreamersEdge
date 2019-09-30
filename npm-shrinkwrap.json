@@ -9018,8 +9018,7 @@
         "event-emitter": "^0.3.4",
         "immutable": "^3.7.6",
         "secure-random": "^1.1.1",
-        "uglify-js": "^3.5.2",
-        "ws": "2.3.1"
+        "uglify-js": "^3.5.2"
       },
       "dependencies": {
         "buffer": {
@@ -11831,14 +11830,6 @@
         "signal-exit": "^3.0.2"
       }
     },
-    "ws": {
-      "version": "2.3.1",
-      "resolved": "https://registry.npmjs.org/ws/-/ws-2.3.1.tgz",
-      "integrity": "sha1-a5Sz5EfLajY/eF6vlK9jWejoHIA=",
-      "requires": {
-        "safe-buffer": "~5.0.1",
-        "ultron": "~1.1.0"
-      },
       "dependencies": {
         "safe-buffer": {
           "version": "5.0.1",
