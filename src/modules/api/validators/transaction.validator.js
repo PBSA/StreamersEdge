@@ -26,11 +26,12 @@ class TransactionValidator extends BaseValidator {
   donate() {
     const bodySchema = {
       receiverId: Joi.number().integer().required(),
-      donateOp: operationSchema.required()
+      ppyAmount: Joi.number(),
+      donateOp: operationSchema
     };
 
     return this.validate(null, bodySchema, async (req, query, body) => {
-      const {receiverId, donateOp} = body;
+      const {receiverId, donateOp, ppyAmount} = body;
 
       if (req.user.id === receiverId) {
         throw new ValidateError(400, 'Validate error', {
@@ -46,7 +47,15 @@ class TransactionValidator extends BaseValidator {
         });
       }
 
-      return {receiverId, donateOp};
+      if (!donateOp && !ppyAmount) {
+        const errorMsg = 'Either donateOp or ppyAmount must be set';
+        throw new ValidateError(400, errorMsg, {
+          donateOp: errorMsg,
+          ppyAmount: errorMsg
+        });
+      }
+
+      return {receiverId, donateOp, ppyAmount};
     });
   }
 

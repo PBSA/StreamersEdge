@@ -75,7 +75,6 @@ class ChallengeModel extends Model {
    *      - game
    *      - accessRule
    *      - ppyAmount
-   *      - depositOp
    *    properties:
    *      name:
    *        type: string

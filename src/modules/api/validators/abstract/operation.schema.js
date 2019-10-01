@@ -1,6 +1,6 @@
 const Joi = require('./joi.form');
 
-module.exports = Joi.object().required().keys({
+module.exports = Joi.object().keys({
   ref_block_num: Joi.number().required(),
   ref_block_prefix: Joi.number().required(),
   expiration: Joi.string().required(),
