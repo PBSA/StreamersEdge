@@ -241,6 +241,12 @@ const attributes = {
   },
   challengeSubscribeData: {
     type: Sequelize.JSON
+  },
+  paypalEmail: {
+    type: Sequelize.STRING
+  },
+  paypalAccountId: {
+    type: Sequelize.STRING
   }
 };
 

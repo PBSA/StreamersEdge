@@ -222,6 +222,12 @@ class UserRepository extends BasePostgresRepository {
     );
   }
 
+  async setPaypalDetails(userId, {paypalEmail, paypalAccountId}) {
+    return await this.model.update(
+      {paypalEmail, paypalAccountId},
+      {where: {id: userId}}
+    );
+  }
 
 }
 
