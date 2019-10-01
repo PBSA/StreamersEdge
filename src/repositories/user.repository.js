@@ -144,11 +144,15 @@ class UserRepository extends BasePostgresRepository {
   /**
    * @param values
    * @param options
+   * @param minBounty
    * @returns {Promise<Array>}
    */
-  async updateInvitation(values, options) {
+  async updateInvitation(values, options, minBounty) {
     return this.model.update(
-      {invitations: options},
+      {
+        invitations: options,
+        minInvitationBounty: minBounty
+      },
       {where: {id: values}}
     );
   }

@@ -15,6 +15,7 @@ const RestError = require('../../../errors/rest.error');
  *    type: object
  *    required:
  *      - invitations
+ *      - minBounty
  *    properties:
  *      invitations:
  *        type: string
@@ -27,6 +28,9 @@ const RestError = require('../../../errors/rest.error');
  *        description: Names of games from which user can accepts invitations
  *        items:
  *          type: string
+ *      minBounty:
+ *        type: number
+ *        description: Minimum bounty allowed for invitations
  *
  */
 

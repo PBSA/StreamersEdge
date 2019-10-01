@@ -209,6 +209,10 @@ const attributes = {
     type: Sequelize.ENUM(...Object.keys(invitationConstants.invitationStatus)),
     defaultValue: invitationConstants.invitationStatus.all
   },
+  minInvitationBounty: {
+    type: Sequelize.DOUBLE,
+    defaultValue: 0.0
+  },
   userType: {
     type: Sequelize.ENUM(Object.keys(profileConstants.userType).map((key) => profileConstants.userType[key]))
   },
