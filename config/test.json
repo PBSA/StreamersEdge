@@ -2,7 +2,7 @@
   "db": {
     "database": "streamers-edge-test"
   },
-  "port": 5432,
+  "port": 5431,
   "cors": true,
   "logLevel": "info",
   "backendUrl": "http://localhost:3000",

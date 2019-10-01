@@ -2,15 +2,12 @@
   "logLevel": "info",
   "backendUrl": "http://localhost:3000",
   "frontendUrl": "http://localhost:8082",
-  "paypal": {
-    "environment": "sandbox"
-  },
   "pubg": {
     "apiKey": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlNzI1NDM2MC04MDkxLTAxMzctOWRkZC0yMzYxNTcxOGIyZmMiLCJpc3MiOiJnYW1lbG9ja2VyIiwiaWF0IjoxNTYyMjQ4Nzg1LCJwdWIiOiJibHVlaG9sZSIsInRpdGxlIjoicHViZyIsImFwcCI6ImRldnMtcGJzYS1pbmZvIn0.r4um-L6PNmusR1Fh32b4JVJLefeggvF8TKjXsxTSA4s"
   },
   "peerplays": {
-    "peerplaysWS": "ws://ec2-35-183-70-167.ca-central-1.compute.amazonaws.com:8090",
-    "peerplaysFaucetURL": "http://ec2-35-183-70-167.ca-central-1.compute.amazonaws.com:5000/api/v1/accounts",
+    "peerplaysWS": "ws://ec2-99-79-98-229.ca-central-1.compute.amazonaws.com:8090",
+    "peerplaysFaucetURL": "http://ec2-99-79-98-229.ca-central-1.compute.amazonaws.com:5000",
     "referrer": "1.2.0",
     "sendAssetId": "1.3.1",
     "paymentAccountID": "1.2.41",
@@ -20,8 +17,8 @@
     "paymentReceiverWIF":"5KXpDezNKVvNve9hydyWaYLyqz2PFbVQq73aBohFr251YRheAts"
   },
   "paypal": {
-    "clientId": "AYq8duooANktXC0Tu59UbFibBnls8oyOSBKK1Dse4jXKSq-_sMcgTxqnYK2HN-BDQ2ulo23Ltam90cGl",
-    "secret": "EImdKtdNPiO2_6XhSNbcD04F5hAtr3f3y3P0cZQExqO0l547flbuEE3pVky2YmRFjQpNpcMd3lXRH-VS",
+    "clientId": "AU5tWEGy5mUTf7P9dH0pn6rWooV3NqcGxuJtjvFihj2VdkPnFbUJ6wY3PxfaapRpDzI6DkbZpDNkmj3Q",
+    "secret": "EBbY2lBpWg9syCboQc7Hkh_pcsf8Q0yW22u-eqBWmQy9PNVd3ZcsFDP90cQ2nkj9oZtpxQKS0TVn6bnn",
     "environment": "sandbox"
   },
   "coinmarketcap": {

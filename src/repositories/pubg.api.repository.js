@@ -11,7 +11,7 @@ class PubgApiRepository {
     return this.pubgConnection.client.getPlayer({name: username});
   }
 
-  async getMatcheIds(pubgUsername) {
+  async getMatchIds(pubgUsername) {
     const profile = await this.getProfile(pubgUsername);
     return profile.relationships.matches;
   }

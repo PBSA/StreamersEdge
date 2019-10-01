@@ -273,12 +273,10 @@ module.exports = {
   },
   associate: (models) => {
     ChallengeModel.belongsTo(models.User.model);
-    ChallengeModel.belongsTo(models.User.model, {
-      foreignKey: 'winnerUserId'
-    });
     ChallengeModel.hasMany(models.ChallengeCondition.model);
     ChallengeModel.hasMany(models.ChallengeInvitedUsers.model);
     ChallengeModel.hasMany(models.JoinedUsers.model);
+    ChallengeModel.hasMany(models.ChallengeWinner.model);
   },
   get model() {
     return ChallengeModel;

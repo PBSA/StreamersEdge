@@ -16,6 +16,9 @@ class GamesJob {
     this.challengeRepository = opts.challengeRepository;
     this.pubgService = opts.pubgService;
     this.dbConnection = opts.dbConnection;
+
+    this.processUserPubg = this.processUserPubg.bind(this);
+    this.resolvePubgChallenge = this.resolvePubgChallenge.bind(this);
   }
 
   /**
@@ -23,51 +26,36 @@ class GamesJob {
    * @returns {Promise<void>}
    */
   async runJob() {
-    const Users = await this.userRepository.findWithGames();
-
-    for (let i = 0; i < Users.length; i++) {
-      await this.processUserPubg(Users[i]);
-    }
+    const users = await this.userRepository.findWithGames();
+    await Promise.all(users.map(this.processPubgUser));
 
     await this.resolveChallenges();
   }
 
-  async processUserPubg(User) {
-    const ids = await this.pubgApiRepository.getMatcheIds(User.pubgUsername);
-    let matchesIds = ids.map(({id}) => id);
-
-    for (let i = 0; i < matchesIds.length; i++) {
-      await this.pubgService.addGame(matchesIds[i]);
-    }
+  async processPubgUser(User) {
+    const matchIds = await this.pubgApiRepository.getMatchIds(User.pubgUsername);
+    await Promise.all(matchIds.map(({id}) => this.pubgService.addGame(id)));
   }
 
   async resolveChallenges() {
-    const Challenges = await this.challengeRepository.findWaitToResolve();
-
-    for (let i = 0; i < Challenges.length; i++) {
-
-      switch (Challenges[i].game) {
-        case 'pubg':
-          await this.resolvePUBGChallenge(Challenges[i]);
-          break;
-        default:
-
-      }
-    }
+    const challenges = await this.challengeRepository.findWaitToResolve();
+    
+    const pubgChallenges = challenges.filter(challenge => challenge.game === 'pubg');
+    await Promise.all(pubgChallenges.map(this.resolvePubgChallenge));
   }
 
-  async resolvePUBGChallenge(Challenge) {
-    const result = (await this.dbConnection.sequelize.query(this.prepareQuery(Challenge), {
-      bind: [Challenge.id]
-    }))[0];
-
-    if (result.length) {
-      Challenge.winnerUserId = result[0].userId;
-    }
-
+  async resolvePubgChallenge(Challenge) {
+    Challenge.winnerUserId = await this.determinePubgWinner(Challenge);
     Challenge.status = challengeConstants.status.resolved;
-
     await Challenge.save();
+  }
+
+  async determinePubgWinner(Challenge) {
+    const userId = null;
+
+    
+
+    return userId;
   }
 
   async prepareWhereString(Challenge){
@@ -80,7 +68,6 @@ class GamesJob {
       let key;
 
       switch (condition.param) {
-
         case challengeConstants.paramTypes.winTime:
           key = 'pubg.duration'; break;
         case challengeConstants.paramTypes.frags:
