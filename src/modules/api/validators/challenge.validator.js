@@ -84,16 +84,18 @@ class ChallengeValidator extends BaseValidator {
         });
       }
 
-      if (body.depositOp.operations[0][1].to !== this.config.peerplays.paymentReceiver) {
-        throw new ValidateError(400, 'Validate error', {
-          depositOp: 'Invalid tx receiver'
-        });
-      }
+      if (body.depositOp) {
+        if (body.depositOp.operations[0][1].to !== this.config.peerplays.paymentReceiver) {
+          throw new ValidateError(400, 'Validate error', {
+            depositOp: 'Invalid tx receiver'
+          });
+        }
 
-      if (!new BigNumber(body.depositOp.operations[0][1].amount.amount).isEqualTo(body.ppyAmount)) {
-        throw new ValidateError(400, 'Validate error', {
-          depositOp: 'Tx amount should be the same as ppyAmount'
-        });
+        if (!new BigNumber(body.depositOp.operations[0][1].amount.amount).isEqualTo(body.ppyAmount)) {
+          throw new ValidateError(400, 'Validate error', {
+            depositOp: 'Tx amount should be the same as ppyAmount'
+          });
+        }
       }
 
       return body;

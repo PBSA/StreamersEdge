@@ -1,11 +1,12 @@
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const moment = require('moment');
+const BigNumber = require('bignumber.js');
+const {Login} = require('peerplaysjs-lib');
 const normalizeEmail = require('normalize-email');
 const RestError = require('../errors/rest.error');
 const {types: txTypes} = require('../constants/transaction');
 const invitationConstants = require('../constants/invitation');
-const {Login} = require('peerplaysjs-lib');
 const PeerplaysNameExistsError = require('./../errors/peerplays-name-exists.error');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
@@ -26,10 +27,12 @@ class UserService {
      * @param {GoogleRepository} opts.googleRepository
      */
   constructor(opts) {
+    this.config = opts.config;
     this.dbConnection = opts.dbConnection;
     this.userRepository = opts.userRepository;
     this.transactionRepository = opts.transactionRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
+    this.peerplaysConnection = opts.peerplaysConnection;
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
@@ -42,7 +45,10 @@ class UserService {
     this.errors = {
       USER_NOT_FOUND: 'USER_NOT_FOUND',
       NOTIFICATION_PREFERENCE_NOT_FOUND: 'NOTIFICATION_PREFERENCE_NOT_FOUND',
-      TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS'
+      TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
+      PEERPLAYS_ACCOUNT_MISSING: 'PEERPLAYS_ACCOUNT_MISSING',
+      INVALID_RECEIVER_ACCOUNT: 'INVALID_RECEIVER_ACCOUNT',
+      INVALID_PPY_AMOUNT: 'INVALID_PPY_AMOUNT'
     };
 
     this.RESET_TOKEN_TIME_INTERVAL = 10;
@@ -148,6 +154,7 @@ class UserService {
     const peerplaysAccount = await this.createPeerplaysAccountForSocialNetwork(User.username, peerplaysPassword);
     
     User.peerplaysAccountName = peerplaysAccount.name;
+    User.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccount.name);
     User.peerplaysMasterPassword = peerplaysPassword;
 
     return await User.save();
@@ -319,6 +326,7 @@ class UserService {
     await this.peerplaysRepository.createPeerplaysAccount(peerplaysAccountUsername,ownerKey, activeKey);
 
     User.peerplaysAccountName = peerplaysAccountUsername;
+    User.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccountUsername);
     User.peerplaysMasterPassword = peerplaysAccountPassword;
     await User.save();
 
@@ -477,29 +485,103 @@ class UserService {
   /**
      *
      * @param {Number} userId
-     * @param {Number} receiverId
-     * @param signTx
+     * @param {*} args
      * @return {Promise<*>}
      */
 
+  async donate(userId, {receiverId, donateOp, ppyAmount}) {
+    const receiverUser = await this.userRepository.model.findOne({where: {id: receiverId}});
 
-  async donate(userId, receiverId, donateOp) {
-    const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(donateOp);
+    if (!receiverUser) {
+      throw new Error(this.errors.INVALID_RECEIVER_ACCOUNT);
+    }
+
+    const receiverAccount = receiverUser.peerplaysAccountId;
+
+    if (!receiverAccount) {
+      throw new Error(this.errors.INVALID_RECEIVER_ACCOUNT);
+    }
+
+    let broadcastResult;
+
+    // use donateOp if set
+    // otherwise try to create a tx using the user's stored peerplays credentials
+    if (donateOp) {
+      broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(donateOp);
+    } else {
+      broadcastResult = await this.signAndBroadcastTx(userId, receiverAccount, ppyAmount);
+    }
 
     await this.transactionRepository.create({
       txId: broadcastResult[0].id,
       blockNum: broadcastResult[0].block_num,
       trxNum: broadcastResult[0].trx_num,
-      ppyAmountValue: donateOp.operations[0][1].amount.amount,
+      ppyAmountValue: broadcastResult[0].trx.operations[0][1].amount.amount,
       type: txTypes.donate,
       userId,
       receiverUserId: receiverId,
       challengeId: null,
-      peerplaysFromId: donateOp.operations[0][1].from,
-      peerplaysToId: donateOp.operations[0][1].to
+      peerplaysFromId: broadcastResult[0].trx.operations[0][1].from,
+      peerplaysToId: broadcastResult[0].trx.operations[0][1].to
     });
 
     return true;
+  }
+
+  /**
+     * Creates, signs and broadcasts a Peerplays transaction from a given user
+     * @param {String} senderId
+     * @param {String} receiverAccount
+     * @param {Number} ppyAmount
+     * @returns {Promise<*>}
+     */
+  async signAndBroadcastTx(senderId, receiverAccount, ppyAmount) {
+    if (typeof ppyAmount !== 'number' || ppyAmount <= 0.0) {
+      throw new Error(this.errors.INVALID_PPY_AMOUNT);
+    }
+
+    const senderUser = await this.userRepository.findByPk(senderId);
+
+    if (!senderUser) {
+      throw new Error(this.errors.USER_NOT_FOUND);
+    }
+
+    if (!senderUser.peerplaysAccountId || !senderUser.peerplaysMasterPassword) {
+      throw new Error(this.errors.PEERPLAYS_ACCOUNT_MISSING);
+    }
+
+    if (!receiverAccount || senderUser.peerplaysAccountId === receiverAccount) {
+      throw new Error(this.errors.INVALID_RECEIVER_ACCOUNT);
+    }
+    
+    // create a new transaction
+    const tx = new this.peerplaysConnection.TransactionBuilder();
+
+    // convert the amount to a bignumber
+    const amount = new BigNumber(ppyAmount).shiftedBy(this.peerplaysConnection.asset.precision).integerValue().toNumber();
+
+    // add a transfer operation from the senderUser's account to receiverAccount
+    tx.add_type_operation('transfer', {
+      from: senderUser.peerplaysAccountId,
+      to: receiverAccount,
+      amount: {amount, asset_id: this.config.peerplays.sendAssetId},
+      fee: {amount: 0, asset_id: this.config.peerplays.sendAssetId}
+    });
+
+    await tx.set_required_fees();
+
+    // generate the active keys for the sender and sign the transaction
+    const keys = Login.generateKeys(
+      senderUser.peerplaysAccountName,
+      senderUser.peerplaysMasterPassword,
+      ['active'],
+      IS_PRODUCTION ? 'PPY' : 'TEST'
+    );
+
+    tx.add_signer(keys.privKeys.active, keys.pubKeys.active);
+
+    // finally broadcast the transaction
+    return await tx.broadcast();
   }
 
   async changeEmail(ActiveToken) {

@@ -25,7 +25,6 @@ class ChallengeService {
     this.challengeConditionRepository = opts.challengeConditionRepository;
     this.userRepository = opts.userRepository;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
-    this.userRepository = opts.userRepository;
     this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
     this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.webPushConnection = opts.webPushConnection;
@@ -33,6 +32,7 @@ class ChallengeService {
     this.peerplaysRepository = opts.peerplaysRepository;
     this.transactionRepository = opts.transactionRepository;
     this.peerplaysConnection = opts.peerplaysConnection;
+    this.userService = opts.userService;
     this.errors = {
       DO_NOT_RECEIVE_INVITATIONS: 'THIS_IS_PRIVATE_CHALLENGE',
       CHALLENGE_NOT_FOUND: 'CLASSIC_GAME_NOT_FOUND',
@@ -53,7 +53,16 @@ class ChallengeService {
      * @returns {Promise<ChallengePublicObject>}
      */
   async createChallenge(creatorId, challengeObject) {
-    const broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
+    let broadcastResult;
+
+    // use the signed tx in depositOp if set
+    // otherwise try to create a tx using the user's stored peerplay credentials
+    if (challengeObject.depositOp) {
+      broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
+    } else {
+      const depositAccount = this.config.peerplays.paymentReceiver;
+      broadcastResult = await this.userService.signAndBroadcastTx(creatorId, depositAccount, challengeObject.ppyAmount);
+    }
 
     const Challenge = await this.challengeRepository.create({
       userId: creatorId,
@@ -137,8 +146,8 @@ class ChallengeService {
       type: txTypes.challengeCreation,
       userId: creatorId,
       challengeId: Challenge.id,
-      peerplaysFromId: challengeObject.depositOp.operations[0][1].from,
-      peerplaysToId: challengeObject.depositOp.operations[0][1].to
+      peerplaysFromId: broadcastResult[0].trx.operations[0][1].from,
+      peerplaysToId: broadcastResult[0].trx.operations[0][1].to
     });
     return this.getCleanObject(Challenge.id, challengeObject.invitedAccounts || creatorId);
   }
