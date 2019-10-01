@@ -1,3 +1,5 @@
+const RestError = require('../../../errors/rest.error');
+
 class TransactionController {
 
   /**
@@ -40,10 +42,11 @@ class TransactionController {
    *    type: object
    *    required:
    *      - receiverId
-   *      - donateOp
    *    properties:
    *      receiverId: 
-   *        type: string
+   *        type: number
+   *      ppyAmount:
+   *        type: number
    *      donateOp:
    *        $ref: '#/definitions/TransactionObject'
    */
@@ -151,8 +154,19 @@ class TransactionController {
     return await this.userService.getUserTransactions(user.id, skip, limit);
   }
   
-  async createDonateTransaction(user, {receiverId, donateOp}) {
-    return await this.userService.donate(user.id, receiverId, donateOp);
+  async createDonateTransaction(user, {receiverId, donateOp, ppyAmount}) {
+    try {
+      return await this.userService.donate(user.id, {receiverId, donateOp, ppyAmount});
+    } catch (err) {
+      switch (err.message) {
+        case this.userService.errors.INVALID_RECEIVER_ACCOUNT:
+          throw new RestError('', 400, {receiverId: [{message: 'Invalid peerplays account'}]});
+        case this.userService.errors.INVALID_PPY_AMOUNT:
+          throw new RestError('', 400, {ppyAmount: [{message: 'Invalid value'}]});
+        default:
+          throw err;
+      }
+    }
   }
 
 

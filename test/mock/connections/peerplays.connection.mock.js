@@ -27,10 +27,18 @@ class TransactionBuilderMock {
 
   async broadcast() {
     assert(this.signed);
-    assert(this.connection.balances[this.params.from] > this.params.amount.amount);
     this.connection.balances[this.params.to] += this.params.amount.amount;
     this.connection.balances[this.params.from] -= this.params.amount.amount;
-    return [{amount: this.params.amount.amount}];
+    return [{
+      amount: this.params.amount.amount,
+      trx: {
+        operations: [[0, {
+          from: this.params.from,
+          to: this.params.to,
+          amount: this.params.amount
+        }]]
+      }
+    }];
   }
 
   serialize() {
