@@ -209,7 +209,7 @@ class ChallengesController {
       [this.challengeService.errors.INVALID_TRANSACTION_RECEIVER]:  {tx: [{to: 'Invalid transaction receiver'}]},
       [this.challengeService.errors.INVALID_TRANSACTION_AMOUNT]: {tx: [{amount: 'Invalid transaction amount'}]}
     };
-    this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
+    
     this.userService = opts.userService;
   }
 

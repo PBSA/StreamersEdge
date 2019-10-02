@@ -26,7 +26,11 @@ class GamesJob {
     const Users = await this.userRepository.findWithGames();
 
     for (let i = 0; i < Users.length; i++) {
-      await this.processUserPubg(Users[i]);
+      try {
+        await this.processUserPubg(Users[i]);
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     await this.resolveChallenges();
@@ -58,7 +62,8 @@ class GamesJob {
 
   async resolvePUBGChallenge(Challenge) {
     const result = (await this.dbConnection.sequelize.query(this.prepareQuery(Challenge), {
-      bind: [Challenge.id]
+      bind: [Challenge.id],
+      type: this.dbConnection.sequelize.QueryTypes.SELECT
     }))[0];
 
     if (result.length) {

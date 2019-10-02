@@ -70,8 +70,8 @@ class ChallengeModel extends Model {
    *  ChallengeNew:
    *    type: object
    *    required:
-   *      - notifications
-   *      - endDate
+   *      - name
+   *      - startDate
    *      - game
    *      - accessRule
    *      - ppyAmount
