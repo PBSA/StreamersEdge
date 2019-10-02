@@ -83,15 +83,97 @@ class AuthController {
    * @param {UserService} opts.userService
    */
   constructor(opts) {
+    this.config = opts.config;
     this.authValidator = opts.authValidator;
     this.userService = opts.userService;
+    this.userRepository = opts.userRepository;
+    this.paypalConnection = opts.paypalConnection;
   }
 
   /**
    * Array of routes processed by this controller
    * @returns {*[]}
    */
-  getRoutes() {
+  getRoutes(app) {
+    /**
+       * @swagger
+       *
+       * /auth/paypal:
+       *  get:
+       *    description: Begin Paypal authorization process
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    parameters:
+       *      - name: callbackUrl
+       *        in: query
+       *        type: string
+       *        description: callback url to return the user to after authentication (relative to frontend url)
+       *    responses:
+       *      302:
+       *        description: Paypal redirect
+       */
+    app.get('/api/v1/auth/paypal', (req, res) => {
+      if (!req.isAuthenticated()) {
+        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=unauthenticated`);
+        return;
+      }
+
+      if (!req.query.callbackUrl) {
+        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=missing-callback-url`);
+        return;
+      }
+
+      req.session.callbackUrl = req.query.callbackUrl;
+      req.session.save();
+
+      try {
+        const paypalUrl = this.paypalConnection.getConnectUrl(`${this.config.backendUrl}/api/v1/auth/paypal/callback`);
+        res.redirect(paypalUrl);
+      } catch (err) {
+        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=${err.message}`);
+      }
+    });
+
+    /**
+       * @swagger
+       *
+       * /auth/paypal/callback:
+       *  get:
+       *    description: Paypal authentication callback
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    parameters:
+       *      - name: code
+       *        in: query
+       *        type: string
+       *        description: Authorization code
+       *    responses:
+       *      302:
+       *        description: Frontend redirect
+       */
+    app.get('/api/v1/auth/paypal/callback', (req, res) => {
+      if (!req.isAuthenticated()) {
+        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=unauthenticated`);
+        return;
+      }
+
+      if (!req.query.code) {
+        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=missing-code`);
+        return;
+      }
+
+      this.paypalCallback(req.user, req.query.code)
+        .then(() => {
+          const callbackUrl = req.session.callbackUrl || '';
+          res.redirect(`${this.config.frontendUrl}${callbackUrl}`);
+        })
+        .catch((err) => res.redirect(`${this.config.frontendUrl}?paypal-auth-error=${err.message}`));
+    });
+
     return [
       /**
        * @swagger
@@ -360,6 +442,12 @@ class AuthController {
     await ResetToken.deactivate();
 
     return true;
+  }
+
+  async paypalCallback(user, code) {
+    const accessToken = await this.paypalConnection.createAccessToken(code);
+    const paypalInfo = await this.paypalConnection.getUserInfo(accessToken);
+    await this.userRepository.setPaypalDetails(user.id, paypalInfo);
   }
 
 }

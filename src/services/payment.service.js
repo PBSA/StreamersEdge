@@ -31,6 +31,11 @@ class PaymentService {
       throw new Error('Invalid order status');
     }
 
+    await this.userRepository.setPaypalDetails(User.id, {
+      paypalEmail: order.payer.email_address,
+      paypalAccountId: order.payer.payer_id
+    });
+
     if (!User.peerplaysAccountId && User.peerplaysAccountName) {
       User.peerplaysAccountId = await this.peerplaysRepository.getAccountId(User.peerplaysAccountName);
       await this.userRepository.setAccountId(User.id, User.peerplaysAccountId);
