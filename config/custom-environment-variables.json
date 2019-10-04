@@ -31,6 +31,13 @@
       "pass": "MAILER_AUTH_PASS"
     }
   },
+  "vapid": {
+    "publicKey": "VAPID_PUBLIC_KEY",
+    "privateKey": "VAPID_PRIVATE_KEY"
+  },
+  "pubg": {
+    "apiKey": "PUBG_API_KEY"
+  },
   "paypal": {
     "clientId": "PAYPAL_CLIENT_ID",
     "secret": "PAYPAL_SECRET",
@@ -43,13 +50,8 @@
     "paymentAccountID": "PEERPLAYS_PAYMENT_ACCOUNT_ID",
     "paymentAccountWIF": "PEERPLAYS_PAYMENT_ACCOUNT_WIF",
     "paymentReceiver": "PEERPLAYS_PAYMENT_RECEIVER",
+    "feeReceiver": "PEERPLAYS_FEE_RECEIVER",
+    "paymentReceiverWIF": "PEERPLAYS_PAYMENT_RECEIVER_WIF",
     "peerplaysWS": "PEERPLAYS_WS"
-  },
-  "vapid": {
-    "publicKey": "VAPID_PUBLIC_KEY",
-    "privateKey": "VAPID_PRIVATE_KEY"
-  },
-  "pubg": {
-    "apiKey": "PUBG_API_KEY"
   }
 }

@@ -16,6 +16,7 @@ class PeerplaysRepository {
     this.config = opts.config;
 
     this.pKey = PrivateKey.fromWif(this.config.peerplays.paymentAccountWIF);
+    this.receiverPKey = PrivateKey.fromWif(this.config.peerplays.paymentReceiverWIF);
   }
 
   async createPeerplaysAccount(name, ownerKey, activeKey) {
@@ -92,6 +93,14 @@ class PeerplaysRepository {
         .exec('broadcast_transaction_with_callback', [(res) => success(res), tr])
         .catch((error) => fail(error));
     });
+  }
+
+  async sendPPYFromPaymentAccount(accountId, amount) {
+    return this.sendPPY(accountId, amount, this.config.peerplays.paymentAccountID, this.pKey);
+  }
+
+  async sendPPYFromReceiverAccount(accountId, amount) {
+    return this.sendPPY(accountId, amount, this.config.peerplays.paymentReceiver, this.receiverPKey);
   }
 
 }
