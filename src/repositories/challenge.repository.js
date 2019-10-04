@@ -49,10 +49,7 @@ class ChallengeRepository extends BasePostgresRepository {
   async findWaitToResolve() {
     return this.model.findAll({
       where: {
-        status: consts.status.open,
-        endDate: {
-          [Op.lte]: new Date()
-        }
+        status: consts.status.open
       },
       include: [{
         model: invitedUsersModel,

@@ -71,6 +71,7 @@ class ChallengeModel extends Model {
    *    type: object
    *    required:
    *      - notifications
+   *      - name
    *      - startDate
    *      - game
    *      - accessRule
