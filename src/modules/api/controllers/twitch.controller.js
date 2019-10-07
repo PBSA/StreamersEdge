@@ -61,13 +61,13 @@ class TwitchController {
       clientID: this.config.twitch.clientId,
       clientSecret: this.config.twitch.clientSecret,
       callbackURL: `${this.config.backendUrl}/api/v1/auth/twitch/callback`,
-      scope: 'user_read'
+      scope: 'user:read:email'
     }, (req, accessToken, refreshToken, profile, done) => {
       this.userService.getUserBySocialNetworkAccount('twitch', {
         id: profile.id.toString(),
         username: profile.username,
         email: profile.email,
-        picture: profile._json.logo
+        picture: profile._json.profile_image_url
       }, accessToken, req.user).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {

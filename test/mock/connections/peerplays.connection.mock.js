@@ -64,11 +64,6 @@ class PeerplaysConnectionMock {
 
         switch (method) {
           case 'get_account_by_name':
-            if (!this._accountIdByName[args[0]]) {
-              this._accountIdByName[args[0]] = `1.2.${this._accountsCount}`;
-              this._accountsCount += 1;
-            }
-
             return Promise.resolve({id: this._accountIdByName[args[0]]});
           default:
             throw new Error('method not allowed');
@@ -103,6 +98,11 @@ class PeerplaysConnectionMock {
 
     if (form.account.name !== constants.modules.api.profile.validPeerplaysName && !form.account.name.startsWith('se-')) {
       throw new Error('Invalid account name');
+    }
+
+    if (!this._accountIdByName[form.account.name]) {
+      this._accountIdByName[form.account.name] = `1.2.${this._accountsCount}`;
+      this._accountsCount += 1;
     }
 
     return {
