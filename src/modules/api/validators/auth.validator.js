@@ -19,6 +19,7 @@ class AuthValidator extends BaseValidator {
     this.userRepository = opts.userRepository;
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
+    this.peerplaysRepository = opts.peerplaysRepository;
 
     this.validateAuthCode = this.validateAuthCode.bind(this);
     this.validateSignUp = this.validateSignUp.bind(this);
@@ -106,6 +107,14 @@ class AuthValidator extends BaseValidator {
       if (alreadyExists && alreadyExists.username === username) {
         throw new ValidateError(400, 'Validate error', {
           username: 'This username is already used'
+        });
+      }
+
+      const peerplaysUser = await this.peerplaysRepository.getAccountId(`se-${username}`);
+
+      if(peerplaysUser!=null) {
+        throw new ValidateError(400,'Validate error', {
+          username: `Peerplays account exists with the username se-${username}`
         });
       }
 

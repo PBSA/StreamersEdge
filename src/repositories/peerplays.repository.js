@@ -83,7 +83,11 @@ class PeerplaysRepository {
       throw new Error('Fetch account error');
     }
 
-    return account.id;
+    if(account) {
+      return account.id;
+    } else {
+      return null;
+    }
   }
 
   async broadcastSerializedTx(tr) {
