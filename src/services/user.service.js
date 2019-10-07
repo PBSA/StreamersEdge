@@ -127,7 +127,7 @@ class UserService {
     let UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
 
     if (UserWithNetworkAccount && LoggedUser && LoggedUser.id !== UserWithNetworkAccount.id) {
-      throw new Error('this account already connected to another profile');
+      throw new Error('this account is already connected to another profile');
     }
 
     if (LoggedUser) {
