@@ -88,7 +88,7 @@ describe('POST /api/v1/auth/sign-up', () => {
     isError(response, 400, ['repeatPassword']);
   });
 
-  it('should forbid. repeatPassword does not match to password', async () => {
+  it('should forbid. repeatPassword does not match password', async () => {
     const body = {...validObject};
     body.repeatPassword = 'testetsttest';
     const response = await agent.post('/api/v1/auth/sign-up').send(body);

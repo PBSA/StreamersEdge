@@ -8,7 +8,6 @@ const chaiHttp = require('chai-http');
 
 const {isSuccess, isError} = require('../helpers/test.response.helper');
 const ApiModule = require('../api.module.test');
-const constants = require('../../../constants.json');
 const {login} = require('../helpers/test.login.helper');
 const {firstTx, secondTx} = require('../helpers/test.transaction.helper');
 
@@ -52,7 +51,7 @@ describe('POST /api/v1/challenges', () => {
   };
 
   beforeEach(async () => {
-    await agent.post('/api/v1/auth/twitch/code').send({code: constants.modules.api.auth.twitchValidCode});
+    //await agent.post('/api/v1/auth/twitch/code').send({code: constants.modules.api.auth.twitchValidCode});
     await login(agent, null, apiModule);
   });
 
