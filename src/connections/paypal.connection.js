@@ -1,6 +1,19 @@
 const paypal = require('@paypal/checkout-server-sdk');
 const request = require('request-promise');
 
+class PayoutRequest {
+
+  constructor(body) {
+    this.path = '/v1/payments/payouts';
+    this.verb = 'POST';
+    this.body = body;
+    this.headers = {
+      'Content-Type': 'application/json'
+    };
+  }
+
+}
+
 class PaypalConnection {
 
   /**
@@ -28,6 +41,26 @@ class PaypalConnection {
     return this.config.paypal.environment === 'live' ?
       new paypal.core.LiveEnvironment(clientId, clientSecret) :
       new paypal.core.SandboxEnvironment(clientId, clientSecret);
+  }
+
+  async createBatchPayout(senderBatchId, items) {
+    const payload = {
+      sender_batch_header: {
+        sender_batch_id: senderBatchId,
+        email_subject: this.config.paypal.payouts.emailSubject,
+        email_message: this.config.paypal.payouts.emailMessage
+      },
+      items: items.map((item) => ({
+        recipient_type: item.paypalAccountId ? 'PAYPAL_ID' : 'EMAIL',
+        amount: {
+          value: item.amountValue,
+          currency: item.amountCurrency
+        },
+        receiver: item.paypalAccountId || item.paypalEmail
+      }))
+    };
+
+    return await this.client().execute(new PayoutRequest(payload));
   }
 
   getConnectUrl(returnUrl) {

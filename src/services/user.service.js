@@ -24,6 +24,7 @@ class UserService {
      * @param {TransactionRepository} opts.transactionRepository
      * @param {FileService} opts.fileService
      * @param {GoogleRepository} opts.googleRepository
+     * @param {PaypalRedemptionRepository} opts.paypalRedemptionRepository
      */
   constructor(opts) {
     this.config = opts.config;
@@ -39,6 +40,7 @@ class UserService {
     this.mailService = opts.mailService;
     this.fileService = opts.fileService;
     this.googleRepository = opts.googleRepository;
+    this.paypalRedemptionRepository = opts.paypalRedemptionRepository;
     this.pubgApiRepository = opts.pubgApiRepository;
 
     this.errors = {
@@ -535,6 +537,35 @@ class UserService {
       challengeId: null,
       peerplaysFromId: broadcastResult[0].trx.operations[0][1].from,
       peerplaysToId: broadcastResult[0].trx.operations[0][1].to
+    });
+
+    return true;
+  }
+
+  async redeem(userId, {redeemOp, ppyAmount}) {
+    let broadcastResult;
+
+    if (redeemOp) {
+      broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(redeemOp);
+    } else {
+      broadcastResult = await this.signAndBroadcastTx(userId, this.config.peerplays.paymentAccountID, ppyAmount);
+    }
+
+    const tx = await this.transactionRepository.create({
+      txId: broadcastResult[0].id,
+      blockNum: broadcastResult[0].block_num,
+      trxNum: broadcastResult[0].trx_num,
+      ppyAmountValue: broadcastResult[0].trx.operations[0][1].amount.amount,
+      type: txTypes.redeem,
+      userId,
+      peerplaysFromId: broadcastResult[0].trx.operations[0][1].from,
+      peerplaysToId: broadcastResult[0].trx.operations[0][1].to
+    });
+
+    await this.paypalRedemptionRepository.createRedemption(userId, {
+      amountCurrency: 'USD',
+      amountValue: tx.ppyAmountValue,
+      transactionId: tx.id
     });
 
     return true;
