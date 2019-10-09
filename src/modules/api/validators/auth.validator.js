@@ -74,9 +74,7 @@ class AuthValidator extends BaseValidator {
     };
 
     return this.validate(null, bodySchema, async (req, query, body) => {
-      const {username, password, repeatPassword} = body;
-
-      const email = normalizeEmail(body.email);
+      const {username, password, repeatPassword, email} = body;
 
       if (username.match(/-dividend-distribution/)) {
         throw new ValidateError(400, 'Validate error', {

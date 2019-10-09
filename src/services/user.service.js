@@ -124,7 +124,7 @@ class UserService {
      */
   async getUserBySocialNetworkAccount(network, account, accessToken, LoggedUser = null) {
     const {id, email, picture, username, youtube} = account;
-    let UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
+    const UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
 
     if (UserWithNetworkAccount && LoggedUser && LoggedUser.id !== UserWithNetworkAccount.id) {
       throw new Error('this account is already connected to another profile');
@@ -302,10 +302,9 @@ class UserService {
     return Promise.all(users.map(async (User) => this.getCleanUserForSearch(User)));
   }
 
-  async signUpWithPassword(email, username, password) {
-
-    const peerplaysAccountUsername = 'se-' + username;
-    const peerplaysAccountPassword = await bcrypt.hash('se-' + password + (new Date()).getTime(), 10);
+  async signUpWithPassword(email, username, unhashedPassword) {
+    const peerplaysAccountUsername = `se-${username}`;
+    const peerplaysAccountPassword = await bcrypt.hash(`se-${unhashedPassword}${(new Date()).getTime()}`, 10);
     const keys = Login.generateKeys(
       peerplaysAccountUsername,
       peerplaysAccountPassword,
@@ -315,7 +314,7 @@ class UserService {
     const ownerKey = keys.pubKeys.owner;
     const activeKey = keys.pubKeys.active;
 
-    password = await bcrypt.hash(password, 10);
+    const password = await bcrypt.hash(unhashedPassword, 10);
     const User = await this.userRepository.model.create({
       email, username, password
     });
@@ -340,6 +339,7 @@ class UserService {
     await User.save();
     ActiveToken.isActive = false;
     await ActiveToken.save();
+    return this.getCleanUser(User);
   }
 
   async getSignInUser(login, password) {
@@ -404,15 +404,17 @@ class UserService {
   }
 
   convertNotificationToBoolean(notifications) {
+    let notificationBoolean = notifications;
+
     if (notifications !== true || notifications !== false) {
       if (parseInt(notifications, 10) === 1 || notifications.toLowerCase() === 'yes' || notifications.toLowerCase() === 'true') {
-        notifications = true;
+        notificationBoolean = true;
       } else if (parseInt(notifications, 10) === 0 || notifications.toLowerCase() === 'no' || notifications.toLowerCase() === 'false') {
-        notifications = false;
+        notificationBoolean = false;
       }
     }
 
-    return notifications;
+    return notificationBoolean;
   }
   /**
      * Change notification status of user
