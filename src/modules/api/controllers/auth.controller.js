@@ -398,8 +398,8 @@ class AuthController {
       throw new ValidateError(401, 'unauthorized');
     }
 
-    let res = await this.userService.confirmEmail(ActiveToken);
-    
+    const res = await this.userService.confirmEmail(ActiveToken);
+
     await new Promise((success) => req.login(res, () => success()));
     return res;
   }
