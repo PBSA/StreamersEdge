@@ -340,6 +340,7 @@ class UserService {
     await User.save();
     ActiveToken.isActive = false;
     await ActiveToken.save();
+    return this.getCleanUser(User);
   }
 
   async getSignInUser(login, password) {

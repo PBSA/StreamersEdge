@@ -248,7 +248,7 @@ class AuthController {
        *      200:
        *        description: Confirm-email response
        *        schema:
-       *         $ref: '#/definitions/SuccessEmptyResponse'
+       *         $ref: '#/definitions/UserResponse'
        *      400:
        *        description: Error form validation
        *        schema:
@@ -393,13 +393,15 @@ class AuthController {
     return this.userService.signUpWithPassword(email, username, password);
   }
 
-  async confirmEmail(user, ActiveToken) {
+  async confirmEmail(user, ActiveToken, req) {
     if (user && user.id !== ActiveToken.userId) {
       throw new ValidateError(401, 'unauthorized');
     }
 
-    await this.userService.confirmEmail(ActiveToken);
-    return true;
+    let res = await this.userService.confirmEmail(ActiveToken);
+    
+    await new Promise((success) => req.login(res, () => success()));
+    return res;
   }
 
   async signIn(_, {login, password}, req) {
