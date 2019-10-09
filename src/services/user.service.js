@@ -302,10 +302,9 @@ class UserService {
     return Promise.all(users.map(async (User) => this.getCleanUserForSearch(User)));
   }
 
-  async signUpWithPassword(email, username, password) {
-
+  async signUpWithPassword(email, username, unhashedPassword) {
     const peerplaysAccountUsername = `se-${username}`;
-    const peerplaysAccountPassword = await bcrypt.hash(`se-${password}${(new Date()).getTime()}`, 10);
+    const peerplaysAccountPassword = await bcrypt.hash(`se-${unhashedPassword}${(new Date()).getTime()}`, 10);
     const keys = Login.generateKeys(
       peerplaysAccountUsername,
       peerplaysAccountPassword,
@@ -315,7 +314,7 @@ class UserService {
     const ownerKey = keys.pubKeys.owner;
     const activeKey = keys.pubKeys.active;
 
-    password = await bcrypt.hash(password, 10);
+    const password = await bcrypt.hash(unhashedPassword, 10);
     const User = await this.userRepository.model.create({
       email, username, password
     });
