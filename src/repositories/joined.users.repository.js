@@ -13,10 +13,10 @@ class JoinedUsersRepository extends BasePostgresRepository {
    * @param [options]
    * @returns {Promise<ChallengeModel>}
    */
-  async joinToChallenge(user, challengeId, options) {
+  async joinToChallenge(userId, challengeId, options) {
     return super.create({
-      challengeId: challengeId,
-      userId: user
+      challengeId,
+      userId
     }, options);
   }
 

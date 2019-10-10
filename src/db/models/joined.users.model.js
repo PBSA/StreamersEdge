@@ -5,7 +5,7 @@ const {Model} = Sequelize;
  * @typedef {Object} JoinedUsers
  * @property {Number} id
  * @property {Number} challengeId
- * @property {Number} participantId
+ * @property {Number} userId
  * @property {String} joinedAt
  * @property {Boolean} isPayed
  */
@@ -14,7 +14,7 @@ const {Model} = Sequelize;
  * @typedef {Object} JoinedUsersPublicObject
  * @property {Number} id
  * @property {Number} challengeId
- * @property {Number} participantId
+ * @property {Number} userId
  * @property {String} joinedAt
  * @property {Boolean} isPayed
  * @property {String} updatedAt
@@ -27,7 +27,7 @@ class JoinedUsers extends Model {
     return {
       id: this.id,
       challengeId: this.challengeId,
-      participantId: this.participantId,
+      userId: this.userId,
       joinedAt: this.joinedAt,
       isPayed: this.isPayed
     };
@@ -58,6 +58,7 @@ module.exports = {
   },
   associate: (models) => {
     JoinedUsers.belongsTo(models.Challenge.model);
+    JoinedUsers.belongsTo(models.User.model);
   },
   get model() {
     return JoinedUsers;
