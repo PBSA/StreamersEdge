@@ -108,7 +108,7 @@ class PeerplaysRepository {
     const fullAccounts = await this.peerplaysConnection.dbAPI.exec('get_full_accounts',[[login],false]);
 
     if (fullAccounts) {
-      return fullAccounts.filter((fullAccount) => {
+      return fullAccounts.find((fullAccount) => {
         return fullAccount[1].account.active.key_auths.filter((key_auth)=> { 
           return key_auth[0] == publicKey;
         });
