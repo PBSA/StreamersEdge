@@ -380,6 +380,38 @@ class AuthController {
         '/api/v1/auth/reset-password',
         this.authValidator.validateResetPassword,
         this.resetPassword.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /auth/peerplays:
+       *  post:
+       *    description: Login with Peerplays
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    parameters:
+       *      - name: peerplays
+       *        in:  body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/AuthSignInUser'
+       *    responses:
+       *      200:
+       *        description: Login response
+       *        schema:
+       *         $ref: '#/definitions/UserResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       */
+      [
+        'post',
+        '/api/v1/auth/peerplays',
+        this.authValidator.validatePeerplaysLogin,
+        this.peerplaysLogin.bind(this)
       ]
     ];
   }
@@ -390,7 +422,7 @@ class AuthController {
   }
 
   async signUp(user, {email, password, username}) {
-    return this.userService.signUpWithPassword(email, username, password);
+    return this.userService.signUpWithPassword(email.toLowerCase(), username, password);
   }
 
   async confirmEmail(user, ActiveToken, req) {
@@ -419,7 +451,7 @@ class AuthController {
 
   async forgotPassword(_, email) {
     try {
-      await this.userService.sendResetPasswordEmail(email);
+      await this.userService.sendResetPasswordEmail(email.toLowerCase());
     } catch (e) {
       switch (e.message) {
         case this.userService.errors.USER_NOT_FOUND:
@@ -450,6 +482,15 @@ class AuthController {
     const accessToken = await this.paypalConnection.createAccessToken(code);
     const paypalInfo = await this.paypalConnection.getUserInfo(accessToken);
     await this.userRepository.setPaypalDetails(user.id, paypalInfo);
+  }
+
+  async peerplaysLogin(_, {login, password}, req) {
+    let user;
+
+    user = await this.userService.loginPeerplaysUser(login, password, req.user);
+
+    await new Promise((success) => req.login(user, () => success()));
+    return user;
   }
 
 }

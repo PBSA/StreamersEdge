@@ -27,11 +27,11 @@ class UserRepository extends BasePostgresRepository {
     });
   }
 
-  async getByLogin(login, normalizeLogin) {
+  async getByLogin(login) {
     return this.model.findOne({
       where: {
         [Sequelize.Op.or]: [{
-          email: normalizeLogin
+          email: login.toLowerCase()
         }, {
           username: login
         }]
@@ -227,6 +227,14 @@ class UserRepository extends BasePostgresRepository {
       {paypalEmail, paypalAccountId},
       {where: {id: userId}}
     );
+  }
+
+  async getByPeerplaysAccountName(accountName) {
+    return this.model.findOne({
+      where: {
+        peerplaysAccountName: accountName
+      }
+    });
   }
 
 }
