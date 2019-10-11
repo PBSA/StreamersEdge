@@ -615,7 +615,7 @@ class UserService {
     //If the user is already logged in and no peerplays account is linked then link this account
     if(LoggedUser && !userWithPeerplaysAccount) {
       LoggedUser.peerplaysAccountName = login;
-      LoggedUser.peerplaysAccountId = PeerplaysUser[0][1].account.id;
+      LoggedUser.peerplaysAccountId = PeerplaysUser[1].account.id;
       LoggedUser.peerplaysMasterPassword = '';
       await LoggedUser.save();
       return this.getCleanUser(LoggedUser);
@@ -625,7 +625,7 @@ class UserService {
       username: await this.getUsernameForPeerplaysAccount(login), 
       password,
       peerplaysAccountName: login,
-      peerplaysAccountId: PeerplaysUser[0][1].account.id
+      peerplaysAccountId: PeerplaysUser[1].account.id
     });
 
     await NewUser.save();
