@@ -1,5 +1,4 @@
 const Joi = require('./abstract/joi.form');
-const normalizeEmail = require('normalize-email');
 const tldJS = require('tldjs');
 const BaseValidator = require('./abstract/base.validator');
 const ValidateError = require('./../../../errors/validate.error');
@@ -29,6 +28,7 @@ class AuthValidator extends BaseValidator {
     this.validateResetPassword = this.validateResetPassword.bind(this);
     this.loggedOnly = this.loggedOnly.bind(this);
     this.loggedAdminOnly = this.loggedAdminOnly.bind(this);
+    this.validatePeerplaysLogin = this.validatePeerplaysLogin.bind(this);
   }
 
   loggedOnly() {
@@ -147,7 +147,7 @@ class AuthValidator extends BaseValidator {
     return this.validate(null, bodySchema, async (req, query, body) => {
       const {login} = body;
 
-      const user = await this.userRepository.getByLogin(login, normalizeEmail(login));
+      const user = await this.userRepository.getByLogin(login);
 
       if(user && user.isEmailVerified === false){
         throw new ValidateError(403, 'Please verify your email address first');
@@ -190,6 +190,25 @@ class AuthValidator extends BaseValidator {
       }
 
       return {ResetToken, password};
+    });
+  }
+
+  validatePeerplaysLogin() {
+    const bodySchema = {
+      login: Joi.string().required(),
+      password: Joi.string().required()
+    };
+    
+    return this.validate(null, bodySchema, async (req, query, body) => {
+      const {login} = body;
+
+      const user = await this.userRepository.getByLogin(login);
+
+      if (user && user.status === profileConstants.status.banned) {
+        throw new ValidateError(403, 'You have been banned. Please contact our admins for potential unban.');
+      }
+
+      return body;
     });
   }
 }

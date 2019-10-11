@@ -1,9 +1,11 @@
 const logger = require('log4js').getLogger('peerplays.repository');
-const {PrivateKey} = require('peerplaysjs-lib');
+const {PrivateKey, Login} = require('peerplaysjs-lib');
 const BigNumber = require('bignumber.js');
 BigNumber.config({ROUNDING_MODE: BigNumber.ROUND_FLOOR});
 
 const PeerplaysNameExistsError = require('./../errors/peerplays-name-exists.error');
+
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 class PeerplaysRepository {
 
@@ -96,6 +98,24 @@ class PeerplaysRepository {
         .exec('broadcast_transaction_with_callback', [(res) => success(res), tr])
         .catch((error) => fail(error));
     });
+  }
+
+  async getPeerplaysUser(login, password) {
+    const keys = Login.generateKeys(login, password,
+      ['active'],
+      IS_PRODUCTION ? 'PPY' : 'TEST');
+    const publicKey = keys.pubKeys.active;
+    const fullAccounts = await this.peerplaysConnection.dbAPI.exec('get_full_accounts',[[login],false]);
+
+    if (fullAccounts) {
+      return fullAccounts.find((fullAccount) => {
+        return fullAccount[1].account.active.key_auths.filter((key_auth)=> { 
+          return key_auth[0] == publicKey;
+        });
+      });
+    }
+
+    return null;
   }
 
 }

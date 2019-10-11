@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const moment = require('moment');
 const BigNumber = require('bignumber.js');
 const {Login} = require('peerplaysjs-lib');
-const normalizeEmail = require('normalize-email');
 const RestError = require('../errors/rest.error');
 const {types: txTypes} = require('../constants/transaction');
 const invitationConstants = require('../constants/invitation');
@@ -343,7 +342,7 @@ class UserService {
   }
 
   async getSignInUser(login, password) {
-    const User = await this.userRepository.getByLogin(login, normalizeEmail(login));
+    const User = await this.userRepository.getByLogin(login);
 
     if (!User) {
       throw new Error('User not found');
@@ -518,7 +517,7 @@ class UserService {
       txId: broadcastResult[0].id,
       blockNum: broadcastResult[0].block_num,
       trxNum: broadcastResult[0].trx_num,
-      ppyAmountValue: broadcastResult[0].trx.operations[0][1].amount.amount,
+      ppyAmountValue: broadcastResult[0].trx.operations[0][1].amount.amount/100000000,
       type: txTypes.donate,
       userId,
       receiverUserId: receiverId,
@@ -594,6 +593,61 @@ class UserService {
     await User.save();
     ActiveToken.isActive = false;
     await ActiveToken.save();
+  }
+
+  async loginPeerplaysUser(login, password, LoggedUser = null) {
+    const PeerplaysUser = await this.peerplaysRepository.getPeerplaysUser(login, password);
+    
+    if (!PeerplaysUser) {
+      throw new RestError('', 400, {login: [{message: 'Invalid peerplays account'}]});
+    }
+
+    const userWithPeerplaysAccount = await this.userRepository.getByPeerplaysAccountName(login);
+
+    if (userWithPeerplaysAccount && LoggedUser && LoggedUser.id !== userWithPeerplaysAccount.id) {
+      throw new RestError('This account is already connected to another profile');
+    }
+
+    if(userWithPeerplaysAccount) {
+      return this.getCleanUser(userWithPeerplaysAccount);
+    }
+
+    //If the user is already logged in and no peerplays account is linked then link this account
+    if(LoggedUser && !userWithPeerplaysAccount) {
+      LoggedUser.peerplaysAccountName = login;
+      LoggedUser.peerplaysAccountId = PeerplaysUser[0][1].account.id;
+      LoggedUser.peerplaysMasterPassword = '';
+      await LoggedUser.save();
+      return this.getCleanUser(LoggedUser);
+    }
+
+    const NewUser = await this.userRepository.model.create({
+      username: await this.getUsernameForPeerplaysAccount(login), 
+      password,
+      peerplaysAccountName: login,
+      peerplaysAccountId: PeerplaysUser[0][1].account.id
+    });
+
+    await NewUser.save();
+
+    return this.getCleanUser(NewUser);
+  }
+
+  async getUsernameForPeerplaysAccount(accountName, numRetries=0){
+    const MAX_RETRIES = 5;
+
+    if (numRetries >= MAX_RETRIES) {
+      throw new RestError('Failed to create user, too many retries');
+    }
+
+    const UsernameExists = await this.userRepository.getByLogin(accountName);
+
+    if(UsernameExists) {
+      const randomString = `${Math.floor(Math.min(1000 + Math.random() * 9000, 9999))}`; // random 4 digit number
+      this.getUsernameForPeerplaysAccount(accountName + randomString, numRetries + 1);
+    }
+
+    return accountName;
   }
 
 }
