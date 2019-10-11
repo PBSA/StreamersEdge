@@ -20,6 +20,12 @@ class JoinedUsersRepository extends BasePostgresRepository {
     }, options);
   }
 
+  async hasUserJoined(userId, challengeId) {
+    return await this.model.count({
+      where: {userId, challengeId}
+    }) !== 0;
+  }
+
 }
 
 module.exports = JoinedUsersRepository;
