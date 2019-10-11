@@ -45,6 +45,8 @@ const {accessRules} = require('../../../constants/challenge');
  *        type: string
  *      userId:
  *        type: string
+ *      joined:
+ *        type: boolean
  *  Operation:
  *    type: object
  *    properties:
@@ -195,12 +197,14 @@ class ChallengesController {
      * @param {ChallengeValidator} opts.challengeValidator
      * @param {ChallengeService} opts.challengeService
      * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
+     * @param {JoinedUsersRepository} opts.joinedUsersRepository
      */
   constructor(opts) {
     this.authValidator = opts.authValidator;
     this.challengeService = opts.challengeService;
     this.challengeValidator = opts.challengeValidator;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
+    this.joinedUsersRepository = opts.joinedUsersRepository;
     this.userService = opts.userService;
   }
 
@@ -468,6 +472,8 @@ class ChallengesController {
         }
       }
 
+      result.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challengeId);
+
       return result;
     } catch (err) {
       switch (err) {
@@ -508,13 +514,16 @@ class ChallengesController {
   }
 
   async getAllChallenges(user) {
-    const allChallenges = await this.challengeService.getAllChallenges(user.id);
+    let challenges = await this.challengeService.getAllChallenges(user.id);
+    challenges = challenges.map((c) => c.toJSON());
+    
+    challenges = await Promise.all(challenges.map(async (challenge) => {
+      delete challenge['challenge-invited-users'];
+      challenge.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challenge.id);
+      return challenge;
+    }));
 
-    for (const challenge of allChallenges) {
-      delete challenge.dataValues['challenge-invited-users'];
-    }
-
-    return allChallenges;
+    return challenges;
   }
 
   async joinToChallenge(user, {challengeId, tx}) {
