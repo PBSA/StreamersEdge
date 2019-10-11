@@ -46,7 +46,7 @@ class TwitchController {
           return;
         }
 
-        res.redirect(this.config.frontendUrl);
+        res.redirect(this.config.frontendCallbackUrl);
 
       });
 
