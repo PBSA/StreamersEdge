@@ -241,7 +241,18 @@ class UsersController {
   }
 
   async changeInvitationStatus(user, status) {
-    return await this.userService.changeInvitationStatus(user, status);
+    try{
+      return await this.userService.changeInvitationStatus(user, status);
+    } catch (e) {
+      switch (e.message) {
+        case this.userService.errors.INVITED_USERS_NOT_FOUND:
+          throw new RestError('Invited users required', 400);
+        case this.userService.errors.INVITED_GAME_NOT_FOUND:
+          throw new RestError('Games required', 400);
+        default:
+          throw new RestError(e.message, 400);
+      }
+    }
   }
 
 }
