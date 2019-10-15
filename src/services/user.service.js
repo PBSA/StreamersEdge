@@ -47,14 +47,16 @@ class UserService {
       TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
       PEERPLAYS_ACCOUNT_MISSING: 'PEERPLAYS_ACCOUNT_MISSING',
       INVALID_RECEIVER_ACCOUNT: 'INVALID_RECEIVER_ACCOUNT',
-      INVALID_PPY_AMOUNT: 'INVALID_PPY_AMOUNT'
+      INVALID_PPY_AMOUNT: 'INVALID_PPY_AMOUNT',
+      INVITED_USERS_NOT_FOUND: 'INVITED_USERS_NOT_FOUND',
+      INVITED_GAME_NOT_FOUND: 'INVITED_GAME_NOT_FOUND'
     };
 
     this.RESET_TOKEN_TIME_INTERVAL = 10;
   }
 
   /**
-   * 
+   *
    * @param {String} username
    * @param {Number} numRetries
    */
@@ -108,7 +110,7 @@ class UserService {
       if (err instanceof PeerplaysNameExistsError) {
         return await this.createPeerplaysAccountForSocialNetwork(username, password, numRetries + 1);
       }
-      
+
       throw err;
     }
   }
@@ -151,7 +153,7 @@ class UserService {
 
     const peerplaysPassword = `${User.username}-${accessToken}`;
     const peerplaysAccount = await this.createPeerplaysAccountForSocialNetwork(User.username, peerplaysPassword);
-    
+
     User.peerplaysAccountName = peerplaysAccount.name;
     User.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccount.name);
     User.peerplaysMasterPassword = peerplaysPassword;
@@ -231,7 +233,7 @@ class UserService {
 
     // copy over properties from updateObject to the User
     Object.assign(User, updateObject);
-    
+
     if (User.twitchUserName === '') {
       User.twitchUserName = null;
     }
@@ -443,6 +445,15 @@ class UserService {
      * @returns {Promise<Array>}
      */
   async changeInvitationStatus(user, status) {
+
+    if(status.invitations.toLowerCase() === 'users' && (status.users === undefined || status.users === null || status.users.length <1)){
+      throw new Error(this.errors.INVITED_USERS_NOT_FOUND);
+    }
+
+    if(status.invitations.toLowerCase() === 'games' && (status.games === undefined || status.games === null || status.games.length <1)){
+      throw new Error(this.errors.INVITED_GAME_NOT_FOUND);
+    }
+
     return await this.dbConnection.sequelize.transaction(async (tx) => {
       const updatedInvitation = await this.userRepository.updateInvitation(user.id, status.invitations, status.minBounty);
 
@@ -554,7 +565,7 @@ class UserService {
     if (!receiverAccount || senderUser.peerplaysAccountId === receiverAccount) {
       throw new Error(this.errors.INVALID_RECEIVER_ACCOUNT);
     }
-    
+
     // create a new transaction
     const tx = new this.peerplaysConnection.TransactionBuilder();
 
@@ -597,7 +608,7 @@ class UserService {
 
   async loginPeerplaysUser(login, password, LoggedUser = null) {
     const PeerplaysUser = await this.peerplaysRepository.getPeerplaysUser(login, password);
-    
+
     if (!PeerplaysUser) {
       throw new RestError('', 400, {login: [{message: 'Invalid peerplays account'}]});
     }
@@ -622,7 +633,7 @@ class UserService {
     }
 
     const NewUser = await this.userRepository.model.create({
-      username: await this.getUsernameForPeerplaysAccount(login), 
+      username: await this.getUsernameForPeerplaysAccount(login),
       password,
       peerplaysAccountName: login,
       peerplaysAccountId: PeerplaysUser[1].account.id
