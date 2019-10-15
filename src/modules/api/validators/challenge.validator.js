@@ -136,7 +136,7 @@ class ChallengeValidator extends BaseValidator {
     return this.validate(null,
       {
         challengeId: Joi.number().integer().required(),
-        tx: operationSchema
+        joinOp: operationSchema
       },
       (req, query, body) => body);
   }

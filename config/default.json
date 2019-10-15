@@ -48,7 +48,8 @@
     "sendAssetId": "1.3.0",
     "paymentAccountID": "",
     "paymentAccountWIF": "",
-    "paymentReceiver": ""
+    "paymentReceiver": "",
+    "feeReceiver": ""
   },
   "paypal": {
     "clientId": "",
@@ -78,6 +79,6 @@
     ]
   },
   "challenge": {
-    "joinFee": "100"
+    "joinFee": 100
   }
 }

@@ -36,6 +36,7 @@ class ChallengeService {
     this.errors = {
       DO_NOT_RECEIVE_INVITATIONS: 'THIS_IS_PRIVATE_CHALLENGE',
       CHALLENGE_NOT_FOUND: 'CLASSIC_GAME_NOT_FOUND',
+      CHALLENGE_NOT_OPEN: 'CHALLENGE_NOT_OPEN',
       TRANSACTION_ERROR: 'TRANSACTION_ERROR',
       INVALID_TRANSACTION_SENDER: 'INVALID_TRANSACTION_SENDER',
       INVALID_TRANSACTION_RECEIVER: 'INVALID_TRANSACTION_RECEIVER',
@@ -286,22 +287,30 @@ class ChallengeService {
     return await this.challengeRepository.findAllChallenges(userId);
   }
 
-  async joinToChallenge(userId, challengeId, bcTx) {
-    return await this.dbConnection.sequelize.transaction(async (dbTx) => {
-      if (operation.to !== this.config.peerplays.paymentReceiver) {
+  async joinToChallenge(userId, challengeId, joinOp) {
+    const user = await this.userRepository.findByPk(userId);
+    const challenge = await this.challengeRepository.findByPk(challengeId);
+
+    if (!challenge) {
+      throw new Error(this.errors.CHALLENGE_NOT_FOUND);
+    }
+
+    if (challenge.status !== challengeConstants.status.open) {
+      throw new Error(this.errors.CHALLENGE_NOT_OPEN);
+    }
+
+    if (challenge.accessRule === challengeConstants.accessRules.invite) {
+      if (!await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
+        throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
+      }
+    }
+
+    if (joinOp) {
+      const operation = joinOp.operations[0][1];
+
+      if (operation.to !== this.config.peerplays.feeReceiver) {
         throw new Error(this.errors.INVALID_TRANSACTION_RECEIVER);
       }
-
-      if (!new BigNumber(operation.amount.amount).eq(this.config.challenge.joinFee)) {
-        throw new Error(this.errors.INVALID_TRANSACTION_AMOUNT);
-      }
-
-      const [user, challenge] = await Promise.all([
-        this.userRepository.findByPk(userId, {transaction: dbTx}),
-        this.challengeRepository.findByPk(challengeId, {transaction: dbTx})
-      ]);
-
-      const operation = bcTx.operations[0][1];
 
       if (user.peerplaysAccountId === '') {
         await this.userRepository.setPeerplaysAccountId(userId, operation.from);
@@ -309,28 +318,16 @@ class ChallengeService {
         throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
       }
 
-      if (!challenge) {
-        throw new Error(this.errors.CHALLENGE_NOT_FOUND);
+      if (!new BigNumber(operation.amount.amount).eq(this.config.challenge.joinFee)) {
+        throw new Error(this.errors.INVALID_TRANSACTION_AMOUNT);
       }
 
-      if (challenge.accessRule === challengeConstants.accessRules.invite) {
-        if (!await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
-          throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
-        }
-      }
+      await this.peerplaysRepository.broadcastSerializedTx(joinOp);
+    } else {
+      await this.userService.signAndBroadcastTx(userId, this.config.peerplays.feeReceiver, this.config.challenge.joinFee);
+    }
 
-      const res = await new Promise(async (resolve, reject) => {
-        await this.peerplaysConnection.networkAPI.exec('broadcast_transaction_with_callback', [resolve, bcTx])
-          .catch((err) => {
-            const error = new Error(this.errors.TRANSACTION_ERROR);
-            error.data = err;
-            reject(error);
-          });
-      });
-      await this.joinedUsersRepository.joinToChallenge(userId, challengeId, {transaction: dbTx});
-      return res;
-    });
-
+    return await this.joinedUsersRepository.joinToChallenge(userId, challengeId);
   }
 
 }
