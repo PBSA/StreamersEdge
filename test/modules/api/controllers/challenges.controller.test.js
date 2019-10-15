@@ -85,12 +85,15 @@ describe('POST /api/v1/challenges', () => {
     assert.hasAllKeys(response.body.error, ['invitedAccounts']);
   });
 
+  let challengeId;
+
   it('should success create challenge', async () => {
     await agent.post('/api/v1/challenges/subscribe').send(subscribe);
     const body = {...validRequest};
     body.depositOp = firstTx;
     const response = await agent.post('/api/v1/challenges').send(body);
     isSuccess(response);
+    challengeId = response.body.result.id;
   });
 
   it('should success create challenge (no depositOp)', async () => {
@@ -117,6 +120,14 @@ describe('POST /api/v1/challenges', () => {
     body.invitedAccounts = [user.body.result.id];
     const response = await agent.post('/api/v1/challenges').send(body);
     isSuccess(response);
+  });
+
+  it('should join challenge', async () => {
+    const response = await agent.post('/api/v1/challenges/join').send({challengeId});
+    isSuccess(response);
+    const {body: {result}} = response;
+    assert(result.challengeId === challengeId);
+    assert.hasAllKeys(result, ['joinedAt', 'id', 'challengeId', 'userId', 'createdAt', 'updatedAt', 'isPayed']);
   });
 
 });

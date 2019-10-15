@@ -91,73 +91,11 @@ const {accessRules} = require('../../../constants/challenge');
  *    type: object
  *    required:
  *      - challengeId
- *      - tx
- *      - user
  *    properties:
  *      challengeId:
  *        type: number
- *        example: 11
- *      tx:
- *        type: object
- *        properties:
- *            ref_block_num:
- *              type: number
- *              example: 37792
- *            ref_block_prefix:
- *              type: number
- *              example: 37792
- *            expiration:
- *              type: string
- *              example:  '2019-06-28T14:17:57'
- *            operations:
- *              type: array
- *              items:
- *                type: array
- *                items:
- *                  allOf:
- *                    - type: number
- *                    - type: object
- *                      properties:
- *                        fee:
- *                          type: object
- *                          properties:
- *                            amount:
- *                              type: string
- *                            asset_id:
- *                              type: string
- *                        from:
- *                          type: string
- *                        to:
- *                          type: string
- *                        amount:
- *                          type: object
- *                          properties:
- *                            amount:
- *                              type: string
- *                            asset_id:
- *                              type: string
- *                            extensions:
- *                              type: array
- *                              items: {}
- *                example:
- *                  - 0
- *                  - fee:
- *                      amount: '20000'
- *                      asset_id: '1'
- *                    from: '1.2.67'
- *                    to: '1.2.57'
- *                    amount:
- *                      amount: '1000'
- *                      asset_id: '1.3.0'
- *                    extensions: []
- *            extensions:
- *              type: array
- *              items: {}
- *              example: []
- *            signatures:
- *              type: array
- *              items: {}
- *              example: [jhvjhhj787878gghjjh]
+ *      joinOp:
+ *        $ref: '#/definitions/TransactionObject'
  *  JoinSuccessResponse:
  *    type: object
  *    properties:
@@ -526,23 +464,25 @@ class ChallengesController {
     return challenges;
   }
 
-  async joinToChallenge(user, {challengeId, tx}) {
+  async joinToChallenge(user, {challengeId, joinOp}) {
     try {
-      return await this.challengeService.joinToChallenge(user.id, challengeId, tx);
+      return await this.challengeService.joinToChallenge(user.id, challengeId, joinOp);
     } catch (err) {
       switch (err.message) {
         case this.challengeService.errors.CHALLENGE_NOT_FOUND:
           throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
+        case this.challengeService.errors.CHALLENGE_NOT_OPEN:
+          throw new RestError('', 422, {challenge: [{message: 'This challenge is not open for joining'}]});
         case this.challengeService.errors.DO_NOT_RECEIVE_INVITATIONS:
           throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
         case this.challengeService.errors.INVALID_TRANSACTION_SENDER:
-          throw new RestError('', 422, {tx: [{from: 'Invalid transaction sender'}]});
+          throw new RestError('', 422, {joinOp: [{from: 'Invalid transaction sender'}]});
         case this.challengeService.errors.INVALID_TRANSACTION_RECEIVER:
-          throw new RestError('', 422, {tx: [{to: 'Invalid transaction receiver'}]});
+          throw new RestError('', 422, {joinOp: [{to: 'Invalid transaction receiver'}]});
         case this.challengeService.errors.INVALID_TRANSACTION_AMOUNT:
-          throw new RestError('', 422, {tx: [{amount: 'Invalid transaction amount'}]});
+          throw new RestError('', 422, {joinOp: [{amount: 'Invalid transaction amount'}]});
         case this.challengeService.errors.TRANSACTION_ERROR:
-          throw new RestError('', 422, {tx: [{signature: err.data.message}]});
+          throw new RestError('', 422, {joinOp: [{signature: err.data.message}]});
         default:
           throw err;
       }
