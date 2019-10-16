@@ -484,6 +484,29 @@ class UserService {
           return updatedInvitation;
         }
 
+        case invitationConstants.invitationStatus.all: {
+          const games = status.games.map((game) => ({
+            'toUser': user.id,
+            'fromGame': game
+          }));
+          const users = status.users.map((userId) => ({
+            'toUser': user.id,
+            'fromUser': userId
+          }));
+          await Promise.all([this.whitelistedGamesRepository.destroyByToUserId(user.id, tx),
+            this.whitelistedUsersRepository.destroyByToUserId(user.id, tx),
+            this.whitelistedGamesRepository.bulkCreateFromGames(games, tx),
+            this.whitelistedUsersRepository.bulkCreateFromUsers(users, tx)]);
+          return updatedInvitation;
+        }
+
+        case invitationConstants.invitationStatus.none: {
+          await Promise.all([this.whitelistedGamesRepository.destroyByToUserId(user.id, tx),
+            this.whitelistedUsersRepository.destroyByToUserId(user.id, tx)
+          ]);
+          return updatedInvitation;
+        }
+
         default:
           return updatedInvitation;
       }
