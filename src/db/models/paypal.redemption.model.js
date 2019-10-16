@@ -13,8 +13,7 @@ module.exports = {
   init: (sequelize) => {
     PaypalRedemptionModel.init({
       amountCurrency: {type: Sequelize.STRING},
-      amountValue: {type: Sequelize.DOUBLE},
-      ppyAmount: {type: Sequelize.DOUBLE}
+      amountValue: {type: Sequelize.DOUBLE}
     }, {
       sequelize,
       modelName: 'paypal-redemptions'
