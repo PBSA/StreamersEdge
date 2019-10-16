@@ -1,21 +1,31 @@
+const {randomBytes} = require('crypto');
+const {Op} = require('sequelize');
 const {statuses} = require('../constants/payment');
 const VALID_ORDER_STATUS = 'COMPLETED';
 
 class PaymentService {
 
   /**
-   * @param {PaypalRepository} opts.paypalRepository
    * @param {PaymentRepository} opts.paymentRepository
    * @param {CoinmarketcapRepository} opts.coinmarketcapRepository
    * @param {PeerplaysRepository} opts.peerplaysRepository
    * @param {UserRepository} opts.userRepository
+   * @param {PaypalRepository} opts.paypalRepository
+   * @param {PaypalPayoutRepository} opts.paypalPayoutRepository
+   * @param {PaypalRedemptionRepository} opts.paypalRedemptionRepository
+   * @param {PaypalConnection} opts.paypalConnection
+   * @param {DbConnection} opts.dbConnection
    */
   constructor(opts) {
-    this.paypalRepository = opts.paypalRepository;
     this.paymentRepository = opts.paymentRepository;
     this.coinmarketcapRepository = opts.coinmarketcapRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
     this.userRepository = opts.userRepository;
+    this.paypalRepository = opts.paypalRepository;
+    this.paypalPayoutRepository = opts.paypalPayoutRepository;
+    this.paypalRedemptionRepository = opts.paypalRedemptionRepository;
+    this.paypalConnection = opts.paypalConnection;
+    this.dbConnection = opts.dbConnection;
   }
 
   async processPayment(User, orderId) {
@@ -81,6 +91,48 @@ class PaymentService {
     }
 
     return payment.save();
+  }
+
+  async processPendingRedemptions() {
+    const PaypalRedemption = this.paypalRedemptionRepository.model;
+    const PaypalPayout = this.paypalPayoutRepository.model;
+
+    const sequelize = this.dbConnection.getConnection();
+
+    const result = await sequelize.transaction(async (transaction) => {
+      const redemptions = await PaypalRedemption.findAll({
+        where: {paypalPayoutId: {[Op.eq]: null}}
+      }, {transaction});
+
+      if (redemptions.length === 0) {
+        return;
+      }
+
+      const senderBatchId = randomBytes(16).toString('hex');
+      const payout = PaypalPayout.create({senderBatchId}, {transaction});
+
+      await PaypalRedemption.update({
+        paypalPayoutId: payout.id
+      }, {
+        where: {paypalPayoutId: {[Op.eq]: null}}
+      }, {transaction});
+
+      return {redemptions, payout};
+    });
+
+    if (!result) {
+      return;
+    }
+
+    const {redemptions, payout} = result;
+    const items = await Promise.all(redemptions.map(async ({userId, amountCurrency, amountValue}) => {
+      const {paypalAccountId} = await this.userRepository.findByPk(userId);
+      return {paypalAccountId, amountCurrency, amountValue};
+    }));
+
+    const {payoutBatchId} = await this.paypalConnection.createBatchPayout(payout.senderBatchId, items);
+    payout.payoutBatchId = payoutBatchId;
+    await payout.save();
   }
 
 }
