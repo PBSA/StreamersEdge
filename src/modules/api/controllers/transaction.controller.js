@@ -37,7 +37,7 @@ class TransactionController {
    *        type: number
    *      challengeId:
    *        type: number
-   * 
+   *
    *  Donation:
    *    type: object
    *    required:
@@ -48,6 +48,14 @@ class TransactionController {
    *      ppyAmount:
    *        type: number
    *      donateOp:
+   *        $ref: '#/definitions/TransactionObject'
+   *
+   *  Redemption:
+   *    type: object
+   *    properties:
+   *      ppyAmount:
+   *        type: number
+   *      redeemOp:
    *        $ref: '#/definitions/TransactionObject'
    */
 
@@ -145,6 +153,42 @@ class TransactionController {
         this.authValidator.loggedOnly,
         this.transactionValidator.donate,
         this.createDonateTransaction.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /redeem:
+       *  post:
+       *    description: Create a redemption transaction
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Transactions
+       *    parameters:
+       *      - name: redeem
+       *        in: body
+       *        required: true
+       *        schema:
+       *          $ref: '#/definitions/Redemption'
+       *    responses:
+       *      200:
+       *        description: Redemption response
+       *        schema:
+       *          $ref: '#/definitions/RedemptionResponse'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       */
+      [
+        'post', '/api/v1/redeem',
+        this.authValidator.loggedOnly,
+        this.transactionValidator.redeem,
+        this.createRedemptionTransaction.bind(this)
       ]
     ];
   }
@@ -169,6 +213,18 @@ class TransactionController {
     }
   }
 
+  async createRedemptionTransaction(user, {redeemOp, ppyAmount}) {
+    try {
+      return await this.userService.redeem(user.id, {redeemOp, ppyAmount});
+    } catch (err) {
+      switch (err.message) {
+        case this.userService.errors.INVALID_PPY_AMOUNT:
+          throw new RestError('', 400, {ppyAmount: [{message: 'Invalid value'}]});
+        default:
+          throw err;
+      }
+    }
+  }
 
 }
 

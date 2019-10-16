@@ -55,7 +55,11 @@
     "clientId": "",
     "secret": "",
     "environment": "live",
-    "openidScopes": "openid email https://uri.paypal.com/services/paypalattributes"
+    "openidScopes": "openid email https://uri.paypal.com/services/paypalattributes",
+    "payouts": {
+      "emailSubject": "",
+      "emailMessage": ""
+    }
   },
   "coinmarketcap": {
     "apiKey": ""

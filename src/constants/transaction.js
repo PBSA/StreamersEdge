@@ -1,6 +1,7 @@
 module.exports = {
   types: {
     challengeCreation: 'challengeCreation',
-    donate: 'donate'
+    donate: 'donate',
+    redeem: 'redeem'
   }
 };

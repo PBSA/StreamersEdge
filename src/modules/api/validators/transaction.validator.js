@@ -11,6 +11,7 @@ class TransactionValidator extends BaseValidator {
     this.config = opts.config;
     this.getTransactions = this.getTransactions.bind(this);
     this.donate = this.donate.bind(this);
+    this.redeem = this.redeem.bind(this);
     this.userRepository = opts.userRepository;
   }
 
@@ -56,6 +57,27 @@ class TransactionValidator extends BaseValidator {
       }
 
       return {receiverId, donateOp, ppyAmount};
+    });
+  }
+
+  redeem() {
+    const bodySchema = {
+      ppyAmount: Joi.number(),
+      redeemOp: operationSchema
+    };
+
+    return this.validate(null, bodySchema, async (req, query, body) => {
+      const {redeemOp, ppyAmount} = body;
+
+      if (!redeemOp && !ppyAmount) {
+        const errorMsg = 'Either redeemOp or ppyAmount must be set';
+        throw new ValidateError(400, errorMsg, {
+          redeemOp: errorMsg,
+          ppyAmount: errorMsg
+        });
+      }
+
+      return {redeemOp, ppyAmount};
     });
   }
 

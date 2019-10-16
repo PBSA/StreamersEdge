@@ -1,7 +1,6 @@
 'use strict';
 
 const MigrationUtil = require('../../utils/migtation.util');
-const {types} = require('../../constants/transaction');
 const DataTypes = require('sequelize/lib/data-types');
 
 const fields = {
@@ -11,7 +10,7 @@ const fields = {
   blockNum: {type: DataTypes.INTEGER},
   trxNum: {type: DataTypes.INTEGER},
   ppyAmountValue: {type: DataTypes.INTEGER},
-  type: {type: DataTypes.ENUM(Object.keys(types).map((key) => types[key]))},
+  type: {type: DataTypes.ENUM(['challengeCreation', 'donate'])},
   peerplaysFromId: {type: DataTypes.STRING},
   peerplaysToId: {type: DataTypes.STRING}
 };
