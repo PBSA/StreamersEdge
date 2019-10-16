@@ -94,9 +94,9 @@ class AuthValidator extends BaseValidator {
         });
       }
 
-      const alreadyExists = await this.userRepository.getByEmailOrUsername(email, username);
+      const alreadyExists = await this.userRepository.getByEmailOrUsername(email.toLowerCase(), username);
 
-      if (alreadyExists && alreadyExists.email === email) {
+      if (alreadyExists && alreadyExists.email === email.toLowerCase()) {
         throw new ValidateError(400, 'Validate error', {
           email: 'This email is already used'
         });
