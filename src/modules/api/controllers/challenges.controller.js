@@ -411,6 +411,7 @@ class ChallengesController {
       }
 
       result.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challengeId);
+      result.joinedUsers = await this.joinedUsersRepository.getForChallenge(challengeId);
 
       return result;
     } catch (err) {
@@ -458,6 +459,8 @@ class ChallengesController {
     challenges = await Promise.all(challenges.map(async (challenge) => {
       delete challenge['challenge-invited-users'];
       challenge.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challenge.id);
+      challenge.joinedUsers = await this.joinedUsersRepository.getForChallenge(challenge.id);
+
       return challenge;
     }));
 
