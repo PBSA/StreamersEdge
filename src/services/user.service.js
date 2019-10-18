@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+
 const bcrypt = require('bcrypt');
 const moment = require('moment');
 const BigNumber = require('bignumber.js');
@@ -483,6 +483,16 @@ class UserService {
           await Promise.all([this.whitelistedGamesRepository.destroyByToUserId(user.id, tx),
             this.whitelistedUsersRepository.destroyByToUserId(user.id, tx),
             this.whitelistedGamesRepository.bulkCreateFromGames(games, tx)]);
+          return updatedInvitation;
+        }
+
+        case invitationConstants.invitationStatus.all: 
+        /* falls through */
+
+        case invitationConstants.invitationStatus.none: {
+          await Promise.all([this.whitelistedGamesRepository.destroyByToUserId(user.id, tx),
+            this.whitelistedUsersRepository.destroyByToUserId(user.id, tx)
+          ]);
           return updatedInvitation;
         }
 

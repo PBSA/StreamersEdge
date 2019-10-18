@@ -3,6 +3,7 @@ const BaseValidator = require('./abstract/base.validator');
 const ValidateError = require('./../../../errors/validate.error');
 const profileConstants = require('../../../constants/profile');
 const invitationConstants = require('../../../constants/invitation');
+const gamesConstants = require('../../../constants/games');
 
 class UserValidator extends BaseValidator {
 
@@ -132,7 +133,7 @@ class UserValidator extends BaseValidator {
       {
         invitations: Joi.string().valid(...Object.keys(invitationConstants.invitationStatus)).required(),
         users: Joi.array().items(Joi.number().integer().greater(0)).allow(null),
-        games: Joi.array().items(Joi.string()).allow(null),
+        games: Joi.array().items(Joi.string().valid(...Object.keys(gamesConstants.games))).allow(null),
         minBounty: Joi.number().min(0)
       },
       (req, query, body) => body);

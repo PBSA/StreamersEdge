@@ -16,8 +16,18 @@ class WebPushConnection extends BaseConnection {
    * @param {Object} payload
    */
   async sendNotification(subscription, vapidKeys, payload) {
+    
+    if(vapidKeys == null) {
+      return;
+    }
+
     webPush.setVapidDetails(`mailto:${streamersEdgeServiceEmail}`, vapidKeys.publicKey, vapidKeys.privateKey);
-    await webPush.sendNotification(subscription, JSON.stringify(payload));
+    
+    try {
+      await webPush.sendNotification(subscription, JSON.stringify(payload));
+    }catch(ex) {
+      console.log(ex);
+    }
   }
 
   disconnect() {}
