@@ -92,21 +92,19 @@ class ChallengeService {
           return;
         }
 
-        await this.challengeInvitedUsersRepository.create({
-          challengeId: Challenge.id,
-          userId: id
-        });
-
         const invitation = {title: `You invited to ${Challenge.name}`};
 
         switch (toUser.invitations) {
           case invitationConstants.invitationStatus.all:
-            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+            await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+            return await this.CreateChallengeInvitedUser(Challenge.id,id);
+    
           case invitationConstants.invitationStatus.users: {
             const isAllowedForUser = await this.whitelistedUsersRepository.isWhitelistedFor(id, creatorId);
 
             if (isAllowedForUser) {
-              return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+              await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+              return await this.CreateChallengeInvitedUser(Challenge.id,id);
             }
           }
 
@@ -115,11 +113,13 @@ class ChallengeService {
             const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(id, challengeObject.game);
 
             if (isAllowedForGame) {
-              return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+              await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+              return await this.CreateChallengeInvitedUser(Challenge.id,id);
             }
           }
 
             break;
+
           default:
             return;
         }
@@ -151,6 +151,13 @@ class ChallengeService {
       peerplaysToId: broadcastResult[0].trx.operations[0][1].to
     });
     return this.getCleanObject(Challenge.id, challengeObject.invitedAccounts || creatorId);
+  }
+
+  async CreateChallengeInvitedUser(challengeId, userId) {
+    return await this.challengeInvitedUsersRepository.create({
+      challengeId,
+      userId
+    });
   }
 
   /**
