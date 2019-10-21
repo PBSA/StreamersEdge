@@ -22,31 +22,6 @@ const {accessRules} = require('../../../constants/challenge');
  *            type: string
  *          auth:
  *            type: string
- *  Challenge:
- *    type: object
- *    properties:
- *      id:
- *        type: number
- *      name:
- *        type: string
- *      startDate:
- *        type: string
- *      endDate:
- *        type: string
- *      game:
- *        type: string
- *      accessRule:
- *        type: number
- *      ppyAmount:
- *        type: number
- *      conditionsText:
- *        type: string
- *      status:
- *        type: string
- *      userId:
- *        type: string
- *      joined:
- *        type: boolean
  *  Operation:
  *    type: object
  *    properties:

@@ -71,7 +71,7 @@ class ChallengeModel extends Model {
    *    type: object
    *    required:
    *      - notifications
-   *      - endDate
+   *      - startDate
    *      - game
    *      - accessRule
    *      - ppyAmount
@@ -140,7 +140,7 @@ class ChallengeModel extends Model {
    *            items:
    *              $ref: '#/definitions/ChallengeCondition'
    *          id:
-   *            type: integer
+   *            type: number
    *          createdAt:
    *            type: string
    *            format: date
@@ -151,9 +151,23 @@ class ChallengeModel extends Model {
    *            type: array
    *            items:
    *               $ref: '#/definitions/User'
+   *          status:
+   *            type: string
+   *          userId:
+   *            type: string
    *          user:
-   *            $ref: '#/definitions/User'
-   *
+   *            type: object
+   *            properties:
+   *              username:
+   *                type: string
+   *              avatar:
+   *                type: string
+   *          joined:
+   *            type: boolean
+   *          joinedUsers:
+   *            type: array
+   *            items:
+   *              $ref: '#/definitions/User'
    *  TransactionObject:
    *    type: object
    *    required:
