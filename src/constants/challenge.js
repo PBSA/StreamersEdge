@@ -1,6 +1,7 @@
 module.exports = {
   games: [
-    'pubg'
+    'pubg',
+    'leagueOfLegends'
   ],
   accessRules: {
     invite: 'invite',

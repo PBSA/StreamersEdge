@@ -1,3 +1,4 @@
+const {Op} = require('sequelize');
 const Joi = require('./abstract/joi.form');
 const BaseValidator = require('./abstract/base.validator');
 const ValidateError = require('./../../../errors/validate.error');
@@ -12,11 +13,13 @@ class ProfileValidator extends BaseValidator {
    * @param {PeerplaysRepository} opts.peerplaysRepository
    * @param {UserRepository} opts.userRepository
    * @param {PubgApiRepository} opts.pubgApiRepository
+   * @param {LeagueOfLegendsApiRepository} opts.leagueOfLegendsApiRepository
    */
   constructor(opts) {
     super();
 
     this.pubgApiRepository = opts.pubgApiRepository;
+    this.leagueOfLegendsApiRepository = opts.leagueOfLegendsApiRepository;
     this.config = opts.config;
     this.peerplaysRepository = opts.peerplaysRepository;
 
@@ -26,6 +29,8 @@ class ProfileValidator extends BaseValidator {
   }
 
   patchProfile() {
+    const leagueOfLegendsRealms = this.leagueOfLegendsApiRepository.getRealms();
+
     const bodySchema = {
       avatar: Joi.string().uri({scheme: [/https?/]}).allow('').max(254),
       youtube: Joi.string().regex(/^https:\/\/www\.youtube\.com/).uri().allow('').max(254),
@@ -39,6 +44,10 @@ class ProfileValidator extends BaseValidator {
       facebookId: Joi.string().allow(null),
       bitcoinAddress: Joi.string().bitcoinAddress().allow(''),
       pubgUsername: Joi.string().allow(''),
+      leagueOfLegends: Joi.object({
+        summonerName: Joi.string(),
+        realm: Joi.string().valid(leagueOfLegendsRealms)
+      }).allow(null),
       userType: Joi.string().valid(profileConstants.gamer, profileConstants.viewer, profileConstants.sponsor),
       email: Joi.string().email(),
       username: Joi.string().allow('')
@@ -107,6 +116,31 @@ class ProfileValidator extends BaseValidator {
 
       } else if (body.pubgUsername === '') {
         body.pubgId = '';
+      }
+
+      if (body.leagueOfLegends) {
+        const {realm, summonerName} = body.leagueOfLegends;
+
+        let accountId;
+
+        try {
+          accountId = await this.leagueOfLegendsApiRepository.getAccountId(realm, summonerName);
+        } catch (err) {
+          throw ValidateError.validateError({leagueOfLegends: err.message});
+        }
+
+        const exist = (await this.userRepository.model.count({where: {
+          id: {[Op.ne]: req.user.id},
+          leagueOfLegendsAccountId: accountId,
+          leagueOfLegendsRealm: realm
+        }})) != 0;
+
+        if (exist) {
+          throw ValidateError.validateError({leagueOfLegends: 'Summoner name already used'});
+        }
+
+        body.leagueOfLegendsAccountId = accountId;
+        body.leagueOfLegendsRealm = realm;
       }
 
       return body;

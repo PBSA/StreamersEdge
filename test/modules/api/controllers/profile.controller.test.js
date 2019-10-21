@@ -44,6 +44,8 @@ describe('GET /api/v1/profile', () => {
       twitchUserName: null,
       userType: null,
       pubgUsername: null,
+      leagueOfLegendsAccountId: null,
+      leagueOfLegendsRealm: null,
       avatar: '',
       invitations: 'all',
       notifications: true,

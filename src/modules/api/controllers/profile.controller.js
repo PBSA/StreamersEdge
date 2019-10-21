@@ -5,6 +5,10 @@ const ValidateError = require('./../../../errors/validate.error');
  * @swagger
  *
  * definitions:
+ *  LeagueOfLegendsRealms:
+ *    type: array
+ *    items:
+ *      type: string
  *  ProfileCreatePeerplaysAccount:
  *    type: object
  *    required:
@@ -47,12 +51,14 @@ class ProfileController {
    * @param {ProfileValidator} opts.profileValidator
    * @param {UserService} opts.userService
    * @param {FileService} opts.fileService
+   * @param {LeagueOfLegendsConnection} opts.leagueOfLegendsConnection
    */
   constructor(opts) {
     this.authValidator = opts.authValidator;
     this.profileValidator = opts.profileValidator;
     this.userService = opts.userService;
     this.fileService = opts.fileService;
+    this.leagueOfLegendsConnection = opts.leagueOfLegendsConnection;
   }
 
   /**
@@ -123,6 +129,31 @@ class ProfileController {
         this.authValidator.loggedOnly,
         this.profileValidator.patchProfile,
         this.patchProfile.bind(this)
+      ],
+      /**
+       * @swagger
+       *
+       * /profile/league-of-legends/realms:
+       *  patch:
+       *    description: Get a list of available LoL realms
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Profile
+       *    responses:
+       *      200:
+       *        description: Realms
+       *        schema:
+       *          $ref: '#/definitions/LeagueOfLegendsRealms'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       */
+      [
+        'get', '/api/v1/profile/league-of-legends/realms',
+        this.authValidator.loggedOnly,
+        this.getLeagueOfLegendsRealms.bind(this)
       ],
       /**
        * @swagger
@@ -318,6 +349,9 @@ class ProfileController {
     }
   }
 
+  async getLeagueOfLegendsRealms() {
+    return this.leagueOfLegendsConnection.getRealms();
+  }
 }
 
 module.exports = ProfileController;
