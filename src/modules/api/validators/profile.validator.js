@@ -47,8 +47,25 @@ class ProfileValidator extends BaseValidator {
     return this.validate(null, bodySchema, async (req, query, body) => {
       const {peerplaysAccountName} = body;
 
-      if (peerplaysAccountName) {
+      if (peerplaysAccountName || peerplaysAccountName != '') {
         body.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccountName);
+        
+        if(body.peerplaysAccountId == null) {
+          throw ValidateError.validateError({peerplaysAccountName: 'Peerplays account invalid'});
+        }
+
+        if (req.user.peerplaysAccountName !== peerplaysAccountName) {
+          const exist = await this.userRepository.model.findOne({where: {peerplaysAccountName}});
+
+          if (exist) {
+            throw ValidateError.validateError({peerplaysAccountName: 'Already used'});
+          }
+        }
+
+        body.peerplaysMasterPassword = '';
+      }else if(peerplaysAccountName == '') {
+        body.peerplaysAccountId = '';
+        body.peerplaysMasterPassword = '';
       }
 
       if (body.username) {
