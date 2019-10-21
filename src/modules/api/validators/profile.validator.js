@@ -47,7 +47,7 @@ class ProfileValidator extends BaseValidator {
     return this.validate(null, bodySchema, async (req, query, body) => {
       const {peerplaysAccountName} = body;
 
-      if (peerplaysAccountName || peerplaysAccountName != '') {
+      if (peerplaysAccountName && peerplaysAccountName != '') {
         body.peerplaysAccountId = await this.peerplaysRepository.getAccountId(peerplaysAccountName);
         
         if(body.peerplaysAccountId == null) {
