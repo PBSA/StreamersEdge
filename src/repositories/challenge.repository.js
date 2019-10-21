@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const invitedUsersModel = require('../db/models/challenge.invited.users.model').model;
+const userModel = require('../db/models/user.model').model;
 const challengeConditionModel = require('../db/models/challenge.condition.model').model;
 const {model} = require('../db/models/challenge.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
@@ -34,9 +35,13 @@ class ChallengeRepository extends BasePostgresRepository {
         {
           model:invitedUsersModel, as:'challenge-invited-users',
           required:false
+        },
+        {
+          model:userModel,
+          attributes: ['username','avatar']
         }
       ],
-      group: ['challenges.id','challenge-invited-users.id'],
+      group: ['challenges.id','challenge-invited-users.id','user.id'],
       order: ['id']
     });
   }
