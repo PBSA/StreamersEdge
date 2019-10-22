@@ -50,8 +50,8 @@ class PeerplaysConnectionMock {
 
   constructor ({config}) {
     this._accounts = {'1.2.0': {}};
-    this._accountIdByName = {};
-    this._accountsCount = 0;
+    this._accountIdByName = {'testAccount':'1.2.1'};
+    this._accountsCount = 1;
     this.asset = {precision: 5};
     this.balances = {[config.peerplays.paymentAccountID]: 1e10};
 
