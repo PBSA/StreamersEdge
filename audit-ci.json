@@ -2,5 +2,5 @@
 	"high": true,
 	"critical": true,
 	"report-type": "full",
-	"whitelist": ["ws"]
+	"whitelist": ["ws", "https-proxy-agent"]
 }
