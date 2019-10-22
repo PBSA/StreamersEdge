@@ -49,6 +49,7 @@
     "paymentAccountID": "",
     "paymentAccountWIF": "",
     "paymentReceiver": "",
+    "paymentReceiverWIF": "",
     "feeReceiver": ""
   },
   "paypal": {
