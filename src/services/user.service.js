@@ -1,5 +1,6 @@
 
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const moment = require('moment');
 const BigNumber = require('bignumber.js');
 const {Login} = require('peerplaysjs-lib');
