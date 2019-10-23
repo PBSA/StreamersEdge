@@ -4,6 +4,7 @@ const {model} = require('../db/models/user.model');
 const {model: banHistoryModel} = require('../db/models/ban.history.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 const {status} = require('../constants/profile');
+const {invitationStatus} = require('../constants/invitation');
 
 class UserRepository extends BasePostgresRepository {
 
@@ -151,7 +152,7 @@ class UserRepository extends BasePostgresRepository {
     return this.model.update(
       {
         invitations: options,
-        minInvitationBounty: minBounty
+        minInvitationBounty: options !== invitationStatus.none ? minBounty : 0
       },
       {where: {id: values}}
     );
