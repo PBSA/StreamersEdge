@@ -432,9 +432,12 @@ class ChallengesController {
     challenges = challenges.map((c) => c.toJSON());
     
     challenges = await Promise.all(challenges.map(async (challenge) => {
-      delete challenge['challenge-invited-users'];
+      challenge.conditions = challenge['challenge-conditions'];
       challenge.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challenge.id);
       challenge.joinedUsers = await this.joinedUsersRepository.getForChallenge(challenge.id);
+
+      delete challenge['challenge-invited-users'];
+      delete challenge['challenge-conditions'];
 
       return challenge;
     }));
