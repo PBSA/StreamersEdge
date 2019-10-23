@@ -90,7 +90,7 @@
     "un": "0.0.0",
     "url": "^0.11.0",
     "wallet-address-validator": "^0.2.4",
-    "web-push": "^3.3.5"
+    "web-push": "^3.4.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^8.1.0",

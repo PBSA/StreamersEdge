@@ -39,9 +39,13 @@ class ChallengeRepository extends BasePostgresRepository {
         {
           model:userModel,
           attributes: ['username','avatar']
+        },
+        {
+          model: challengeConditionModel,
+          required: false
         }
       ],
-      group: ['challenges.id','challenge-invited-users.id','user.id'],
+      group: ['challenges.id','challenge-invited-users.id','challenge-conditions.id','user.id'],
       order: ['id']
     });
   }
