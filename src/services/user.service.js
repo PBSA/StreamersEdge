@@ -658,7 +658,7 @@ class UserService {
     const userWithPeerplaysAccount = await this.userRepository.getByPeerplaysAccountName(login);
 
     if (userWithPeerplaysAccount && LoggedUser && LoggedUser.id !== userWithPeerplaysAccount.id) {
-      throw new RestError('This account is already connected to another profile');
+      throw new RestError('', 409, {image: [{login: 'This account is already connected to another profile'}]});
     }
 
     if(userWithPeerplaysAccount) {
@@ -690,7 +690,7 @@ class UserService {
     const MAX_RETRIES = 5;
 
     if (numRetries >= MAX_RETRIES) {
-      throw new RestError('Failed to create user, too many retries');
+      throw new RestError('Failed to create user, too many retries',400);
     }
 
     const UsernameExists = await this.userRepository.getByLogin(accountName);
