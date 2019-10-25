@@ -35,7 +35,10 @@ class JoinedUsersRepository extends BasePostgresRepository {
       include: [{
         model: UserModel
       }]
-    });
+    }).map((joinedUser) => ({
+      ...joinedUser.toJSON(),
+      user: joinedUser.user ? joinedUser.user.getPublic() : null
+    }));
   }
 
 }
