@@ -37,7 +37,7 @@ class JoinedUsersRepository extends BasePostgresRepository {
       }]
     }).map((joinedUser) => ({
       ...joinedUser.toJSON(),
-      user: joinedUser.user.getPublic()
+      user: joinedUser.user ? joinedUser.user.getPublic() : null
     }));
   }
 
