@@ -388,6 +388,9 @@ class ChallengesController {
       result.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challengeId);
       result.joinedUsers = await this.joinedUsersRepository.getForChallenge(challengeId);
 
+      const validKeys = ['username','avatar'];
+      Object.keys(result.user).forEach((key) => validKeys.includes(key) || delete result.user[key]);
+
       return result;
     } catch (err) {
       switch (err) {

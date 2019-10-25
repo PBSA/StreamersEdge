@@ -29,7 +29,7 @@ class ChallengeRepository extends BasePostgresRepository {
   async findAllChallenges(id) {
     return this.model.findAll({
       where: {
-        [Op.or]: [{accessRule: 'anyone'}, {userId: id}, {['$challenge-invited-users.userId$']: id}]
+        [Op.or]: [{accessRule: 'anyone'}, {['$challenge-invited-users.userId$']: id}]
       },
       include:[
         {
