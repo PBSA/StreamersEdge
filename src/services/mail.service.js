@@ -16,7 +16,7 @@ class MailService {
   async sendMailAfterRegistration(email, uniqueLink) {
     const sourceHTML = fs.readFileSync(`${__dirname}/templates/welcome.handlebars`).toString();
     const templateHTML = Handlebars.compile(sourceHTML);
-    const url = `${this.config.frontendUrl}/confirm-email/${uniqueLink}`;
+    const url = `${this.config.frontendCallbackUrl}/confirm-email/${uniqueLink}`;
     const resultHtml = templateHTML({url});
 
     const options = {
@@ -31,7 +31,7 @@ class MailService {
   async sendMailResetPassword(email, uniqueLink) {
     const sourceHTML = fs.readFileSync(`${__dirname}/templates/reset-password.handlebars`).toString();
     const templateHTML = Handlebars.compile(sourceHTML);
-    const url = `${this.config.frontendUrl}/reset-password/${uniqueLink}`;
+    const url = `${this.config.frontendCallbackUrl}/reset-password/${uniqueLink}`;
     const resultHtml = templateHTML({url});
 
     const options = {
@@ -46,7 +46,7 @@ class MailService {
   async sendMailForChangeEmail(email, uniqueLink) {
     const sourceHTML = fs.readFileSync(`${__dirname}/templates/change-email.handlebars`).toString();
     const templateHTML = Handlebars.compile(sourceHTML);
-    const url = `${this.config.frontendUrl}/change-email/${uniqueLink}`;
+    const url = `${this.config.frontendCallbackUrl}/change-email/${uniqueLink}`;
     const resultHtml = templateHTML({url});
 
     const options = {
