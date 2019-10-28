@@ -13,7 +13,7 @@ module.exports = Joi.object().keys({
     to: Joi.string().required(),
     amount: Joi.object().keys({
       amount: Joi.string().required(),
-      asset_id: Joi.string().valid('1.3.0').required()
+      asset_id: Joi.string().required()
     }).required(),
     extensions: Joi.array()
   }))).required(),
