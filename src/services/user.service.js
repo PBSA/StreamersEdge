@@ -541,7 +541,7 @@ class UserService {
       txId: broadcastResult[0].id,
       blockNum: broadcastResult[0].block_num,
       trxNum: broadcastResult[0].trx_num,
-      ppyAmountValue: broadcastResult[0].trx.operations[0][1].amount.amount/100000000,
+      ppyAmountValue: new BigNumber(broadcastResult[0].trx.operations[0][1].amount.amount).shiftedBy(-1 * this.peerplaysConnection.asset.precision),
       type: txTypes.donate,
       userId,
       receiverUserId: receiverId,
