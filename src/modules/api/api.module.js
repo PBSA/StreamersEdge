@@ -58,6 +58,7 @@ class ApiModule {
    * @param {SteamController} opts.steamController
    * @param {TransactionController} opts.transactionController
    * @param {GameController} opts.gameController
+   * @param {NotificationsController} opts.notificationsController
    */
   constructor(opts) {
     this.config = opts.config;
@@ -80,6 +81,7 @@ class ApiModule {
     this.transactionController = opts.transactionController;
     this.adminController = opts.adminController;
     this.gameController = opts.gameController;
+    this.notificationsController = opts.notificationsController;
 
     this.userRepository = opts.userRepository;
   }
@@ -165,14 +167,14 @@ class ApiModule {
       this.twitchController,
       this.facebookController,
       this.googleController,
-      this.challengesController,
       this.paymentController,
       this.steamController,
       this.reportController,
       this.streamController,
       this.transactionController,
       this.adminController,
-      this.gameController
+      this.gameController,
+      this.notificationsController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
       this.addRestHandler(...route);
     }));

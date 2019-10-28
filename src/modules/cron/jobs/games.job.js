@@ -98,12 +98,10 @@ class GamesJob {
     const user = await this.userRepository.findByPk(userId);
     const notification = {title: 'You have won a challenge.'};
 
-    if (user.vapidKey) {
-      try {
-        return await this.webPushConnection.sendNotification(user.challengeSubscribeData, user.vapidKey, notification);
-      // eslint-disable-next-line no-empty
-      } catch (err) {} // ignore any errors
-    }
+    try {
+      return await this.webPushConnection.sendNotification(user.challengeSubscribeData, notification);
+    // eslint-disable-next-line no-empty
+    } catch (err) {} // ignore any errors
   }
 
   prepareWhereString(challenge) {

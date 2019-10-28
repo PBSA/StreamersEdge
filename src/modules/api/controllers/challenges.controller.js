@@ -5,23 +5,6 @@ const {accessRules} = require('../../../constants/challenge');
  * @swagger
  *
  * definitions:
- *  ChallengeSubscribe:
- *    type: object
- *    required:
- *      - endpoint
- *      - keys
- *    properties:
- *      endpoint:
- *        type: string
- *      expirationTime:
- *        type: number
- *      keys:
- *        type: object
- *        properties:
- *          p256dh:
- *            type: string
- *          auth:
- *            type: string
  *  Operation:
  *    type: object
  *    properties:
@@ -92,13 +75,6 @@ const {accessRules} = require('../../../constants/challenge');
  *          result:
  *            $ref: '#/definitions/Challenge'
  *
- *  ChallengeSubscribeResponse:
- *    allOf:
- *      - $ref: '#/definitions/SuccessResponse'
- *      - type: object
- *        properties:
- *          result:
- *            type: string
  *
  */
 
@@ -213,43 +189,6 @@ class ChallengesController {
         this.authValidator.loggedOnly,
         this.challengeValidator.validateGetChallenge,
         this.getChallenge.bind(this)
-      ],
-      /**
-             * @swagger
-             *
-             * /challenges/subscribe:
-             *  post:
-             *    description: Subscribe to new notification
-             *    summary: Subscribe to new notification
-             *    produces:
-             *      - application/json
-             *    tags:
-             *      - Challenge
-             *    parameters:
-             *      - name: ChallengeSubscribe
-             *        in: body
-             *        required: true
-             *        schema:
-             *          $ref: '#/definitions/ChallengeSubscribe'
-             *    responses:
-             *      200:
-             *        description: Subscribe response
-             *        schema:
-             *         $ref: '#/definitions/ChallengeSubscribeResponse'
-             *      400:
-             *        description: Error form validation
-             *        schema:
-             *          $ref: '#/definitions/ValidateError'
-             *      401:
-             *        description: Error user unauthorized
-             *        schema:
-             *          $ref: '#/definitions/UnauthorizedError'
-             */
-      [
-        'post', '/api/v1/challenges/subscribe',
-        this.authValidator.loggedOnly,
-        this.challengeValidator.subscribe,
-        this.subscribeToChallenges.bind(this)
       ],
       /**
              * @swagger
@@ -400,12 +339,6 @@ class ChallengesController {
           throw err;
       }
     }
-  }
-
-  async subscribeToChallenges(user, data) {
-    const result = await this.challengeService.checkUserSubscribe(user, data);
-    return result;
-
   }
 
   async sendInvite(user, {userId, challengeId}) {
