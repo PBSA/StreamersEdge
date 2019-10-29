@@ -40,7 +40,7 @@ class ProfileValidator extends BaseValidator {
       bitcoinAddress: Joi.string().bitcoinAddress().allow(''),
       pubgUsername: Joi.string().allow(''),
       userType: Joi.string().valid(profileConstants.gamer, profileConstants.viewer, profileConstants.sponsor),
-      email: Joi.string().email().allow(''),
+      email: Joi.string().email(),
       username: Joi.string().allow('')
     };
 
