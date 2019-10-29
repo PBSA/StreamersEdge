@@ -40,11 +40,13 @@ class UsersController {
    * @param {AuthValidator} opts.authValidator
    * @param {UserValidator} opts.userValidator
    * @param {UserService} opts.userService
+   * @param {WebPushConnection} opts.webPushConnection
    */
   constructor(opts) {
     this.authValidator = opts.authValidator;
     this.userService = opts.userService;
     this.userValidator = opts.userValidator;
+    this.webPushConnection = opts.webPushConnection;
   }
 
   /**

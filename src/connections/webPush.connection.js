@@ -1,33 +1,28 @@
-const {streamersEdgeServiceEmail} = require('config');
 const webPush = require('web-push');
 const BaseConnection = require('./abstracts/base.connection');
 
 class WebPushConnection extends BaseConnection {
+  constructor(opts) {
+    super();
 
-  connect() {}
+    this.config = opts.config;
+  }
 
-  generateVapidKeys() {
-    return webPush.generateVAPIDKeys();
+  connect() {
+    const {streamersEdgeServiceEmail, vapid: {publicKey, privateKey}} = this.config;
+    webPush.setVapidDetails(`mailto:${streamersEdgeServiceEmail}`, publicKey, privateKey);
+  }
+
+  getPublicKey() {
+    return this.config.vapid.publicKey;
   }
 
   /**
    * @param {Object} subscription
-   * @param {Object} vapidKeys
    * @param {Object} payload
    */
-  async sendNotification(subscription, vapidKeys, payload) {
-    
-    if(vapidKeys == null) {
-      return;
-    }
-
-    webPush.setVapidDetails(`mailto:${streamersEdgeServiceEmail}`, vapidKeys.publicKey, vapidKeys.privateKey);
-    
-    try {
-      await webPush.sendNotification(subscription, JSON.stringify(payload));
-    }catch(ex) {
-      console.log(ex);
-    }
+  sendNotification(subscription, payload) {
+    return webPush.sendNotification(subscription, JSON.stringify(payload));
   }
 
   disconnect() {}

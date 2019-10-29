@@ -96,14 +96,14 @@ class ChallengeService {
 
         switch (toUser.invitations) {
           case invitationConstants.invitationStatus.all:
-            await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+            await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, invitation);
             return await this.CreateChallengeInvitedUser(Challenge.id,id);
     
           case invitationConstants.invitationStatus.users: {
             const isAllowedForUser = await this.whitelistedUsersRepository.isWhitelistedFor(id, creatorId);
 
             if (isAllowedForUser) {
-              await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+              await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, invitation);
               return await this.CreateChallengeInvitedUser(Challenge.id,id);
             }
           }
@@ -113,7 +113,7 @@ class ChallengeService {
             const isAllowedForGame = await this.whitelistedGamesRepository.isWhitelistedFor(id, challengeObject.game);
 
             if (isAllowedForGame) {
-              await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, invitation);
+              await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, invitation);
               return await this.CreateChallengeInvitedUser(Challenge.id,id);
             }
           }
@@ -133,7 +133,7 @@ class ChallengeService {
       await Promise.all(users.map(async (toUser) => {
         if (toUser.notifications === true) {
           const notification = {title: `Challenge ${Challenge.name} appeared`};
-          await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, toUser.vapidKey, notification);
+          await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, notification);
         }
       }));
 
@@ -198,16 +198,9 @@ class ChallengeService {
 
 
   async checkUserSubscribe(user, data) {
-    if (user.vapidKey === null) {
-      const vapidKeys = this.webPushConnection.generateVapidKeys();
-      user.vapidKey = {
-        ...vapidKeys
-      };
-    }
-
     user.challengeSubscribeData = data;
     user.save();
-    return user.vapidKey.publicKey;
+    return true;
   }
 
   /**
@@ -226,20 +219,10 @@ class ChallengeService {
 
     const toUser = await this.userRepository.findByPk(toUserWithId);
 
-    if(!toUser){
+    if(!toUser) {
       throw this.errors.INVITED_USER_NOT_FOUND;
     }
 
-    if(!toUser.vapidKey){
-      const vapidKeys = this.webPushConnection.generateVapidKeys();
-      toUser.vapidKey = {
-        ...vapidKeys
-      };
-    }
-
-    toUser.save();
-
-    const vapidKeys = toUser.vapidKey;
     const invitation = {title: `You invited to ${challenge.name}`};
 
     const isInvited = await this.challengeInvitedUsersRepository.isUserInvited(challengeId, toUserWithId);
@@ -254,7 +237,7 @@ class ChallengeService {
 
         if (isAllowedForUser) {
           try{
-            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, invitation);
           } catch(err) {
             throw this.errors.UNABLE_TO_INVITE;
           }
@@ -268,7 +251,7 @@ class ChallengeService {
 
         if (isAllowedForGame) {
           try{
-            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+            return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, invitation);
           } catch(err) {
             throw this.errors.UNABLE_TO_INVITE;
           }
@@ -279,7 +262,7 @@ class ChallengeService {
 
       case invitationConstants.invitationStatus.all:
         try{
-          return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, vapidKeys, invitation);
+          return await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, invitation);
         } catch(err) {
           throw this.errors.UNABLE_TO_INVITE;
         }

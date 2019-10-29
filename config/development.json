@@ -25,6 +25,10 @@
   "coinmarketcap": {
     "apiKey": "1a087c6d-33ad-4ffd-9771-8e329f4580b9"
   },
+  "vapid": {
+    "publicKey": "BH9lqrP9XUcs3nobzrXcbmfTYXNC1o0K_0AGuSvaeLQbvghstkH3qKUAy98pLvsPGqlKdhwtKfHdxIqu4SlkUw8",
+    "privateKey": "sNS9sOpOIWFJEhzfZD2pfqXMiz6k7IJCRwhr2w-zhps"
+  },
   "twitch": {
     "clientId": "499iaseqxq621bjrxwsed7r66fbb7z",
     "clientSecret": "r330delp3et0n6vfht7h5tj1fassmf"

@@ -43,11 +43,10 @@ describe('POST /api/v1/challenges', () => {
   const subscribe = {
     endpoint: 'https://fcm.googleapis.com/fcm/send/cw6aOnAet50:APA91bHi',
     expirationTime: null,
-    keys:
-      {
-        p256dh: 'BEKDvqrxzRWlnHv272vmoRikeYUyeDvvwGzwhKD_',
-        auth: 'Pamms0H_wkQI6LAn2eEQBQ'
-      }
+    keys: {
+      p256dh: 'BEKDvqrxzRWlnHv272vmoRikeYUyeDvvwGzwhKD_',
+      auth: 'Pamms0H_wkQI6LAn2eEQBQ'
+    }
   };
 
   beforeEach(async () => {
@@ -88,7 +87,7 @@ describe('POST /api/v1/challenges', () => {
   let challengeId;
 
   it('should success create challenge', async () => {
-    await agent.post('/api/v1/challenges/subscribe').send(subscribe);
+    await agent.post('/api/v1/notifications/subscribe').send(subscribe);
     const body = {...validRequest};
     body.depositOp = firstTx;
     const response = await agent.post('/api/v1/challenges').send(body);
@@ -97,7 +96,7 @@ describe('POST /api/v1/challenges', () => {
   });
 
   it('should success create challenge (no depositOp)', async () => {
-    await agent.post('/api/v1/challenges/subscribe').send(subscribe);
+    await agent.post('/api/v1/notifications/subscribe').send(subscribe);
     const body = {...validRequest};
     body.depositOp = undefined;
     const response = await agent.post('/api/v1/challenges').send(body);
@@ -113,7 +112,7 @@ describe('POST /api/v1/challenges', () => {
     };
     const bodyUser = {...validObject};
     const user = await agent.post('/api/v1/auth/sign-up').send(bodyUser);
-    await agent.post('/api/v1/challenges/subscribe').send(subscribe);
+    await agent.post('/api/v1/notifications/subscribe').send(subscribe);
     const body = {...validRequest};
     body.accessRule = 'invite';
     body.depositOp = secondTx;

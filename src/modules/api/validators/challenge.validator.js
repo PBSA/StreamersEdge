@@ -20,7 +20,6 @@ class ChallengeValidator extends BaseValidator {
     this.config = opts.config;
     this.createChallenge = this.createChallenge.bind(this);
     this.validateGetChallenge = this.validateGetChallenge.bind(this);
-    this.subscribe = this.subscribe.bind(this);
     this.invite = this.invite.bind(this);
     this.joinToChallenge = this.joinToChallenge.bind(this);
   }
@@ -109,19 +108,6 @@ class ChallengeValidator extends BaseValidator {
     };
 
     return this.validate(querySchema, null, (req, query) => query.id);
-  }
-
-  subscribe() {
-    const bodySchema = {
-      endpoint: Joi.string().required(),
-      expirationTime: Joi.number().allow(null),
-      keys: Joi.object({
-        p256dh: Joi.string().required(),
-        auth: Joi.string().required()
-      }).required()
-    };
-
-    return this.validate(null, bodySchema, (req, query, body) => body);
   }
 
   invite() {
