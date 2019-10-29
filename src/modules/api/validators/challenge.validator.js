@@ -91,7 +91,8 @@ class ChallengeValidator extends BaseValidator {
           });
         }
 
-        if (!new BigNumber(body.depositOp.operations[0][1].amount.amount).isEqualTo(body.ppyAmount)) {
+        if (!new BigNumber(body.depositOp.operations[0][1].amount.amount)
+          .shiftedBy(-1 * this.peerplaysConnection.asset.precision).isEqualTo(body.ppyAmount)) {
           throw new ValidateError(400, 'Validate error', {
             depositOp: 'Tx amount should be the same as ppyAmount'
           });
