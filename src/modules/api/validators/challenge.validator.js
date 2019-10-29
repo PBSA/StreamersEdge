@@ -16,7 +16,7 @@ class ChallengeValidator extends BaseValidator {
     super();
 
     this.userRepository = opts.userRepository;
-
+    this.peerplaysConnection = opts.peerplaysConnection;
     this.config = opts.config;
     this.createChallenge = this.createChallenge.bind(this);
     this.validateGetChallenge = this.validateGetChallenge.bind(this);

@@ -13,7 +13,7 @@ const firstTx = {
         'from': '1.2.67',
         'to': '1.2.57',
         'amount': {
-          'amount': '100',
+          'amount': '10000000',
           'asset_id': '1.3.0'
         },
         'extensions': []
@@ -41,7 +41,7 @@ const secondTx = {
         'from': '1.2.67',
         'to': '1.2.57',
         'amount': {
-          'amount': '100',
+          'amount': '10000000',
           'asset_id': '1.3.0'
         },
         'extensions': []
