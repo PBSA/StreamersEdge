@@ -21,7 +21,11 @@ class WebPushConnection extends BaseConnection {
    * @param {Object} subscription
    * @param {Object} payload
    */
-  sendNotification(subscription, payload) {
+  async sendNotification(subscription, payload) {
+    if (!subscription) {
+      return;
+    }
+
     return webPush.sendNotification(subscription, JSON.stringify(payload));
   }
 
