@@ -1,7 +1,9 @@
+const logger = require('log4js').getLogger('challenge.service');
 const BigNumber = require('bignumber.js');
 const challengeConstants = require('../constants/challenge');
 const invitationConstants = require('../constants/invitation');
 const {types: txTypes} = require('../constants/transaction');
+const RestError = require('../errors/rest.error');
 
 class ChallengeService {
 
@@ -58,11 +60,21 @@ class ChallengeService {
 
     // use the signed tx in depositOp if set
     // otherwise try to create a tx using the user's stored peerplay credentials
-    if (challengeObject.depositOp) {
-      broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
-    } else {
-      const depositAccount = this.config.peerplays.paymentReceiver;
-      broadcastResult = await this.userService.signAndBroadcastTx(creatorId, depositAccount, challengeObject.ppyAmount);
+    try{
+      if (challengeObject.depositOp) {
+        broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
+      } else {
+        const depositAccount = this.config.peerplays.paymentReceiver;
+        broadcastResult = await this.userService.signAndBroadcastTx(creatorId, depositAccount, challengeObject.ppyAmount);
+      }
+    }catch(ex) {
+      logger.error(ex);
+
+      if(ex.message.includes('insufficient')) {
+        throw new RestError('', 400, {ppyAmount: [{message: 'Insufficient Balance'}]});
+      }
+
+      throw ex;
     }
 
     const Challenge = await this.challengeRepository.create({
@@ -294,26 +306,36 @@ class ChallengeService {
       }
     }
 
-    if (joinOp) {
-      const operation = joinOp.operations[0][1];
+    try {
+      if (joinOp) {
+        const operation = joinOp.operations[0][1];
 
-      if (operation.to !== this.config.peerplays.feeReceiver) {
-        throw new Error(this.errors.INVALID_TRANSACTION_RECEIVER);
+        if (operation.to !== this.config.peerplays.feeReceiver) {
+          throw new Error(this.errors.INVALID_TRANSACTION_RECEIVER);
+        }
+
+        if (user.peerplaysAccountId === '') {
+          await this.userRepository.setPeerplaysAccountId(userId, operation.from);
+        } else if (operation.from !== user.peerplaysAccountId) {
+          throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
+        }
+
+        if (!new BigNumber(operation.amount.amount).eq(this.config.challenge.joinFee)) {
+          throw new Error(this.errors.INVALID_TRANSACTION_AMOUNT);
+        }
+
+        await this.peerplaysRepository.broadcastSerializedTx(joinOp);
+      } else {
+        await this.userService.signAndBroadcastTx(userId, this.config.peerplays.feeReceiver, this.config.challenge.joinFee);
+      }
+    }catch(ex) {
+      logger.error(ex);
+
+      if(ex.message.includes('insufficient')) {
+        throw new RestError('Insufficient Balance', 400);
       }
 
-      if (user.peerplaysAccountId === '') {
-        await this.userRepository.setPeerplaysAccountId(userId, operation.from);
-      } else if (operation.from !== user.peerplaysAccountId) {
-        throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
-      }
-
-      if (!new BigNumber(operation.amount.amount).eq(this.config.challenge.joinFee)) {
-        throw new Error(this.errors.INVALID_TRANSACTION_AMOUNT);
-      }
-
-      await this.peerplaysRepository.broadcastSerializedTx(joinOp);
-    } else {
-      await this.userService.signAndBroadcastTx(userId, this.config.peerplays.feeReceiver, this.config.challenge.joinFee);
+      throw ex;
     }
 
     return await this.joinedUsersRepository.joinToChallenge(userId, challengeId);

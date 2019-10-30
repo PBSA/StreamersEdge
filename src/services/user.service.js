@@ -8,6 +8,7 @@ const RestError = require('../errors/rest.error');
 const {types: txTypes} = require('../constants/transaction');
 const invitationConstants = require('../constants/invitation');
 const PeerplaysNameExistsError = require('./../errors/peerplays-name-exists.error');
+const logger = require('log4js').getLogger('user.service');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -531,10 +532,22 @@ class UserService {
 
     // use donateOp if set
     // otherwise try to create a tx using the user's stored peerplays credentials
-    if (donateOp) {
-      broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(donateOp);
-    } else {
-      broadcastResult = await this.signAndBroadcastTx(userId, receiverAccount, ppyAmount);
+    try{
+
+      if (donateOp) {
+        broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(donateOp);
+      } else {
+        broadcastResult = await this.signAndBroadcastTx(userId, receiverAccount, ppyAmount);
+      }
+
+    }catch(ex) {
+      logger.error(ex);
+
+      if(ex.message.includes('insufficient')) {
+        throw new RestError('', 400, {ppyAmount: [{message: 'Insufficient Balance'}]});
+      }
+
+      throw ex;
     }
 
     await this.transactionRepository.create({
@@ -556,10 +569,20 @@ class UserService {
   async redeem(userId, {redeemOp, ppyAmount}) {
     let broadcastResult;
 
-    if (redeemOp) {
-      broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(redeemOp);
-    } else {
-      broadcastResult = await this.signAndBroadcastTx(userId, this.config.peerplays.paymentAccountID, ppyAmount);
+    try {
+      if (redeemOp) {
+        broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(redeemOp);
+      } else {
+        broadcastResult = await this.signAndBroadcastTx(userId, this.config.peerplays.paymentAccountID, ppyAmount);
+      }
+    }catch(ex) {
+      logger.error(ex);
+
+      if(ex.message.includes('insufficient')) {
+        throw new RestError('', 400, {ppyAmount: [{message: 'Insufficient Balance'}]});
+      }
+
+      throw ex;
     }
 
     const tx = await this.transactionRepository.create({
