@@ -116,7 +116,9 @@ class UserModel extends Model {
       notifications: this.notifications,
       invitations: this.invitations,
       avatar: this.avatar || '',
-      pubgUsername: this.pubgUsername
+      pubgUsername: this.pubgUsername,
+      leagueOfLegendsAccountId: this.leagueOfLegendsAccountId,
+      leagueOfLegendsRealm: this.leagueOfLegendsRealm
     };
   }
 
@@ -233,6 +235,12 @@ const attributes = {
     type: Sequelize.STRING
   },
   pubgId: {
+    type: Sequelize.STRING
+  },
+  leagueOfLegendsAccountId: {
+    type: Sequelize.STRING
+  },
+  leagueOfLegendsRealm: {
     type: Sequelize.STRING
   },
   challengeSubscribeData: {

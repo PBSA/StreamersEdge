@@ -63,15 +63,13 @@ class PaymentsJob {
     const users = await this.userRepository.findByPkList(winners.map(({userId}) => userId));
     
     const totalReward = new BigNumber(challenge.ppyAmount)
-      .times(this.config.userRewardPercent);
+      .times(this.config.challenge.userRewardPercent);
 
     const winnerReward = totalReward
-      .dividedBy(users.length)
-      .toFixed(0);
+      .dividedBy(users.length);
 
     const fee = new BigNumber(challenge.ppyAmount)
-      .minus(totalReward)
-      .toFixed(0);
+      .minus(totalReward);
 
     await Promise.all(users.map((user) => this.sendPPY('challengeReward', challenge, user, winnerReward)));
     await this.peerplaysRepository.sendPPYFromReceiverAccount(this.config.peerplays.feeReceiver, fee);

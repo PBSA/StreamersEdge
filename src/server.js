@@ -27,7 +27,7 @@ const currentModule = process.env.MODULE || 'api';
     const connections = listModules(['src/connections/*.js']);
     await Promise.all(connections.map(async ({name}) => {
       try {
-        await container.resolve(name.replace(/\.([a-z])/, (a) => a[1].toUpperCase())).connect();
+        await container.resolve(name.replace(/\.([a-z])/g, (a) => a[1].toUpperCase())).connect();
       } catch (error) {
         logger.error(`${name} connect error`);
         logger.error(error);

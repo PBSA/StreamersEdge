@@ -1,6 +1,7 @@
 module.exports = {
   games: {
     pubg: 'pubg',
-    fortnite: 'fortnite'
+    fortnite: 'fortnite',
+    leagueOfLegends: 'leagueOfLegends'
   }
 };
