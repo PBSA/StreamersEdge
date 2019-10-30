@@ -332,7 +332,7 @@ class ChallengeService {
       logger.error(ex);
 
       if(ex.message.includes('insufficient')) {
-        throw new RestError('', 400, {ppyAmount: [{message: 'Insufficient Balance'}]});
+        throw new RestError('Insufficient Balance', 400);
       }
 
       throw ex;

@@ -569,10 +569,20 @@ class UserService {
   async redeem(userId, {redeemOp, ppyAmount}) {
     let broadcastResult;
 
-    if (redeemOp) {
-      broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(redeemOp);
-    } else {
-      broadcastResult = await this.signAndBroadcastTx(userId, this.config.peerplays.paymentAccountID, ppyAmount);
+    try {
+      if (redeemOp) {
+        broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(redeemOp);
+      } else {
+        broadcastResult = await this.signAndBroadcastTx(userId, this.config.peerplays.paymentAccountID, ppyAmount);
+      }
+    }catch(ex) {
+      logger.error(ex);
+
+      if(ex.message.includes('insufficient')) {
+        throw new RestError('', 400, {ppyAmount: [{message: 'Insufficient Balance'}]});
+      }
+
+      throw ex;
     }
 
     const tx = await this.transactionRepository.create({
