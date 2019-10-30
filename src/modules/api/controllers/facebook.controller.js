@@ -33,7 +33,7 @@ class FacebookController {
      *        description: Redirect to facebook
      */
     this.initializePassport();
-    app.get('/api/v1/auth/facebook', passport.authenticate('facebook'));
+    app.get('/api/v1/auth/facebook', passport.authenticate('facebook',{scope: 'email'}));
 
     app.get('/api/v1/auth/facebook/callback', (req, res) => {
       passport.authenticate(
@@ -65,6 +65,7 @@ class FacebookController {
     }, (req, token, tokenSecret, profile, done) => {
       this.userService.getUserBySocialNetworkAccount('facebook', {
         ...profile._json,
+        username: profile._json.first_name.toLowerCase() + profile._json.id,
         picture: profile._json.picture.data.url
       }, token, req.user).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
