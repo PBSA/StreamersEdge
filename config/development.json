@@ -6,6 +6,9 @@
   "pubg": {
     "apiKey": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlNzI1NDM2MC04MDkxLTAxMzctOWRkZC0yMzYxNTcxOGIyZmMiLCJpc3MiOiJnYW1lbG9ja2VyIiwiaWF0IjoxNTYyMjQ4Nzg1LCJwdWIiOiJibHVlaG9sZSIsInRpdGxlIjoicHViZyIsImFwcCI6ImRldnMtcGJzYS1pbmZvIn0.r4um-L6PNmusR1Fh32b4JVJLefeggvF8TKjXsxTSA4s"
   },
+  "leagueOfLegends": {
+    "apiKey": "RGAPI-4290b649-c710-46ad-a7f8-6588fd2141ee"
+  },
   "peerplays": {
     "peerplaysWS": "ws://ec2-99-79-98-229.ca-central-1.compute.amazonaws.com:8090",
     "peerplaysFaucetURL": "http://ec2-99-79-98-229.ca-central-1.compute.amazonaws.com:5000/api/v1/accounts",

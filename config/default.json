@@ -77,6 +77,9 @@
   "pubg": {
     "apiKey": ""
   },
+  "leagueOfLegends": {
+    "apiKey": ""
+  },
   "swagger": {
     "host": "virtserver.swaggerhub.com",
     "schemes": [
@@ -84,6 +87,7 @@
     ]
   },
   "challenge": {
-    "joinFee": 100
+    "joinFee": 100,
+    "userRewardPercent": 0.95
   }
 }

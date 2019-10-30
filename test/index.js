@@ -31,7 +31,7 @@ describe('ALL TESTS', () => {
       const connections = listModules(['src/connections/*.js']);
       await Promise.all(connections.map(({name}) => new Promise(async (resolve) => {
         try {
-          const connection = container.resolve(name.replace(/\.([a-z])/, (a) => a[1].toUpperCase()));
+          const connection = container.resolve(name.replace(/\.([a-z])/g, (a) => a[1].toUpperCase()));
           await connection.connect();
 
           if (name === 'db.connection') {
@@ -54,7 +54,7 @@ describe('ALL TESTS', () => {
     const connections = listModules(['src/connections/*.js']);
     await Promise.all(connections.map(({name}) => new Promise(async (resolve) => {
       try {
-        await container.resolve(name.replace(/\.([a-z])/, (a) => a[1].toUpperCase())).disconnect();
+        await container.resolve(name.replace(/\.([a-z])/g, (a) => a[1].toUpperCase())).disconnect();
         resolve();
       } catch (error) {
         logger.error(`${name} disconnect error`);
