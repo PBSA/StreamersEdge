@@ -110,7 +110,7 @@ class ChallengeService {
           case invitationConstants.invitationStatus.all:
             await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, invitation);
             return await this.CreateChallengeInvitedUser(Challenge.id,id);
-    
+
           case invitationConstants.invitationStatus.users: {
             const isAllowedForUser = await this.whitelistedUsersRepository.isWhitelistedFor(id, creatorId);
 
@@ -284,8 +284,8 @@ class ChallengeService {
     }
   }
 
-  async getAllChallenges(userId) {
-    return await this.challengeRepository.findAllChallenges(userId);
+  async getAllChallenges(userId, fetchingParams) {
+    return await this.challengeRepository.findAllChallenges(userId, fetchingParams);
   }
 
   async joinToChallenge(userId, challengeId, joinOp) {
