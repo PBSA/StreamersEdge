@@ -242,6 +242,17 @@ class ChallengesController {
              *      - application/json
              *    tags:
              *     - Challenge
+             *    parameters:
+             *      - name: searchText
+             *        description: Filter by the searchText
+             *        in: query
+             *        required: false
+             *        type: string
+             *      - name: order
+             *        description: Receives challenges in a particular order
+             *        in: query
+             *        required: false
+             *        type: string
              *    responses:
              *      200:
              *        description: Get list of all challenge
@@ -259,6 +270,7 @@ class ChallengesController {
       [
         'get', '/api/v1/challenges',
         this.authValidator.loggedOnly,
+        this.challengeValidator.getAllChallenges,
         this.getAllChallenges.bind(this)
       ],
 
@@ -363,10 +375,10 @@ class ChallengesController {
 
   }
 
-  async getAllChallenges(user) {
-    let challenges = await this.challengeService.getAllChallenges(user.id);
+  async getAllChallenges(user, query) {
+    let challenges = await this.challengeService.getAllChallenges(user.id, query);
     challenges = challenges.map((c) => c.toJSON());
-    
+
     challenges = await Promise.all(challenges.map(async (challenge) => {
       challenge.conditions = challenge['challenge-conditions'];
       challenge.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challenge.id);

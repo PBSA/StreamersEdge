@@ -24,12 +24,22 @@ class ChallengeRepository extends BasePostgresRepository {
 
   /**
    * @param id
+   * @param order
+   * @param searchText
    * @returns {Promise<ChallengeModel>}
    */
-  async findAllChallenges(id) {
+  async findAllChallenges(id, {order='', searchText=''}) {
+    const orderQuery = order ? order !== 'ppyAmount' ? [order, 'ASC'] : [order, 'DESC'] : null;
     return this.model.findAll({
       where: {
-        [Op.or]: [{accessRule: 'anyone'}, {['$challenge-invited-users.userId$']: id}]
+        [Op.and] : [
+          {[Op.or]: [{accessRule: 'anyone'}, {['$challenge-invited-users.userId$']: id}]},
+          {[Op.or]: [
+            {name: {[Op.iLike]: `%${searchText}%`}},
+            {game: {[Op.iLike]: `%${searchText}%`}},
+            {'$user.username$': {[Op.iLike]: `%${searchText}%`}}
+          ]}
+        ]
       },
       include:[
         {
@@ -46,7 +56,7 @@ class ChallengeRepository extends BasePostgresRepository {
         }
       ],
       group: ['challenges.id','challenge-invited-users.id','challenge-conditions.id','user.id'],
-      order: ['id']
+      order: [ orderQuery || 'id']
     });
   }
 
