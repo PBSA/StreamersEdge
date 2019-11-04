@@ -186,7 +186,6 @@ class ChallengesController {
              */
       [
         'get', '/api/v1/challenges/:id',
-        this.authValidator.loggedOnly,
         this.challengeValidator.validateGetChallenge,
         this.getChallenge.bind(this)
       ],
@@ -269,7 +268,6 @@ class ChallengesController {
              */
       [
         'get', '/api/v1/challenges',
-        this.authValidator.loggedOnly,
         this.challengeValidator.getAllChallenges,
         this.getAllChallenges.bind(this)
       ],

@@ -18,7 +18,7 @@ class TwitchStreamConnection extends BaseConnection {
   async request(userIds) {
     const options = {
       method: 'GET',
-      uri: this.config.twitchUrl + streamConstants.gamedIds + userIds,
+      uri: `${this.config.twitchUrl}${streamConstants.gamedIds}&userId=${userIds}`,
       headers: {'Client-ID': this.config.twitch.clientId}
     };
     return new Promise((success, fail) => {

@@ -31,7 +31,7 @@ class StreamRepository extends BasePostgresRepository {
     });
 
     while(Array.isArray(twitchIds) && twitchIds.length) {
-      const data = JSON.parse(await this.twitchConnection.request(twitchIds.splice(0,100).map((user)=>'&user_id='+user.twitchId)));
+      const data = JSON.parse(await this.twitchConnection.request(twitchIds.splice(0,100).map((user)=>user.twitchId).join('&user_id=')));
 
       for(let i = 0; i < data.data.length; i++) {
         const streamObj = data.data[i];
