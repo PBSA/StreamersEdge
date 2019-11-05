@@ -6,6 +6,7 @@ const challengeConditionModel = require('../db/models/challenge.condition.model'
 const {model} = require('../db/models/challenge.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 const consts = require('../constants/challenge');
+const moment = require('moment');
 
 class ChallengeRepository extends BasePostgresRepository {
 
@@ -30,15 +31,26 @@ class ChallengeRepository extends BasePostgresRepository {
    */
   async findAllChallenges(id, {order='', searchText=''}) {
     const orderQuery = order ? order !== 'ppyAmount' ? [order, 'ASC'] : [order, 'DESC'] : null;
+    const searchList = [];
+
+    if (Number(searchText)) {
+      searchList.push({ppyAmount: {[Op.eq] : parseInt(searchText)}});
+    } else if (moment(searchText).isValid()) {
+      searchList.push({[Op.and]: {
+        startDate: {[Op.lte]: searchText},
+        endDate: {[Op.gte]: searchText}
+      }});
+    } else {
+      searchList.push({name: {[Op.iLike]: `%${searchText}%`}});
+      searchList.push({game: {[Op.iLike]: `%${searchText}%`}});
+      searchList.push({'$user.username$': {[Op.iLike]: `%${searchText}%`}});
+    }
+
     return this.model.findAll({
       where: {
         [Op.and] : [
           {[Op.or]: [{accessRule: 'anyone'}, {['$challenge-invited-users.userId$']: id}]},
-          {[Op.or]: [
-            {name: {[Op.iLike]: `%${searchText}%`}},
-            {game: {[Op.iLike]: `%${searchText}%`}},
-            {'$user.username$': {[Op.iLike]: `%${searchText}%`}}
-          ]}
+          {[Op.or]: searchList}
         ]
       },
       include:[
