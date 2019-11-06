@@ -134,7 +134,7 @@ class ProfileController {
        * @swagger
        *
        * /profile/league-of-legends/realms:
-       *  patch:
+       *  get:
        *    description: Get a list of available LoL realms
        *    produces:
        *      - application/json
