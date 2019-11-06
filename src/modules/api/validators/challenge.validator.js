@@ -69,20 +69,24 @@ class ChallengeValidator extends BaseValidator {
           });
         }
       }
-
-      const endCriteria = body.conditions.filter((row) => row.join === 'END');
-
-      if (endCriteria.length > 1) {
-        throw new ValidateError(400, 'Validate error', {
-          conditions: '\'end\' criteria cannot be used more than once'
-        });
-      }
-
+      
       if (!body.conditions.length && body.conditionsText === '') {
         throw new ValidateError(400, 'Validate error', {
           conditions: 'You must specify the criteria or conditions description'
         });
       }
+
+      body.conditions.forEach((condition, index) => {
+        if ((index < body.conditions.length - 1) && condition.join === 'END') {
+          throw new ValidateError(400, 'Validate error', {
+            conditions: 'Only the last condition\'s join property can equal "END"'
+          });
+        } else if ((index === body.conditions.length - 1) && condition.join !== 'END') {
+          throw new ValidateError(400, 'Validate error', {
+            conditions: 'The last condition\'s join property must equal "END"'
+          });
+        }
+      });
 
       if (body.depositOp) {
         if (body.depositOp.operations[0][1].to !== this.config.peerplays.paymentReceiver) {
