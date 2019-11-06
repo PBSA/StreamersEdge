@@ -1,6 +1,5 @@
 const challengeConstants = require('../../../constants/challenge');
 const txConstants = require('../../../constants/transaction');
-const BigNumber = require('bignumber.js');
 
 class PaymentsJob {
 
@@ -62,14 +61,9 @@ class PaymentsJob {
   async payToWinners(challenge, winners) {
     const users = await this.userRepository.findByPkList(winners.map(({userId}) => userId));
     
-    const totalReward = new BigNumber(challenge.ppyAmount)
-      .times(this.config.challenge.userRewardPercent);
-
-    const winnerReward = totalReward
-      .dividedBy(users.length);
-
-    const fee = new BigNumber(challenge.ppyAmount)
-      .minus(totalReward);
+    const totalReward = challenge.ppyAmount * this.config.challenge.userRewardPercent;
+    const winnerReward = totalReward / users.length;
+    const fee = challenge.ppyAmount - totalReward;
 
     await Promise.all(users.map((user) => this.sendPPY('challengeReward', challenge, user, winnerReward)));
     await this.peerplaysRepository.sendPPYFromReceiverAccount(this.config.peerplays.feeReceiver, fee);
