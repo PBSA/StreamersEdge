@@ -400,7 +400,7 @@ class UserService {
     User.password = await bcrypt.hash(password, 10);
     await User.save();
 
-    return true;
+    return this.getCleanUser(User);
   }
 
   async getUserTransactions(userId, skip, limit) {

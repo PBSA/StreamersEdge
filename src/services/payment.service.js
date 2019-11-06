@@ -7,7 +7,6 @@ class PaymentService {
 
   /**
    * @param {PaymentRepository} opts.paymentRepository
-   * @param {CoinmarketcapRepository} opts.coinmarketcapRepository
    * @param {PeerplaysRepository} opts.peerplaysRepository
    * @param {UserRepository} opts.userRepository
    * @param {PaypalRepository} opts.paypalRepository
@@ -18,7 +17,6 @@ class PaymentService {
    */
   constructor(opts) {
     this.paymentRepository = opts.paymentRepository;
-    this.coinmarketcapRepository = opts.coinmarketcapRepository;
     this.peerplaysRepository = opts.peerplaysRepository;
     this.userRepository = opts.userRepository;
     this.paypalRepository = opts.paypalRepository;
@@ -65,7 +63,7 @@ class PaymentService {
         orderId,
         amountCurrency: unit.amount.currency_code,
         amountValue: unit.amount.value,
-        ppyAmountValue: await this.coinmarketcapRepository.getPPYAmount(unit.amount.value),
+        ppyAmountValue: unit.amount.value,
         status: statuses.SUCCESS,
         error: '',
         txId: '',

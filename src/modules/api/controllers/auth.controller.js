@@ -344,7 +344,7 @@ class AuthController {
        *
        * /auth/reset-password:
        *  post:
-       *    description: Forgot password
+       *    description: Reset password
        *    produces:
        *      - application/json
        *    tags:
@@ -359,7 +359,7 @@ class AuthController {
        *      200:
        *        description: Reset-password response
        *        schema:
-       *         $ref: '#/definitions/SuccessEmptyResponse'
+       *         $ref: '#/definitions/UserResponse'
        *      400:
        *        description: Error form validation
        *        schema:
@@ -466,16 +466,17 @@ class AuthController {
     return true;
   }
 
-  async resetPassword(_, {ResetToken, password}) {
+  async resetPassword(_, {ResetToken, password}, req) {
 
     if (_ && _.id !== ResetToken.userId) {
       throw new ValidateError(401, 'unauthorized');
     }
 
-    await this.userService.resetPassword(ResetToken.user, password);
+    const user = await this.userService.resetPassword(ResetToken.user, password);
     await ResetToken.deactivate();
-
-    return true;
+    
+    await new Promise((success) => req.login(user, () => success()));
+    return user;
   }
 
   async paypalCallback(user, code) {
