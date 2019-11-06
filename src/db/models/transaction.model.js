@@ -32,7 +32,7 @@ module.exports = {
       },
       blockNum: {type: Sequelize.INTEGER},
       trxNum: {type: Sequelize.INTEGER},
-      ppyAmountValue: {type: Sequelize.INTEGER},
+      ppyAmountValue: {type: Sequelize.DOUBLE},
       type: {type: Sequelize.ENUM(Object.keys(types).map((key) => types[key]))},
       peerplaysFromId: {type: Sequelize.STRING},
       peerplaysToId: {type: Sequelize.STRING},

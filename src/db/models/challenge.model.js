@@ -91,7 +91,7 @@ class ChallengeModel extends Model {
    *          - invite
    *          - anyone
    *      ppyAmount:
-   *        type: integer
+   *        type: number
    *      conditionsText:
    *        type: string
    *      game:
@@ -266,7 +266,7 @@ const attributes = {
     allowNull: false
   },
   ppyAmount: {
-    type: Sequelize.BIGINT,
+    type: Sequelize.DOUBLE,
     allowNull: false
   },
   conditionsText: {
