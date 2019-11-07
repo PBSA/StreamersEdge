@@ -59,6 +59,7 @@ class ProfileController {
     this.userService = opts.userService;
     this.fileService = opts.fileService;
     this.leagueOfLegendsConnection = opts.leagueOfLegendsConnection;
+    this.config = opts.config;
   }
 
   /**
@@ -305,16 +306,26 @@ class ProfileController {
     }
   }
 
+  async deleteAvatarFromCDN(user) {
+    if (user.avatar && user.avatar.startsWith(this.config.cdnUrl)) {
+      await this.fileService.delete(user.avatar.slice(this.config.cdnUrl.length));
+    }
+  }
+
   async uploadAvatar(user, data, req, res) {
     try {
       const location = await this.fileService.saveImage(req, res);
-      return await this.userService.patchProfile(user, {avatar: location});
+      const patchedUser = await this.userService.patchProfile(user, {avatar: location});
+      await this.deleteAvatarFromCDN(user);
+
+      return patchedUser;
     } catch (err) {
       this.handleError(err);
     }
   }
 
   async deleteAvatar(user) {
+    await this.deleteAvatarFromCDN(user);
     return await this.userService.patchProfile(user, {avatar: null});
   }
 

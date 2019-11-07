@@ -64,6 +64,20 @@ class FileService {
 
   /**
    *
+   * @param {String} fileName
+   * @return Promise<>
+   */
+  delete(fileName) {
+    return new Promise((resolve, reject) => {
+      this.awsConnection.s3.deleteObject({
+        Bucket: this.config.s3.bucket,
+        Key: fileName
+      }, (err, data) => err ? reject(err) : resolve(data));
+    });
+  }
+
+  /**
+   *
    * @param {Object} req
    * @param {Object} file
    * @param {Function} done
