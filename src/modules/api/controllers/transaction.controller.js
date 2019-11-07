@@ -174,7 +174,7 @@ class TransactionController {
        *      200:
        *        description: Redemption response
        *        schema:
-       *          $ref: '#/definitions/RedemptionResponse'
+       *          $ref: '#/definitions/SuccessEmptyResponse'
        *      401:
        *        description: Error user unauthorized
        *        schema:

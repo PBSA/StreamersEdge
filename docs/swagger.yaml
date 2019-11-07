@@ -159,7 +159,7 @@ paths:
               error:
                 type: string
                 example: User not found
-  '/api/v1/admin/users/info/{id}':
+  '/admin/users/info/{id}':
     get:
       description: Get user info by id
       produces:
@@ -185,6 +185,58 @@ paths:
           description: Error forbidden for this user
           schema:
             $ref: '#/definitions/ForbiddenError'
+  /admin/reports/:
+    get:
+      description: Get all reports
+      produces:
+        - application/json
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Report result schema
+          schema:
+            $ref: '#/definitions/ReportResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '403':
+          description: Error forbidden for this user
+          schema:
+            $ref: '#/definitions/ForbiddenError'
+  /auth/paypal:
+    get:
+      description: Begin Paypal authorization process
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: callbackUrl
+          in: query
+          type: string
+          description: >-
+            callback url to return the user to after authentication (relative to
+            frontend url)
+      responses:
+        '302':
+          description: Paypal redirect
+  /auth/paypal/callback:
+    get:
+      description: Paypal authentication callback
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: code
+          in: query
+          type: string
+          description: Authorization code
+      responses:
+        '302':
+          description: Frontend redirect
   /auth/logout:
     post:
       description: Logout
@@ -244,7 +296,7 @@ paths:
         '200':
           description: Confirm-email response
           schema:
-            $ref: '#/definitions/SuccessEmptyResponse'
+            $ref: '#/definitions/UserResponse'
         '400':
           description: Error form validation
           schema:
@@ -315,7 +367,7 @@ paths:
                 example: Too many requests
   /auth/reset-password:
     post:
-      description: Forgot password
+      description: Reset password
       produces:
         - application/json
       tags:
@@ -330,7 +382,7 @@ paths:
         '200':
           description: Reset-password response
           schema:
-            $ref: '#/definitions/SuccessEmptyResponse'
+            $ref: '#/definitions/UserResponse'
         '400':
           description: Error form validation
           schema:
@@ -345,6 +397,28 @@ paths:
               error:
                 type: string
                 example: Token not found
+  /auth/peerplays:
+    post:
+      description: Login with Peerplays
+      produces:
+        - application/json
+      tags:
+        - Auth
+      parameters:
+        - name: peerplays
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthSignInUser'
+      responses:
+        '200':
+          description: Login response
+          schema:
+            $ref: '#/definitions/UserResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
   /challenges:
     post:
       description: Create new challenge
@@ -382,9 +456,45 @@ paths:
         - application/json
       tags:
         - Challenge
+      parameters:
+        - name: searchText
+          description: Filter by the searchText
+          in: query
+          required: false
+          type: string
+        - name: order
+          description: Receives challenges in a particular order
+          in: query
+          required: false
+          type: string
       responses:
         '200':
           description: Get list of all challenge
+          schema:
+            $ref: '#/definitions/ChallengeResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /challenges/wins:
+    get:
+      description: Get all challenges won by a user
+      produces:
+        - application/json
+      tags:
+        - Challenge
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: List of won challenges
           schema:
             $ref: '#/definitions/ChallengeResponse'
         '400':
@@ -431,33 +541,6 @@ paths:
               error:
                 type: string
                 example: Challenge not found
-  /challenges/subscribe:
-    post:
-      description: Subscribe to new notification
-      summary: Subscribe to new notification
-      produces:
-        - application/json
-      tags:
-        - Challenge
-      parameters:
-        - name: ChallengeSubscribe
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ChallengeSubscribe'
-      responses:
-        '200':
-          description: Subscribe response
-          schema:
-            $ref: '#/definitions/ChallengeSubscribeResponse'
-        '400':
-          description: Error form validation
-          schema:
-            $ref: '#/definitions/ValidateError'
-        '401':
-          description: Error user unauthorized
-          schema:
-            $ref: '#/definitions/UnauthorizedError'
   /challenges/invite:
     post:
       description: Invite user to new challenge
@@ -526,6 +609,26 @@ paths:
       responses:
         '302':
           description: Redirect to facebook
+  /game/stats:
+    get:
+      description: Get game paramTypes data
+      produces:
+        - application/json
+      tags:
+        - Game
+      responses:
+        '200':
+          description: Game response
+          schema:
+            $ref: '#/definitions/GameResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+        '403':
+          description: Error forbidden for this user
+          schema:
+            $ref: '#/definitions/ForbiddenError'
   /auth/google:
     get:
       description: Auth by google
@@ -537,6 +640,47 @@ paths:
       responses:
         '302':
           description: Redirect to google
+  /notifications/publicKey:
+    get:
+      description: Returns the application's VAPID key
+      produces:
+        - application/json
+      tags:
+        - Notifications
+      responses:
+        '200':
+          description: VAPID key
+          schema:
+            type: object
+            properties:
+              publicKey:
+                type: string
+  /notifications/subscribe:
+    post:
+      description: Sets the PushSubscription data for the current user
+      produces:
+        - application/json
+      tags:
+        - Notifications
+      parameters:
+        - name: NotificationsSubscribe
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NotificationsSubscribe'
+      responses:
+        '200':
+          description: Subscribe response
+          schema:
+            $ref: '#/definitions/NotificationsSubscribeResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
   /payment:
     post:
       description: Process payment paypal
@@ -607,6 +751,22 @@ paths:
           description: Error user unauthorized
           schema:
             $ref: '#/definitions/UnauthorizedError'
+  /profile/league-of-legends/realms:
+    get:
+      description: Get a list of available LoL realms
+      produces:
+        - application/json
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Realms
+          schema:
+            $ref: '#/definitions/LeagueOfLegendsRealms'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
   /profile/peerplays/create-account:
     post:
       description: Create peerplays account for authorized user
@@ -644,7 +804,7 @@ paths:
         - Profile
       parameters:
         - in: formData
-          name: upfile
+          name: file
           type: file
           description: The file to upload.
       consumes:
@@ -696,6 +856,30 @@ paths:
           description: Change user email response
           schema:
             $ref: '#/definitions/ProfileResponse'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /report:
+    post:
+      description: ReportUser
+      summary: Report User
+      produces:
+        - application/json
+      tags:
+        - Report
+      parameters:
+        - name: report
+          description: Report object
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ReportUser'
+      responses:
+        '200':
+          description: Report User response
+          schema:
+            $ref: '#/definitions/ReportUserResponse'
         '401':
           description: Error user unauthorized
           schema:
@@ -842,6 +1026,32 @@ paths:
           description: Payment response
           schema:
             $ref: '#/definitions/PaymentResponse'
+        '400':
+          description: Error form validation
+          schema:
+            $ref: '#/definitions/ValidateError'
+        '401':
+          description: Error user unauthorized
+          schema:
+            $ref: '#/definitions/UnauthorizedError'
+  /redeem:
+    post:
+      description: Create a redemption transaction
+      produces:
+        - application/json
+      tags:
+        - Transactions
+      parameters:
+        - name: redeem
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Redemption'
+      responses:
+        '200':
+          description: Redemption response
+          schema:
+            $ref: '#/definitions/SuccessEmptyResponse'
         '400':
           description: Error form validation
           schema:
@@ -1104,6 +1314,49 @@ definitions:
         type: number
       ban-histories.bannedAt:
         type: string
+  ReportResponse:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        reportedUserId:
+          type: number
+          example: 2
+        reportedByUserId:
+          type: number
+          example: 1
+        reason:
+          type: string
+          example: vulgarity-on-stream
+        description:
+          type: string
+        videoUrl:
+          type: string
+          example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
+        reporter:
+          type: object
+          properties:
+            username:
+              type: string
+              example: abc
+        troublemaker:
+          type: object
+          properties:
+            email:
+              type: string
+              example: abc@pbsa.info
+            username:
+              type: string
+              example: abc
+            userType:
+              type: string
+              example: admin
+            avatar:
+              type: string
+              example: /profile_images/81vg5oejxn-BoDgqJ1Bm1cXY-soctGdMU.jpg
   AuthSignUpUser:
     type: object
     required:
@@ -1173,68 +1426,6 @@ definitions:
             type: array
             items:
               $ref: '#/definitions/User'
-  ChallengeSubscribe:
-    type: object
-    required:
-      - endpoint
-      - keys
-    properties:
-      endpoint:
-        type: string
-      expirationTime:
-        type: number
-      keys:
-        type: object
-        properties:
-          p256dh:
-            type: string
-          auth:
-            type: string
-  Challenge:
-    type: object
-    properties:
-      id:
-        type: number
-      name:
-        type: string
-      startDate:
-        type: string
-      endDate:
-        type: string
-      game:
-        type: string
-      accessRule:
-        type: number
-      ppyAmount:
-        type: number
-      conditionsText:
-        type: string
-      status:
-        type: string
-      userId:
-        type: string
-    allOf:
-      - $ref: '#/definitions/ChallengeNew'
-      - type: object
-        properties:
-          conditions:
-            type: array
-            items:
-              $ref: '#/definitions/ChallengeCondition'
-          id:
-            type: integer
-          createdAt:
-            type: string
-            format: date
-          updatedAt:
-            type: string
-            format: date
-          invitedUsers:
-            type: array
-            items:
-              $ref: '#/definitions/User'
-          user:
-            $ref: '#/definitions/User'
   Operation:
     type: object
     properties:
@@ -1279,74 +1470,11 @@ definitions:
     type: object
     required:
       - challengeId
-      - tx
-      - user
     properties:
       challengeId:
         type: number
-        example: 11
-      tx:
-        type: object
-        properties:
-          ref_block_num:
-            type: number
-            example: 37792
-          ref_block_prefix:
-            type: number
-            example: 37792
-          expiration:
-            type: string
-            example: '2019-06-28T14:17:57'
-          operations:
-            type: array
-            items:
-              type: array
-              items:
-                allOf:
-                  - type: number
-                  - type: object
-                    properties:
-                      fee:
-                        type: object
-                        properties:
-                          amount:
-                            type: string
-                          asset_id:
-                            type: string
-                      from:
-                        type: string
-                      to:
-                        type: string
-                      amount:
-                        type: object
-                        properties:
-                          amount:
-                            type: string
-                          asset_id:
-                            type: string
-                          extensions:
-                            type: array
-                            items: {}
-              example:
-                - 0
-                - fee:
-                    amount: '20000'
-                    asset_id: '1'
-                  from: 1.2.67
-                  to: 1.2.57
-                  amount:
-                    amount: '1000'
-                    asset_id: 1.3.0
-                  extensions: []
-          extensions:
-            type: array
-            items: {}
-            example: []
-          signatures:
-            type: array
-            items: {}
-            example:
-              - jhvjhhj787878gghjjh
+      joinOp:
+        $ref: '#/definitions/TransactionObject'
   JoinSuccessResponse:
     type: object
     properties:
@@ -1367,13 +1495,48 @@ definitions:
         properties:
           result:
             $ref: '#/definitions/Challenge'
-  ChallengeSubscribeResponse:
+  GameResponse:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 200
+      result:
+        type: object
+        properties:
+          resultPlace:
+            type: string
+            example: resultPlace
+          winTime:
+            type: string
+            example: winTime
+          frags:
+            type: string
+            example: frags
+  NotificationsSubscribe:
+    type: object
+    required:
+      - endpoint
+      - keys
+    properties:
+      endpoint:
+        type: string
+      expirationTime:
+        type: number
+      keys:
+        type: object
+        properties:
+          p256dh:
+            type: string
+          auth:
+            type: string
+  NotificationsSubscribeResponse:
     allOf:
       - $ref: '#/definitions/SuccessResponse'
       - type: object
         properties:
           result:
-            type: string
+            type: boolean
   PaymentPaypal:
     type: object
     required:
@@ -1415,6 +1578,10 @@ definitions:
         type: string
       createdAt:
         type: string
+  LeagueOfLegendsRealms:
+    type: array
+    items:
+      type: string
   ProfileCreatePeerplaysAccount:
     type: object
     required:
@@ -1448,6 +1615,47 @@ definitions:
         properties:
           result:
             $ref: '#/definitions/User'
+  ReportUser:
+    type: object
+    required:
+      - reportedUserId
+      - reason
+      - description
+    properties:
+      reportedUserId:
+        type: number
+      reason:
+        type: string
+      description:
+        type: string
+      videoUrl:
+        type: string
+  ReportUserResponse:
+    type: object
+    properties:
+      status:
+        type: number
+        example: 200
+      result:
+        type: object
+        properties:
+          id:
+            type: number
+            example: 1
+          reportedUserId:
+            type: number
+            example: 2
+          reportedByUserId:
+            type: number
+            example: 1
+          reason:
+            type: string
+            example: vulgarity-on-stream
+          description:
+            type: string
+          videoUrl:
+            type: string
+            example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
   StreamGet:
     type: object
     required:
@@ -1511,11 +1719,19 @@ definitions:
     type: object
     required:
       - receiverId
-      - donateOp
     properties:
       receiverId:
-        type: string
+        type: number
+      ppyAmount:
+        type: number
       donateOp:
+        $ref: '#/definitions/TransactionObject'
+  Redemption:
+    type: object
+    properties:
+      ppyAmount:
+        type: number
+      redeemOp:
         $ref: '#/definitions/TransactionObject'
   UsersChangeNotificationsStatus:
     type: object
@@ -1528,6 +1744,7 @@ definitions:
     type: object
     required:
       - invitations
+      - minBounty
     properties:
       invitations:
         type: string
@@ -1540,6 +1757,9 @@ definitions:
         description: Names of games from which user can accepts invitations
         items:
           type: string
+      minBounty:
+        type: number
+        description: Minimum bounty allowed for invitations
   SuccessResponse:
     type: object
     properties:
@@ -1589,11 +1809,11 @@ definitions:
     type: object
     required:
       - notifications
-      - endDate
+      - name
+      - startDate
       - game
       - accessRule
       - ppyAmount
-      - depositOp
     properties:
       name:
         type: string
@@ -1609,7 +1829,7 @@ definitions:
           - invite
           - anyone
       ppyAmount:
-        type: integer
+        type: number
       conditionsText:
         type: string
       game:
@@ -1646,6 +1866,44 @@ definitions:
             format: date
           challengeId:
             type: integer
+  Challenge:
+    allOf:
+      - $ref: '#/definitions/ChallengeNew'
+      - type: object
+        properties:
+          conditions:
+            type: array
+            items:
+              $ref: '#/definitions/ChallengeCondition'
+          id:
+            type: number
+          createdAt:
+            type: string
+            format: date
+          updatedAt:
+            type: string
+            format: date
+          invitedUsers:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+          status:
+            type: string
+          userId:
+            type: string
+          user:
+            type: object
+            properties:
+              username:
+                type: string
+              avatar:
+                type: string
+          joined:
+            type: boolean
+          joinedUsers:
+            type: array
+            items:
+              $ref: '#/definitions/User'
   TransactionObject:
     type: object
     required:
