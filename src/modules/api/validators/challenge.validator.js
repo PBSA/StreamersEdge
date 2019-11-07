@@ -20,6 +20,7 @@ class ChallengeValidator extends BaseValidator {
     this.config = opts.config;
     this.createChallenge = this.createChallenge.bind(this);
     this.getAllChallenges = this.getAllChallenges.bind(this);
+    this.getWonChallenges = this.getWonChallenges.bind(this);
     this.validateGetChallenge = this.validateGetChallenge.bind(this);
     this.invite = this.invite.bind(this);
     this.joinToChallenge = this.joinToChallenge.bind(this);
@@ -114,6 +115,14 @@ class ChallengeValidator extends BaseValidator {
     };
 
     return this.validate(querySchema, null, (req, query) => query);
+  }
+
+  getWonChallenges() {
+    const querySchema = {
+      userId: Joi.number().integer().required()
+    };
+
+    return this.validate(querySchema, null, (req, query) => query.userId);
   }
 
   validateGetChallenge() {
