@@ -167,7 +167,7 @@ class GamesJob {
     whereString += this.createConditionsQuery(conditions, {
       [challengeConstants.paramTypes.winTime]: 'match."gameDuration"',
       [challengeConstants.paramTypes.frags]: 'participants.kills',
-      [challengeConstants.paramTypes.resultPlace]: 'participants."isWin"'
+      [challengeConstants.paramTypes.resultPlace]: 'participants."isWin"::int'
     });
 
     whereString += ') AND users.id IS NOT NULL AND users."peerplaysAccountId" IS NOT NULL';
