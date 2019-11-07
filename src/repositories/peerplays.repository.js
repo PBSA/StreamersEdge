@@ -110,8 +110,8 @@ class PeerplaysRepository {
 
     if (fullAccounts) {
       return fullAccounts.find((fullAccount) => {
-        return fullAccount[1].account.active.key_auths.filter((key_auth)=> { 
-          return key_auth[0] == publicKey;
+        return fullAccount[1].account.active.key_auths.find((key_auth)=> { 
+          return key_auth[0] === publicKey;
         });
       });
     }
