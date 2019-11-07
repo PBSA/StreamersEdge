@@ -288,6 +288,10 @@ class ChallengeService {
     return await this.challengeRepository.findAllChallenges(userId, fetchingParams);
   }
 
+  async getWonChallenges(userId) {
+    return await this.challengeRepository.findWonChallenges(userId);
+  }
+
   async joinToChallenge(userId, challengeId, joinOp) {
     const user = await this.userRepository.findByPk(userId);
     const challenge = await this.challengeRepository.findByPk(challengeId);

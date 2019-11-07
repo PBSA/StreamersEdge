@@ -144,6 +144,43 @@ class ChallengesController {
         this.challengeValidator.createChallenge,
         this.createChallenge.bind(this)
       ],
+
+      /**
+       * @swagger
+       *
+       * /challenges/wins:
+       *  get:
+       *    description: Get all challenges won by a user
+       *    produces:
+       *      - application/json
+       *    tags:
+       *     - Challenge
+       *    parameters:
+       *      - name: userId
+       *        in: path
+       *        required: true
+       *        type: string 
+       *    responses:
+       *      200:
+       *        description: List of won challenges
+       *        schema:
+       *          $ref: '#/definitions/ChallengeResponse'
+       *      400:
+       *        description: Error form validation
+       *        schema:
+       *          $ref: '#/definitions/ValidateError'
+       *      401:
+       *        description: Error user unauthorized
+       *        schema:
+       *          $ref: '#/definitions/UnauthorizedError'
+       */
+      [
+        'get', '/api/v1/challenges/wins/:userId',
+        this.authValidator.loggedOnly,
+        this.challengeValidator.getWonChallenges,
+        this.getWonChallenges.bind(this)
+      ],
+
       /**
              * @swagger
              *
@@ -373,22 +410,25 @@ class ChallengesController {
 
   }
 
+  async fillChallengeDetails(challenge, userId) {
+    challenge.conditions = challenge['challenge-conditions'];
+    challenge.joined = await this.joinedUsersRepository.hasUserJoined(userId, challenge.id);
+    challenge.joinedUsers = await this.joinedUsersRepository.getForChallenge(challenge.id);
+
+    delete challenge['challenge-invited-users'];
+    delete challenge['challenge-conditions'];
+
+    return challenge;
+  }
+
   async getAllChallenges(user, query) {
     let challenges = await this.challengeService.getAllChallenges(user.id, query);
-    challenges = challenges.map((c) => c.toJSON());
+    return Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user.id)));
+  }
 
-    challenges = await Promise.all(challenges.map(async (challenge) => {
-      challenge.conditions = challenge['challenge-conditions'];
-      challenge.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challenge.id);
-      challenge.joinedUsers = await this.joinedUsersRepository.getForChallenge(challenge.id);
-
-      delete challenge['challenge-invited-users'];
-      delete challenge['challenge-conditions'];
-
-      return challenge;
-    }));
-
-    return challenges;
+  async getWonChallenges(user, userId) {
+    let challenges = await this.challengeService.getWonChallenges(userId);
+    return Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user.id)));
   }
 
   async joinToChallenge(user, {challengeId, joinOp}) {

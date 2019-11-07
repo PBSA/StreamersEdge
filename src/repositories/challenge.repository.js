@@ -3,6 +3,7 @@ const Op = Sequelize.Op;
 const invitedUsersModel = require('../db/models/challenge.invited.users.model').model;
 const userModel = require('../db/models/user.model').model;
 const challengeConditionModel = require('../db/models/challenge.condition.model').model;
+const challengeWinnersModel = require('../db/models/challenge.winners.model').model;
 const {model} = require('../db/models/challenge.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 const consts = require('../constants/challenge');
@@ -21,6 +22,27 @@ class ChallengeRepository extends BasePostgresRepository {
    */
   async findByPk(pk, options) {
     return super.findByPk(pk, options);
+  }
+
+  getFindParams(orderQuery) {
+    return {
+      include:[
+        {
+          model:invitedUsersModel, as:'challenge-invited-users',
+          required:false
+        },
+        {
+          model:userModel,
+          attributes: ['username','avatar']
+        },
+        {
+          model: challengeConditionModel,
+          required: false
+        }
+      ],
+      group: ['challenges.id','challenge-invited-users.id','challenge-conditions.id','user.id'],
+      order: [ orderQuery || 'id']
+    };
   }
 
   /**
@@ -53,23 +75,17 @@ class ChallengeRepository extends BasePostgresRepository {
           {[Op.or]: searchList}
         ]
       },
-      include:[
-        {
-          model:invitedUsersModel, as:'challenge-invited-users',
-          required:false
-        },
-        {
-          model:userModel,
-          attributes: ['username','avatar']
-        },
-        {
-          model: challengeConditionModel,
-          required: false
-        }
-      ],
-      group: ['challenges.id','challenge-invited-users.id','challenge-conditions.id','user.id'],
-      order: [ orderQuery || 'id']
+      ...this.getFindParams(orderQuery)
     });
+  }
+
+  async findWonChallenges(userId) {
+    const challengeIds = await challengeWinnersModel.findAll({
+      where: {userId},
+      attributes: ['challengeId']
+    }, {raw: true}).map((w) => w.challengeId);
+
+    return await Promise.all(challengeIds.map((id) => this.model.findOne({where: {id}, ...this.getFindParams()})));
   }
 
   async findWaitToResolve() {
