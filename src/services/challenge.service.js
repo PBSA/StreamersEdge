@@ -56,27 +56,6 @@ class ChallengeService {
      * @returns {Promise<ChallengePublicObject>}
      */
   async createChallenge(creatorId, challengeObject) {
-    let broadcastResult;
-
-    // use the signed tx in depositOp if set
-    // otherwise try to create a tx using the user's stored peerplay credentials
-    try{
-      if (challengeObject.depositOp) {
-        broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
-      } else {
-        const depositAccount = this.config.peerplays.paymentReceiver;
-        broadcastResult = await this.userService.signAndBroadcastTx(creatorId, depositAccount, challengeObject.ppyAmount);
-      }
-    }catch(ex) {
-      logger.error(ex);
-
-      if(ex.message.includes('insufficient')) {
-        throw new RestError('', 400, {ppyAmount: [{message: 'Insufficient Balance'}]});
-      }
-
-      throw ex;
-    }
-
     const Challenge = await this.challengeRepository.create({
       userId: creatorId,
       name: challengeObject.name,
@@ -96,7 +75,6 @@ class ChallengeService {
     }));
 
     if (challengeObject.accessRule === challengeConstants.accessRules.invite) {
-
       await Promise.all(challengeObject.invitedAccounts.map(async (id) => {
         const toUser = await this.userRepository.findByPk(id);
 
@@ -131,16 +109,13 @@ class ChallengeService {
           }
 
             break;
-
           default:
             return;
         }
       }));
-
     }
 
     if (challengeObject.accessRule === challengeConstants.accessRules.anyone) {
-
       const users = await this.userRepository.findWithChallengeSubscribed();
       await Promise.all(users.map(async (toUser) => {
         if (toUser.notifications === true) {
@@ -148,7 +123,34 @@ class ChallengeService {
           await this.webPushConnection.sendNotification(toUser.challengeSubscribeData, notification);
         }
       }));
+    }
 
+    let broadcastResult;
+
+    // use the signed tx in depositOp if set
+    // otherwise try to create a tx using the user's stored peerplay credentials
+    try {
+      if (challengeObject.depositOp) {
+        broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(challengeObject.depositOp);
+      } else {
+        const depositAccount = this.config.peerplays.paymentReceiver;
+        broadcastResult = await this.userService.signAndBroadcastTx(creatorId, depositAccount, challengeObject.ppyAmount);
+      }
+    } catch(ex) {
+      logger.error(ex);
+
+      // if the tx failed delete the created challenge
+      try {
+        await Challenge.destroy();
+      } catch (ex2) {
+        logger.error(ex2);
+      }
+
+      if(ex.message.includes('insufficient')) {
+        throw new RestError('', 400, {ppyAmount: [{message: 'Insufficient Balance'}]});
+      }
+
+      throw ex;
     }
 
     await this.transactionRepository.create({
@@ -162,6 +164,7 @@ class ChallengeService {
       peerplaysFromId: broadcastResult[0].trx.operations[0][1].from,
       peerplaysToId: broadcastResult[0].trx.operations[0][1].to
     });
+
     return this.getCleanObject(Challenge.id, challengeObject.invitedAccounts || creatorId);
   }
 
