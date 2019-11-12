@@ -148,7 +148,7 @@ class ChallengesController {
       /**
        * @swagger
        *
-       * /challenges/wins:
+       * /challenges/wins/{userId}:
        *  get:
        *    description: Get all challenges won by a user
        *    produces:
