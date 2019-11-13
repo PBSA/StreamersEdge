@@ -100,14 +100,14 @@ class PaymentService {
     const result = await sequelize.transaction(async (transaction) => {
       const redemptions = await PaypalRedemption.findAll({
         where: {paypalPayoutId: {[Op.eq]: null}}
-      }, {transaction});
+      }, {transaction, raw: true});
 
       if (redemptions.length === 0) {
         return;
       }
 
       const senderBatchId = randomBytes(16).toString('hex');
-      const payout = PaypalPayout.create({senderBatchId}, {transaction});
+      const payout = await PaypalPayout.create({senderBatchId}, {transaction});
 
       await PaypalRedemption.update({
         paypalPayoutId: payout.id
