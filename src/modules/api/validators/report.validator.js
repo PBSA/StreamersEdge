@@ -13,11 +13,9 @@ class ReportValidator extends BaseValidator {
   }
 
   createReportValidation() {
-    const {reportType: {vulgarity, sexist, religious, profilePic}} = profileConstants;
-
     const bodySchema = {
       reportedUserId: Joi.number().integer().required(),
-      reason: Joi.string().valid([vulgarity, sexist, religious, profilePic]).required(),
+      reason: Joi.string().valid(Object.values(profileConstants.reportType)).required(),
       description: Joi.string().min(24).max(1000).required(),
       videoUrl: Joi.string()
     };
