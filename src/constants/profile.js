@@ -14,7 +14,8 @@ module.exports = {
     vulgarity: 'vulgarity-on-stream',
     sexist: 'sexist-comments-on-stream',
     religious: 'offends-my-religious-sentiments',
-    profilePic: 'offensive-profile-pic'
+    profilePic: 'offensive-profile-pic',
+    other: 'other'
   },
   applicationType: ['mac','windows','web','electron','mobile','ios'],
   gamer:'gamer',

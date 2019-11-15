@@ -25,13 +25,13 @@ module.exports = {
         type:  Sequelize.INTEGER
       },
       reason: {
-        type: Sequelize.ENUM(Object.keys(profileConstants.reportType).map((key) => profileConstants.reportType[key]))
+        type: Sequelize.ENUM(Object.values(profileConstants.reportType))
       },
       description: {
         type: Sequelize.STRING,
         allowNull: true
       },
-      videoUrl:{
+      videoUrl: {
         type: Sequelize.STRING,
         allowNull: true
       }
