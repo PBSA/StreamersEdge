@@ -55,7 +55,8 @@ class GoogleController {
           return;
         }
 
-        res.redirect(this.config.frontendCallbackUrl);
+        const newUser = req.session.newUser;
+        res.redirect(`${this.config.frontendCallbackUrl}/${newUser ? 'profile' : ''}`);
 
       });
 
@@ -81,7 +82,7 @@ class GoogleController {
           ...profile._json,
           username: profile._json.email.replace(/@.+/, ''),
           youtube
-        }, accessToken, req.user).then((User) => {
+        }, accessToken, req).then((User) => {
           this.userService.getCleanUser(User).then((user) => done(null, user));
         }).catch((error) => {
           done(error);

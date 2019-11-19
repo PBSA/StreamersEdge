@@ -45,9 +45,9 @@ class FacebookController {
           res.redirect(`${this.config.frontendUrl}?facebook-auth-error=${err.message}`);
           return;
         }
-
-        res.redirect(this.config.frontendCallbackUrl);
-
+        
+        const newUser = req.session.newUser;
+        res.redirect(`${this.config.frontendCallbackUrl}/${newUser ? 'profile' : ''}`);
       });
 
     });
@@ -67,7 +67,7 @@ class FacebookController {
         ...profile._json,
         username: profile._json.first_name.toLowerCase() + profile._json.id,
         picture: profile._json.picture.data.url
-      }, token, req.user).then((User) => {
+      }, token, req).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {
         done(error);
