@@ -426,8 +426,8 @@ class ChallengesController {
   }
 
   async getAllChallenges(user, query) {
-    let challenges = await this.challengeService.getAllChallenges(user.id, query);
-    return Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user.id)));
+    let challenges = await this.challengeService.getAllChallenges(user && user.id, query);
+    return Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user && user.id)));
   }
 
   async getWonChallenges(user, userId) {
