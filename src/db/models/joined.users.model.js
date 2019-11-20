@@ -6,6 +6,7 @@ const {Model} = Sequelize;
  * @property {Number} id
  * @property {Number} challengeId
  * @property {Number} userId
+ * @property {Number} ppyAmount
  * @property {String} joinedAt
  * @property {Boolean} isPayed
  */
@@ -15,6 +16,7 @@ const {Model} = Sequelize;
  * @property {Number} id
  * @property {Number} challengeId
  * @property {Number} userId
+ * @property {Number} ppyAmount
  * @property {String} joinedAt
  * @property {Boolean} isPayed
  * @property {String} updatedAt
@@ -28,6 +30,7 @@ class JoinedUsers extends Model {
       id: this.id,
       challengeId: this.challengeId,
       userId: this.userId,
+      ppyAmount: this.ppyAmount,
       joinedAt: this.joinedAt,
       isPayed: this.isPayed
     };
@@ -45,6 +48,10 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false
+      },
+      ppyAmount: {
+        type: Sequelize.DOUBLE,
+        allowNull: true
       },
       joinedAt: {
         type: Sequelize.DATE,

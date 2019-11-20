@@ -13,8 +13,6 @@ class ChallengeService {
      * @param {ChallengeConditionRepository} opts.challengeConditionRepository
      * @param {ChallengeInvitedUsersRepository} opts.challengeInvitedUsersRepository
      * @param {UserRepository} opts.userRepository
-     * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
-     * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
      * @param {JoinedUsersRepository} opts.joinedUsersRepository
      * @param {WebPushConnection} opts.webPushConnection
      * @param {PeerplaysRepository} opts.peerplaysRepository
@@ -27,8 +25,6 @@ class ChallengeService {
     this.challengeConditionRepository = opts.challengeConditionRepository;
     this.userRepository = opts.userRepository;
     this.challengeInvitedUsersRepository = opts.challengeInvitedUsersRepository;
-    this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
-    this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.webPushConnection = opts.webPushConnection;
     this.dbConnection = opts.dbConnection;
     this.peerplaysRepository = opts.peerplaysRepository;

@@ -20,8 +20,6 @@ class UserService {
      * @param {PeerplaysRepository} opts.peerplaysRepository
      * @param {VerificationTokenRepository} opts.verificationTokenRepository
      * @param {ResetTokenRepository} opts.resetTokenRepository
-     * @param {WhitelistedUsersRepository} opts.whitelistedUsersRepository
-     * @param {WhitelistedGamesRepository} opts.whitelistedGamesRepository
      * @param {MailService} opts.mailService
      * @param {TransactionRepository} opts.transactionRepository
      * @param {FileService} opts.fileService
@@ -37,8 +35,6 @@ class UserService {
     this.peerplaysConnection = opts.peerplaysConnection;
     this.verificationTokenRepository = opts.verificationTokenRepository;
     this.resetTokenRepository = opts.resetTokenRepository;
-    this.whitelistedUsersRepository = opts.whitelistedUsersRepository;
-    this.whitelistedGamesRepository = opts.whitelistedGamesRepository;
     this.mailService = opts.mailService;
     this.fileService = opts.fileService;
     this.googleRepository = opts.googleRepository;
