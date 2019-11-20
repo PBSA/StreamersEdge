@@ -18,6 +18,10 @@ module.exports = {
     other: 'other'
   },
   applicationType: ['mac','windows','web','electron','mobile','ios'],
+  timeFormat: {
+    time12h: '12h',
+    time24h: '24h'
+  },
   gamer:'gamer',
   viewer: 'viewer',
   sponsor:'sponsor'

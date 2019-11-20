@@ -6,12 +6,10 @@ const challengeConstants = require('../../constants/challenge');
  * @typedef {Object} ChallengeModel
  * @property {Number} id
  * @property {String} name
- * @property {Date} startDate
- * @property {Date} endDate
+ * @property {Date} timeToStart
  * @property {String} game
- * @property {String} accessRule
- * @property {Number} ppyAmount
  * @property {String} conditionsText
+ * @property {String} streamLink
  */
 
 /**
@@ -19,13 +17,11 @@ const challengeConstants = require('../../constants/challenge');
  * @property {Number} id
  * @property {String} name
  * @property {Date} createdAt
- * @property {Date} startDate
- * @property {Date} endDate
+ * @property {Date} timeToStart
  * @property {String} game
- * @property {String} accessRule
- * @property {Number} ppyAmount
  * @property {[Number]} invitedUsers
  * @property {String} conditionsText
+ * @property {String} streamLink
  * @property {UserPublicObject} user
  * @property {[ChallengeConditionModel]} conditions
  */
@@ -72,27 +68,18 @@ class ChallengeModel extends Model {
    *    required:
    *      - notifications
    *      - name
-   *      - startDate
+   *      - timeToStart
    *      - game
-   *      - accessRule
-   *      - ppyAmount
+   *      - streamLink
    *    properties:
    *      name:
    *        type: string
-   *      startDate:
+   *      timeToStart:
    *        type: string
    *        format: date
-   *      endDate:
-   *        type: string
-   *        format: date
-   *      accessRule:
-   *        type: string
-   *        enum:
-   *          - invite
-   *          - anyone
-   *      ppyAmount:
-   *        type: number
    *      conditionsText:
+   *        type: string
+   *      streamLink:
    *        type: string
    *      game:
    *        type: string
@@ -220,12 +207,10 @@ class ChallengeModel extends Model {
       id: this.id,
       name: this.name,
       createdAt: this.createdAt,
-      startDate: this.startDate,
-      endDate: this.endDate,
+      timeToStart: this.timeToStart,
       game: this.game,
-      accessRule: this.accessRule,
-      ppyAmount: this.ppyAmount,
       conditionsText: this.conditionsText,
+      streamLink: this.streamLink,
       userId: this.userId
     };
 
@@ -237,10 +222,6 @@ class ChallengeModel extends Model {
       result.conditions = this['challenge-conditions'];
     }
 
-    if (this['challenge-invited-users']) {
-      result.invitedUsers = this['challenge-invited-users'];
-    }
-
     return result;
   }
 }
@@ -249,11 +230,7 @@ const attributes = {
     type: Sequelize.STRING,
     allowNull: false
   },
-  startDate: {
-    type: Sequelize.DATE,
-    allowNull: true
-  },
-  endDate: {
+  timeToStart: {
     type: Sequelize.DATE,
     allowNull: true
   },
@@ -261,16 +238,12 @@ const attributes = {
     type: Sequelize.STRING,
     allowNull: false
   },
-  accessRule: {
-    type: Sequelize.ENUM(...Object.keys(challengeConstants.accessRules)),
-    allowNull: false
-  },
-  ppyAmount: {
-    type: Sequelize.DOUBLE,
-    allowNull: false
-  },
   conditionsText: {
     type: Sequelize.TEXT,
+    allowNull: true
+  },
+  streamLink: {
+    type: Sequelize.STRING,
     allowNull: true
   },
   status: {
@@ -289,7 +262,6 @@ module.exports = {
   associate: (models) => {
     ChallengeModel.belongsTo(models.User.model);
     ChallengeModel.hasMany(models.ChallengeCondition.model);
-    ChallengeModel.hasMany(models.ChallengeInvitedUsers.model);
     ChallengeModel.hasMany(models.JoinedUsers.model);
   },
   get model() {

@@ -1,6 +1,6 @@
 module.exports = {
   types: {
-    challengeCreation: 'challengeCreation',
+    challengeDonate: 'challengeDonate',
     challengeRefund: 'challengeRefund',
     challengeReward: 'challengeReward',
     donate: 'donate',

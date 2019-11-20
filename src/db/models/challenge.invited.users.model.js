@@ -30,10 +30,7 @@ module.exports = {
       modelName: 'challenge-invited-users'
     });
   },
-  associate: (models) => {
-    ChallengeInvitedUsersModel.belongsTo(models.Challenge.model);
-    ChallengeInvitedUsersModel.belongsTo(models.User.model);
-  },
+  associate() {},
   get model() {
     return ChallengeInvitedUsersModel;
   }
