@@ -1,0 +1,32 @@
+version: "2"
+checks:
+  argument-count:
+    enabled: true
+  complex-logic:
+    enabled: true
+  file-lines:
+    enabled: true
+  method-complexity:
+    enabled: true
+  method-count:
+    enabled: true
+  method-lines:
+    enabled: true
+  nested-control-flow:
+    enabled: true
+  return-statements:
+    enabled: true
+  similar-code:
+    enabled: false
+  identical-code:
+    enabled: true
+plugins:
+  eslint:
+    enabled: true
+    exclude_patterns:
+    - "/commitlint.config.js"
+    - "!src/**/*.js"
+    - "!test/**/*.js"
+    channel: "eslint-5"
+    config:
+      config: /.eslintrc.json

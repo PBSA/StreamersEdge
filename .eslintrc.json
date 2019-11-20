@@ -1,39 +1,60 @@
 {
-	"extends": "airbnb-base",
-	"env": { "browser": true, "jest": true },
-	"plugins": ["import"],
-	"rules": {
-		"arrow-parens": ["error", "always"],
-		"padded-blocks": [
-			"error",
-			{ "classes": "always" }
-		],
-		"class-methods-use-this": 0,
-		"max-len": [
-			"error", {
-				"code": 120,
-				"tabWidth": 4,
-				"ignoreUrls": false,
-				"ignoreComments": false,
-				"ignoreRegExpLiterals": true,
-				"ignoreTrailingComments": false,
-				"ignoreStrings": false,
-				"ignoreTemplateLiterals": false,
-				"ignorePattern": "( \\* @property)|( \\* @apiError)|( \\* @apiParam)"
-			}
-		],
-		"newline-per-chained-call": 0,
-		"no-param-reassign": 0,
-		"no-tabs": 0,
-		"no-underscore-dangle": 0,
-		"indent": [
-			"error",
-			"tab",
-			{ "SwitchCase": 1 }
-		],
-		"no-shadow": [
-			"error",
-			{ "allow": ["resolve", "reject", "error"] }
-		]
-	}
+  "plugins": [
+    "prettier"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:node/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "mocha": true
+  },
+  "parserOptions": {"ecmaVersion": 2018},
+  "rules": {
+    "no-throw-literal": "off",
+    "operator-assignment": "off",
+    "no-unused-vars": ["error", { 
+      "vars": "all", "args": "after-used"
+    }],
+    "comma-dangle": "error",
+    "indent": ["error", 2, {"SwitchCase": 1}],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
+    "no-console": "off",
+    "camelcase": "off",
+    "object-curly-spacing": ["error", "never"],
+    "prefer-const": "off",
+    "no-underscore-dangle": "off",
+    "no-param-reassign": "off",
+    "no-plusplus": "off",
+    "no-useless-escape": "off",
+    "no-restricted-properties": "off",
+    "consistent-return": "off",
+    "guard-for-in": "off",
+    "no-loop-func": "off",
+    "curly": ["error", "all"],
+    "brace-style": ["error", "1tbs"],
+    "default-case": "error",
+    "prefer-destructuring": "off",
+    "padding-line-between-statements": [
+        "error",
+        { "blankLine": "always", "prev": "*", "next": "block-like" },
+        { "blankLine": "always", "prev": "block-like", "next": "*" }
+    ],
+    "max-len": ["error", {"code": 150}],
+    "implicit-arrow-linebreak": ["error", "beside"],
+    "no-control-regex": "off",
+    "arrow-parens": ["error", "always"],
+    "node/no-unpublished-require": "off"
+  },
+  "settings": {
+    "import/resolver": "webpack"
+  },
+  "overrides": [
+    {
+      "files": [ "src/**/*.js", "test/**/*.js" ]
+    }
+  ]
 }

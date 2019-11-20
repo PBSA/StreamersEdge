@@ -56,10 +56,15 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env
-
 # next.js build output
 .next
 package-lock.json
+config/local.json
+config/local-test.json
 
+apidoc
+config/local-test.json
+public/images
+public/video
+.idea/
+.DS_Store

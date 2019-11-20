@@ -3,12 +3,34 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const mongoose = require('mongoose');
+const passport = require('passport');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+let swaggerDef = require('./swagger-definition.js');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const MethodNotAllowedError = require('../../errors/method-not-allowed.error');
 const RestError = require('../../errors/rest.error');
-
+/**
+ * @swagger
+ *
+ * definitions:
+ *  SuccessResponse:
+ *    type: object
+ *    properties:
+ *      status:
+ *        type: number
+ *        default: 200
+ *        example: 200
+ *  SuccessEmptyResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            type: boolean
+ *            example: true
+ */
 /**
  * A namespace.
  * @namespace api
@@ -16,123 +38,197 @@ const RestError = require('../../errors/rest.error');
  */
 class ApiModule {
 
-	/**
-	 *
-	 * @param {AppConfig} opts.config
-	 */
-	constructor(opts) {
-		this.config = opts.config;
-		this.app = null;
-		this.server = null;
-	}
+  /**
+   *
+   * @param {AppConfig} opts.config
+   * @param {DbConnection} opts.dbConnection
+   * @param {SmtpConnection} opts.smtpConnection
+   * @param {AuthController} opts.authController
+   * @param {ProfileController} opts.profileController
+   * @param {UsersController} opts.usersController
+   * @param {TwitchController} opts.twitchController
+   * @param {GoogleController} opts.googleController
+   * @param {FacebookController} opts.facebookController
+   * @param {UserRepository} opts.userRepository
+   * @param {ChallengesController} opts.challengesController
+   * @param {PaymentController} opts.paymentController
+   * @param {AdminController} opts.adminController
+   * @param {StreamController} opts.streamController
+   * @param {ReportController} opts.reportController
+   * @param {SteamController} opts.steamController
+   * @param {TransactionController} opts.transactionController
+   * @param {GameController} opts.gameController
+   * @param {NotificationsController} opts.notificationsController
+   */
+  constructor(opts) {
+    this.config = opts.config;
+    this.dbConnection = opts.dbConnection;
+    this.smtpConnection = opts.smtpConnection;
+    this.app = null;
+    this.server = null;
 
-	/**
-	 * Start HTTP server listener
-	 * @return {Promise<void>}
-	 */
-	initModule() {
-		return new Promise((resolve) => {
-			logger.trace('Start HTTP server initialization');
+    this.authController = opts.authController;
+    this.profileController = opts.profileController;
+    this.usersController = opts.usersController;
+    this.twitchController = opts.twitchController;
+    this.facebookController = opts.facebookController;
+    this.googleController = opts.googleController;
+    this.challengesController = opts.challengesController;
+    this.paymentController = opts.paymentController;
+    this.streamController = opts.streamController;
+    this.reportController = opts.reportController;
+    this.steamController = opts.steamController;
+    this.transactionController = opts.transactionController;
+    this.adminController = opts.adminController;
+    this.gameController = opts.gameController;
+    this.notificationsController = opts.notificationsController;
 
-			const sessionStore = new MongoStore({ mongooseConnection: mongoose.connection });
+    this.userRepository = opts.userRepository;
+  }
 
-			this.app = express();
-			this.app.use(bodyParser.urlencoded({ extended: true }));
-			this.app.use(bodyParser.json());
+  /**
+   * Start HTTP server listener
+   * @return {Promise<void>}
+   */
+  initModule() {
+    return new Promise((resolve) => {
+      logger.trace('Start HTTP server initialization');
 
-			if (this.config.cors) {
-				const corsOptions = {
-					origin: (origin, callback) => {
-						callback(null, true);
-					},
-					credentials: true,
-					methods: ['GET', 'PUT', 'POST', 'OPTIONS', 'DELETE', 'PATCH'],
-					headers: ['x-user', 'X-Signature', 'accept', 'content-type'],
-				};
+      this.app = express();
+      this.app.use(bodyParser.urlencoded({extended: true}));
+      this.app.use(bodyParser.json());
 
-				this.app.use(cors(corsOptions));
-				this.app.options('*', cors());
-			}
+      if (this.config.cors) {
+        const corsOptions = {
+          origin: (origin, callback) => {
+            callback(null, true);
+          },
+          credentials: true,
+          methods: ['GET', 'PUT', 'POST', 'OPTIONS', 'DELETE', 'PATCH'],
+          headers: ['x-user', 'X-Signature', 'accept', 'content-type']
+        };
 
-			this.app.use(session({
-				name: 'crypto.sid',
-				secret: this.config.session_secret,
-				cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }, // 7 days
-				resave: false,
-				saveUninitialized: false,
-				rolling: true,
-				store: sessionStore,
-			}));
+        this.app.use(cors(corsOptions));
+        this.app.options('*', cors());
+      }
 
-			this.server = this.app.listen(this.config.port, () => {
-				logger.info(`API APP REST listen ${this.config.port} Port`);
-				this._initRestRoutes();
-				resolve();
-			});
-		});
-	}
+      const SessionStore = new SequelizeStore({
+        db: this.dbConnection.sequelize
+      });
 
-	/**
-	 * Bind routers
-	 */
-	_initRestRoutes() {
-		[].forEach((controller) => controller.init(this.addRestHandler.bind(this)));
+      this.app.use(session({
+        name: 'crypto.sid',
+        secret: this.config.sessionSecret,
+        cookie: {maxAge: 7 * 24 * 60 * 60 * 1000}, // 7 days
+        resave: false,
+        saveUninitialized: false,
+        rolling: true,
+        store: SessionStore
+      }));
 
-		if (process.env.NODE_ENV === 'development') {
-			this.app.use('/apidoc', express.static('apidoc'));
-		}
-		this.addRestHandler('use', '*', () => {
-			throw new MethodNotAllowedError();
-		});
-	}
+      // SessionStore.sync();
 
-	/** @typedef {('get','post','patch','use')} Method */
+      this.app.use(passport.initialize());
+      this.app.use(passport.session());
 
-	/**
-	 * @param {Method} method
-	 * @param {String} route
-	 * @param args
-	 */
-	addRestHandler(method, route, ...args) {
-		const action = args.pop();
-		this.app[method](route, async (req, res) => {
-			try {
-				await args.reduce(async (previousPromise, handler) => {
-					await previousPromise;
-					return handler()(req, res);
-				}, Promise.resolve());
+      passport.serializeUser((user, done) => {
+        done(null, user.id);
+      });
+      passport.deserializeUser((user, done) => {
+        this.userRepository.findByPk(user).then((_user) => {
+          done(null, _user);
+        });
+      });
 
-				const result = await action({
-					form: req.form,
-					user: req.user,
-					targetUser: req.targetUser,
-					req,
-				});
+      if (process.env.NODE_ENV != 'production') {
+        this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc({
+          definition: swaggerDef,
+          apis: swaggerDef.apis
+        })));
+      }
 
-				return res.status(200).json({
-					result: result || null,
-					status: 200,
-				});
-			} catch (error) {
-				let restError = error;
-				if (!(error instanceof RestError)) {
-					logger.error(error);
-					restError = {
-						status: 500,
-						message: 'server side error',
-					};
-				}
-				return res.status(restError.status).json({
-					error: restError.details || restError.message,
-					status: restError.status,
-				});
-			}
-		});
-	}
+      this.server = this.app.listen(this.config.port, () => {
+        logger.info(`API APP REST listen ${this.config.port} Port`);
+        this._initRestRoutes();
+        resolve();
+      });
+    });
+  }
 
-	close() {
-		this.server.close();
-	}
+  /**
+   * Bind routers
+   */
+  _initRestRoutes() {
+    [
+      this.authController,
+      this.profileController,
+      this.usersController,
+      this.challengesController,
+      this.twitchController,
+      this.facebookController,
+      this.googleController,
+      this.paymentController,
+      this.steamController,
+      this.reportController,
+      this.streamController,
+      this.transactionController,
+      this.adminController,
+      this.gameController,
+      this.notificationsController
+    ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
+      this.addRestHandler(...route);
+    }));
+
+    this.addRestHandler('use', '*', () => {
+      throw new MethodNotAllowedError();
+    });
+  }
+
+  /** @typedef {('get','post','patch','use')} Method */
+
+  /**
+   * @param {Method} method
+   * @param {String} route
+   * @param args
+   */
+  addRestHandler(method, route, ...args) {
+    const action = args.pop();
+    this.app[method](route, async (req, res) => {
+      try {
+        await args.reduce(async (previousPromise, handler) => {
+          await previousPromise;
+          return handler()(req, res);
+        }, Promise.resolve());
+
+        const result = await action(req.user, req.pure, req, res);
+        return res.status(200).json({
+          result: result || null,
+          status: 200
+        });
+      } catch (error) {
+        let restError = error;
+
+        if (!(error instanceof RestError)) {
+          /* istanbul ignore next */
+          logger.error(error);
+          /* istanbul ignore next */
+          restError = {
+            status: 500,
+            message: 'server side error'
+          };
+        }
+
+        return res.status(restError.status).json({
+          error: restError.details || restError.message,
+          status: restError.status
+        });
+      }
+    });
+  }
+
+  close() {
+    this.server.close();
+  }
 
 }
 

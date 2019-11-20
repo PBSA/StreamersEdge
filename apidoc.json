@@ -5,10 +5,6 @@
 		"forceLanguage": "en",
 		"withCompare": true,
 		"withGenerator": true
-	},
-  "header": {
-    "title": "Api Explanation",
-    "filename": "docs/api-explanation.md"
-  }
+	}
 }
 

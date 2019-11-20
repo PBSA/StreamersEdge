@@ -1,0 +1,55 @@
+{
+  "db": {
+    "user": "DB_USER",
+    "password": "DB_PASSWORD",
+    "host": "DB_HOST",
+    "port": "DB_PORT",
+    "database": "DB_DATABASE"
+  },
+  "sessionSecret": "SESSION_SECRET",
+  "twitch": {
+    "clientId": "TWITCH_CLIENT_ID",
+    "clientSecret": "TWITCH_CLIENT_SECRET"
+  },
+  "google": {
+    "clientId": "GOOGLE_CLIENT_ID",
+    "clientSecret": "GOOGLE_CLIENT_SECRET"
+  },
+  "facebook": {
+    "clientId": "FACEBOOK_CLIENT_ID",
+    "clientSecret": "FACEBOOK_CLIENT_SECRET"
+  },
+  "raven": {
+    "url": "RAVEN_URL"
+  },
+  "backendUrl": "BACKEND_URL",
+  "frontendUrl": "FRONTEND_URL",
+  "mailer": {
+    "host": "MAILER_HOST",
+    "auth": {
+      "user": "MAILER_AUTH_USER",
+      "pass": "MAILER_AUTH_PASS"
+    }
+  },
+  "paypal": {
+    "clientId": "PAYPAL_CLIENT_ID",
+    "secret": "PAYPAL_SECRET",
+    "environment": "PAYPAL_ENV"
+  },
+  "coinmarketcap": {
+    "apiKey": "COINMARKETCAP_API_KEY"
+  },
+  "peerplays": {
+    "paymentAccountID": "PEERPLAYS_PAYMENT_ACCOUNT_ID",
+    "paymentAccountWIF": "PEERPLAYS_PAYMENT_ACCOUNT_WIF",
+    "paymentReceiver": "PEERPLAYS_PAYMENT_RECEIVER",
+    "peerplaysWS": "PEERPLAYS_WS"
+  },
+  "vapid": {
+    "publicKey": "VAPID_PUBLIC_KEY",
+    "privateKey": "VAPID_PRIVATE_KEY"
+  },
+  "pubg": {
+    "apiKey": "PUBG_API_KEY"
+  }
+}

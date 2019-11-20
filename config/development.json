@@ -1,3 +1,63 @@
 {
-  "logLevel": "info"
+  "logLevel": "info",
+  "backendUrl": "http://localhost:3000",
+  "frontendUrl": "http://localhost:8082",
+  "frontendCallbackUrl": "http://localhost:8082/callback",
+  "pubg": {
+    "apiKey": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlNzI1NDM2MC04MDkxLTAxMzctOWRkZC0yMzYxNTcxOGIyZmMiLCJpc3MiOiJnYW1lbG9ja2VyIiwiaWF0IjoxNTYyMjQ4Nzg1LCJwdWIiOiJibHVlaG9sZSIsInRpdGxlIjoicHViZyIsImFwcCI6ImRldnMtcGJzYS1pbmZvIn0.r4um-L6PNmusR1Fh32b4JVJLefeggvF8TKjXsxTSA4s"
+  },
+  "leagueOfLegends": {
+    "apiKey": "RGAPI-4290b649-c710-46ad-a7f8-6588fd2141ee"
+  },
+  "peerplays": {
+    "peerplaysWS": "ws://ec2-99-79-98-229.ca-central-1.compute.amazonaws.com:8090",
+    "peerplaysFaucetURL": "http://ec2-99-79-98-229.ca-central-1.compute.amazonaws.com:5000/api/v1/accounts",
+    "referrer": "1.2.0",
+    "sendAssetId": "1.3.1",
+    "paymentAccountID": "1.2.41",
+    "paymentAccountWIF": "5J52sE1gTD2EfkAPWxCaTBvS3ihYTwdSmNsYktVPVYigS24Q3CP",
+    "paymentReceiver": "1.2.40",
+    "feeReceiver": "1.2.6",
+    "paymentReceiverWIF": "5J4zVhG7yeZnHj4r25GJryw8LVvcbP8rxhW5AbXoEr2BUzmaW8F"
+  },
+  "paypal": {
+    "clientId": "AYq8duooANktXC0Tu59UbFibBnls8oyOSBKK1Dse4jXKSq-_sMcgTxqnYK2HN-BDQ2ulo23Ltam90cGl",
+    "secret": "EImdKtdNPiO2_6XhSNbcD04F5hAtr3f3y3P0cZQExqO0l547flbuEE3pVky2YmRFjQpNpcMd3lXRH-VS",
+    "environment": "sandbox"
+  },
+  "coinmarketcap": {
+    "apiKey": "1a087c6d-33ad-4ffd-9771-8e329f4580b9"
+  },
+  "vapid": {
+    "publicKey": "BH9lqrP9XUcs3nobzrXcbmfTYXNC1o0K_0AGuSvaeLQbvghstkH3qKUAy98pLvsPGqlKdhwtKfHdxIqu4SlkUw8",
+    "privateKey": "sNS9sOpOIWFJEhzfZD2pfqXMiz6k7IJCRwhr2w-zhps"
+  },
+  "twitch": {
+    "clientId": "499iaseqxq621bjrxwsed7r66fbb7z",
+    "clientSecret": "r330delp3et0n6vfht7h5tj1fassmf"
+  },
+  "google": {
+    "clientId": "457241315847-53tlujrnj4oj66sehd37rqqjjmgdh1r6.apps.googleusercontent.com",
+    "clientSecret": "1vkXPzTcNew4Q4pKmiPgVFFp"
+  },
+  "facebook": {
+    "clientId": "2534442443233970",
+    "clientSecret": "271bd8b8a045cf88f42b6ba36765a337"
+  },
+  "raven": {
+    "enabled": true,
+    "url": ""
+  },
+  "swagger": {
+    "host": "localhost:3000",
+    "schemes": [
+      "http"
+    ]
+  },
+  "db": {
+    "database": "streamersedge"
+  },
+  "s3": {
+    "bucket": "streamersedge/profile_images"
+  }
 }

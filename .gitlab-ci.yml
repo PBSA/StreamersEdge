@@ -1,28 +1,80 @@
 stages:
   - test
-  - build
+  - swagger
+  - deploy
 
 test:
-  image: node:10.15-alpine
+  image: node:10.16-alpine
   stage: test
   variables:
-    DATABASE_TEST_URL: "mongodb://mongo/dbname"
+    DB_USER: postgres
+    DB_PASSWORD: ""
+    DB_HOST: postgres
+    DB_PORT: 5432
+    DB_DATABASE: streamers-edge-test
+    POSTGRES_DB: streamers-edge-test
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: ""
+    TWITCH_CLIENT_ID: $TEST_TWITCH_CLIENT_ID
+    TWITCH_CLIENT_SECRET: $TEST_TWITCH_CLIENT_SECRET
+    GOOGLE_CLIENT_ID: $TEST_GOOGLE_CLIENT_ID
+    GOOGLE_CLIENT_SECRET: $TEST_GOOGLE_CLIENT_SECRET
+    FACEBOOK_CLIENT_ID: $TEST_FACEBOOK_CLIENT_ID
+    FACEBOOK_CLIENT_SECRET: $TEST_FACEBOOK_CLIENT_SECRET
+    PUBG_API_KEY: $TEST_PUBG_API_KEY
+    PEERPLAYS_PAYMENT_ACCOUNT_WIF: $TEST_PEERPLAYS_PAYMENT_ACCOUNT_WIF
+    COINMARKETCAP_API_KEY: $TEST_COINMARKETCAP_API_KEY
+    AWS_ACCESS_KEY_ID: $TEST_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $TEST_AWS_SECRET_ACCESS_KEY
+    AWS_DEFAULT_REGION: $TEST_AWS_DEFAULT_REGION
+    
   services:
-    - mongo
+    - postgres:latest
+    - mesosphere/aws-cli:latest
+    
   cache:
     key: $CI_COMMIT_REF_NAME
     paths:
       - node_modules
+  artifacts:
+    paths:
+      - docs/
   script:
-    - apk --no-cache add make gcc g++ python git
-    - npm config set unsafe-perm true
-    - npm i
-    - npm run audit
-    - npm run lint
-    - npm run test
+    - apk add python make g++
+    - npm ci
+    - npm run db-migrate-all
+    - npm run test:audit
+    - npm run test:lint
+    - npm run test:coverage
+    - npm run build:doc
   tags:
     - docker
   only:
     - merge_requests
     - develop
     - master
+    - web
+
+swagger:
+  stage: swagger
+  dependencies:
+    - test
+  script:
+    - mkdir -p "/var/www/swagger/$CI_COMMIT_REF_NAME/$CI_COMMIT_SHORT_SHA"
+    - cp docs/swagger.yaml "/var/www/swagger/$CI_COMMIT_REF_NAME/$CI_COMMIT_SHORT_SHA"
+    - cp docs/swagger.yaml "/var/www/swagger/$CI_COMMIT_REF_NAME"
+  tags:
+    - swagger
+
+deployToDev:
+  stage: deploy
+  script:
+    - bash deploy/deployToDev.sh
+  only:
+    - develop
+
+deployToStaging:
+  stage: deploy
+  script:
+    - bash deploy/deployToStaging.sh
+  when: manual

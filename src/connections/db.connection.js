@@ -1,6 +1,6 @@
 const logger = require('log4js').getLogger('db.connection');
-const mongoose = require('mongoose');
-
+const Sequelize = require('sequelize');
+const fs = require('fs');
 const BaseConnection = require('./abstracts/base.connection');
 
 /**
@@ -10,29 +10,57 @@ const BaseConnection = require('./abstracts/base.connection');
  */
 class DbConnection extends BaseConnection {
 
-	/** @param {{config:AppConfig}} opts */
-	constructor(opts) {
-		super();
-		const {
-			user, password, host, port, database,
-		} = opts.config.db;
-		this._url = `mongodb://${(user) ? (`${user}:${password}@`) : ''}${host}:${port}/${database}`;
-		mongoose.Promise = global.Promise;
-	}
+  /** @param {{config:AppConfig}} opts */
+  constructor(opts) {
+    super();
+    const {
+      user, password, host, port, database
+    } = opts.config.db;
+    this._url = `postgres://${(user) ? (`${user}:${password}@`) : ''}${host}:${port}/${database}`;
+    this.sequelize = null;
+  }
 
-	/** @returns {Promise<Mongoose.Connection>} */
-	async connect() {
-		logger.trace('Start connect to db');
-		mongoose.set('useCreateIndex', true);
-		const connection = await mongoose.connect(this._url, { useNewUrlParser: true });
-		logger.info('DB is connected');
-		return connection;
-	}
+  /** @returns {Promise<*>} */
+  async connect() {
+    logger.trace('Start connect to db');
 
-	/** @returns {Promise<void>} */
-	disconnect() {
-		return mongoose.connection.close();
-	}
+    this.sequelize = new Sequelize(this._url, {
+      logging: false
+    });
+    logger.info('DB is connected');
+    await this.initModels();
+    return this.sequelize;
+  }
+
+  async initModels() {
+    const models = {};
+    await Promise.all(fs.readdirSync('src/db/models').map(async (file) => {
+      const Model = require(`../db/models/${file}`);
+      Model.init(this.sequelize);
+      const name = file.replace(/\.model\.js/, '').toLowerCase()
+        .split('.')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join('');
+      models[name] = Model;
+    }));
+    Object.keys(models).forEach((name) => {
+      models[name].associate(models);
+    });
+    // await this.sequelize.sync();
+  }
+
+  /** @returns {Promise<void>} */
+  disconnect() {
+    return this.sequelize.close();
+  }
+
+  /**
+   *
+   * @return {null|Sequelize}
+   */
+  getConnection(){
+    return this.sequelize;
+  }
 
 }
 
