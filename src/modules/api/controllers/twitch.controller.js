@@ -46,7 +46,8 @@ class TwitchController {
           return;
         }
 
-        res.redirect(this.config.frontendCallbackUrl);
+        const newUser = req.session.newUser;
+        res.redirect(`${this.config.frontendCallbackUrl}/${newUser ? 'profile' : ''}`);
 
       });
 
@@ -68,7 +69,7 @@ class TwitchController {
         username: profile.username,
         email: profile.email,
         picture: profile._json.profile_image_url
-      }, accessToken, req.user).then((User) => {
+      }, accessToken, req).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {
         done(error);

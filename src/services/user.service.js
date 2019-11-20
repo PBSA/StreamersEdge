@@ -124,24 +124,29 @@ class UserService {
      * @param {String} network
      * @param account
      * @param {String} accessToken
-     * @param {UserModel|null} LoggedUser
+     * @param {} req
      * @returns {Promise<UserModel>}
      */
-  async getUserBySocialNetworkAccount(network, account, accessToken, LoggedUser = null) {
+  async getUserBySocialNetworkAccount(network, account, accessToken, req) {
+    const loggedUser = req.user;
+
     const {id, email, picture, username, youtube} = account;
     const UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
 
-    if (UserWithNetworkAccount && LoggedUser && LoggedUser.id !== UserWithNetworkAccount.id) {
+    if (UserWithNetworkAccount && loggedUser && loggedUser.id !== UserWithNetworkAccount.id) {
       throw new Error('this account is already connected to another profile');
     }
 
-    if (LoggedUser) {
-      return await this.connectSocialNetwork(network, account, LoggedUser);
+    if (loggedUser) {
+      return await this.connectSocialNetwork(network, account, loggedUser);
     }
 
     if (UserWithNetworkAccount) {
       return UserWithNetworkAccount;
     }
+
+    req.session.newUser = true;
+    req.session.save();
 
     const emailIsUsed = email && await this.userRepository.model.count({where: {email}});
     const User = await this.createUserForSocialNetwork(username);

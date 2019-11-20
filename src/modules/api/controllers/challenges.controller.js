@@ -159,7 +159,7 @@ class ChallengesController {
        *      - name: userId
        *        in: path
        *        required: true
-       *        type: string 
+       *        type: string
        *    responses:
        *      200:
        *        description: List of won challenges
@@ -412,7 +412,11 @@ class ChallengesController {
 
   async fillChallengeDetails(challenge, userId) {
     challenge.conditions = challenge['challenge-conditions'];
-    challenge.joined = await this.joinedUsersRepository.hasUserJoined(userId, challenge.id);
+
+    if(userId) {
+      challenge.joined = await this.joinedUsersRepository.hasUserJoined(userId, challenge.id);
+    }
+
     challenge.joinedUsers = await this.joinedUsersRepository.getForChallenge(challenge.id);
 
     delete challenge['challenge-invited-users'];
@@ -422,8 +426,8 @@ class ChallengesController {
   }
 
   async getAllChallenges(user, query) {
-    let challenges = await this.challengeService.getAllChallenges(user.id, query);
-    return Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user.id)));
+    let challenges = await this.challengeService.getAllChallenges(user && user.id, query);
+    return Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user && user.id)));
   }
 
   async getWonChallenges(user, userId) {

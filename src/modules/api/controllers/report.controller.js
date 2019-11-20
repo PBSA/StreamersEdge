@@ -16,6 +16,8 @@
  *        type: string
  *      description:
  *        type: string
+ *        minLength: 24
+ *        maxLength: 1000
  *      videoUrl:
  *        type: string
  *
