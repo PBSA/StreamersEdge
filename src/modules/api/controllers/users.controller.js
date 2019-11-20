@@ -180,40 +180,6 @@ class UsersController {
         this.authValidator.loggedOnly,
         this.userValidator.changeNotificationStatus,
         this.changeNotificationStatus.bind(this)
-      ],
-      /**
-       * @swagger
-       *
-       * /users/setInvitation:
-       *  patch:
-       *    description: Change invitation status
-       *    produces:
-       *      - application/json
-       *    tags:
-       *      - User
-       *    parameters:
-       *      - name: invitations-status
-       *        in: body
-       *        required: true
-       *        schema:
-       *          $ref: '#/definitions/UsersChangeInvitationsStatus'
-       *    responses:
-       *      200:
-       *        description: Change result
-       *      401:
-       *        description: Error user unauthorized
-       *        schema:
-       *          $ref: '#/definitions/UnauthorizedError'
-       *      400:
-       *        description: Error form validation
-       *        schema:
-       *          $ref: '#/definitions/ValidateError'
-       */
-      [
-        'patch', '/api/v1/users/setInvitation',
-        this.authValidator.loggedOnly,
-        this.userValidator.changeInvitationStatus,
-        this.changeInvitationStatus.bind(this)
       ]
     ];
   }
@@ -238,21 +204,6 @@ class UsersController {
     } catch (e) {
       if (e.message === this.userService.errors.NOTIFICATION_PREFERENCE_NOT_FOUND) {
         throw new RestError('', 400, {image: [{message: 'Notification Preference Required'}]});
-      }
-    }
-  }
-
-  async changeInvitationStatus(user, status) {
-    try{
-      return await this.userService.changeInvitationStatus(user, status);
-    } catch (e) {
-      switch (e.message) {
-        case this.userService.errors.INVITED_USERS_NOT_FOUND:
-          throw new RestError('Invited users required', 400);
-        case this.userService.errors.INVITED_GAME_NOT_FOUND:
-          throw new RestError('Games required', 400);
-        default:
-          throw new RestError(e.message, 400);
       }
     }
   }

@@ -6,7 +6,7 @@ const BigNumber = require('bignumber.js');
 const {Login} = require('peerplaysjs-lib');
 const RestError = require('../errors/rest.error');
 const {types: txTypes} = require('../constants/transaction');
-const invitationConstants = require('../constants/invitation');
+const {userType} = require('../constants/profile');
 const PeerplaysNameExistsError = require('./../errors/peerplays-name-exists.error');
 const logger = require('log4js').getLogger('user.service');
 
@@ -47,9 +47,7 @@ class UserService {
       TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
       PEERPLAYS_ACCOUNT_MISSING: 'PEERPLAYS_ACCOUNT_MISSING',
       INVALID_RECEIVER_ACCOUNT: 'INVALID_RECEIVER_ACCOUNT',
-      INVALID_PPY_AMOUNT: 'INVALID_PPY_AMOUNT',
-      INVITED_USERS_NOT_FOUND: 'INVITED_USERS_NOT_FOUND',
-      INVITED_GAME_NOT_FOUND: 'INVITED_GAME_NOT_FOUND'
+      INVALID_PPY_AMOUNT: 'INVALID_PPY_AMOUNT'
     };
 
     this.RESET_TOKEN_TIME_INTERVAL = 10;
@@ -155,6 +153,10 @@ class UserService {
     User.googleName = network === 'google' ? username : '';
     User.facebook = network === 'facebook' ? username : '';
     User.youtube = youtube;
+    
+    if(network == 'twitch' && User.pubgId) {
+      User.userType =  userType.gamer;
+    }
 
     const peerplaysPassword = `${User.username}-${accessToken}`;
     const peerplaysAccount = await this.createPeerplaysAccountForSocialNetwork(User.username, peerplaysPassword);
@@ -179,6 +181,10 @@ class UserService {
 
     if (network === 'twitch') {
       User.twitchUserName = username;
+      
+      if(User.pubgId) {
+        User.userType =  userType.gamer;
+      }
     } else if (network === 'google') {
       User.googleName = username;
     } else if (network === 'facebook') {
@@ -234,6 +240,10 @@ class UserService {
       await this.mailService.sendMailForChangeEmail(newEmail, token);
       // delete the email property as we want to change the email only after it has been verified
       delete updateObject.email;
+    }
+
+    if(Object.keys(updateObject).includes('steamId') && User.twitchId) {
+      User.userType = userType.gamer;
     }
 
     // copy over properties from updateObject to the User
@@ -440,69 +450,6 @@ class UserService {
 
     return updatedNotification;
 
-  }
-
-  /**
-     * Change invitation status of user
-     *
-     * @param user
-     * @param status
-     * @returns {Promise<Array>}
-     */
-  async changeInvitationStatus(user, status) {
-
-    if(status.invitations.toLowerCase() === 'users' && (status.users === undefined || status.users === null || status.users.length <1)){
-      throw new Error(this.errors.INVITED_USERS_NOT_FOUND);
-    }
-
-    if(status.invitations.toLowerCase() === 'games' && (status.games === undefined || status.games === null || status.games.length <1)){
-      throw new Error(this.errors.INVITED_GAME_NOT_FOUND);
-    }
-
-    return await this.dbConnection.sequelize.transaction(async (tx) => {
-      const updatedInvitation = await this.userRepository.updateInvitation(user.id, status.invitations, status.minBounty);
-
-      if (!updatedInvitation[0]) {
-        throw new Error(this.errors.USER_NOT_FOUND);
-      }
-
-      switch (status.invitations) {
-        case invitationConstants.invitationStatus.users: {
-          const users = status.users.map((userId) => ({
-            'toUser': user.id,
-            'fromUser': userId
-          }));
-          await Promise.all([this.whitelistedUsersRepository.destroyByToUserId(user.id, tx),
-            this.whitelistedUsersRepository.bulkCreateFromUsers(users, tx)]);
-
-          return updatedInvitation;
-        }
-
-        case invitationConstants.invitationStatus.games: {
-          const games = status.games.map((game) => ({
-            'toUser': user.id,
-            'fromGame': game
-          }));
-          await Promise.all([this.whitelistedGamesRepository.destroyByToUserId(user.id, tx),
-            this.whitelistedUsersRepository.destroyByToUserId(user.id, tx),
-            this.whitelistedGamesRepository.bulkCreateFromGames(games, tx)]);
-          return updatedInvitation;
-        }
-
-        case invitationConstants.invitationStatus.all: 
-        /* falls through */
-
-        case invitationConstants.invitationStatus.none: {
-          await Promise.all([this.whitelistedGamesRepository.destroyByToUserId(user.id, tx),
-            this.whitelistedUsersRepository.destroyByToUserId(user.id, tx)
-          ]);
-          return updatedInvitation;
-        }
-
-        default:
-          return updatedInvitation;
-      }
-    });
   }
 
   async getUserYoutubeLink(tokens) {
