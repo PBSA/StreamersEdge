@@ -19,7 +19,6 @@ const challengeConstants = require('../../constants/challenge');
  * @property {Date} createdAt
  * @property {Date} timeToStart
  * @property {String} game
- * @property {[Number]} invitedUsers
  * @property {String} conditionsText
  * @property {String} streamLink
  * @property {UserPublicObject} user

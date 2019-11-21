@@ -28,10 +28,6 @@ class ChallengeRepository extends BasePostgresRepository {
     return {
       include:[
         {
-          model:invitedUsersModel, as:'challenge-invited-users',
-          required:false
-        },
-        {
           model:userModel,
           attributes: ['username','avatar']
         },
@@ -40,7 +36,7 @@ class ChallengeRepository extends BasePostgresRepository {
           required: false
         }
       ],
-      group: ['challenges.id','challenge-invited-users.id','challenge-conditions.id','user.id'],
+      group: ['challenges.id','challenge-conditions.id','user.id'],
       order: [ orderQuery || 'id']
     };
   }
@@ -68,19 +64,9 @@ class ChallengeRepository extends BasePostgresRepository {
       searchList.push({'$user.username$': {[Op.iLike]: `%${searchText}%`}});
     }
 
-    const conditions = [];
-    conditions.push({accessRule: 'anyone'});
-
-    if(id){
-      conditions.push({['$challenge-invited-users.userId$']: id});
-    }
-
     return this.model.findAll({
       where: {
-        [Op.and] : [
-          {[Op.or]: conditions},
-          {[Op.or]: searchList}
-        ]
+        [Op.or]: searchList
       },
       ...this.getFindParams(orderQuery)
     });

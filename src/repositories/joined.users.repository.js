@@ -1,6 +1,7 @@
 const {model} = require('../db/models/joined.users.model');
 const {model: UserModel} = require('../db/models/user.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
+const Sequelize = require('sequelize');
 
 class JoinedUsersRepository extends BasePostgresRepository {
 
@@ -34,7 +35,9 @@ class JoinedUsersRepository extends BasePostgresRepository {
       },
       include: [{
         model: UserModel
-      }]
+      }],
+      attributes: [[Sequelize.fn('sum', Sequelize.col('ppyAmount')), 'totalDonation']],
+      group : ['user.id']
     }).map((joinedUser) => ({
       ...joinedUser.toJSON(),
       user: joinedUser.user ? joinedUser.user.getPublic() : null

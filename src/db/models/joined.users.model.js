@@ -31,7 +31,7 @@ class JoinedUsers extends Model {
       challengeId: this.challengeId,
       userId: this.userId,
       ppyAmount: this.ppyAmount,
-      joinedAt: this.joinedAt,
+      createdAt: this.createdAt,
       isPayed: this.isPayed
     };
   }
@@ -52,11 +52,6 @@ module.exports = {
       ppyAmount: {
         type: Sequelize.DOUBLE,
         allowNull: true
-      },
-      joinedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW
       }
     }, {
       sequelize,
