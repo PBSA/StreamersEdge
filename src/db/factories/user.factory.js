@@ -1,6 +1,5 @@
 const Faker = require('faker');
 const profileConstants = require('../../constants/profile');
-const invitationConstants = require('../../constants/invitation');
 const Lodash = require('lodash');
 const Bcrypt = require('bcrypt');
 
@@ -18,9 +17,6 @@ class UserFactory {
     userType = Lodash.sample(
       Object.values(profileConstants.userType)),
     notifications = true,
-    invitations = Lodash.sample(
-      Object.values(
-        invitationConstants.invitationStatus)),
     avatar = Faker.image.avatar(),
     pubgUsername = Faker.internet.userName(),
     createdAt = new Date(),
@@ -40,7 +36,6 @@ class UserFactory {
       bitcoinAddress,
       userType,
       notifications,
-      invitations,
       avatar,
       pubgUsername,
       createdAt, updatedAt,
