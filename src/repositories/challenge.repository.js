@@ -28,10 +28,6 @@ class ChallengeRepository extends BasePostgresRepository {
     return {
       include:[
         {
-          model:invitedUsersModel, as:'challenge-invited-users',
-          required:false
-        },
-        {
           model:userModel,
           attributes: ['username','avatar']
         },
@@ -40,7 +36,7 @@ class ChallengeRepository extends BasePostgresRepository {
           required: false
         }
       ],
-      group: ['challenges.id','challenge-invited-users.id','challenge-conditions.id','user.id'],
+      group: ['challenges.id','challenge-conditions.id','user.id'],
       order: [ orderQuery || 'id']
     };
   }
