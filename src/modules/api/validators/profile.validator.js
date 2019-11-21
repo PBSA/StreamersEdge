@@ -44,6 +44,7 @@ class ProfileValidator extends BaseValidator {
       facebookId: Joi.string().allow(null),
       bitcoinAddress: Joi.string().bitcoinAddress().allow(''),
       pubgUsername: Joi.string().allow(''),
+      steamId: Joi.string().allow(null),
       leagueOfLegends: Joi.object({
         summonerName: Joi.string(),
         realm: Joi.string().valid(leagueOfLegendsRealms)
