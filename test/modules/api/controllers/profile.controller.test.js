@@ -32,30 +32,30 @@ describe('GET /api/v1/profile', () => {
     isError(response, 401);
   });
 
-  // it('should success. User logged', async () => {
-  //   await login(agent, null, apiModule);
-  //   const response = await agent.get('/api/v1/profile');
-  //   isSuccess(response);
-  //   assert.deepEqual(response.body.result, {
-  //     id: response.body.result.id,
-  //     username: 'test-global',
-  //     email: 'testglobal@email.com',
-  //     googleName: null,
-  //     twitchUserName: null,
-  //     userType: null,
-  //     pubgUsername: null,
-  //     leagueOfLegendsAccountId: null,
-  //     leagueOfLegendsRealm: null,
-  //     avatar: '',
-  //     invitations: 'all',
-  //     notifications: true,
-  //     youtube: '',
-  //     twitch: '',
-  //     facebook: '',
-  //     peerplaysAccountName: 'se-test-global',
-  //     bitcoinAddress: ''
-  //   });
-  //});
+  it('should success. User logged', async () => {
+    await login(agent, null, apiModule);
+    const response = await agent.get('/api/v1/profile');
+    isSuccess(response);
+    assert.deepEqual(response.body.result, {
+      id: response.body.result.id,
+      username: 'test-global',
+      email: 'testglobal@email.com',
+      googleName: null,
+      twitchUserName: null,
+      userType: 'gamer',
+      pubgUsername: null,
+      leagueOfLegendsAccountId: null,
+      leagueOfLegendsRealm: null,
+      avatar: '',
+      notifications: true,
+      youtube: '',
+      twitch: '',
+      facebook: '',
+      peerplaysAccountName: 'se-test-global',
+      bitcoinAddress: '',
+      timeFormat: '12h'
+    });
+  });
 
 });
 

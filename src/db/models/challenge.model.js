@@ -142,7 +142,12 @@ class ChallengeModel extends Model {
    *          joinedUsers:
    *            type: array
    *            items:
-   *              $ref: '#/definitions/User'
+   *              type: object
+   *              properties:
+   *                totalDonation:
+   *                  type: number
+   *                user:
+   *                  $ref: '#/definitions/User'
    *  TransactionObject:
    *    type: object
    *    required:
