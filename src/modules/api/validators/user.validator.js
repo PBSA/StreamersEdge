@@ -2,8 +2,6 @@ const Joi = require('./abstract/joi.form');
 const BaseValidator = require('./abstract/base.validator');
 const ValidateError = require('./../../../errors/validate.error');
 const profileConstants = require('../../../constants/profile');
-const invitationConstants = require('../../../constants/invitation');
-const gamesConstants = require('../../../constants/games');
 
 class UserValidator extends BaseValidator {
 
@@ -24,7 +22,6 @@ class UserValidator extends BaseValidator {
     this.banUser = this.banUser.bind(this);
     this.getUsersWithBansHistory = this.getUsersWithBansHistory.bind(this);
     this.changeNotificationStatus = this.changeNotificationStatus.bind(this);
-    this.changeInvitationStatus = this.changeInvitationStatus.bind(this);
     this.unbanUser = this.unbanUser.bind(this);
   }
 
@@ -125,17 +122,6 @@ class UserValidator extends BaseValidator {
   changeNotificationStatus() {
     return this.validate(null,
       {notifications: Joi.alternatives().try(Joi.string(), Joi.number().integer(), Joi.boolean()).required()},
-      (req, query, body) => body);
-  }
-
-  changeInvitationStatus() {
-    return this.validate(null,
-      {
-        invitations: Joi.string().valid(...Object.keys(invitationConstants.invitationStatus)).required(),
-        users: Joi.array().items(Joi.number().integer().greater(0)).allow(null),
-        games: Joi.array().items(Joi.string().valid(...Object.keys(gamesConstants.games))).allow(null),
-        minBounty: Joi.number().min(0)
-      },
       (req, query, body) => body);
   }
 
