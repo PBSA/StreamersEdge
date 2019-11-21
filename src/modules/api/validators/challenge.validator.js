@@ -97,12 +97,23 @@ class ChallengeValidator extends BaseValidator {
   }
 
   joinToChallenge() {
-    return this.validate(null,
-      {
-        challengeId: Joi.number().integer().required(),
-        joinOp: operationSchema
-      },
-      (req, query, body) => body);
+    return this.validate(null, {
+      challengeId: Joi.number().integer().required(),
+      depositOp: operationSchema,
+      ppyAmount: Joi.number().min(1)
+    }, (req, query, {challengeId, depositOp, ppyAmount}) => {
+      if (!depositOp && !ppyAmount) {
+        throw new ValidateError(400, 'Validate error', {
+          depositOp: 'Either depositOp or ppyAmount must be set'
+        });
+      } else if (depositOp && ppyAmount) {
+        throw new ValidateError(400, 'Validate error', {
+          depositOp: 'Only one of depositOp and ppyAmount can be set'
+        });
+      }
+
+      return {challengeId, depositOp, ppyAmount};
+    });
   }
 
 }

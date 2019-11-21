@@ -51,15 +51,15 @@ const RestError = require('../../../errors/rest.error');
  *    properties:
  *      challengeId:
  *        type: number
- *      joinOp:
+ *      ppyAmount:
+ *        type: number
+ *      depositOp:
  *        $ref: '#/definitions/TransactionObject'
  *  JoinSuccessResponse:
  *    type: object
  *    properties:
- *      joinedAt:
+ *      createdAt:
  *        type: string
- *      isPlayed:
- *        type: boolean
  *      id:
  *        type: number
  *      challengeId:
@@ -310,9 +310,9 @@ class ChallengesController {
 
       /**
              * @swagger
-             * /challenges/join:
+             * /challenges/conditionaldonate:
              *  post:
-             *    description:  Join user to challenge
+             *    description: Conditionally donate to a challenge
              *    produces:
              *      - application/json
              *    tags:
@@ -338,7 +338,7 @@ class ChallengesController {
              *          $ref: '#/definitions/UnauthorizedError'
              */
       [
-        'post', '/api/v1/challenges/join',
+        'post', '/api/v1/challenges/conditionaldonate',
         this.authValidator.loggedOnly,
         this.challengeValidator.joinToChallenge,
         this.joinToChallenge.bind(this)
@@ -429,25 +429,29 @@ class ChallengesController {
     return Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user.id)));
   }
 
-  async joinToChallenge(user, {challengeId, joinOp}) {
+  async joinToChallenge(user, {challengeId, depositOp, ppyAmount}) {
     try {
-      return await this.challengeService.joinToChallenge(user.id, challengeId, joinOp);
+      return await this.challengeService.joinToChallenge(user.id, challengeId, {depositOp, ppyAmount});
     } catch (err) {
       switch (err.message) {
         case this.challengeService.errors.CHALLENGE_NOT_FOUND:
           throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});
         case this.challengeService.errors.CHALLENGE_NOT_OPEN:
           throw new RestError('', 422, {challenge: [{message: 'This challenge is not open for joining'}]});
+        case this.challengeService.errors.CANNOT_JOIN_OWN_CHALLENGE:
+          throw new RestError('', 422, {challenge: [{message: 'You cannot join your own challenges'}]});
         case this.challengeService.errors.DO_NOT_RECEIVE_INVITATIONS:
           throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
         case this.challengeService.errors.INVALID_TRANSACTION_SENDER:
-          throw new RestError('', 422, {joinOp: [{from: 'Invalid transaction sender'}]});
+          throw new RestError('', 422, {depositOp: [{from: 'Invalid transaction sender'}]});
         case this.challengeService.errors.INVALID_TRANSACTION_RECEIVER:
-          throw new RestError('', 422, {joinOp: [{to: 'Invalid transaction receiver'}]});
+          throw new RestError('', 422, {depositOp: [{to: 'Invalid transaction receiver'}]});
         case this.challengeService.errors.INVALID_TRANSACTION_AMOUNT:
-          throw new RestError('', 422, {joinOp: [{amount: 'Invalid transaction amount'}]});
+          throw new RestError('', 422, {depositOp: [{amount: 'Invalid transaction amount'}]});
+        case this.challengeService.errors.INSUFFICIENT_BALANCE:
+          throw new RestError('', 422, {depositOp: [{amount: 'Insufficient balance'}]});
         case this.challengeService.errors.TRANSACTION_ERROR:
-          throw new RestError('', 422, {joinOp: [{signature: err.data.message}]});
+          throw new RestError('', 422, {depositOp: [{signature: err.data.message}]});
         default:
           throw err;
       }

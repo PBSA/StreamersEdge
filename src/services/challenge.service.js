@@ -3,6 +3,7 @@ const BigNumber = require('bignumber.js');
 const challengeConstants = require('../constants/challenge');
 const invitationConstants = require('../constants/invitation');
 const {userType} = require('../constants/profile');
+const {types: txTypes} = require('../constants/transaction');
 const RestError = require('../errors/rest.error');
 
 class ChallengeService {
@@ -39,8 +40,10 @@ class ChallengeService {
       INVALID_TRANSACTION_SENDER: 'INVALID_TRANSACTION_SENDER',
       INVALID_TRANSACTION_RECEIVER: 'INVALID_TRANSACTION_RECEIVER',
       INVALID_TRANSACTION_AMOUNT: 'INVALID_TRANSACTION_AMOUNT',
+      INSUFFICIENT_BALANCE: 'INSUFFICIENT_BALANCE',
       UNABLE_TO_INVITE: 'UNABLE_TO_INVITE',
-      INVITED_USER_NOT_FOUND: 'INVITED_USER_NOT_FOUND'
+      INVITED_USER_NOT_FOUND: 'INVITED_USER_NOT_FOUND',
+      CANNOT_JOIN_OWN_CHALLENGE: 'CANNOT_JOIN_OWN_CHALLENGE'
     };
     this.joinedUsersRepository = opts.joinedUsersRepository;
   }
@@ -77,7 +80,6 @@ class ChallengeService {
 
   /**
      * @param challengeId
-     * @param userId
      * @returns {Promise<ChallengePublicObject>}
      */
   async getCleanObject(challengeId) {
@@ -181,7 +183,7 @@ class ChallengeService {
     return await this.challengeRepository.findWonChallenges(userId);
   }
 
-  async joinToChallenge(userId, challengeId, joinOp) {
+  async joinToChallenge(userId, challengeId, {depositOp, ppyAmount}) {
     const user = await this.userRepository.findByPk(userId);
     const challenge = await this.challengeRepository.findByPk(challengeId);
 
@@ -193,17 +195,17 @@ class ChallengeService {
       throw new Error(this.errors.CHALLENGE_NOT_OPEN);
     }
 
-    if (challenge.accessRule === challengeConstants.accessRules.invite) {
-      if (!await this.challengeInvitedUsersRepository.isAllowFor(challengeId, userId)) {
-        throw new Error(this.errors.DO_NOT_RECEIVE_INVITATIONS);
-      }
+    if (challenge.userId === user.id) {
+      throw new Error(this.errors.CANNOT_JOIN_OWN_CHALLENGE);
     }
 
-    try {
-      if (joinOp) {
-        const operation = joinOp.operations[0][1];
+    let broadcastResult;
 
-        if (operation.to !== this.config.peerplays.feeReceiver) {
+    try {
+      if (depositOp) {
+        const operation = depositOp.operations[0][1];
+
+        if (operation.to !== this.config.peerplays.paymentReceiver) {
           throw new Error(this.errors.INVALID_TRANSACTION_RECEIVER);
         }
 
@@ -213,25 +215,35 @@ class ChallengeService {
           throw new Error(this.errors.INVALID_TRANSACTION_SENDER);
         }
 
-        if (!new BigNumber(operation.amount.amount).eq(this.config.challenge.joinFee)) {
-          throw new Error(this.errors.INVALID_TRANSACTION_AMOUNT);
-        }
-
-        await this.peerplaysRepository.broadcastSerializedTx(joinOp);
+        broadcastResult = await this.peerplaysRepository.broadcastSerializedTx(depositOp);
       } else {
-        await this.userService.signAndBroadcastTx(userId, this.config.peerplays.feeReceiver, this.config.challenge.joinFee);
+        broadcastResult = await this.userService.signAndBroadcastTx(userId, this.config.peerplays.paymentReceiver, ppyAmount);
       }
-    }catch(ex) {
+    } catch (ex) {
       logger.error(ex);
 
-      if(ex.message.includes('insufficient')) {
-        throw new RestError('Insufficient Balance', 400);
+      if (ex.message.includes('insufficient')) {
+        throw new Error(this.errors.INSUFFICIENT_BALANCE);
       }
 
       throw ex;
     }
 
-    return await this.joinedUsersRepository.joinToChallenge(userId, challengeId);
+    const tx = await this.transactionRepository.create({
+      txId: broadcastResult[0].id,
+      blockNum: broadcastResult[0].block_num,
+      trxNum: broadcastResult[0].trx_num,
+      ppyAmountValue: new BigNumber(broadcastResult[0].trx.operations[0][1].amount.amount)
+        .shiftedBy(-1 * this.peerplaysConnection.asset.precision).toFixed(20),
+      type: txTypes.challengeDonate,
+      userId,
+      challengeId,
+      peerplaysFromId: broadcastResult[0].trx.operations[0][1].from,
+      peerplaysToId: broadcastResult[0].trx.operations[0][1].to
+    });
+
+    const joinedUser = await this.joinedUsersRepository.joinToChallenge(userId, challengeId, tx.ppyAmountValue);
+    return joinedUser.getPublic();
   }
 
 }
