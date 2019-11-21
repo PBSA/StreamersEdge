@@ -66,11 +66,9 @@ class ChallengeModel extends Model {
    *  ChallengeNew:
    *    type: object
    *    required:
-   *      - notifications
    *      - name
    *      - timeToStart
    *      - game
-   *      - streamLink
    *    properties:
    *      name:
    *        type: string
@@ -85,10 +83,6 @@ class ChallengeModel extends Model {
    *        type: string
    *        enum:
    *          - pubg
-   *      invitedAccounts:
-   *        type: array
-   *        items:
-   *          type: integer
    *
    *  ChallengeFullNew:
    *    allOf:
@@ -99,8 +93,6 @@ class ChallengeModel extends Model {
    *            type: array
    *            items:
    *              $ref: '#/definitions/ChallengeConditionNew'
-   *          depositOp:
-   *              $ref: '#/definitions/TransactionObject'
    *
    *  ChallengeCondition:
    *    allOf:
@@ -135,10 +127,6 @@ class ChallengeModel extends Model {
    *          updatedAt:
    *            type: string
    *            format: date
-   *          invitedUsers:
-   *            type: array
-   *            items:
-   *               $ref: '#/definitions/User'
    *          status:
    *            type: string
    *          userId:

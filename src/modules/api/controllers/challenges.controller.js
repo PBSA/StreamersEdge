@@ -227,7 +227,7 @@ class ChallengesController {
         this.getChallenge.bind(this)
       ],
       /**
-             * @swagger
+             *
              *
              * /challenges/invite:
              *  post:
@@ -261,12 +261,12 @@ class ChallengesController {
              *        schema:
              *          $ref: '#/definitions/UnauthorizedError'
              */
-      [
-        'post', '/api/v1/challenges/invite',
-        this.authValidator.loggedOnly,
-        this.challengeValidator.invite,
-        this.sendInvite.bind(this)
-      ],
+      // [
+      //   'post', '/api/v1/challenges/invite',
+      //   this.authValidator.loggedOnly,
+      //   this.challengeValidator.invite,
+      //   this.sendInvite.bind(this)
+      // ],
 
       /**
              * @swagger
@@ -349,14 +349,17 @@ class ChallengesController {
 
   async createChallenge(user, challenge) {
     try {
-      return await this.challengeService.createChallenge(user.id, challenge);
+      const result = await this.challengeService.createChallenge(user, challenge);
+
+      result.joined = false;
+      result.joinedUsers = [];
+      
+      const validKeys = ['username','avatar'];
+      Object.keys(result.user).forEach((key) => validKeys.includes(key) || delete result.user[key]);
+
+      return result;
     } catch (err) {
-      switch (err.message) {
-        case this.userService.errors.INVALID_PPY_AMOUNT:
-          throw new RestError('', 400, {ppyAmount: [{message: 'Invalid value'}]});
-        default:
-          throw err;
-      }
+      throw err;
     }
   }
 
