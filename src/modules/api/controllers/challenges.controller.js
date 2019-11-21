@@ -1,5 +1,4 @@
 const RestError = require('../../../errors/rest.error');
-const {accessRules} = require('../../../constants/challenge');
 
 /**
  * @swagger
@@ -367,13 +366,6 @@ class ChallengesController {
     try {
       const result = await this.challengeService.getCleanObject(challengeId);
 
-      if (result.accessRule === accessRules.invite && result.userId !== user.id) {
-
-        if (!await this.challengeInvitedUsersRepository.isUserInvited(result.id, user.id)) {
-          throw new RestError('', 422, {challenge: [{message: 'This is private challenge'}]});
-        }
-      }
-
       result.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challengeId);
       result.joinedUsers = await this.joinedUsersRepository.getForChallenge(challengeId);
 
@@ -422,7 +414,6 @@ class ChallengesController {
 
     challenge.joinedUsers = await this.joinedUsersRepository.getForChallenge(challenge.id);
 
-    delete challenge['challenge-invited-users'];
     delete challenge['challenge-conditions'];
 
     return challenge;

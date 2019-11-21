@@ -64,19 +64,9 @@ class ChallengeRepository extends BasePostgresRepository {
       searchList.push({'$user.username$': {[Op.iLike]: `%${searchText}%`}});
     }
 
-    const conditions = [];
-    conditions.push({accessRule: 'anyone'});
-
-    if(id){
-      conditions.push({['$challenge-invited-users.userId$']: id});
-    }
-
     return this.model.findAll({
       where: {
-        [Op.and] : [
-          {[Op.or]: conditions},
-          {[Op.or]: searchList}
-        ]
+        [Op.or]: searchList
       },
       ...this.getFindParams(orderQuery)
     });

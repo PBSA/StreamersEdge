@@ -19,7 +19,6 @@ const challengeConstants = require('../../constants/challenge');
  * @property {Date} createdAt
  * @property {Date} timeToStart
  * @property {String} game
- * @property {[Number]} invitedUsers
  * @property {String} conditionsText
  * @property {String} streamLink
  * @property {UserPublicObject} user
@@ -143,7 +142,12 @@ class ChallengeModel extends Model {
    *          joinedUsers:
    *            type: array
    *            items:
-   *              $ref: '#/definitions/User'
+   *              type: object
+   *              properties:
+   *                totalDonation:
+   *                  type: number
+   *                user:
+   *                  $ref: '#/definitions/User'
    *  TransactionObject:
    *    type: object
    *    required:
