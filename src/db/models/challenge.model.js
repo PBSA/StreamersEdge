@@ -42,8 +42,8 @@ class ChallengeModel extends Model {
    *    param:
    *      type: string
    *      enum:
-   *        - result_place
-   *        - win_time
+   *        - resultPlace
+   *        - winTime
    *        - frags
    *    operator:
    *      type: string
@@ -58,9 +58,9 @@ class ChallengeModel extends Model {
    *    join:
    *      type: string
    *      enum:
-   *        - AND
-   *        - OR
    *        - END
+   *        - OR
+   *        - AND
    *
    *  ChallengeNew:
    *    type: object

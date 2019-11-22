@@ -48,16 +48,14 @@ class ChallengeRepository extends BasePostgresRepository {
    * @returns {Promise<ChallengeModel>}
    */
   async findAllChallenges(id, {order='', searchText=''}) {
-    const orderQuery = order ? order !== 'ppyAmount' ? [order, 'ASC'] : [order, 'DESC'] : null;
+    const orderQuery = order ?  [order, 'ASC'] : null;
     const searchList = [];
 
-    if (Number(searchText)) {
-      searchList.push({ppyAmount: {[Op.eq] : parseInt(searchText)}});
-    } else if (moment(searchText).isValid()) {
-      searchList.push({[Op.and]: {
-        startDate: {[Op.lte]: searchText},
-        endDate: {[Op.gte]: searchText}
-      }});
+    if (moment(searchText).isValid()) {
+      searchList.push(
+        {createdAt:
+            {[Op.between]: [moment(searchText).format('YYYY-MM-DD'),moment(searchText).add(1, 'days').format('YYYY-MM-DD')]}
+        });
     } else {
       searchList.push({name: {[Op.iLike]: `%${searchText}%`}});
       searchList.push({game: {[Op.iLike]: `%${searchText}%`}});
