@@ -38,11 +38,11 @@ class TwitchController {
     app.get('/api/v1/auth/twitch/callback', (req, res) => {
       passport.authenticate(
         'twitch',
-        {failureRedirect: `${this.config.frontendUrl}?twitch-auth-error=restrict`}
+        {failureRedirect: `${this.config.frontendUrl}/error?twitch-auth-error=restrict`}
       )(req, res, (err) => {
 
         if (err) {
-          res.redirect(`${this.config.frontendUrl}?twitch-auth-error=${err.message}`);
+          res.redirect(`${this.config.frontendUrl}/error?twitch-auth-error=${err.message}`);
           return;
         }
 
