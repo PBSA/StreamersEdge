@@ -123,6 +123,8 @@ class UserService {
      */
   async getUserBySocialNetworkAccount(network, account, accessToken, req) {
     const loggedUser = req.user;
+    req.session.newUser = false;
+    req.session.save();
 
     const {id, email, picture, username, youtube} = account;
     const UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
