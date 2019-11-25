@@ -49,7 +49,6 @@ class ProfileValidator extends BaseValidator {
         summonerName: Joi.string(),
         realm: Joi.string().valid(leagueOfLegendsRealms)
       }).allow(null),
-      userType: Joi.string().valid(profileConstants.gamer, profileConstants.viewer, profileConstants.sponsor),
       email: Joi.string().email(),
       username: Joi.string().allow(''),
       timeFormat: Joi.string().valid(Object.values(profileConstants.timeFormat))

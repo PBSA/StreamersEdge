@@ -25,6 +25,7 @@ class UserService {
      * @param {FileService} opts.fileService
      * @param {GoogleRepository} opts.googleRepository
      * @param {PaypalRedemptionRepository} opts.paypalRedemptionRepository
+     * @param {challengeRepository} opts.challengeRepository
      */
   constructor(opts) {
     this.config = opts.config;
@@ -40,6 +41,7 @@ class UserService {
     this.googleRepository = opts.googleRepository;
     this.paypalRedemptionRepository = opts.paypalRedemptionRepository;
     this.pubgApiRepository = opts.pubgApiRepository;
+    this.challengeRepository = opts.challengeRepository;
 
     this.errors = {
       USER_NOT_FOUND: 'USER_NOT_FOUND',
@@ -157,7 +159,7 @@ class UserService {
     User.youtube = youtube;
     
     if(network == 'twitch' && User.pubgId) {
-      User.userType =  userType.gamer;
+      await this.changeUserType(User, userType.gamer);
     }
 
     const peerplaysPassword = `${User.username}-${accessToken}`;
@@ -185,7 +187,7 @@ class UserService {
       User.twitchUserName = username;
       
       if(User.pubgId) {
-        User.userType =  userType.gamer;
+        await this.changeUserType(User, userType.gamer);
       }
     } else if (network === 'google') {
       User.googleName = username;
@@ -227,6 +229,17 @@ class UserService {
     return User.getPublic();
   }
 
+  async changeUserType(user, newType) {
+    // if the user is now a viewer refund any created challenges
+    if (user.userType !== userType.viewer && newType === userType.viewer) {
+      await this.challengeRepository.refundChallengesCreatedByUser(user);
+    }
+
+    user.userType = newType;
+    await user.save();
+    return user;
+  }
+
   /**
      * @param {UserModel} User
      * @param updateObject
@@ -249,11 +262,29 @@ class UserService {
     Object.assign(User, updateObject);
 
     if(Object.keys(updateObject).includes('steamId') && updateObject.steamId && User.twitchId) {
-      User.userType = userType.gamer;
+      await this.changeUserType(User, userType.gamer);
+    }
+
+    if (User.googleName === '') {
+      User.googleName = null;
+      User.googleId = null;
+    }
+
+    if (User.facebook === '') {
+      User.facebook = null;
+      User.facebookId = null;
     }
 
     if (User.twitchUserName === '') {
       User.twitchUserName = null;
+      User.twitchId = null;
+      await this.changeUserType(User, userType.viewer);
+    }
+
+    if (User.pubgUsername === '') {
+      User.pubgUsername = null;
+      User.pubgId = null;
+      await this.changeUserType(User, userType.viewer);
     }
 
     // save any changes
