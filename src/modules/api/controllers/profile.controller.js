@@ -353,8 +353,7 @@ class ProfileController {
         throw new ValidateError(401, 'unauthorized');
       }
 
-      await this.userService.changeEmail(ActiveToken);
-      return true;
+      return await this.userService.changeEmail(ActiveToken);
     } catch (err) {
       this.handleError(err);
     }
