@@ -620,6 +620,7 @@ class UserService {
     await User.save();
     ActiveToken.isActive = false;
     await ActiveToken.save();
+    return User;
   }
 
   async loginPeerplaysUser(login, password, LoggedUser = null) {
