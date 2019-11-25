@@ -251,6 +251,7 @@ class UserService {
     }
 
     if (User.twitchUserName === '') {
+      User.twitchId = null;
       User.twitchUserName = null;
     }
 
