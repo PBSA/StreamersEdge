@@ -81,7 +81,7 @@ class ChallengeValidator extends BaseValidator {
       const user = await this.userRepository.findByPk(query.userId);
 
       if (!user) {
-        throw new ValidateError(404, 'Validate error', {
+        throw new ValidateError(400, 'Validate error', {
           userId: 'This user does not exist'
         });
       }
