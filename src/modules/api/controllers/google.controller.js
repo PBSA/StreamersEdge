@@ -47,11 +47,11 @@ class GoogleController {
     app.get('/api/v1/auth/google/callback', (req, res) => {
       passport.authenticate(
         'google',
-        {failureRedirect: `${this.config.frontendUrl}?google-auth-error=restrict`}
+        {failureRedirect: `${this.config.frontendUrl}/error?google-auth-error=restrict`}
       )(req, res, (err) => {
 
         if (err) {
-          res.redirect(`${this.config.frontendUrl}?google-auth-error=${err.message}`);
+          res.redirect(`${this.config.frontendUrl}/error?google-auth-error=${err.message}`);
           return;
         }
 

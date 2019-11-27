@@ -73,10 +73,21 @@ class ChallengeValidator extends BaseValidator {
 
   getWonChallenges() {
     const querySchema = {
-      userId: Joi.number().integer().required()
+      userId: Joi.number().integer().positive().required()
     };
 
-    return this.validate(querySchema, null, (req, query) => query.userId);
+    return this.validate(querySchema, null, async (req, query) => {
+
+      const user = await this.userRepository.findByPk(query.userId);
+
+      if (!user) {
+        throw new ValidateError(400, 'Validate error', {
+          userId: 'This user does not exist'
+        });
+      }
+
+      return query.userId;
+    });
   }
 
   validateGetChallenge() {
