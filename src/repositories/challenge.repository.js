@@ -28,10 +28,6 @@ class ChallengeRepository extends BasePostgresRepository {
     return {
       include:[
         {
-          model:invitedUsersModel, as:'challenge-invited-users',
-          required:false
-        },
-        {
           model:userModel,
           attributes: ['username','avatar']
         },
@@ -40,7 +36,7 @@ class ChallengeRepository extends BasePostgresRepository {
           required: false
         }
       ],
-      group: ['challenges.id','challenge-invited-users.id','challenge-conditions.id','user.id'],
+      group: ['challenges.id','challenge-conditions.id','user.id'],
       order: [ orderQuery || 'id']
     };
   }
@@ -52,16 +48,14 @@ class ChallengeRepository extends BasePostgresRepository {
    * @returns {Promise<ChallengeModel>}
    */
   async findAllChallenges(id, {order='', searchText=''}) {
-    const orderQuery = order ? order !== 'ppyAmount' ? [order, 'ASC'] : [order, 'DESC'] : null;
+    const orderQuery = order ?  [order, 'ASC'] : null;
     const searchList = [];
 
-    if (Number(searchText)) {
-      searchList.push({ppyAmount: {[Op.eq] : parseInt(searchText)}});
-    } else if (moment(searchText).isValid()) {
-      searchList.push({[Op.and]: {
-        startDate: {[Op.lte]: searchText},
-        endDate: {[Op.gte]: searchText}
-      }});
+    if (moment(searchText).isValid()) {
+      searchList.push(
+        {createdAt:
+            {[Op.between]: [moment(searchText).format('YYYY-MM-DD'),moment(searchText).add(1, 'days').format('YYYY-MM-DD')]}
+        });
     } else {
       searchList.push({name: {[Op.iLike]: `%${searchText}%`}});
       searchList.push({game: {[Op.iLike]: `%${searchText}%`}});
@@ -70,10 +64,7 @@ class ChallengeRepository extends BasePostgresRepository {
 
     return this.model.findAll({
       where: {
-        [Op.and] : [
-          {[Op.or]: [{accessRule: 'anyone'}, {['$challenge-invited-users.userId$']: id}]},
-          {[Op.or]: searchList}
-        ]
+        [Op.or]: searchList
       },
       ...this.getFindParams(orderQuery)
     });

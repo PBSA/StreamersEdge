@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 const {Model} = Sequelize;
 const profileConstants = require('../../constants/profile');
-const invitationConstants = require('../../constants/invitation');
 
 /**
  * @typedef {Object} UserPublicObject
@@ -16,7 +15,6 @@ const invitationConstants = require('../../constants/invitation');
  * @property {String} peerplaysAccountName
  * @property {String} bitcoinAddress
  * @property {Boolean} notifications
- * @property {String} invitations
  * @property {Enum} userType
  * @property {String} pubgUsername
  */
@@ -37,13 +35,13 @@ const invitationConstants = require('../../constants/invitation');
  * @property {String} peerplaysAccountName
  * @property {String} bitcoinAddress
  * @property {Boolean} notifications
- * @property {String} invitations
  * @property {Enum} userType
  * @property {Enum} applicationType
  * @property {String} pushNotificationId
  * @property {String} pubgUsername
  * @property {String} pubgId
  * @property {String} challengeSubscribeData
+ * @property {String} timeFormat
  */
 class UserModel extends Model {
   /**
@@ -77,6 +75,8 @@ class UserModel extends Model {
    *          - admin
    *      email:
    *        type: string
+   *      timeFormat:
+   *        type: string
    *
    *  User:
    *    allOf:
@@ -91,12 +91,6 @@ class UserModel extends Model {
    *            type: string
    *          notifications:
    *            type: boolean
-   *          invitations:
-   *            type: string
-   *            enum:
-   *              - allnone
-   *              - users
-   *              - games
    *
    * @returns {UserPublicObject}
    */
@@ -114,11 +108,11 @@ class UserModel extends Model {
       bitcoinAddress: this.bitcoinAddress,
       userType: this.userType,
       notifications: this.notifications,
-      invitations: this.invitations,
       avatar: this.avatar || '',
       pubgUsername: this.pubgUsername,
       leagueOfLegendsAccountId: this.leagueOfLegendsAccountId,
-      leagueOfLegendsRealm: this.leagueOfLegendsRealm
+      leagueOfLegendsRealm: this.leagueOfLegendsRealm,
+      timeFormat: this.timeFormat
     };
   }
 
@@ -206,16 +200,9 @@ const attributes = {
     type: Sequelize.BOOLEAN,
     defaultValue: true
   },
-  invitations: {
-    type: Sequelize.ENUM(...Object.keys(invitationConstants.invitationStatus)),
-    defaultValue: invitationConstants.invitationStatus.all
-  },
-  minInvitationBounty: {
-    type: Sequelize.DOUBLE,
-    defaultValue: 0.0
-  },
   userType: {
-    type: Sequelize.ENUM(Object.keys(profileConstants.userType).map((key) => profileConstants.userType[key]))
+    type: Sequelize.ENUM(Object.keys(profileConstants.userType).map((key) => profileConstants.userType[key])),
+    defaultValue: profileConstants.userType.viewer
   },
   applicationType: {
     type: Sequelize.ENUM,
@@ -251,6 +238,10 @@ const attributes = {
   },
   paypalAccountId: {
     type: Sequelize.STRING
+  },
+  timeFormat: {
+    type: Sequelize.ENUM(Object.values(profileConstants.timeFormat)),
+    defaultValue: profileConstants.timeFormat.time12h
   }
 };
 
@@ -264,9 +255,6 @@ module.exports = {
   associate: (models) => {
     UserModel.hasMany(models.ResetToken.model);
     UserModel.hasMany(models.Challenge.model);
-    UserModel.hasMany(models.ChallengeInvitedUsers.model);
-    UserModel.hasMany(models.WhitelistedUsers.model);
-    UserModel.hasMany(models.WhitelistedGames.model);
     UserModel.hasMany(models.Stream.model);
     UserModel.hasMany(models.BanHistory.model);
   },

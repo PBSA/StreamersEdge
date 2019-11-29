@@ -116,12 +116,12 @@ class AuthController {
        */
     app.get('/api/v1/auth/paypal', (req, res) => {
       if (!req.isAuthenticated()) {
-        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=unauthenticated`);
+        res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=unauthenticated`);
         return;
       }
 
       if (!req.query.callbackUrl) {
-        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=missing-callback-url`);
+        res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=missing-callback-url`);
         return;
       }
 
@@ -132,7 +132,7 @@ class AuthController {
         const paypalUrl = this.paypalConnection.getConnectUrl(`${this.config.backendUrl}/api/v1/auth/paypal/callback`);
         res.redirect(paypalUrl);
       } catch (err) {
-        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=${err.message}`);
+        res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=${err.message}`);
       }
     });
 
@@ -157,12 +157,12 @@ class AuthController {
        */
     app.get('/api/v1/auth/paypal/callback', (req, res) => {
       if (!req.isAuthenticated()) {
-        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=unauthenticated`);
+        res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=unauthenticated`);
         return;
       }
 
       if (!req.query.code) {
-        res.redirect(`${this.config.frontendUrl}?paypal-auth-error=missing-code`);
+        res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=missing-code`);
         return;
       }
 
@@ -171,7 +171,7 @@ class AuthController {
           const callbackUrl = req.session.callbackUrl || '';
           res.redirect(`${this.config.frontendUrl}${callbackUrl}`);
         })
-        .catch((err) => res.redirect(`${this.config.frontendUrl}?paypal-auth-error=${err.message}`));
+        .catch((err) => res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=${err.message}`));
     });
 
     return [

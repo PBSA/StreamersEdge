@@ -42,18 +42,18 @@ describe('GET /api/v1/profile', () => {
       email: 'testglobal@email.com',
       googleName: null,
       twitchUserName: null,
-      userType: null,
+      userType: 'gamer',
       pubgUsername: null,
       leagueOfLegendsAccountId: null,
       leagueOfLegendsRealm: null,
       avatar: '',
-      invitations: 'all',
       notifications: true,
       youtube: '',
       twitch: '',
       facebook: '',
       peerplaysAccountName: 'se-test-global',
-      bitcoinAddress: ''
+      bitcoinAddress: '',
+      timeFormat: '12h'
     });
   });
 

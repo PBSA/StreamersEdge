@@ -1,6 +1,6 @@
 {
   "name": "streamers-edge",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "license": "UNLICENSED",
   "repository": {
     "url": "https://github.com/PBSA/StreamersEdge",
@@ -58,7 +58,7 @@
     "faker": "^4.1.0",
     "fs-extra": "^8.1.0",
     "googleapis": "^44.0.0",
-    "handlebars": "^4.5.2",
+    "handlebars": "^4.5.3",
     "inquirer": "^6.5.0",
     "joi": "^14.3.1",
     "lodash": "^4.17.15",

@@ -8,7 +8,7 @@ module.exports = {
     await queryInterface.addColumn('joined-users', 'challengeId', {type: Sequelize.INTEGER})
   },
 
-  down: async (queryInterface) => {
+  down: async (queryInterface, Sequelize) => {
     await queryInterface.removeColumn('joined-users', 'userId');
     await queryInterface.addColumn('joined-users', 'participantId', {type: Sequelize.STRING})
     await queryInterface.removeColumn('joined-users', 'challengeId');

@@ -4,7 +4,6 @@ const {model} = require('../db/models/user.model');
 const {model: banHistoryModel} = require('../db/models/ban.history.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 const {status} = require('../constants/profile');
-const {invitationStatus} = require('../constants/invitation');
 
 class UserRepository extends BasePostgresRepository {
 
@@ -138,22 +137,6 @@ class UserRepository extends BasePostgresRepository {
   async updateNotification(values, options) {
     return this.model.update(
       {notifications: options},
-      {where: {id: values}}
-    );
-  }
-
-  /**
-   * @param values
-   * @param options
-   * @param minBounty
-   * @returns {Promise<Array>}
-   */
-  async updateInvitation(values, options, minBounty) {
-    return this.model.update(
-      {
-        invitations: options,
-        minInvitationBounty: options !== invitationStatus.none ? minBounty : 0
-      },
       {where: {id: values}}
     );
   }

@@ -6,12 +6,10 @@ const challengeConstants = require('../../constants/challenge');
  * @typedef {Object} ChallengeModel
  * @property {Number} id
  * @property {String} name
- * @property {Date} startDate
- * @property {Date} endDate
+ * @property {Date} timeToStart
  * @property {String} game
- * @property {String} accessRule
- * @property {Number} ppyAmount
  * @property {String} conditionsText
+ * @property {String} streamLink
  */
 
 /**
@@ -19,13 +17,10 @@ const challengeConstants = require('../../constants/challenge');
  * @property {Number} id
  * @property {String} name
  * @property {Date} createdAt
- * @property {Date} startDate
- * @property {Date} endDate
+ * @property {Date} timeToStart
  * @property {String} game
- * @property {String} accessRule
- * @property {Number} ppyAmount
- * @property {[Number]} invitedUsers
  * @property {String} conditionsText
+ * @property {String} streamLink
  * @property {UserPublicObject} user
  * @property {[ChallengeConditionModel]} conditions
  */
@@ -47,8 +42,8 @@ class ChallengeModel extends Model {
    *    param:
    *      type: string
    *      enum:
-   *        - result_place
-   *        - win_time
+   *        - resultPlace
+   *        - winTime
    *        - frags
    *    operator:
    *      type: string
@@ -63,45 +58,30 @@ class ChallengeModel extends Model {
    *    join:
    *      type: string
    *      enum:
-   *        - AND
-   *        - OR
    *        - END
+   *        - OR
+   *        - AND
    *
    *  ChallengeNew:
    *    type: object
    *    required:
-   *      - notifications
    *      - name
-   *      - startDate
+   *      - timeToStart
    *      - game
-   *      - accessRule
-   *      - ppyAmount
    *    properties:
    *      name:
    *        type: string
-   *      startDate:
+   *      timeToStart:
    *        type: string
    *        format: date
-   *      endDate:
-   *        type: string
-   *        format: date
-   *      accessRule:
-   *        type: string
-   *        enum:
-   *          - invite
-   *          - anyone
-   *      ppyAmount:
-   *        type: number
    *      conditionsText:
+   *        type: string
+   *      streamLink:
    *        type: string
    *      game:
    *        type: string
    *        enum:
    *          - pubg
-   *      invitedAccounts:
-   *        type: array
-   *        items:
-   *          type: integer
    *
    *  ChallengeFullNew:
    *    allOf:
@@ -112,8 +92,6 @@ class ChallengeModel extends Model {
    *            type: array
    *            items:
    *              $ref: '#/definitions/ChallengeConditionNew'
-   *          depositOp:
-   *              $ref: '#/definitions/TransactionObject'
    *
    *  ChallengeCondition:
    *    allOf:
@@ -148,10 +126,6 @@ class ChallengeModel extends Model {
    *          updatedAt:
    *            type: string
    *            format: date
-   *          invitedUsers:
-   *            type: array
-   *            items:
-   *               $ref: '#/definitions/User'
    *          status:
    *            type: string
    *          userId:
@@ -168,7 +142,12 @@ class ChallengeModel extends Model {
    *          joinedUsers:
    *            type: array
    *            items:
-   *              $ref: '#/definitions/User'
+   *              type: object
+   *              properties:
+   *                totalDonation:
+   *                  type: number
+   *                user:
+   *                  $ref: '#/definitions/User'
    *  TransactionObject:
    *    type: object
    *    required:
@@ -220,12 +199,10 @@ class ChallengeModel extends Model {
       id: this.id,
       name: this.name,
       createdAt: this.createdAt,
-      startDate: this.startDate,
-      endDate: this.endDate,
+      timeToStart: this.timeToStart,
       game: this.game,
-      accessRule: this.accessRule,
-      ppyAmount: this.ppyAmount,
       conditionsText: this.conditionsText,
+      streamLink: this.streamLink,
       userId: this.userId
     };
 
@@ -237,10 +214,6 @@ class ChallengeModel extends Model {
       result.conditions = this['challenge-conditions'];
     }
 
-    if (this['challenge-invited-users']) {
-      result.invitedUsers = this['challenge-invited-users'];
-    }
-
     return result;
   }
 }
@@ -249,11 +222,7 @@ const attributes = {
     type: Sequelize.STRING,
     allowNull: false
   },
-  startDate: {
-    type: Sequelize.DATE,
-    allowNull: true
-  },
-  endDate: {
+  timeToStart: {
     type: Sequelize.DATE,
     allowNull: true
   },
@@ -261,16 +230,12 @@ const attributes = {
     type: Sequelize.STRING,
     allowNull: false
   },
-  accessRule: {
-    type: Sequelize.ENUM(...Object.keys(challengeConstants.accessRules)),
-    allowNull: false
-  },
-  ppyAmount: {
-    type: Sequelize.DOUBLE,
-    allowNull: false
-  },
   conditionsText: {
     type: Sequelize.TEXT,
+    allowNull: true
+  },
+  streamLink: {
+    type: Sequelize.STRING,
     allowNull: true
   },
   status: {
@@ -289,7 +254,6 @@ module.exports = {
   associate: (models) => {
     ChallengeModel.belongsTo(models.User.model);
     ChallengeModel.hasMany(models.ChallengeCondition.model);
-    ChallengeModel.hasMany(models.ChallengeInvitedUsers.model);
     ChallengeModel.hasMany(models.JoinedUsers.model);
   },
   get model() {

@@ -44,13 +44,15 @@ class ProfileValidator extends BaseValidator {
       facebookId: Joi.string().allow(null),
       bitcoinAddress: Joi.string().bitcoinAddress().allow(''),
       pubgUsername: Joi.string().allow(''),
+      steamId: Joi.string().allow(null),
       leagueOfLegends: Joi.object({
         summonerName: Joi.string(),
         realm: Joi.string().valid(leagueOfLegendsRealms)
       }).allow(null),
       userType: Joi.string().valid(profileConstants.gamer, profileConstants.viewer, profileConstants.sponsor),
       email: Joi.string().email(),
-      username: Joi.string().allow('')
+      username: Joi.string().allow(''),
+      timeFormat: Joi.string().valid(Object.values(profileConstants.timeFormat))
     };
 
     return this.validate(null, bodySchema, async (req, query, body) => {

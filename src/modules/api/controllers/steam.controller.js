@@ -35,7 +35,7 @@ class SteamController {
     this.initializePassport();
     app.get('/api/v1/auth/steam', (req, res, next) => {
       if (!req.isAuthenticated()) {
-        res.redirect(`${this.config.frontendUrl}?steam-auth-error=cannot-authenticated`);
+        res.redirect(`${this.config.frontendUrl}/error?steam-auth-error=cannot-authenticated`);
         return;
       }
 
@@ -44,13 +44,13 @@ class SteamController {
 
     app.get('/api/v1/auth/steam/callback', (req, res) => {
       if (!req.isAuthenticated()) {
-        res.redirect(`${this.config.frontendUrl}?steam-auth-error=cannot-authenticated`);
+        res.redirect(`${this.config.frontendUrl}/error?steam-auth-error=cannot-authenticated`);
         return;
       }
 
       passport.authenticate('steam', {})(req, res, (err) => {
         if (err) {
-          res.redirect(`${this.config.frontendUrl}?steam-auth-error=${err.message}`);
+          res.redirect(`${this.config.frontendUrl}/error?steam-auth-error=${err.message}`);
           return;
         }
 

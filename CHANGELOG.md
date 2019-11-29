@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.4.0](https://github.com/PBSA/StreamersEdge/compare/v0.2.0...v0.4.0) (2019-11-29)
+
+
+### Bug Fixes
+
+* challenge api logged out [#832](https://github.com/PBSA/StreamersEdge/issues/832) ([#173](https://github.com/PBSA/StreamersEdge/issues/173)) ([903cf88](https://github.com/PBSA/StreamersEdge/commit/903cf88))
+* challenge api logged out [#832](https://github.com/PBSA/StreamersEdge/issues/832) ([#174](https://github.com/PBSA/StreamersEdge/issues/174)) ([7a726ef](https://github.com/PBSA/StreamersEdge/commit/7a726ef))
+* constraint description length in swagger docs for ReportUser ([#176](https://github.com/PBSA/StreamersEdge/issues/176)) ([18c484c](https://github.com/PBSA/StreamersEdge/commit/18c484c))
+* fixing migration-undo ([#178](https://github.com/PBSA/StreamersEdge/issues/178)) ([00033a5](https://github.com/PBSA/StreamersEdge/commit/00033a5))
+* modifying getChallengesApi [#866](https://github.com/PBSA/StreamersEdge/issues/866) ([#184](https://github.com/PBSA/StreamersEdge/issues/184)) ([acf9448](https://github.com/PBSA/StreamersEdge/commit/acf9448))
+* return error route for failure in oauth ([#189](https://github.com/PBSA/StreamersEdge/issues/189)) ([a0b2956](https://github.com/PBSA/StreamersEdge/commit/a0b2956))
+* strm-742: proper redirect after social media register ([#175](https://github.com/PBSA/StreamersEdge/issues/175)) ([a8cf70e](https://github.com/PBSA/StreamersEdge/commit/a8cf70e))
+* strm-875: add timeFormat to profile validator ([#182](https://github.com/PBSA/StreamersEdge/issues/182)) ([1aca364](https://github.com/PBSA/StreamersEdge/commit/1aca364))
+* strm-897 change response for change-email api to match swagger docs ([#188](https://github.com/PBSA/StreamersEdge/issues/188)) ([d88f011](https://github.com/PBSA/StreamersEdge/commit/d88f011))
+* strm-900: unset session.newUser on social media login ([#187](https://github.com/PBSA/StreamersEdge/issues/187)) ([c902ca9](https://github.com/PBSA/StreamersEdge/commit/c902ca9))
+
+
+### Features
+
+* create challenge changes ([#181](https://github.com/PBSA/StreamersEdge/issues/181)) ([94a3a90](https://github.com/PBSA/StreamersEdge/commit/94a3a90))
+* strm-869: new challenge join api ([#180](https://github.com/PBSA/StreamersEdge/issues/180)) ([9eff3a9](https://github.com/PBSA/StreamersEdge/commit/9eff3a9))
+* strm-872  changes to twitch api and strm-874 remove set invitation ([#179](https://github.com/PBSA/StreamersEdge/issues/179)) ([88435e4](https://github.com/PBSA/StreamersEdge/commit/88435e4))
+* strm-878: model changes ([#177](https://github.com/PBSA/StreamersEdge/issues/177)) ([fb0855d](https://github.com/PBSA/StreamersEdge/commit/fb0855d))
+
+
+
+## [0.3.0](https://github.com/PBSA/StreamersEdge/compare/v0.2.0...v0.3.0) (2019-11-27)
+
+
+### Bug Fixes
+
+* challenge api logged out [#832](https://github.com/PBSA/StreamersEdge/issues/832) ([#173](https://github.com/PBSA/StreamersEdge/issues/173)) ([903cf88](https://github.com/PBSA/StreamersEdge/commit/903cf88))
+* challenge api logged out [#832](https://github.com/PBSA/StreamersEdge/issues/832) ([#174](https://github.com/PBSA/StreamersEdge/issues/174)) ([7a726ef](https://github.com/PBSA/StreamersEdge/commit/7a726ef))
+* constraint description length in swagger docs for ReportUser ([#176](https://github.com/PBSA/StreamersEdge/issues/176)) ([18c484c](https://github.com/PBSA/StreamersEdge/commit/18c484c))
+* fixing migration-undo ([#178](https://github.com/PBSA/StreamersEdge/issues/178)) ([00033a5](https://github.com/PBSA/StreamersEdge/commit/00033a5))
+* strm-742: proper redirect after social media register ([#175](https://github.com/PBSA/StreamersEdge/issues/175)) ([a8cf70e](https://github.com/PBSA/StreamersEdge/commit/a8cf70e))
+* strm-875: add timeFormat to profile validator ([#182](https://github.com/PBSA/StreamersEdge/issues/182)) ([1aca364](https://github.com/PBSA/StreamersEdge/commit/1aca364))
+
+
+### Features
+
+* create challenge changes ([#181](https://github.com/PBSA/StreamersEdge/issues/181)) ([94a3a90](https://github.com/PBSA/StreamersEdge/commit/94a3a90))
+* strm-869: new challenge join api ([#180](https://github.com/PBSA/StreamersEdge/issues/180)) ([9eff3a9](https://github.com/PBSA/StreamersEdge/commit/9eff3a9))
+* strm-872  changes to twitch api and strm-874 remove set invitation ([#179](https://github.com/PBSA/StreamersEdge/issues/179)) ([88435e4](https://github.com/PBSA/StreamersEdge/commit/88435e4))
+* strm-878: model changes ([#177](https://github.com/PBSA/StreamersEdge/issues/177)) ([fb0855d](https://github.com/PBSA/StreamersEdge/commit/fb0855d))
+
+
+
 ## 0.2.0 (2019-11-20)
 
 

@@ -38,15 +38,16 @@ class TwitchController {
     app.get('/api/v1/auth/twitch/callback', (req, res) => {
       passport.authenticate(
         'twitch',
-        {failureRedirect: `${this.config.frontendUrl}?twitch-auth-error=restrict`}
+        {failureRedirect: `${this.config.frontendUrl}/error?twitch-auth-error=restrict`}
       )(req, res, (err) => {
 
         if (err) {
-          res.redirect(`${this.config.frontendUrl}?twitch-auth-error=${err.message}`);
+          res.redirect(`${this.config.frontendUrl}/error?twitch-auth-error=${err.message}`);
           return;
         }
 
-        res.redirect(this.config.frontendCallbackUrl);
+        const newUser = req.session.newUser;
+        res.redirect(`${this.config.frontendCallbackUrl}/${newUser ? 'profile' : ''}`);
 
       });
 
@@ -68,7 +69,7 @@ class TwitchController {
         username: profile.username,
         email: profile.email,
         picture: profile._json.profile_image_url
-      }, accessToken, req.user).then((User) => {
+      }, accessToken, req).then((User) => {
         this.userService.getCleanUser(User).then((user) => done(null, user));
       }).catch((error) => {
         done(error);
