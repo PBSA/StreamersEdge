@@ -2,7 +2,6 @@ include:
   - template: Dependency-Scanning.gitlab-ci.yml
   - template: Container-Scanning.gitlab-ci.yml
   - template: SAST.gitlab-ci.yml
-  - template: License-Management.gitlab-ci.yml
 
 stages:
   - test
@@ -60,6 +59,28 @@ test:
     - develop
     - master
     - web
+
+license_management:
+  stage: test
+  image:
+    name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
+    entrypoint: [""]
+  variables:
+    SETUP_CMD: $LICENSE_MANAGEMENT_SETUP_CMD
+  allow_failure: true
+  script:
+    - /run.sh analyze .
+  artifacts:
+      paths: [gl-license-management-report.json]
+  dependencies: []
+  only:
+    refs:
+      - branches
+    variables:
+      - $GITLAB_FEATURES =~ /\blicense_management\b/
+  except:
+    variables:
+      - $LICENSE_MANAGEMENT_DISABLED
 
 swagger:
   stage: swagger
