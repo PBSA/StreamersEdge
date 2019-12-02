@@ -88,9 +88,9 @@ class ChallengeService {
     const users = await this.userRepository.findWithChallengeSubscribed();
 
     const notificationText = {title: 'New Challenge', body: `${challengeName} was created. Donate now!`};
-    return users.map(async (user)=> {
+    return await Promise.all(users.map(async (user)=> {
       await this.webPushConnection.sendNotification(user.challengeSubscribeData, notificationText);
-    });
+    }));
   }
   /**
      * @param challengeId
