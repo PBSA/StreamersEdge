@@ -60,7 +60,8 @@ class UserRepository extends BasePostgresRepository {
    * @returns {Promise<UserModel[]>}
    */
   async getUsersWithBansHistory(flag, search, offset, limit) {
-    const filter = search ? {
+    const searchList = [];
+    const searchFilter = {
       [Sequelize.Op.or]: [{
         username: {
           [Sequelize.Op.like]: `%${search}%`
@@ -70,16 +71,24 @@ class UserRepository extends BasePostgresRepository {
           [Sequelize.Op.like]: `%${search}%`
         }
       }]
-    } : {};
+    };
+
+    if(search) {
+      searchList.push(searchFilter);
+    }
 
     switch (flag) {
       case status.banned: {
-        filter.status = status.banned;
+        searchList.push({
+          status: status.banned
+        });
         break;
       }
 
       case status.active: {
-        filter.status = status.active;
+        searchList.push({
+          status: status.active
+        });
         break;
       }
 
@@ -89,7 +98,9 @@ class UserRepository extends BasePostgresRepository {
     }
 
     return this.model.findAll({
-      where: filter,
+      where: {
+        [Sequelize.Op.and]: searchList
+      },
       include: [
         {
           model: banHistoryModel,
