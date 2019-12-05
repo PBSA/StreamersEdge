@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/PBSA/StreamersEdge/compare/v0.4.0...v0.5.0) (2019-12-05)
+
+
+### Bug Fixes
+
+* strm-871: patch profile changes ([#185](https://github.com/PBSA/StreamersEdge/issues/185)) ([33f7b91](https://github.com/PBSA/StreamersEdge/commit/33f7b91))
+
+
+
+## [0.3.0](https://github.com/PBSA/StreamersEdge/compare/v0.2.0...v0.3.0) (2019-11-27)
+
+
+### Bug Fixes
+
+* STRM-784 validations for negative id and non-existing user ([#190](https://github.com/PBSA/StreamersEdge/issues/190)) ([01b2513](https://github.com/PBSA/StreamersEdge/commit/01b2513))
+
+
+
 ## [0.4.0](https://github.com/PBSA/StreamersEdge/compare/v0.2.0...v0.4.0) (2019-11-29)
 
 
