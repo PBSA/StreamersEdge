@@ -203,7 +203,8 @@ class ChallengeModel extends Model {
       game: this.game,
       conditionsText: this.conditionsText,
       streamLink: this.streamLink,
-      userId: this.userId
+      userId: this.userId,
+      status: this.status
     };
 
     if (this.user) {
