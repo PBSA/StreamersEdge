@@ -43,6 +43,7 @@ describe('GET /api/v1/profile', () => {
       googleName: null,
       twitchUserName: null,
       userType: 'gamer',
+      paypalEmail: '',
       pubgUsername: constants.modules.api.profile.steamId,
       leagueOfLegendsAccountId: null,
       leagueOfLegendsRealm: null,
