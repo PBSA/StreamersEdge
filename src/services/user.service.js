@@ -257,11 +257,10 @@ class UserService {
       delete updateObject.email;
     }
 
-
     // copy over properties from updateObject to the User
     Object.assign(User, updateObject);
 
-    if(Object.keys(updateObject).includes('steamId') && updateObject.steamId && User.twitchId) {
+    if(User.pubgUsername && User.twitchId) {
       await this.changeUserType(User, userType.gamer);
     }
 
