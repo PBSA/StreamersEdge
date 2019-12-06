@@ -92,7 +92,7 @@ describe('POST /api/v1/challenges', () => {
     const body = {...validRequest};
     const profileResponse = await agent.patch('/api/v1/profile').send({
       twitchId: constants.modules.api.profile.twitchId,
-      steamId: constants.modules.api.profile.steamId
+      pubgUsername: constants.modules.api.profile.steamId
     });
     isSuccess(profileResponse);
     const response = await agent.post('/api/v1/challenges').send(body);
