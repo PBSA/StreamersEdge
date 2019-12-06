@@ -421,7 +421,20 @@ class ChallengesController {
 
   async getAllChallenges(user, query) {
     let challenges = await this.challengeService.getAllChallenges(user && user.id, query);
-    return Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user && user.id)));
+    challenges = await Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user && user.id)));
+    
+    //order by total donations
+    if(query.order === 'totalDonations') {
+      challenges = await Promise.all(challenges.sort((a, b) => (this.calculateTotalReward(a) < this.calculateTotalReward(b)) ? 1 : -1));
+    }
+
+    return challenges;
+  }
+
+  calculateTotalReward(challenge) {
+    return challenge.joinedUsers.reduce((sum, user) => {
+      return sum + user.totalDonation;
+    }, 0);
   }
 
   async getWonChallenges(user, userId) {

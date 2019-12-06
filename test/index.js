@@ -7,6 +7,7 @@ const SmtpConnection = require('./mock/connections/smtp.connection.mock');
 const WebPushConnection = require('./mock/connections/web-push.connection.mock');
 const PaypalConnection = require('./mock/connections/paypal.connection.mock');
 const CoinmarketcapConnection = require('./mock/connections/coinmarketcap.connection.mock');
+const PubgConnection = require('./mock/connections/pubg.connection.mock');
 const TestDbHelper = require('./modules/api/helpers/test.db.helper');
 
 container.register({
@@ -14,7 +15,8 @@ container.register({
   smtpConnection: asClass(SmtpConnection),
   webPushConnection: asClass(WebPushConnection),
   paypalConnection: asClass(PaypalConnection),
-  coinmarketcapConnection: asClass(CoinmarketcapConnection)
+  coinmarketcapConnection: asClass(CoinmarketcapConnection),
+  pubgConnection: asClass(PubgConnection)
 });
 
 describe('ALL TESTS', () => {
