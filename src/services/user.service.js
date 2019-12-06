@@ -667,7 +667,9 @@ class UserService {
     }
 
     if(userWithPeerplaysAccount) {
-      return this.getCleanUser(userWithPeerplaysAccount);
+      const user = await this.getCleanUser(userWithPeerplaysAccount);
+      user['newUser'] = false;
+      return user;
     }
 
     //If the user is already logged in and no peerplays account is linked then link this account
@@ -676,7 +678,9 @@ class UserService {
       LoggedUser.peerplaysAccountId = PeerplaysUser[1].account.id;
       LoggedUser.peerplaysMasterPassword = '';
       await LoggedUser.save();
-      return this.getCleanUser(LoggedUser);
+      const user = await this.getCleanUser(LoggedUser);
+      user['newUser'] = false;
+      return user;
     }
 
     const NewUser = await this.userRepository.model.create({
@@ -688,7 +692,9 @@ class UserService {
 
     await NewUser.save();
 
-    return this.getCleanUser(NewUser);
+    const user = await this.getCleanUser(NewUser);
+    user['newUser'] = true;
+    return user;
   }
 
   async getUsernameForPeerplaysAccount(accountName, numRetries=0){
