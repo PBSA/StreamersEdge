@@ -17,5 +17,6 @@ module.exports = {
     open: 'open',
     resolved: 'resolved',
     paid: 'paid'
-  }
+  },
+  order: ['totalDonations','createdAt','timeToStart','name','game']
 };
