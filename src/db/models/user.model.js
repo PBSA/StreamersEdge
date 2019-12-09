@@ -112,7 +112,8 @@ class UserModel extends Model {
       pubgUsername: this.pubgUsername,
       leagueOfLegendsAccountId: this.leagueOfLegendsAccountId,
       leagueOfLegendsRealm: this.leagueOfLegendsRealm,
-      timeFormat: this.timeFormat
+      timeFormat: this.timeFormat,
+      paypalEmail: this.paypalEmail
     };
   }
 
