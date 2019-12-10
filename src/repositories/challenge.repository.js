@@ -58,7 +58,9 @@ class ChallengeRepository extends BasePostgresRepository {
    * @returns {Promise<ChallengeModel>}
    */
   async findAllChallenges(id, {order='', searchText=''}) {
-    const orderQuery = (order && order !== 'totalDonations') ? order === 'createdAt' ? [order, 'DESC'] : [order, 'ASC'] : null;
+    const orderQuery = (order && order !== 'totalDonations') ? 
+      order === 'createdAt' ? [order, 'DESC'] : 
+        order === 'name' ? [Sequelize.fn('LOWER', Sequelize.col('name')), 'ASC'] : [order, 'ASC'] : null;
     const searchList = [];
 
     if (moment(searchText).isValid()) {

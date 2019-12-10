@@ -9,6 +9,7 @@ const {types: txTypes} = require('../constants/transaction');
 const {userType} = require('../constants/profile');
 const PeerplaysNameExistsError = require('./../errors/peerplays-name-exists.error');
 const logger = require('log4js').getLogger('user.service');
+const profileConstants = require('../constants/profile');
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -667,6 +668,11 @@ class UserService {
     }
 
     if(userWithPeerplaysAccount) {
+
+      if (userWithPeerplaysAccount.status === profileConstants.status.banned) {
+        throw new RestError('You have been banned. Please contact our admins for potential unban.',403);
+      }
+
       const user = await this.getCleanUser(userWithPeerplaysAccount);
       user['newUser'] = false;
       return user;
@@ -699,19 +705,20 @@ class UserService {
 
   async getUsernameForPeerplaysAccount(accountName, numRetries=0){
     const MAX_RETRIES = 5;
+    let username = accountName;
 
     if (numRetries >= MAX_RETRIES) {
       throw new RestError('Failed to create user, too many retries',400);
     }
 
-    const UsernameExists = await this.userRepository.getByLogin(accountName);
+    const UsernameExists = await this.userRepository.getByLogin(username);
 
     if(UsernameExists) {
       const randomString = `${Math.floor(Math.min(1000 + Math.random() * 9000, 9999))}`; // random 4 digit number
-      this.getUsernameForPeerplaysAccount(accountName + randomString, numRetries + 1);
+      username = this.getUsernameForPeerplaysAccount(accountName + randomString, numRetries + 1);
     }
 
-    return accountName;
+    return username;
   }
 
 }
