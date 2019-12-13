@@ -578,9 +578,11 @@ class UserService {
       peerplaysToId: broadcastResult[0].trx.operations[0][1].to
     });
 
+    const redeemPercent = this.config.challenge.userRedeemPercent;
+
     await this.paypalRedemptionRepository.createRedemption(userId, {
       amountCurrency: 'USD',
-      amountValue: tx.ppyAmountValue,
+      amountValue: tx.ppyAmountValue * redeemPercent,
       transactionId: tx.id
     });
 
