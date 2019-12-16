@@ -47,7 +47,7 @@ class PeerplaysRepository {
   }
 
   async sendPPY(accountId, amount) {
-    amount = new BigNumber(amount).shiftedBy(this.peerplaysConnection.asset.precision).integerValue().toNumber();
+    amount = new BigNumber(amount).shiftedBy(this.peerplaysConnection.asset.precision).toNumber();
     const tr = new this.peerplaysConnection.TransactionBuilder();
     let result;
 
