@@ -13,4 +13,4 @@ echo -e "Host *\n\tStrictHostKeyChecking no\n\n" >> ~/.ssh/config
 
 # ssh into dev and deploy the app
 echo "deploying to ${DEV_SERVER}"
-ssh ubuntu@${DEV_SERVER} BRANCH=$CI_COMMIT_REF_NAME PROJECT=$CI_PROJECT_NAME 'bash -s' < ./deploy/update.sh
+ssh ${DEV_USER}@${DEV_SERVER} BRANCH=$CI_COMMIT_REF_NAME PROJECT=$CI_PROJECT_NAME 'bash -s' < ./deploy/update.sh
