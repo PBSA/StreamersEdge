@@ -12,5 +12,5 @@ touch ~/.ssh/config
 echo -e "Host *\n\tStrictHostKeyChecking no\n\n" >> ~/.ssh/config
 
 # ssh into staging and deploy the app
-echo "deploying to ${STAGING_SERVER}"
-ssh ${STAGING_USER}@${STAGING_SERVER} BRANCH=$CI_COMMIT_REF_NAME PROJECT=$CI_PROJECT_NAME 'bash -s' < ./deploy/update.sh
+echo "deploying to ${QAPR_SERVER}"
+ssh ${QAPR_USER}@${QAPR_SERVER} BRANCH=$CI_COMMIT_REF_NAME PROJECT=$CI_PROJECT_NAME 'bash -s' < ./deploy/update.sh
