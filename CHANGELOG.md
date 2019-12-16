@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/PBSA/StreamersEdge/compare/v0.3.0...v0.5.0) (2019-12-16)
+
+
+### Bug Fixes
+
+* modifying getChallengesApi [#866](https://github.com/PBSA/StreamersEdge/issues/866) ([#184](https://github.com/PBSA/StreamersEdge/issues/184)) ([acf9448](https://github.com/PBSA/StreamersEdge/commit/acf9448))
+* return error route for failure in oauth ([#189](https://github.com/PBSA/StreamersEdge/issues/189)) ([a0b2956](https://github.com/PBSA/StreamersEdge/commit/a0b2956))
+* STRM-784 validations for negative id and non-existing user ([#190](https://github.com/PBSA/StreamersEdge/issues/190)) ([01b2513](https://github.com/PBSA/StreamersEdge/commit/01b2513))
+* strm-871: patch profile changes ([#185](https://github.com/PBSA/StreamersEdge/issues/185)) ([33f7b91](https://github.com/PBSA/StreamersEdge/commit/33f7b91))
+* strm-897 change response for change-email api to match swagger docs ([#188](https://github.com/PBSA/StreamersEdge/issues/188)) ([d88f011](https://github.com/PBSA/StreamersEdge/commit/d88f011))
+* strm-900: unset session.newUser on social media login ([#187](https://github.com/PBSA/StreamersEdge/issues/187)) ([c902ca9](https://github.com/PBSA/StreamersEdge/commit/c902ca9))
+
+
+
 ## [0.4.0](https://github.com/PBSA/StreamersEdge/compare/v0.2.0...v0.4.0) (2019-11-29)
 
 
