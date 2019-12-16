@@ -486,10 +486,7 @@ class AuthController {
   }
 
   async peerplaysLogin(_, {login, password}, req) {
-    let user;
-
-    user = await this.userService.loginPeerplaysUser(login, password, req.user);
-
+    const user = await this.userService.loginPeerplaysUser(login, password, req.user);
     await new Promise((success) => req.login(user, () => success()));
     return user;
   }

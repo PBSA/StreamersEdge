@@ -64,7 +64,7 @@ class ChallengeValidator extends BaseValidator {
 
   getAllChallenges() {
     const querySchema = {
-      order: Joi.string().allow(''),
+      order: Joi.string().allow('').valid(challengeConstants.order),
       searchText: Joi.string().allow('')
     };
 

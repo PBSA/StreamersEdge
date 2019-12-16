@@ -75,9 +75,23 @@ class ChallengeService {
       });
     }));
 
+    await this.sendChallengeNotifications(Challenge.name);
+
     return this.getCleanObject(Challenge.id);
   }
 
+  /**
+   * Send challenge notificaitons to all subscribed users
+   * @param challenge 
+   */
+  async sendChallengeNotifications(challengeName) {
+    const users = await this.userRepository.findWithChallengeSubscribed();
+
+    const notificationText = {title: 'New Challenge', body: `${challengeName} was created. Donate now!`};
+    return await Promise.all(users.map(async (user)=> {
+      await this.webPushConnection.sendNotification(user.challengeSubscribeData, notificationText);
+    }));
+  }
   /**
      * @param challengeId
      * @returns {Promise<ChallengePublicObject>}

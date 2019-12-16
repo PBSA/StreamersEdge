@@ -26,7 +26,11 @@ class WebPushConnection extends BaseConnection {
       return;
     }
 
-    return webPush.sendNotification(subscription, JSON.stringify(payload));
+    try {
+      return await webPush.sendNotification(subscription, JSON.stringify(payload));
+    } catch (err) {
+      console.error(`web push error: ${err.message}`);
+    }
   }
 
   disconnect() {}
