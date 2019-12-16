@@ -50,7 +50,7 @@ describe('GET /api/v1/profile', () => {
       notifications: true,
       youtube: '',
       twitch: '',
-      facebook: '',
+      facebook: null,
       peerplaysAccountName: 'se-test-global',
       bitcoinAddress: '',
       timeFormat: '12h'
