@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/PBSA/StreamersEdge/compare/v0.4.0...v0.6.0) (2019-12-16)
+
+
+### Bug Fixes
+
+* filters not working in admin users search ([#194](https://github.com/PBSA/StreamersEdge/issues/194)) ([742bd3b](https://github.com/PBSA/StreamersEdge/commit/742bd3b))
+* peerplays transaction amount format wrong ([#191](https://github.com/PBSA/StreamersEdge/issues/191)) ([6c9b127](https://github.com/PBSA/StreamersEdge/commit/6c9b127))
+* send notification for a new challenge to all subscribed users ([#193](https://github.com/PBSA/StreamersEdge/issues/193)) ([33c047b](https://github.com/PBSA/StreamersEdge/commit/33c047b))
+* strm-871: patch profile changes ([#185](https://github.com/PBSA/StreamersEdge/issues/185)) ([33f7b91](https://github.com/PBSA/StreamersEdge/commit/33f7b91))
+
+
+
+## [0.3.0](https://github.com/PBSA/StreamersEdge/compare/v0.2.0...v0.3.0) (2019-11-27)
+
+
+### Bug Fixes
+
+* STRM-784 validations for negative id and non-existing user ([#190](https://github.com/PBSA/StreamersEdge/issues/190)) ([01b2513](https://github.com/PBSA/StreamersEdge/commit/01b2513))
+
+
+
 ## [0.4.0](https://github.com/PBSA/StreamersEdge/compare/v0.2.0...v0.4.0) (2019-11-29)
 
 
