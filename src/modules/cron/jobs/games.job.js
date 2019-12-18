@@ -152,9 +152,7 @@ class GamesJob {
         throw new Error('unsupported game');
     }
 
-    const [winner] = (await this.dbConnection.sequelize.query(query, {
-      bind: [challenge.id]
-    }));
+    const [winner] = (await this.dbConnection.sequelize.query(query));
     
     return winner.length !== 0;
   }
