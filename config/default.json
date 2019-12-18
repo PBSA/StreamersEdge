@@ -88,7 +88,7 @@
   },
   "challenge": {
     "joinFee": 100,
-    "userRewardPercent": 0.95,
+    "userRewardPercent": 1,
     "userRedeemPercent": 0.95
   }
 }

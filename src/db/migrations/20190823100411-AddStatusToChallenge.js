@@ -1,10 +1,9 @@
 'use strict';
-const challengeConstants = require('../../constants/challenge');
 const DataTypes = require('sequelize/lib/data-types');
 
 module.exports = {
     up: async (queryInterface) => {
-        await queryInterface.addColumn('challenges', 'status', {type: DataTypes.ENUM(Object.keys(challengeConstants.status).map((key) => challengeConstants.status[key]))});
+        await queryInterface.addColumn('challenges', 'status', {type: DataTypes.ENUM(['open', 'resolved', 'paid'])})
         await queryInterface.addColumn('challenge-invited-users', 'joinedAt', {type:DataTypes.DATE, allowNull:false});
         return Promise.resolve();
 

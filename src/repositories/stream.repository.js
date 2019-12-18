@@ -2,6 +2,11 @@ const Sequelize = require('sequelize');
 const {model} = require('../db/models/stream.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
 
+const GAME_IDS_MAP = {
+  33124: 'fortnite',
+  493057: 'pubg'
+};
+
 class StreamRepository extends BasePostgresRepository {
 
   constructor(opts) {
@@ -19,66 +24,91 @@ class StreamRepository extends BasePostgresRepository {
     return super.findByPk(pk, options);
   }
 
+  async getLiveStreamForUser(userId) {
+    return this.model.findOne({
+      where: {
+        userId,
+        isLive: true
+      }
+    });
+  }
+
   async populateTwitchStreams() {
-    const twitchIds = await this.userRepository.model.findAll({
+    const twitchIds = (await this.userRepository.model.findAll({
       attributes: ['twitchId'],
       where: {
         twitchId: {
-          [Sequelize.Op.ne]:null
+          [Sequelize.Op.ne]: null
         }
       },
       raw: true
-    });
+    })).map((user) => user.twitchId);
 
-    while(Array.isArray(twitchIds) && twitchIds.length) {
-      const data = JSON.parse(await this.twitchConnection.request(twitchIds.splice(0,100).map((user)=>user.twitchId).join('&user_id=')));
+    const liveStreams = await this.model.findAll({
+      where: {
+        isLive: true
+      },
+      attributes: ['id', 'channelId']
+    }, {raw: true});
 
-      for(let i = 0; i < data.data.length; i++) {
-        const streamObj = data.data[i];
-        let user = await this.userRepository.getByTwitchId(streamObj.user_id);
-        let streamGame = '';
+    // list of all streams we believe are currently live
+    const liveByChannelId = liveStreams.reduce((acc, stream) => {
+      stream = stream.toJSON();
+      stream.isLive = false;
+      acc[stream.channelId] = stream;
+      return acc;
+    }, {});
 
-        if(streamObj.game_id == 33214) {
-          streamGame = 'fortnite';
-        }else {
-          streamGame = 'pubg';
+    for (let i = 0; i <= twitchIds.length; i += 100) {
+      const streams = await this.twitchConnection.getStreams(twitchIds.slice(i, i + 100));
+
+      for (const stream of streams) {
+        const user = await this.userRepository.getByTwitchId(stream.user_id);
+
+        if (!user) {
+          continue;
         }
 
-        let isStreamLive = streamObj.type == 'live' ? true : false;
-        await this.createOrUpdateStream(streamObj, user, streamGame, isStreamLive);
+        const game = GAME_IDS_MAP[stream.game_id];
+
+        if (!game) {
+          continue;
+        }
+
+        // live stream still exists, mark it as such
+        if (liveByChannelId[stream.id]) {
+          liveByChannelId[stream.id].isLive = true;
+        }
+        
+        this.model.upsert({
+          userId: user.id,
+          name: stream.title,
+          game,
+          sourceName: 'twitch',
+          embedUrl: '',
+          channelId: stream.id,
+          views: stream.viewer_count,
+          isLive: stream.type === 'live',
+          startTime: stream.started_at,
+          thumbnailUrl: stream.thumbnail_url
+        });
       }
     }
-  }
 
-  async createOrUpdateStream(streamObj, user, streamGame, isStreamLive) {
-    this.model.findOne({where:{channelId:streamObj.id}}).then((obj)=>{
-      if(!obj) {
-        this.create({
-          userId: user.id,
-          name: streamObj.title,
-          game: streamGame,
-          sourceName: 'twitch',
-          embedUrl: '',
-          channelId:streamObj.id,
-          views:streamObj.viewer_count,
-          isLive:isStreamLive,
-          startTime:streamObj.started_at,
-          thumbnailUrl:streamObj.thumbnail_url
-        });
-      }else {
-        obj.update({
-          name: streamObj.title,
-          game: streamGame,
-          sourceName: 'twitch',
-          embedUrl: '',
-          channelId:streamObj.id,
-          views:streamObj.viewer_count,
-          isLive:isStreamLive,
-          startTime:streamObj.started_at,
-          thumbnailUrl:streamObj.thumbnail_url
-        });
+    // any stream we didn't find in the API must have ended
+    await Promise.all(Object.values(liveByChannelId).map(async (stream) => {
+      if (stream.isLive) {
+        return;
       }
-    });
+
+      return this.model.update({
+        isLive: false
+      }, {
+        where: {
+          id: stream.id
+        }
+      });
+    }));
   }
 
   async searchStreams(search, limit, offset, sortBy, isAscending, searchActiveStreams, options) {

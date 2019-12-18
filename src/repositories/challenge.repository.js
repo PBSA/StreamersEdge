@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-const invitedUsersModel = require('../db/models/challenge.invited.users.model').model;
 const joinedUsersModel = require('../db/models/joined.users.model').model;
 const userModel = require('../db/models/user.model').model;
 const challengeConditionModel = require('../db/models/challenge.condition.model').model;
@@ -23,6 +22,8 @@ class ChallengeRepository extends BasePostgresRepository {
     this.config = opts.config;
     this.peerplaysRepository = opts.peerplaysRepository;
     this.transactionRepository = opts.transactionRepository;
+
+    this.refundChallenge = this.refundChallenge.bind(this);
   }
 
   /**
@@ -100,57 +101,65 @@ class ChallengeRepository extends BasePostgresRepository {
   async findWaitToResolve() {
     return this.model.findAll({
       where: {
-        status: consts.status.open
+        status: consts.status.open,
+        timeToStart: {
+          [Op.lt]: Sequelize.fn('NOW')
+        }
+      }
+    });
+  }
+
+  async findLive() {
+    return this.model.findAll({
+      where: {
+        status: consts.status.live
       },
       include: [{
-        model: invitedUsersModel,
-        as: 'challenge-invited-users',
-        required: false
-      }, {
         model: challengeConditionModel,
         required: false
       }]
     });
   }
 
-  async refundChallengesCreatedByUser(user) {
-    const challenges = await this.findAllChallengesForUser(user.id);
-
-    for (const challenge of challenges) {
-      if (challenge.status !== consts.status.open) {
-        continue;
-      }
-
-      const joinedUsers = await joinedUsersModel.findAll({
-        where: {challengeId: challenge.id},
-        include: [{
-          model: userModel
-        }],
-        attributes: [[Sequelize.fn('sum', Sequelize.col('ppyAmount')), 'totalDonation']],
-        group: ['user.id']
-      }, {raw: true});
-
-      for (let joinedUser of joinedUsers) {
-        joinedUser = joinedUser.toJSON();
-        const tx = await this.peerplaysRepository.sendPPYFromReceiverAccount(joinedUser.user.peerplaysAccountId, joinedUser.totalDonation);
-
-        await this.transactionRepository.create({
-          txId: tx.id,
-          blockNum: tx.block_num,
-          trxNum: tx.trx_num,
-          ppyAmountValue: joinedUser.totalDonation,
-          type: txConstants.types.challengeRefund,
-          userId: joinedUser.user.id,
-          challengeId: challenge.id,
-          peerplaysFromId: this.config.peerplays.paymentReceiver,
-          peerplaysToId: joinedUser.user.peerplaysAccountId
-        });
-      }
-
-      challenge.status = consts.status.paid;
-      challenge.streamLink = null;
-      await challenge.save();
+  async refundChallenge(challenge) {
+    if (challenge.status !== consts.status.open) {
+      return;
     }
+
+    const joinedUsers = await joinedUsersModel.findAll({
+      where: {challengeId: challenge.id},
+      include: [{
+        model: userModel
+      }],
+      attributes: [[Sequelize.fn('sum', Sequelize.col('ppyAmount')), 'totalDonation']],
+      group: ['user.id']
+    }, {raw: true});
+
+    for (let joinedUser of joinedUsers) {
+      joinedUser = joinedUser.toJSON();
+      const tx = await this.peerplaysRepository.sendPPYFromReceiverAccount(joinedUser.user.peerplaysAccountId, joinedUser.totalDonation);
+
+      await this.transactionRepository.create({
+        txId: tx.id,
+        blockNum: tx.block_num,
+        trxNum: tx.trx_num,
+        ppyAmountValue: joinedUser.totalDonation,
+        type: txConstants.types.challengeRefund,
+        userId: joinedUser.user.id,
+        challengeId: challenge.id,
+        peerplaysFromId: this.config.peerplays.paymentReceiver,
+        peerplaysToId: joinedUser.user.peerplaysAccountId
+      });
+    }
+
+    challenge.status = consts.status.paid;
+    challenge.streamLink = null;
+    await challenge.save();
+  }
+
+  async refundChallengesCreatedByUser(user) {
+    return (await this.findAllChallengesForUser(user.id))
+      .map(this.refundChallenge);
   }
 
 }

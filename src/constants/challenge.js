@@ -15,6 +15,7 @@ module.exports = {
   },
   status: {
     open: 'open',
+    live: 'live',
     resolved: 'resolved',
     paid: 'paid'
   },
