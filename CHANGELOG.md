@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/PBSA/StreamersEdge/compare/v0.4.0...v0.7.0) (2019-12-18)
+
+
+### Bug Fixes
+
+* adding PaypalEmail [#688](https://github.com/PBSA/StreamersEdge/issues/688) ([#197](https://github.com/PBSA/StreamersEdge/issues/197)) ([a9d4186](https://github.com/PBSA/StreamersEdge/commit/a9d4186))
+* check pubgusername instead of steamId in the patch profile ([#196](https://github.com/PBSA/StreamersEdge/issues/196)) ([653d62c](https://github.com/PBSA/StreamersEdge/commit/653d62c))
+* error in ppy sign up when username exists ([#201](https://github.com/PBSA/StreamersEdge/issues/201)) ([dcc7052](https://github.com/PBSA/StreamersEdge/commit/dcc7052))
+* errors in sorting challenges ([#198](https://github.com/PBSA/StreamersEdge/issues/198)) ([bcddcea](https://github.com/PBSA/StreamersEdge/commit/bcddcea))
+* filters not working in admin users search ([#194](https://github.com/PBSA/StreamersEdge/issues/194)) ([742bd3b](https://github.com/PBSA/StreamersEdge/commit/742bd3b))
+* peerplays transaction amount format wrong ([#191](https://github.com/PBSA/StreamersEdge/issues/191)) ([6c9b127](https://github.com/PBSA/StreamersEdge/commit/6c9b127))
+* return newuser field in response on peerplays login ([#199](https://github.com/PBSA/StreamersEdge/issues/199)) ([3bdb9ef](https://github.com/PBSA/StreamersEdge/commit/3bdb9ef))
+* return status in challenge details ([#195](https://github.com/PBSA/StreamersEdge/issues/195)) ([c21eb09](https://github.com/PBSA/StreamersEdge/commit/c21eb09))
+* send notification for a new challenge to all subscribed users ([#193](https://github.com/PBSA/StreamersEdge/issues/193)) ([33c047b](https://github.com/PBSA/StreamersEdge/commit/33c047b))
+* strm-871: patch profile changes ([#185](https://github.com/PBSA/StreamersEdge/issues/185)) ([33f7b91](https://github.com/PBSA/StreamersEdge/commit/33f7b91))
+
+
+
+## [0.3.0](https://github.com/PBSA/StreamersEdge/compare/v0.2.0...v0.3.0) (2019-11-27)
+
+
+### Bug Fixes
+
+* STRM-784 validations for negative id and non-existing user ([#190](https://github.com/PBSA/StreamersEdge/issues/190)) ([01b2513](https://github.com/PBSA/StreamersEdge/commit/01b2513))
+
+
+
 ## [0.4.0](https://github.com/PBSA/StreamersEdge/compare/v0.2.0...v0.4.0) (2019-11-29)
 
 
