@@ -112,7 +112,7 @@ class UserValidator extends BaseValidator {
 
     const querySchema = {
       flag: Joi.string().valid([banned, active]),
-      search: Joi.string().regex(/^[a-zA-Z0-9.-@]+$/).allow('').max(254),
+      search: Joi.string().regex(/^[a-zA-Z0-9.\-@]+$/).allow('').max(254),
       offset: Joi.number().integer().min(0),
       limit: Joi.number().integer().min(1).max(100).default(20)
     };
