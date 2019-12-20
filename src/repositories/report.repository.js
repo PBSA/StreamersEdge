@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize');
+
 const {model} = require('../db/models/report.model');
 const {model: UserModel} = require('../db/models/user.model');
 const BasePostgresRepository = require('./abstracts/base-postgres.repository');
@@ -18,8 +20,25 @@ class ReportRepository extends BasePostgresRepository {
     });
   }
 
-  async fetchAll(){
+  async fetchAll(search, offset, limit) {
+    const filter = search ? {
+      [Sequelize.Op.or]: [{
+        '$troublemaker.username$':{
+          [Sequelize.Op.iLike]: `%${search}%`
+        }
+      },{
+        '$reporter.username$':{
+          [Sequelize.Op.iLike]: `%${search}%`
+        }
+      }, {
+        description: {
+          [Sequelize.Op.iLike]: `%${search}%`
+        }
+      }]
+    } : null;
+
     return this.model.findAll({
+      where: filter,
       include: [
         {
           model: UserModel,
@@ -34,7 +53,9 @@ class ReportRepository extends BasePostgresRepository {
       ],
       attributes: {
         exclude: ['createdAt', 'updatedAt']
-      }
+      },
+      offset,
+      limit
     });
   }
 

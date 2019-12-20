@@ -72,8 +72,9 @@ class AdminService {
     return await this.userRepository.getUserInfo(userId);
   }
 
-  async getReports(){
-    return this.reportRepository.fetchAll();
+  async getReports(fetchingParams){
+    const {search, offset = 0, limit = 20} = fetchingParams;
+    return this.reportRepository.fetchAll(search, offset, limit);
   }
 
 

@@ -23,6 +23,7 @@ class UserValidator extends BaseValidator {
     this.getUsersWithBansHistory = this.getUsersWithBansHistory.bind(this);
     this.changeNotificationStatus = this.changeNotificationStatus.bind(this);
     this.unbanUser = this.unbanUser.bind(this);
+    this.getReports = this.getReports.bind(this);
   }
 
   getUser() {
@@ -123,6 +124,16 @@ class UserValidator extends BaseValidator {
     return this.validate(null,
       {notifications: Joi.alternatives().try(Joi.string(), Joi.number().integer(), Joi.boolean()).required()},
       (req, query, body) => body);
+  }
+
+  getReports() {
+    const querySchema = {
+      search: Joi.string().regex(/^[a-zA-Z0-9.-]+$/).allow('').max(254),
+      offset: Joi.number().integer().min(0),
+      limit: Joi.number().integer().min(1).max(100).default(20)
+    };
+
+    return this.validate(querySchema, null, (req, query) => query);
   }
 
 }

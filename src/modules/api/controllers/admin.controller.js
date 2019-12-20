@@ -402,6 +402,22 @@ class AdminController {
        *      - application/json
        *    tags:
        *      - Admin
+       *    parameters:
+       *      - name: search
+       *        description: Filter by reported username, reported by username and description
+       *        in: query
+       *        required: false
+       *        type: string
+       *      - name: offset
+       *        description: Number of rows to skip
+       *        in: query
+       *        required: false
+       *        type: integer
+       *      - name: limit
+       *        description: Limit of rows
+       *        in: query
+       *        required: true
+       *        type: integer
        *    responses:
        *      200:
        *        description: Report result schema
@@ -418,6 +434,7 @@ class AdminController {
        */
       ['get', '/api/v1/admin/reports',
         this.authValidator.loggedAdminOnly,
+        this.userValidator.getReports,
         this.getAllReports.bind(this)
       ]
     ];
@@ -444,8 +461,8 @@ class AdminController {
     return this.adminService.getUserInfo(req.query.id);
   }
 
-  async getAllReports() {
-    return this.adminService.getReports();
+  async getAllReports(user, pure, req) {
+    return this.adminService.getReports(req.query);
   }
 
 }
