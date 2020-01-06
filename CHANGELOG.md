@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/PBSA/StreamersEdge/compare/v0.7.0...v0.9.0) (2020-01-06)
+
+
+### Bug Fixes
+
+* remove extra parameter passed to query and twitch stream error ([#205](https://github.com/PBSA/StreamersEdge/issues/205)) ([fa0c1eb](https://github.com/PBSA/StreamersEdge/commit/fa0c1eb))
+* strm-878: set default value for users userType ([#204](https://github.com/PBSA/StreamersEdge/issues/204)) ([a42f462](https://github.com/PBSA/StreamersEdge/commit/a42f462))
+* strm-965: admin user search validation fix ([#206](https://github.com/PBSA/StreamersEdge/issues/206)) ([44ee8a2](https://github.com/PBSA/StreamersEdge/commit/44ee8a2))
+
+
+### Features
+
+* add searching in admin/report api ([#208](https://github.com/PBSA/StreamersEdge/issues/208)) ([f7fa913](https://github.com/PBSA/StreamersEdge/commit/f7fa913))
+* strm-876: games job changes ([#200](https://github.com/PBSA/StreamersEdge/issues/200)) ([5cf6f8c](https://github.com/PBSA/StreamersEdge/commit/5cf6f8c))
+
+
+
+## [0.6.0](https://github.com/PBSA/StreamersEdge/compare/v0.5.0...v0.6.0) (2019-12-16)
+
+
+
+## [0.5.0](https://github.com/PBSA/StreamersEdge/compare/v0.4.0...v0.5.0) (2019-12-16)
+
+
+### Bug Fixes
+
+* strm-961: don't throw on failed web push notification ([#202](https://github.com/PBSA/StreamersEdge/issues/202)) ([c2efd29](https://github.com/PBSA/StreamersEdge/commit/c2efd29))
+
+
+### Features
+
+* strm-877: deduct 5% from each redemption ([#203](https://github.com/PBSA/StreamersEdge/issues/203)) ([1b35255](https://github.com/PBSA/StreamersEdge/commit/1b35255))
+
+
+
 ## [0.8.0](https://github.com/PBSA/StreamersEdge/compare/v0.7.0...v0.8.0) (2019-12-23)
 
 
