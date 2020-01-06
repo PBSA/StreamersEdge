@@ -15,10 +15,10 @@ class TwitchStreamConnection extends BaseConnection {
 
   connect() {}
 
-  async request(userIds) {
+  async getStreams(userIds) {
     const options = {
       method: 'GET',
-      uri: `${this.config.twitchUrl}${streamConstants.gamedIds}&userId=${userIds}`,
+      uri: `${this.config.twitchUrl}${streamConstants.gamedIds}${userIds.map((id) => `&user_id=${id}`)}`.replace(/,/g,''),
       headers: {'Client-ID': this.config.twitch.clientId}
     };
     return new Promise((success, fail) => {
@@ -39,7 +39,7 @@ class TwitchStreamConnection extends BaseConnection {
         }
 
         try {
-          success(body);
+          success(JSON.parse(body).data);
         } catch (_err) {
           fail(_err.message);
         }

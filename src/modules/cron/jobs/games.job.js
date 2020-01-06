@@ -2,10 +2,6 @@ const challengeConstants = require('../../../constants/challenge');
 const moment = require('moment');
 const eachLimit = require('async/eachLimit');
 
-function flatten(array) {
-  return [].concat.apply([], array);
-}
-
 class GamesJob {
 
   /**
@@ -14,6 +10,7 @@ class GamesJob {
    * @param {LeagueOfLegendsApiRepository} opts.leagueOfLegendsApiRepository
    * @param {ChallengeRepository} opts.challengeRepository
    * @param {JoinedUsersRepository} opts.joinedUsersRepository
+   * @param {StreamRepository} opts.streamRepository
    * @param {ChallengeWinnersRepository} opts.challengeWinnersRepository
    * @param {PubgService} opts.pubgService
    * @param {LeagueOfLegendsService} opts.leagueOfLegendsService
@@ -26,6 +23,7 @@ class GamesJob {
     this.leagueOfLegendsApiRepository = opts.leagueOfLegendsApiRepository;
     this.challengeRepository = opts.challengeRepository;
     this.joinedUsersRepository = opts.joinedUsersRepository;
+    this.streamRepository = opts.streamRepository;
     this.challengeWinnersRepository = opts.challengeWinnersRepository;
     this.pubgService = opts.pubgService;
     this.leagueOfLegendsService = opts.leagueOfLegendsService;
@@ -40,49 +38,72 @@ class GamesJob {
   }
 
   async runJob() {
+    // update list of twitch streams
+    await this.streamRepository.populateTwitchStreams();
+    
     // get all unresolved challenges
     let challenges = await this.challengeRepository.findWaitToResolve();
 
-    // resolve pubg challenges
-    await this.resolvePubgChallenges(challenges.filter(({game}) => game === 'pubg'));
-    
-    // resolve league of legends challenges
-    await this.resolveLeagueOfLegendsChallenges(challenges.filter(({game}) => game === 'leagueOfLegends'));
+    for (const challenge of challenges) {
+      const stream = await this.streamRepository.getLiveStreamForUser(challenge.userId);
+
+      if (!stream || !stream.isLive) {
+        if (moment(challenge.timeToStart).add(5, 'minutes').diff(moment()) < 0) {
+          await this.challengeRepository.refundChallenge(challenge);
+        }
+
+        continue;
+      }
+
+      challenge.status = challengeConstants.status.live;
+      challenge.streamLink = stream.embedUrl;
+      await challenge.save();
+    }
+
+    // get all live challenges
+    challenges = await this.challengeRepository.findLive();
+
+    for (const challenge of challenges) {
+      const stream = await this.streamRepository.getLiveStreamForUser(challenge.userId);
+
+      if (!stream || !stream.isLive) {
+        await this.challengeRepository.refundChallenge(challenge);
+        continue;
+      }
+
+      const user = await this.userRepository.model.findOne({
+        where: {
+          id: challenge.userId
+        },
+        attributes: ['id', 'pubgUsername', 'leagueOfLegendsRealm', 'leagueOfLegendsAccountId']
+      });
+
+      if (!user) {
+        console.error(`failed to find user ${challenge.userId} for challenge ${challenge.id}`);
+        continue;
+      }
+
+      // query the game apis for any new matches for this user
+      await this.updateMatchesForUser(user, challenge.game);
+
+      // try to resolve the challenge
+      await this.resolveChallenge(challenge, stream);
+    }
+  }
+
+  async updateMatchesForUser(user, game) {
+    if (game === 'pubg') {
+      const matches = this.getPubgMatchesForUser(user.pubgUsername);
+      await eachLimit(matches, this.asyncLimit, ({id}, cb) => this.pubgService.addGame(id).then(cb));
+    } else if (game === 'leagueOfLegends') {
+      const realm = user.leagueOfLegendsRealm;
+      const matches = await this.getLeagueOfLegendsMatchesForUser(realm, user.leagueOfLegendsAccountId);
+      await eachLimit(matches, this.asyncLimit, ({gameId}, cb) => this.leagueOfLegendsService.addGame(realm, gameId).then(cb));
+    }
   }
 
   async getLeagueOfLegendsMatchesForUser(realm, accountId) {
     return await this.leagueOfLegendsApiRepository.getMatchesForAccount(realm, accountId);
-  }
-
-  async resolveLeagueOfLegendsChallenges(challenges) {
-    let users = flatten(await Promise.all(challenges.map(({id}) => this.joinedUsersRepository.getForChallenge(id))));
-
-    const usersByRealm = users.reduce((realms, {user: {leagueOfLegendsRealm, leagueOfLegendsAccountId}}) => {
-      if (!leagueOfLegendsAccountId || !leagueOfLegendsRealm) {
-        return realms;
-      }
-
-      if (!realms[leagueOfLegendsRealm]) {
-        realms[leagueOfLegendsRealm] = [];
-      }
-
-      realms[leagueOfLegendsRealm].push(leagueOfLegendsAccountId);
-      return realms;
-    }, {});
-  
-    for (const realm of Object.keys(usersByRealm)) {
-      const accountIds = [...new Set(usersByRealm[realm])];
-
-      const matches = flatten(await Promise.all(accountIds.map((accountId) => this.getLeagueOfLegendsMatchesForUser(realm, accountId))));
-
-      try {
-        await eachLimit(matches, this.asyncLimit, ({gameId}, cb) => this.leagueOfLegendsService.addGame(realm, gameId).then(cb));
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    await Promise.all(challenges.map(this.resolveChallenge));
   }
 
   async getPubgMatchesForUser(pubgUsername) {
@@ -97,59 +118,43 @@ class GamesJob {
     }
   }
 
-  async resolvePubgChallenges(challenges) {
-    // get all joined users
-    let users = flatten(await Promise.all(challenges.map(({id}) => this.joinedUsersRepository.getForChallenge(id))));
+  async resolveChallenge(challenge, stream) {
+    const isWon = await this.checkChallengeConditions(challenge, stream);
 
-    // filter out users without a pubg username and remove duplicates
-    let pubgUsers = [...new Set(users.map(({pubgUsername}) => pubgUsername).filter((x) => x))];
-    
-    // get all pubg matches
-    const matches = flatten(await Promise.all(pubgUsers.map(this.getPubgMatchesForUser)));
-
-    // add the matches to the pubg service
-    await eachLimit(matches, this.asyncLimit, ({id}, cb) => this.pubgService.addGame(id).then(cb));
-
-    // resolve each challenge
-    await Promise.all(challenges.map(this.resolveChallenge));
-  }
-
-  async resolveChallenge(challenge) {
-    const winners = await this.determineWinners(challenge);
-
-    if ((!challenge.endDate || challenge.endDate > new Date()) && winners.length === 0) {
+    if (!isWon) {
       return;
     }
 
-    challenge.status = challengeConstants.status.resolved;
+    await this.addAndNotifyWinner(challenge.userId, challenge);
+    challenge.status = challenge.status.resolved;
     await challenge.save();
-
-    await Promise.all(winners.map(({userId}) => this.addAndNotifyWinner(userId, challenge)));
   }
 
-  async determineWinners(challenge) {
+  async checkChallengeConditions(challenge, stream) {
     const conditions = challenge.toJSON()['challenge-conditions'].sort((a, b) => a.id - b.id);
-    const startDate = moment(challenge.startDate || challenge.createdAt).format();
-    const endDate = moment(challenge.endDate || new Date()).format();
+    let timeToStart = moment(challenge.timeToStart);
+    const streamStart = moment(stream.startTime);
+
+    if (timeToStart.diff(streamStart) < 0) {
+      timeToStart = streamStart;
+    }
 
     let query;
     
     switch (challenge.game) {
       case 'pubg':
-        query = this.createPubgQuery(conditions, startDate, endDate);
+        query = this.createPubgQuery(challenge.userId, conditions, timeToStart);
         break;
       case 'leagueOfLegends':
-        query = this.createLeagueOfLegendsQuery(conditions, startDate, endDate);
+        query = this.createLeagueOfLegendsQuery(challenge.userId, conditions, timeToStart);
         break;
       default:
         throw new Error('unsupported game');
     }
 
-    const [winners] = (await this.dbConnection.sequelize.query(query, {
-      bind: [challenge.id]
-    }));
-
-    return winners;
+    const [winner] = (await this.dbConnection.sequelize.query(query));
+    
+    return winner.length !== 0;
   }
 
   createConditionsQuery(conditions, mapping) {
@@ -161,8 +166,8 @@ class GamesJob {
     }, '');
   }
 
-  createLeagueOfLegendsQuery(conditions, startDate, endDate) {
-    let whereString = `match."createdAt" between '${startDate}' and '${endDate}' AND (`;
+  createLeagueOfLegendsQuery(userId, conditions, timeToStart) {
+    let whereString = `match."createdAt" > '${timeToStart.format()}' AND (`;
 
     whereString += this.createConditionsQuery(conditions, {
       [challengeConstants.paramTypes.winTime]: 'match."gameDuration"',
@@ -170,22 +175,21 @@ class GamesJob {
       [challengeConstants.paramTypes.resultPlace]: 'participants."isWin"::int'
     });
 
-    whereString += ') AND users.id IS NOT NULL AND users."peerplaysAccountId" IS NOT NULL';
+    whereString += ') AND users.id IS NOT NULL';
 
     return `SELECT
-        DISTINCT users.id as "userId",
         match.id as "matchId",
         match."createdAt" as "createdAt"
       FROM "leagueoflegends-matches" as match
       LEFT JOIN "leagueoflegends-participants" as participants ON match.id = participants."leagueOfLegendsMatchId" 
-      LEFT JOIN "joined-users" AS joinedUsers ON joinedUsers."challengeId" = $1
-      LEFT JOIN "users" ON users."leagueOfLegendsAccountId" = "participants"."accountId" AND users.id = joinedUsers."userId"
+      LEFT JOIN "users" ON users."leagueOfLegendsAccountId" = "participants"."accountId" AND users.id = '${userId}'
       WHERE ${whereString}
-      ORDER BY match."createdAt"`;
+      ORDER BY match."createdAt"
+      LIMIT 1`;
   }
 
-  createPubgQuery(conditions, startDate, endDate) {
-    let whereString = `pubg."createdAt" between '${startDate}' and '${endDate}' AND (`;
+  createPubgQuery(userId, conditions, timeToStart) {
+    let whereString = `pubg."createdAt" > '${timeToStart.format()}' AND (`;
 
     whereString += this.createConditionsQuery(conditions, {
       [challengeConstants.paramTypes.winTime]: 'pubg.duration',
@@ -193,7 +197,7 @@ class GamesJob {
       [challengeConstants.paramTypes.resultPlace]: 'participants.rank'
     });
 
-    whereString += ') AND users.id IS NOT NULL AND users."peerplaysAccountId" IS NOT NULL';
+    whereString += ') AND users.id IS NOT NULL';
 
     return `SELECT
         DISTINCT users.id as "userId", 
@@ -201,10 +205,10 @@ class GamesJob {
         pubg."createdAt" as "createdAt"
       FROM "pubgs" as pubg 
       LEFT JOIN "pubg-participants" as participants ON pubg.id = "participants"."pubgId" 
-      LEFT JOIN "joined-users" AS joinedUsers ON joinedUsers."challengeId" = $1
-      LEFT JOIN "users" ON users."pubgUsername" = "participants"."name" AND users.id = joinedUsers."userId"
+      LEFT JOIN "users" ON users."pubgUsername" = "participants"."name" AND users.id = '${userId}'
       WHERE ${whereString}
-      ORDER BY pubg."createdAt"`;
+      ORDER BY pubg."createdAt"
+      LIMIT 1`;
   }
 
   async addAndNotifyWinner(userId, challenge) {
