@@ -1,5 +1,6 @@
 const profileConstants = require('../constants/profile');
 const Sequelize = require('sequelize');
+const {status} = require('../constants/profile');
 
 class AdminService {
 
@@ -26,7 +27,16 @@ class AdminService {
    */
   async getUsers(fetchingParams) {
     const {flag, search, offset = 0, limit = 20} = fetchingParams;
-    return await this.userRepository.getUsersWithBansHistory(flag, search, offset, limit);
+
+    if(flag === status.banned){
+      let bannedUsers = await this.userRepository.getUsersWithBansHistory(flag, search, offset, limit);
+      return Promise.all(bannedUsers.map(async (user) => {
+        user['reportInfo'] = await this.reportRepository.fetchReportByUserId(user.id);
+        return user;
+      }));
+    } else {
+      return await this.userRepository.getUsersWithBansHistory(flag, search, offset, limit);
+    }
   }
 
   /**
@@ -72,8 +82,15 @@ class AdminService {
     return await this.userRepository.getUserInfo(userId);
   }
 
-  async getReports(){
-    return this.reportRepository.fetchAll();
+  async getReports(fetchingParams){
+    const {search, offset = 0, limit = 20} = fetchingParams;
+    let reports =  await this.reportRepository.fetchAll(search, offset, limit);
+    return reports.map((report) => {
+      report = report.toJSON();
+      report['reportedDate'] = report.createdAt;
+      delete report['createdAt'];
+      return report;
+    });
   }
 
 

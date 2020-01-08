@@ -97,7 +97,46 @@ class AdminController {
    *        type: number
    *      ban-histories.bannedAt:
    *        type: string
+   *      reportInfo:
+   *        $ref: '#/definitions/ReportBanResponse'
    *
+   *  ReportBanResponse:
+   *    type: array
+   *    items:
+   *      type: object
+   *      properties:
+   *          id:
+   *            type: number
+   *            example: 1
+   *          reportedUserId:
+   *            type: number
+   *            example: 2
+   *          reportedByUserId:
+   *            type: number
+   *            example: 1
+   *          reason:
+   *            type: string
+   *            example: vulgarity-on-stream
+   *          description:
+   *            type: string
+   *          videoUrl:
+   *            type: string
+   *            example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
+   *          createdAt:
+   *            type: string
+   *            example: '2019-07-27 00:32:54.495+05:30'
+   *          updatedAt:
+   *            type: string
+   *            example: '2019-07-27 00:32:54.495+05:30'
+   *          reporter:
+   *            type: object
+   *            properties:
+   *              username:
+   *                type: string
+   *                example: abc
+   *              email:
+   *                type: string
+   *                example: abc@xyz.com
    *  ReportResponse:
    *    type: array
    *    items:
@@ -120,6 +159,9 @@ class AdminController {
    *          videoUrl:
    *            type: string
    *            example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
+   *          reportedDate:
+   *            type: string
+   *            example: '2019-07-27 00:32:54.495+05:30'
    *          reporter:
    *            type: object
    *            properties:
@@ -402,6 +444,22 @@ class AdminController {
        *      - application/json
        *    tags:
        *      - Admin
+       *    parameters:
+       *      - name: search
+       *        description: Filter by reported username, reported by username and description
+       *        in: query
+       *        required: false
+       *        type: string
+       *      - name: offset
+       *        description: Number of rows to skip
+       *        in: query
+       *        required: false
+       *        type: integer
+       *      - name: limit
+       *        description: Limit of rows
+       *        in: query
+       *        required: true
+       *        type: integer
        *    responses:
        *      200:
        *        description: Report result schema
@@ -418,6 +476,7 @@ class AdminController {
        */
       ['get', '/api/v1/admin/reports',
         this.authValidator.loggedAdminOnly,
+        this.userValidator.getReports,
         this.getAllReports.bind(this)
       ]
     ];
@@ -444,8 +503,8 @@ class AdminController {
     return this.adminService.getUserInfo(req.query.id);
   }
 
-  async getAllReports() {
-    return this.adminService.getReports();
+  async getAllReports(user, pure, req) {
+    return this.adminService.getReports(req.query);
   }
 
 }
