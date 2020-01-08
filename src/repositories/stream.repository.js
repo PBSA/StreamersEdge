@@ -34,16 +34,6 @@ class StreamRepository extends BasePostgresRepository {
   }
 
   async populateTwitchStreams() {
-    const twitchIds = (await this.userRepository.model.findAll({
-      attributes: ['twitchId'],
-      where: {
-        twitchId: {
-          [Sequelize.Op.ne]: null
-        }
-      },
-      raw: true
-    })).map((user) => user.twitchId);
-
     const liveStreams = await this.model.findAll({
       where: {
         isLive: true
@@ -58,6 +48,16 @@ class StreamRepository extends BasePostgresRepository {
       acc[stream.channelId] = stream;
       return acc;
     }, {});
+
+    const twitchIds = (await this.userRepository.model.findAll({
+      attributes: ['twitchId'],
+      where: {
+        twitchId: {
+          [Sequelize.Op.ne]: null
+        }
+      },
+      raw: true
+    })).map((user) => user.twitchId);
 
     for (let i = 0; i <= twitchIds.length; i += 100) {
       const streams = await this.twitchConnection.getStreams(twitchIds.slice(i, i + 100));
@@ -79,13 +79,13 @@ class StreamRepository extends BasePostgresRepository {
         if (liveByChannelId[stream.id]) {
           liveByChannelId[stream.id].isLive = true;
         }
-        
+
         this.model.upsert({
           userId: user.id,
           name: stream.title,
           game,
           sourceName: 'twitch',
-          embedUrl: '',
+          embedUrl: `https://twitch.tv/${stream.user_name}`,
           channelId: stream.id,
           views: stream.viewer_count,
           isLive: stream.type === 'live',
