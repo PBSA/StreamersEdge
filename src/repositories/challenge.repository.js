@@ -122,7 +122,7 @@ class ChallengeRepository extends BasePostgresRepository {
   }
 
   async refundChallenge(challenge) {
-    if (challenge.status !== consts.status.open) {
+    if (challenge.status !== consts.status.open && challenge.status !== consts.status.live) {
       return;
     }
 
