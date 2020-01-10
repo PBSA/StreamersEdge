@@ -52,10 +52,28 @@ class ReportRepository extends BasePostgresRepository {
         }
       ],
       attributes: {
-        exclude: ['createdAt', 'updatedAt']
+        exclude: ['updatedAt']
       },
       offset,
       limit
+    });
+  }
+
+  async fetchReportByUserId(userId) {
+    return this.model.findOne({
+      where:{
+        reportedUserId: userId
+      },
+      include: [
+        {
+          model: UserModel,
+          attributes: ['username','email'],
+          as: 'reporter'
+        }
+      ],
+      attributes: {
+        include: ['id']
+      }
     });
   }
 

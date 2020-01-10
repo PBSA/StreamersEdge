@@ -97,7 +97,46 @@ class AdminController {
    *        type: number
    *      ban-histories.bannedAt:
    *        type: string
+   *      reportInfo:
+   *        $ref: '#/definitions/ReportBanResponse'
    *
+   *  ReportBanResponse:
+   *    type: array
+   *    items:
+   *      type: object
+   *      properties:
+   *          id:
+   *            type: number
+   *            example: 1
+   *          reportedUserId:
+   *            type: number
+   *            example: 2
+   *          reportedByUserId:
+   *            type: number
+   *            example: 1
+   *          reason:
+   *            type: string
+   *            example: vulgarity-on-stream
+   *          description:
+   *            type: string
+   *          videoUrl:
+   *            type: string
+   *            example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
+   *          createdAt:
+   *            type: string
+   *            example: '2019-07-27 00:32:54.495+05:30'
+   *          updatedAt:
+   *            type: string
+   *            example: '2019-07-27 00:32:54.495+05:30'
+   *          reporter:
+   *            type: object
+   *            properties:
+   *              username:
+   *                type: string
+   *                example: abc
+   *              email:
+   *                type: string
+   *                example: abc@xyz.com
    *  ReportResponse:
    *    type: array
    *    items:
@@ -120,6 +159,9 @@ class AdminController {
    *          videoUrl:
    *            type: string
    *            example: /profile_images/UsmhsMzlzx-HwFX6wsQiLrjN-RZqP0WNz.mp4
+   *          reportedDate:
+   *            type: string
+   *            example: '2019-07-27 00:32:54.495+05:30'
    *          reporter:
    *            type: object
    *            properties:
