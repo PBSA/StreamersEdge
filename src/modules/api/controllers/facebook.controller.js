@@ -61,7 +61,7 @@ class FacebookController {
       clientID: this.config.facebook.clientId,
       clientSecret: this.config.facebook.clientSecret,
       callbackURL: `${this.config.backendUrl}/api/v1/auth/facebook/callback`,
-      profileFields: ['id', 'name', 'picture', 'email']
+      profileFields: ['id', 'name', 'picture', 'email', 'link']
     }, (req, token, tokenSecret, profile, done) => {
       this.userService.getUserBySocialNetworkAccount('facebook', {
         ...profile._json,

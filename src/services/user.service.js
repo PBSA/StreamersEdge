@@ -129,7 +129,7 @@ class UserService {
     req.session.newUser = false;
     req.session.save();
 
-    const {id, email, picture, username, youtube} = account;
+    const {id, email, picture, username, youtube, link} = account;
     const UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
 
     if (UserWithNetworkAccount && loggedUser && loggedUser.id !== UserWithNetworkAccount.id) {
@@ -157,6 +157,7 @@ class UserService {
     User.twitchUserName = network === 'twitch' ? username : null;
     User.googleName = network === 'google' ? username : '';
     User.facebook = network === 'facebook' ? username : '';
+    User.facebookLink = network === 'facebook' ? link : '';
     User.youtube = youtube;
     
     if(network == 'twitch' && User.pubgId) {
