@@ -54,7 +54,8 @@ describe('GET /api/v1/profile', () => {
       facebook: null,
       peerplaysAccountName: 'se-test-global',
       bitcoinAddress: '',
-      timeFormat: '12h'
+      timeFormat: '12h',
+      facebookLink: null
     });
   });
 

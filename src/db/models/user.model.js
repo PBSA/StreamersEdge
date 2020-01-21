@@ -17,6 +17,7 @@ const profileConstants = require('../../constants/profile');
  * @property {Boolean} notifications
  * @property {Enum} userType
  * @property {String} pubgUsername
+ * @property {String} facebookLink
  */
 
 /**
@@ -42,6 +43,7 @@ const profileConstants = require('../../constants/profile');
  * @property {String} pubgId
  * @property {String} challengeSubscribeData
  * @property {String} timeFormat
+ * @property {String} facebookLink
  */
 class UserModel extends Model {
   /**
@@ -91,6 +93,8 @@ class UserModel extends Model {
    *            type: string
    *          notifications:
    *            type: boolean
+   *          facebookLink:
+   *            type: string
    *
    * @returns {UserPublicObject}
    */
@@ -113,7 +117,8 @@ class UserModel extends Model {
       leagueOfLegendsAccountId: this.leagueOfLegendsAccountId,
       leagueOfLegendsRealm: this.leagueOfLegendsRealm,
       timeFormat: this.timeFormat,
-      paypalEmail: this.paypalEmail
+      paypalEmail: this.paypalEmail,
+      facebookLink: this.facebookLink
     };
   }
 
@@ -243,6 +248,9 @@ const attributes = {
   timeFormat: {
     type: Sequelize.ENUM(Object.values(profileConstants.timeFormat)),
     defaultValue: profileConstants.timeFormat.time12h
+  },
+  facebookLink: {
+    type: Sequelize.STRING
   }
 };
 
