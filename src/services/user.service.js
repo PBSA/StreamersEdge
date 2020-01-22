@@ -175,7 +175,7 @@ class UserService {
   }
 
   async connectSocialNetwork(network, account, User) {
-    const {id, email, picture, username, youtube} = account;
+    const {id, email, picture, username, youtube, link} = account;
 
     if (User[`${network}Id`] === id) {
       return User;
@@ -195,6 +195,7 @@ class UserService {
       User.googleName = username;
     } else if (network === 'facebook') {
       User.facebook = username;
+      User.facebookLink = link;
     } else {
       throw new RestError(`Unexpected Network ${network}`);
     }
@@ -274,6 +275,7 @@ class UserService {
     if (User.facebook === '') {
       User.facebook = null;
       User.facebookId = null;
+      User.facebookLink = null;
     }
 
     if (User.twitchUserName === '') {
