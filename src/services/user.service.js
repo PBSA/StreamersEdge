@@ -132,6 +132,11 @@ class UserService {
     const {id, email, picture, username, youtube, link} = account;
     const UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
 
+    if(UserWithNetworkAccount && UserWithNetworkAccount.status === profileConstants.status.banned) {
+      req.logout();
+      throw new Error('You have been banned. Please contact our admins for potential unban.');
+    }
+
     if (UserWithNetworkAccount && loggedUser && loggedUser.id !== UserWithNetworkAccount.id) {
       throw new Error('this account is already connected to another profile');
     }
