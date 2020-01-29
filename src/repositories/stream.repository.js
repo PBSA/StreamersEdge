@@ -24,11 +24,10 @@ class StreamRepository extends BasePostgresRepository {
     return super.findByPk(pk, options);
   }
 
-  async getLiveStreamForUser(userId) {
+  async getStreamForUser(userId) {
     return this.model.findOne({
       where: {
-        userId,
-        isLive: true
+        userId
       }
     });
   }
@@ -80,7 +79,10 @@ class StreamRepository extends BasePostgresRepository {
           liveByChannelId[stream.id].isLive = true;
         }
 
-        this.model.upsert({
+        const existingId = liveByChannelId[stream.id] ? liveByChannelId[stream.id].id : null;
+
+        await this.model.upsert({
+          id: existingId,
           userId: user.id,
           name: stream.title,
           game,
