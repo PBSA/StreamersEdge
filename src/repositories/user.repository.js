@@ -152,9 +152,9 @@ class UserRepository extends BasePostgresRepository {
     );
   }
 
-  async getByTwitchId(searchtwitchId) {
+  async getByTwitchId(twitchId) {
     return this.model.findOne({
-      where: {twitchId:searchtwitchId}
+      where: {twitchId}
     });
   }
 

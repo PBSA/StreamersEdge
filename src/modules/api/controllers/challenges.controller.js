@@ -1,4 +1,5 @@
 const RestError = require('../../../errors/rest.error');
+const challengeConstants = require('../../../constants/challenge');
 
 /**
  * @swagger
@@ -421,6 +422,12 @@ class ChallengesController {
 
   async getAllChallenges(user, query) {
     let challenges = await this.challengeService.getAllChallenges(user && user.id, query);
+
+    // filter out paid and resolved challenges
+    challenges = challenges.filter((challenge) => challenge.status !== challengeConstants.status.paid &&
+      challenge.status !== challengeConstants.status.resolved
+    );
+
     challenges = await Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user && user.id)));
     
     //order by total donations
