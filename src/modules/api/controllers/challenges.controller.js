@@ -347,7 +347,7 @@ class ChallengesController {
     ];
   }
 
-  async createChallenge(user, challenge) {
+  async createChallenge(user, challenge, req) {
     try {
       const result = await this.challengeService.createChallenge(user, challenge);
 
@@ -359,6 +359,10 @@ class ChallengesController {
 
       return result;
     } catch (err) {
+      if(err.status === 403) {
+        req.logout();
+      }
+
       throw err;
     }
   }
@@ -449,10 +453,14 @@ class ChallengesController {
     return Promise.all(challenges.map((c) => this.fillChallengeDetails(c.toJSON(), user.id)));
   }
 
-  async joinToChallenge(user, {challengeId, depositOp, ppyAmount}) {
+  async joinToChallenge(user, {challengeId, depositOp, ppyAmount}, req) {
     try {
       return await this.challengeService.joinToChallenge(user.id, challengeId, {depositOp, ppyAmount});
     } catch (err) {
+      if(err.status === 403) {
+        req.logout();
+      }
+
       switch (err.message) {
         case this.challengeService.errors.CHALLENGE_NOT_FOUND:
           throw new RestError('', 404, {challenge: [{message: 'This challenge not found'}]});

@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.1](https://github.com/PBSA/StreamersEdge/compare/v0.10.0...v0.10.1) (2020-01-29)
+
+
+### Bug Fixes
+
+* strm-1030: games job fixes ([#211](https://github.com/PBSA/StreamersEdge/issues/211)) ([53dc912](https://github.com/PBSA/StreamersEdge/commit/53dc912))
+* strm-1038: fix check in refund challenge ([#212](https://github.com/PBSA/StreamersEdge/issues/212)) ([1fe8640](https://github.com/PBSA/StreamersEdge/commit/1fe8640))
+* strm-933: do not list paid challenges in challenge api ([#207](https://github.com/PBSA/StreamersEdge/issues/207)) ([be5d2b7](https://github.com/PBSA/StreamersEdge/commit/be5d2b7))
+
+
+
 ## [0.10.0](https://github.com/PBSA/StreamersEdge/compare/v0.7.0...v0.10.0) (2020-01-10)
 
 
