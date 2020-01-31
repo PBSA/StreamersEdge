@@ -31,7 +31,6 @@ class GamesJob {
     this.webPushConnection = opts.webPushConnection;
 
     this.resolveChallenge = this.resolveChallenge.bind(this);
-    this.getLeagueOfLegendsMatchesForUser = this.getLeagueOfLegendsMatchesForUser.bind(this);
     this.getPubgMatchesForUser = this.getPubgMatchesForUser.bind(this);
 
     this.asyncLimit = 8;
@@ -45,7 +44,7 @@ class GamesJob {
     let challenges = await this.challengeRepository.findWaitToResolve();
 
     for (const challenge of challenges) {
-      const stream = await this.streamRepository.getLiveStreamForUser(challenge.userId);
+      const stream = await this.streamRepository.getStreamForUser(challenge.userId);
 
       if (!stream || !stream.isLive) {
         if (moment(challenge.timeToStart).add(5, 'minutes').diff(moment()) < 0) {
@@ -64,7 +63,7 @@ class GamesJob {
     challenges = await this.challengeRepository.findLive();
 
     for (const challenge of challenges) {
-      const stream = await this.streamRepository.getLiveStreamForUser(challenge.userId);
+      const stream = await this.streamRepository.getStreamForUser(challenge.userId);
 
       if (!stream || !stream.isLive) {
         await this.challengeRepository.refundChallenge(challenge);
@@ -93,17 +92,15 @@ class GamesJob {
 
   async updateMatchesForUser(user, game) {
     if (game === 'pubg') {
-      const matches = this.getPubgMatchesForUser(user.pubgUsername);
-      await eachLimit(matches, this.asyncLimit, ({id}, cb) => this.pubgService.addGame(id).then(cb));
+      const matchIds = (await this.getPubgMatchesForUser(user.pubgUsername))
+        .map(({id}) => id);
+      await eachLimit(matchIds, this.asyncLimit, (id, cb) => this.pubgService.addGame(id).then(cb));
     } else if (game === 'leagueOfLegends') {
       const realm = user.leagueOfLegendsRealm;
-      const matches = await this.getLeagueOfLegendsMatchesForUser(realm, user.leagueOfLegendsAccountId);
-      await eachLimit(matches, this.asyncLimit, ({gameId}, cb) => this.leagueOfLegendsService.addGame(realm, gameId).then(cb));
+      const matchIds = (await this.this.leagueOfLegendsApiRepository.getMatchesForAccount(realm, user.leagueOfLegendsAccountId))
+        .map(({id}) => id);
+      await eachLimit(matchIds, this.asyncLimit, (id, cb) => this.leagueOfLegendsService.addGame(realm, id).then(cb));
     }
-  }
-
-  async getLeagueOfLegendsMatchesForUser(realm, accountId) {
-    return await this.leagueOfLegendsApiRepository.getMatchesForAccount(realm, accountId);
   }
 
   async getPubgMatchesForUser(pubgUsername) {
