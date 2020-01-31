@@ -1,6 +1,6 @@
 {
   "name": "streamers-edge",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "license": "UNLICENSED",
   "repository": {
     "url": "https://github.com/PBSA/StreamersEdge",
@@ -75,7 +75,7 @@
     "passport-google-oauth": "^2.0.0",
     "passport-steam": "^1.0.11",
     "passport-twitch-helix": "^1.1.0",
-    "peerplaysjs-lib": "^0.6.0",
+    "peerplaysjs-lib": "^0.6.4",
     "pg": "^7.11.0",
     "pg-hstore": "^2.3.2",
     "pubg.js": "^3.9.0",

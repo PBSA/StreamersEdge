@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.2](https://github.com/PBSA/StreamersEdge/compare/v0.10.1...v0.10.2) (2020-01-31)
+
+
+### Bug Fixes
+
+* banned user shouldn't be able to create or donate-to challenge ([#216](https://github.com/PBSA/StreamersEdge/issues/216)) ([190f27e](https://github.com/PBSA/StreamersEdge/commit/190f27e))
+* strm-1036 add facebook link in user profile ([#213](https://github.com/PBSA/StreamersEdge/issues/213)) ([4036112](https://github.com/PBSA/StreamersEdge/commit/4036112))
+* strm-1036 populate facebooklink when linking to existing account ([#214](https://github.com/PBSA/StreamersEdge/issues/214)) ([ff33a42](https://github.com/PBSA/StreamersEdge/commit/ff33a42))
+* strm-1057 banned user shouldn't be able to login with social media ([#215](https://github.com/PBSA/StreamersEdge/issues/215)) ([e3db32e](https://github.com/PBSA/StreamersEdge/commit/e3db32e))
+
+
+
 ### [0.10.1](https://github.com/PBSA/StreamersEdge/compare/v0.10.0...v0.10.1) (2020-01-29)
 
 

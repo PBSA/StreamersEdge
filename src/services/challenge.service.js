@@ -2,6 +2,7 @@ const logger = require('log4js').getLogger('challenge.service');
 const BigNumber = require('bignumber.js');
 const challengeConstants = require('../constants/challenge');
 const invitationConstants = require('../constants/invitation');
+const profileConstants = require('../constants/profile');
 const {userType} = require('../constants/profile');
 const {types: txTypes} = require('../constants/transaction');
 const RestError = require('../errors/rest.error');
@@ -43,7 +44,8 @@ class ChallengeService {
       INSUFFICIENT_BALANCE: 'INSUFFICIENT_BALANCE',
       UNABLE_TO_INVITE: 'UNABLE_TO_INVITE',
       INVITED_USER_NOT_FOUND: 'INVITED_USER_NOT_FOUND',
-      CANNOT_JOIN_OWN_CHALLENGE: 'CANNOT_JOIN_OWN_CHALLENGE'
+      CANNOT_JOIN_OWN_CHALLENGE: 'CANNOT_JOIN_OWN_CHALLENGE',
+      BANNED_USER: 'THE_USER_IS_BANNED'
     };
     this.joinedUsersRepository = opts.joinedUsersRepository;
   }
@@ -55,6 +57,10 @@ class ChallengeService {
      * @returns {Promise<ChallengePublicObject>}
      */
   async createChallenge(creator, challengeObject) {
+
+    if(creator.status === profileConstants.status.banned) {
+      throw new RestError('You have been banned. Please contact our admins for potential unban.',403);
+    }
 
     if(creator.userType !== userType.gamer) {
       throw new RestError('User is not a streamer',400);
@@ -200,6 +206,10 @@ class ChallengeService {
   async joinToChallenge(userId, challengeId, {depositOp, ppyAmount}) {
     const user = await this.userRepository.findByPk(userId);
     const challenge = await this.challengeRepository.findByPk(challengeId);
+
+    if(user.status == profileConstants.status.banned) {
+      throw new RestError('You have been banned. Please contact our admins for potential unban.',403);
+    }
 
     if (!challenge) {
       throw new Error(this.errors.CHALLENGE_NOT_FOUND);

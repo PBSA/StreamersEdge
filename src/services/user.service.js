@@ -129,8 +129,13 @@ class UserService {
     req.session.newUser = false;
     req.session.save();
 
-    const {id, email, picture, username, youtube} = account;
+    const {id, email, picture, username, youtube, link} = account;
     const UserWithNetworkAccount = await this.userRepository.model.findOne({where: {[`${network}Id`]: id}});
+
+    if(UserWithNetworkAccount && UserWithNetworkAccount.status === profileConstants.status.banned) {
+      req.logout();
+      throw new Error('You have been banned. Please contact our admins for potential unban.');
+    }
 
     if (UserWithNetworkAccount && loggedUser && loggedUser.id !== UserWithNetworkAccount.id) {
       throw new Error('this account is already connected to another profile');
@@ -157,6 +162,7 @@ class UserService {
     User.twitchUserName = network === 'twitch' ? username : null;
     User.googleName = network === 'google' ? username : '';
     User.facebook = network === 'facebook' ? username : '';
+    User.facebookLink = network === 'facebook' ? link : '';
     User.youtube = youtube;
     
     if(network == 'twitch' && User.pubgId) {
@@ -174,7 +180,7 @@ class UserService {
   }
 
   async connectSocialNetwork(network, account, User) {
-    const {id, email, picture, username, youtube} = account;
+    const {id, email, picture, username, youtube, link} = account;
 
     if (User[`${network}Id`] === id) {
       return User;
@@ -194,6 +200,7 @@ class UserService {
       User.googleName = username;
     } else if (network === 'facebook') {
       User.facebook = username;
+      User.facebookLink = link;
     } else {
       throw new RestError(`Unexpected Network ${network}`);
     }
@@ -273,6 +280,7 @@ class UserService {
     if (User.facebook === '') {
       User.facebook = null;
       User.facebookId = null;
+      User.facebookLink = null;
     }
 
     if (User.twitchUserName === '') {
