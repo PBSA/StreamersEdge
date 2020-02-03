@@ -125,12 +125,9 @@ class AuthController {
         return;
       }
 
-      req.session.callbackUrl = req.query.callbackUrl;
-      req.session.save();
-
       try {
         const paypalUrl = this.paypalConnection.getConnectUrl(`${this.config.backendUrl}/api/v1/auth/paypal/callback`);
-        res.redirect(paypalUrl);
+        res.redirect(`${paypalUrl}&state=${req.user.id}callbackUrl${req.query.callbackUrl}`);
       } catch (err) {
         res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=${err.message}`);
       }
@@ -156,19 +153,14 @@ class AuthController {
        *        description: Frontend redirect
        */
     app.get('/api/v1/auth/paypal/callback', (req, res) => {
-      if (!req.isAuthenticated()) {
-        res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=unauthenticated`);
-        return;
-      }
-
       if (!req.query.code) {
         res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=missing-code`);
         return;
       }
 
-      this.paypalCallback(req.user, req.query.code)
+      this.paypalCallback(req.query.state.substring(0,req.query.state.indexOf('callbackUrl')), req.query.code)
         .then(() => {
-          const callbackUrl = req.session.callbackUrl || '';
+          const callbackUrl = req.query.state.substring(req.query.state.indexOf('callbackUrl')+11,req.query.state.length) || '';
           res.redirect(`${this.config.frontendUrl}${callbackUrl}`);
         })
         .catch((err) => res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=${err.message}`));
@@ -479,10 +471,11 @@ class AuthController {
     return user;
   }
 
-  async paypalCallback(user, code) {
+  async paypalCallback(userId, code) {
+
     const accessToken = await this.paypalConnection.createAccessToken(code);
     const paypalInfo = await this.paypalConnection.getUserInfo(accessToken);
-    await this.userRepository.setPaypalDetails(user.id, paypalInfo);
+    await this.userRepository.setPaypalDetails(userId, paypalInfo);
   }
 
   async peerplaysLogin(_, {login, password}, req) {
