@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.3](https://github.com/PBSA/StreamersEdge/compare/v0.10.2...v0.10.3) (2020-02-04)
+
+
+### Bug Fixes
+
+* strm-1049: cron job fixes ([#218](https://github.com/PBSA/StreamersEdge/issues/218)) ([cdc30b0](https://github.com/PBSA/StreamersEdge/commit/cdc30b0))
+
+
+
 ### [0.10.2](https://github.com/PBSA/StreamersEdge/compare/v0.10.1...v0.10.2) (2020-01-31)
 
 
