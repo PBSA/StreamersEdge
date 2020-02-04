@@ -25,11 +25,17 @@ class StreamRepository extends BasePostgresRepository {
   }
 
   async getStreamForUser(userId) {
-    return this.model.findOne({
+    const streams = await this.model.findAll({
       where: {
         userId
-      }
+      },
+      order: [
+        ['startTime', 'DESC']
+      ],
+      limit: 1
     });
+
+    return streams[0];
   }
 
   async populateTwitchStreams() {

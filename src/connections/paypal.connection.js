@@ -66,6 +66,10 @@ class PaypalConnection {
   getConnectUrl(returnUrl) {
     const env = this.environment();
 
+    if(returnUrl.includes('localhost')) {
+      returnUrl = returnUrl.replace('localhost','127.0.0.1');
+    }
+
     const url = new URL('/connect', env.webUrl);
     url.search = new URLSearchParams({
       flowEntry: 'static',
