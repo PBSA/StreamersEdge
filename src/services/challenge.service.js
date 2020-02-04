@@ -215,7 +215,7 @@ class ChallengeService {
       throw new Error(this.errors.CHALLENGE_NOT_FOUND);
     }
 
-    if (challenge.status !== challengeConstants.status.open) {
+    if (challenge.status !== challengeConstants.status.open && challenge.status !== challengeConstants.status.live) {
       throw new Error(this.errors.CHALLENGE_NOT_OPEN);
     }
 
