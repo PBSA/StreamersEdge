@@ -371,7 +371,12 @@ class ChallengesController {
     try {
       const result = await this.challengeService.getCleanObject(challengeId);
 
-      result.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challengeId);
+      if(user) {
+        result.joined = await this.joinedUsersRepository.hasUserJoined(user.id, challengeId);
+      }else {
+        result.joined = false;
+      }
+      
       result.joinedUsers = await this.joinedUsersRepository.getForChallenge(challengeId);
 
       const validKeys = ['username','avatar'];
