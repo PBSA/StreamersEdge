@@ -674,7 +674,7 @@ class UserService {
     const userWithPeerplaysAccount = await this.userRepository.getByPeerplaysAccountName(login);
 
     if (userWithPeerplaysAccount && LoggedUser && LoggedUser.id !== userWithPeerplaysAccount.id) {
-      throw new RestError('', 409, {image: [{login: 'This account is already connected to another profile'}]});
+      throw new RestError('', 409, {login: [{message: 'This account is already connected to another profile'}]});
     }
 
     if(userWithPeerplaysAccount) {
