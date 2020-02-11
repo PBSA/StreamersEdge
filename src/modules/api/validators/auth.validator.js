@@ -29,6 +29,7 @@ class AuthValidator extends BaseValidator {
     this.loggedOnly = this.loggedOnly.bind(this);
     this.loggedAdminOnly = this.loggedAdminOnly.bind(this);
     this.validatePeerplaysLogin = this.validatePeerplaysLogin.bind(this);
+    this.validatePaypalAuth = this.validatePaypalAuth.bind(this);
   }
 
   loggedOnly() {
@@ -200,6 +201,14 @@ class AuthValidator extends BaseValidator {
     };
     
     return this.validate(null, bodySchema, async (req, query, body) => body);
+  }
+
+  validatePaypalAuth() {
+    const querySchema = { 
+      callbackUrl: Joi.string().required()
+    };
+
+    return this.validate(querySchema, null, async (req, query) => query);
   }
 }
 
