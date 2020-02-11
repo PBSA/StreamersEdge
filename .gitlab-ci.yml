@@ -7,11 +7,13 @@ variables:
   SAST_ANALYZER_IMAGE_TAG: 2
   SAST_DISABLE_DIND: "true"
   SCAN_KUBERNETES_MANIFESTS: "false"
+  DAST_VERSION: 1
 
 stages:
   - test
   - swagger
   - deploy
+  - dast
 
 test:
   image: node:10.16-alpine
@@ -152,6 +154,31 @@ secrets-sast:
     variables:
       - $GITLAB_FEATURES =~ /\bsast\b/ &&
           $SAST_DEFAULT_ANALYZERS =~ /secrets/
+
+dast:
+  stage: dast
+  image:
+    name: "registry.gitlab.com/gitlab-org/security-products/dast:$DAST_VERSION"
+  variables:
+    DAST_WEBSITE: $TEST_DAST_WEBSITE
+    DAST_TARGET_AVAILABILITY_TIMEOUT: 60
+    DAST_FULL_SCAN_ENABLED: "true"
+  allow_failure: true
+  script:
+    - export DAST_WEBSITE=${DAST_WEBSITE:-$(cat environment_url.txt)}
+    - /analyze -t $DAST_WEBSITE
+  artifacts:
+      paths: [gl-sast-report.json]
+  only:
+    variables:
+      - $GITLAB_FEATURES =~ /\bdast\b/
+  except:
+    variables:
+      - $DAST_DISABLED
+      - $DAST_DISABLED_FOR_DEFAULT_BRANCH && $CI_DEFAULT_BRANCH == $CI_COMMIT_REF_NAME
+  when: manual
+  tags: 
+    - dast
 
 swagger:
   stage: swagger

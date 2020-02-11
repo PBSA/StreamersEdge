@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.4](https://github.com/PBSA/StreamersEdge/compare/v0.10.3...v0.10.4) (2020-02-11)
+
+
+### Bug Fixes
+
+* allow donation to live challenges ([#221](https://github.com/PBSA/StreamersEdge/issues/221)) ([c511429](https://github.com/PBSA/StreamersEdge/commit/c511429))
+* changing limit of report SE-53 ([#220](https://github.com/PBSA/StreamersEdge/issues/220)) ([883daa5](https://github.com/PBSA/StreamersEdge/commit/883daa5))
+* paypal auth redirect url error and session not saved ([#219](https://github.com/PBSA/StreamersEdge/issues/219)) ([543dad8](https://github.com/PBSA/StreamersEdge/commit/543dad8))
+* strm-1049: getStreamForUser fix ([#224](https://github.com/PBSA/StreamersEdge/issues/224)) ([6630d7b](https://github.com/PBSA/StreamersEdge/commit/6630d7b))
+
+
+
 ### [0.10.3](https://github.com/PBSA/StreamersEdge/compare/v0.10.2...v0.10.3) (2020-02-04)
 
 
