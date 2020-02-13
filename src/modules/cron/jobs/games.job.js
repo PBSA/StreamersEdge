@@ -214,7 +214,7 @@ class GamesJob {
     const user = await this.userRepository.findByPk(userId);
     const notification = {title: 'You have won a challenge.'};
 
-    if (user.challengeSubscribeData) {
+    if (user.challengeSubscribeData && user.notifications) {
       try {
         return await this.webPushConnection.sendNotification(user.challengeSubscribeData, notification);
       // eslint-disable-next-line no-empty
