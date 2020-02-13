@@ -65,7 +65,7 @@ class GamesJob {
     for (const challenge of challenges) {
       const stream = await this.streamRepository.getStreamForUser(challenge.userId);
 
-      if (!stream || !stream.isLive) {
+      if ((!stream || !stream.isLive) && moment(challenge.timeToStart).add(1, 'hour').diff(moment()) < 0) {
         await this.challengeRepository.refundChallenge(challenge);
         continue;
       }
