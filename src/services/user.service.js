@@ -544,7 +544,8 @@ class UserService {
       txId: broadcastResult[0].id,
       blockNum: broadcastResult[0].block_num,
       trxNum: broadcastResult[0].trx_num,
-      ppyAmountValue: new BigNumber(broadcastResult[0].trx.operations[0][1].amount.amount).shiftedBy(-1 * this.peerplaysConnection.asset.precision),
+      ppyAmountValue: new BigNumber(broadcastResult[0].trx.operations[0][1].amount.amount)
+        .shiftedBy(-1 * this.peerplaysConnection.asset.precision).integerValue().toNumber().toFixed(2),
       type: txTypes.donate,
       userId,
       receiverUserId: receiverId,
@@ -579,7 +580,8 @@ class UserService {
       txId: broadcastResult[0].id,
       blockNum: broadcastResult[0].block_num,
       trxNum: broadcastResult[0].trx_num,
-      ppyAmountValue: broadcastResult[0].trx.operations[0][1].amount.amount,
+      ppyAmountValue: new BigNumber(broadcastResult[0].trx.operations[0][1].amount.amount)
+        .shiftedBy(-1 * this.peerplaysConnection.asset.precision).integerValue().toNumber().toFixed(2),
       type: txTypes.redeem,
       userId,
       peerplaysFromId: broadcastResult[0].trx.operations[0][1].from,
@@ -590,7 +592,7 @@ class UserService {
 
     await this.paypalRedemptionRepository.createRedemption(userId, {
       amountCurrency: 'USD',
-      amountValue: tx.ppyAmountValue * redeemPercent,
+      amountValue: (tx.ppyAmountValue * redeemPercent).toFixed(2),
       transactionId: tx.id
     });
 
