@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.5](https://github.com/PBSA/StreamersEdge/compare/v0.10.4...v0.10.5) (2020-02-14)
+
+
+### Bug Fixes
+
+* corrected error details STRM-1083 ([#227](https://github.com/PBSA/StreamersEdge/issues/227)) ([d40b8e3](https://github.com/PBSA/StreamersEdge/commit/d40b8e3))
+* cors error on redirecting to paypal from backend ([#225](https://github.com/PBSA/StreamersEdge/issues/225)) ([500b1cd](https://github.com/PBSA/StreamersEdge/commit/500b1cd))
+* return joined as false if user is not logged in STRM-1063 ([#228](https://github.com/PBSA/StreamersEdge/issues/228)) ([c925d0b](https://github.com/PBSA/StreamersEdge/commit/c925d0b))
+* youtube connection error STRM-1025 ([#226](https://github.com/PBSA/StreamersEdge/issues/226)) ([6e5c3b4](https://github.com/PBSA/StreamersEdge/commit/6e5c3b4))
+
+
+
 ### [0.10.4](https://github.com/PBSA/StreamersEdge/compare/v0.10.3...v0.10.4) (2020-02-11)
 
 
