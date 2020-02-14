@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.6](https://github.com/PBSA/StreamersEdge/compare/v0.10.5...v0.10.6) (2020-02-14)
+
+
+### Bug Fixes
+
+* account for pubg match to complete ([#230](https://github.com/PBSA/StreamersEdge/issues/230)) ([411410b](https://github.com/PBSA/StreamersEdge/commit/411410b))
+* shift payout amount for blockchain precision ([#231](https://github.com/PBSA/StreamersEdge/issues/231)) ([1da79b3](https://github.com/PBSA/StreamersEdge/commit/1da79b3))
+
+
+
 ### [0.10.5](https://github.com/PBSA/StreamersEdge/compare/v0.10.4...v0.10.5) (2020-02-14)
 
 

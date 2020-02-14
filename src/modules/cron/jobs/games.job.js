@@ -65,7 +65,7 @@ class GamesJob {
     for (const challenge of challenges) {
       const stream = await this.streamRepository.getStreamForUser(challenge.userId);
 
-      if (!stream || !stream.isLive) {
+      if ((!stream || !stream.isLive) && moment(challenge.timeToStart).add(1, 'hour').diff(moment()) < 0) {
         await this.challengeRepository.refundChallenge(challenge);
         continue;
       }
@@ -123,7 +123,7 @@ class GamesJob {
     }
 
     await this.addAndNotifyWinner(challenge.userId, challenge);
-    challenge.status = challenge.status.resolved;
+    challenge.status = challengeConstants.status.resolved;
     await challenge.save();
   }
 
@@ -214,7 +214,7 @@ class GamesJob {
     const user = await this.userRepository.findByPk(userId);
     const notification = {title: 'You have won a challenge.'};
 
-    if (user.challengeSubscribeData) {
+    if (user.challengeSubscribeData && user.notifications) {
       try {
         return await this.webPushConnection.sendNotification(user.challengeSubscribeData, notification);
       // eslint-disable-next-line no-empty
