@@ -95,7 +95,9 @@ class ChallengeService {
 
     const notificationText = {title: 'New Challenge', body: `${challengeName} was created. Donate now!`};
     return await Promise.all(users.map(async (user)=> {
-      await this.webPushConnection.sendNotification(user.challengeSubscribeData, notificationText);
+      if(user.notifications) {
+        await this.webPushConnection.sendNotification(user.challengeSubscribeData, notificationText);
+      }
     }));
   }
   /**
