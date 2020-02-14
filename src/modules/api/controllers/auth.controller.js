@@ -98,44 +98,6 @@ class AuthController {
     /**
        * @swagger
        *
-       * /auth/paypal:
-       *  get:
-       *    description: Begin Paypal authorization process
-       *    produces:
-       *      - application/json
-       *    tags:
-       *      - Auth
-       *    parameters:
-       *      - name: callbackUrl
-       *        in: query
-       *        type: string
-       *        description: callback url to return the user to after authentication (relative to frontend url)
-       *    responses:
-       *      302:
-       *        description: Paypal redirect
-       */
-    app.get('/api/v1/auth/paypal', (req, res) => {
-      if (!req.isAuthenticated()) {
-        res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=unauthenticated`);
-        return;
-      }
-
-      if (!req.query.callbackUrl) {
-        res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=missing-callback-url`);
-        return;
-      }
-
-      try {
-        const paypalUrl = this.paypalConnection.getConnectUrl(`${this.config.backendUrl}/api/v1/auth/paypal/callback`);
-        res.redirect(`${paypalUrl}&state=${req.user.id}callbackUrl${req.query.callbackUrl}`);
-      } catch (err) {
-        res.redirect(`${this.config.frontendUrl}/error?paypal-auth-error=${err.message}`);
-      }
-    });
-
-    /**
-       * @swagger
-       *
        * /auth/paypal/callback:
        *  get:
        *    description: Paypal authentication callback
@@ -193,6 +155,29 @@ class AuthController {
        *
        */
       ['post', '/api/v1/auth/logout', this.authValidator.loggedOnly, this.logout.bind(this)],
+      /**
+       * @swagger
+       *
+       * /auth/paypalAuthUrl:
+       *  get:
+       *    description: Begin Paypal authorization process
+       *    produces:
+       *      - application/json
+       *    tags:
+       *      - Auth
+       *    parameters:
+       *      - name: callbackUrl
+       *        in: query
+       *        type: string
+       *        description: callback url to return the user to after authentication (relative to frontend url)
+       *    responses:
+       *      200:
+       *        description: Paypal auth url
+       */
+      ['get','/api/v1/auth/paypalAuthUrl',
+        this.authValidator.loggedOnly,
+        this.authValidator.validatePaypalAuth,
+        this.getConnectUrl.bind(this)],
       /**
        * @swagger
        *
@@ -484,6 +469,10 @@ class AuthController {
     return user;
   }
 
+  async getConnectUrl(user, query) {
+    const paypalUrl = this.paypalConnection.getConnectUrl(`${this.config.backendUrl}/api/v1/auth/paypal/callback`);
+    return `${paypalUrl}&state=${user.id}callbackUrl${query.callbackUrl}`;
+  }
 }
 
 module.exports = AuthController;
