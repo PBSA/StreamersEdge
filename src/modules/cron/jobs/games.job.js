@@ -123,7 +123,7 @@ class GamesJob {
     }
 
     await this.addAndNotifyWinner(challenge.userId, challenge);
-    challenge.status = challenge.status.resolved;
+    challenge.status = challengeConstants.status.resolved;
     await challenge.save();
   }
 
