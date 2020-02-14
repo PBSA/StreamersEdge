@@ -8,9 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 * account for pubg match to complete ([#230](https://github.com/PBSA/StreamersEdge/issues/230)) ([411410b](https://github.com/PBSA/StreamersEdge/commit/411410b))
-* send notification to user only when the user has enabled it ([#232](https://github.com/PBSA/StreamersEdge/issues/232)) ([93f83aa](https://github.com/PBSA/StreamersEdge/commit/93f83aa))
 * shift payout amount for blockchain precision ([#231](https://github.com/PBSA/StreamersEdge/issues/231)) ([1da79b3](https://github.com/PBSA/StreamersEdge/commit/1da79b3))
-* strm-1049: typo in games job ([#233](https://github.com/PBSA/StreamersEdge/issues/233)) ([3b3a093](https://github.com/PBSA/StreamersEdge/commit/3b3a093))
 
 
 
