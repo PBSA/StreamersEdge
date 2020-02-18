@@ -10,6 +10,7 @@ services:
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - POSTGRES_DB=streamers-edge
+      - POSTGRES_HOST_AUTH_METHOD=trust
       - PGDATA=/var/lib/postgresql/data
     volumes:
       - postgres:/var/lib/postgresql/data
