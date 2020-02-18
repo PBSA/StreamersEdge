@@ -46,6 +46,19 @@ class JoinedUsersRepository extends BasePostgresRepository {
     }));
   }
 
+  async getJoinedUsersForChallenge(challengeId) {
+    return await this.model.findAll({
+      where: { 
+        challengeId
+      },
+      include: [{
+        model: UserModel,
+        attributes: ['username']
+      }],
+      attributes:['ppyAmount','createdAt']
+    });
+  }
+
 }
 
 module.exports = JoinedUsersRepository;

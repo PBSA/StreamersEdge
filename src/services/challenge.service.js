@@ -199,6 +199,10 @@ class ChallengeService {
     return await this.challengeRepository.findAllChallenges(userId, fetchingParams);
   }
 
+  async getAllChallengesForUser(userId) {
+    return await this.challengeRepository.findAllChallengesForUser(userId);
+  }
+
   async getWonChallenges(userId) {
     return await this.challengeRepository.findWonChallenges(userId);
   }
