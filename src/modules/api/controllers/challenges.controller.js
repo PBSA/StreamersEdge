@@ -311,6 +311,42 @@ class ChallengesController {
 
       /**
              * @swagger
+             *
+             * /challenges/{userId}:
+             *  get:
+             *    description: Get all challenges for user
+             *    produces:
+             *      - application/json
+             *    tags:
+             *     - Challenge
+             *    parameters:
+             *      - name: userId
+             *        description: userId for whom challenges have to be returned
+             *        in: path
+             *        required: true
+             *        type: string
+             *    responses:
+             *      200:
+             *        description: Get list of all challenge
+             *        schema:
+             *          $ref: '#/definitions/ChallengeResponse'
+             *      400:
+             *        description: Error form validation
+             *        schema:
+             *          $ref: '#/definitions/ValidateError'
+             *      401:
+             *        description: Error user unauthorized
+             *        schema:
+             *          $ref: '#/definitions/UnauthorizedError'
+             */
+      [
+        'get', '/api/v1/challengesbyuser/:userId',
+        this.challengeValidator.getAllChallengesForUser,
+        this.getAllChallengesForUser.bind(this)
+      ],
+
+      /**
+             * @swagger
              * /challenges/conditionaldonate:
              *  post:
              *    description: Conditionally donate to a challenge
@@ -451,6 +487,24 @@ class ChallengesController {
     return challenge.joinedUsers.reduce((sum, user) => {
       return sum + user.totalDonation;
     }, 0);
+  }
+
+  async getAllChallengesForUser(user, userId) {
+    let challenges = await this.challengeService.getAllChallengesForUser(userId);
+
+    // filter out paid and resolved challenges
+    challenges = challenges.filter((challenge) => challenge.status !== challengeConstants.status.paid &&
+      challenge.status !== challengeConstants.status.resolved
+    );
+
+    challenges = await Promise.all(challenges.map((c) => this.getJoinedUsersForChallenge(c.toJSON())));
+
+    return challenges;
+  }
+
+  async getJoinedUsersForChallenge(challenge) {
+    challenge.joinedUsers = await this.joinedUsersRepository.getJoinedUsersForChallenge(challenge.id);
+    return challenge;
   }
 
   async getWonChallenges(user, userId) {

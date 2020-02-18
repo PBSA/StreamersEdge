@@ -22,6 +22,7 @@ class ChallengeValidator extends BaseValidator {
     this.validateGetChallenge = this.validateGetChallenge.bind(this);
     this.invite = this.invite.bind(this);
     this.joinToChallenge = this.joinToChallenge.bind(this);
+    this.getAllChallengesForUser = this.getAllChallengesForUser.bind(this);
   }
 
   createChallenge() {
@@ -96,6 +97,14 @@ class ChallengeValidator extends BaseValidator {
     };
 
     return this.validate(querySchema, null, (req, query) => query.id);
+  }
+
+  getAllChallengesForUser() {
+    const querySchema = {
+      userId: Joi.number().integer().required()
+    };
+
+    return this.validate(querySchema, null, (req, query) => query.userId);
   }
 
   invite() {
