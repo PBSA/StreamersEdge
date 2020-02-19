@@ -197,7 +197,7 @@ class AuthValidator extends BaseValidator {
   validatePeerplaysLogin() {
     const bodySchema = {
       login: Joi.string().required(),
-      password: Joi.string().required()
+      password: Joi.string().required().min(12)
     };
     
     return this.validate(null, bodySchema, async (req, query, body) => body);
