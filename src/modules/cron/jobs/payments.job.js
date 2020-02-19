@@ -50,7 +50,7 @@ class PaymentsJob {
   }
 
   async payToWinners(challenge, winner) {
-    const users = await this.userRepository.findByPk(winner.userId);
+    const user = await this.userRepository.findByPk(winner.userId);
     
     const joined = await this.joinedUsersRepository.model.findAll({
       where: {challengeId: challenge.id}
@@ -58,7 +58,7 @@ class PaymentsJob {
 
     const totalReward = joined.reduce((acc, {ppyAmount}) => acc + ppyAmount, 0.0);
 
-    await Promise.all(users.map((user) => this.sendPPY('challengeReward', challenge, user, totalReward)));
+    await this.sendPPY('challengeReward', challenge, user, totalReward);
 
     challenge.status = challengeConstants.status.paid;
     await challenge.save();
