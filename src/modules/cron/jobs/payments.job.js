@@ -50,7 +50,7 @@ class PaymentsJob {
   }
 
   async payToWinners(challenge, winner) {
-    const users = await this.userRepository.findByPkList(winner.userId);
+    const users = await this.userRepository.findByPk(winner.userId);
     
     const joined = await this.joinedUsersRepository.model.findAll({
       where: {challengeId: challenge.id}
