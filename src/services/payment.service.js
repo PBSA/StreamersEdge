@@ -79,7 +79,7 @@ class PaymentService {
         throw new Error('User does not have peerplays account');
       }
 
-      const result = await this.peerplaysRepository.sendPPY(peerplaysAccountId, payment.amountValue);
+      const result = await this.peerplaysRepository.sendPPYFromPaymentAccount(peerplaysAccountId, payment.amountValue);
       payment.txId = result.id;
       payment.blockNumber = result.block_num;
       payment.ppyAmountValue = result.amount;
