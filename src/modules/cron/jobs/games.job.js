@@ -38,7 +38,11 @@ class GamesJob {
 
   async runJob() {
     // update list of twitch streams
-    await this.streamRepository.populateTwitchStreams();
+    try{
+      await this.streamRepository.populateTwitchStreams();
+    }catch(e) {
+      console.error(e);
+    }
     
     // get all unresolved challenges
     let challenges = await this.challengeRepository.findWaitToResolve();
@@ -48,7 +52,11 @@ class GamesJob {
 
       if (!stream || !stream.isLive) {
         if (moment(challenge.timeToStart).add(5, 'minutes').diff(moment()) < 0) {
-          await this.challengeRepository.refundChallenge(challenge);
+          try{
+            await this.challengeRepository.refundChallenge(challenge);
+          }catch(e) {
+            console.error(e);
+          }
         }
 
         continue;
@@ -65,8 +73,15 @@ class GamesJob {
     for (const challenge of challenges) {
       const stream = await this.streamRepository.getStreamForUser(challenge.userId);
 
-      if ((!stream || !stream.isLive) && moment(challenge.timeToStart).add(1, 'hour').diff(moment()) < 0) {
-        await this.challengeRepository.refundChallenge(challenge);
+      if ((!stream || !stream.isLive)) {
+        if(moment(challenge.timeToStart).add(1, 'hour').diff(moment()) < 0) {
+          try{
+            await this.challengeRepository.refundChallenge(challenge);
+          }catch(e) {
+            console.error(e);
+          }
+        }
+
         continue;
       }
 
@@ -94,6 +109,7 @@ class GamesJob {
     if (game === 'pubg') {
       const matchIds = (await this.getPubgMatchesForUser(user.pubgUsername))
         .map(({id}) => id);
+
       await eachLimit(matchIds, this.asyncLimit, (id, cb) => this.pubgService.addGame(id).then(cb));
     } else if (game === 'leagueOfLegends') {
       const realm = user.leagueOfLegendsRealm;
@@ -111,7 +127,7 @@ class GamesJob {
         return [];
       }
 
-      throw err;
+      console.error(err);
     }
   }
 
