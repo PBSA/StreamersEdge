@@ -46,7 +46,7 @@ class PeerplaysRepository {
     }
   }
 
-  async sendPPY(accountId, amount) {
+  async sendPPY(accountId, amount, senderAccountId, senderPKey) {
     amount = new BigNumber(amount).shiftedBy(this.peerplaysConnection.asset.precision).toNumber();
     const tr = new this.peerplaysConnection.TransactionBuilder();
     let result;
@@ -57,14 +57,14 @@ class PeerplaysRepository {
           amount: 0,
           asset_id: this.config.peerplays.sendAssetId
         },
-        from: this.config.peerplays.paymentAccountID,
+        from: senderAccountId,
         to: accountId,
         amount: {amount, asset_id: this.config.peerplays.sendAssetId}
       });
 
 
       await tr.set_required_fees();
-      tr.add_signer(this.pKey, this.pKey.toPublicKey().toPublicKeyString());
+      tr.add_signer(senderPKey, senderPKey.toPublicKey().toPublicKeyString());
       logger.trace('serialized transaction:', JSON.stringify(tr.serialize(), null, 2));
       [result] = await tr.broadcast();
       result.amount = amount;

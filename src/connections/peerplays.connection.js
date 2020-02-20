@@ -1,6 +1,12 @@
 /* istanbul ignore file */
 const request = require('request');
-const {Apis, TransactionBuilder} = require('peerplaysjs-lib');
+const {
+  Apis,
+  ConnectionManager,
+  TransactionBuilder
+} = require('peerplaysjs-lib');
+const {getLogger} = require('log4js');
+const logger = getLogger();
 
 const BaseConnection = require('./abstracts/base.connection');
 
@@ -14,12 +20,39 @@ class PeerplaysConnection extends BaseConnection {
 
     this.config = opts.config;
     this.dbAPI = null;
-
     this.asset = null;
+
+    const urls = this.config.peerplays.peerplaysWS.split(',');
+    this.wsConnectionManager = new ConnectionManager({urls});
   }
 
   async connect() {
-    await Apis.instance(this.config.peerplays.peerplaysWS, true).init_promise;
+    if (!this.endpoints) {
+      this.endpoints = await this.wsConnectionManager.sortNodesByLatency();
+    }
+
+    if (!this.endpoints || this.endpoints.length === 0) {
+      throw new Error('no valid peerplays urls');
+    }
+
+    let nextUrlIndex = 0;
+
+    while (nextUrlIndex < this.endpoints.length) {
+      const endpoint = this.endpoints[nextUrlIndex];
+      logger.info(`connecting to peerplays endpoint "${endpoint}"`);
+
+      try {
+        await Apis.instance(endpoint, true).init_promise;
+      } catch (err) {
+        logger.info('peerplays connection failed, trying next endpoint');
+        nextUrlIndex++;
+        continue;
+      }
+
+      break;
+    }
+
+    logger.info('peerplays connection successful');
 
     this.dbAPI = Apis.instance().db_api();
     this.networkAPI = Apis.instance().network_api();

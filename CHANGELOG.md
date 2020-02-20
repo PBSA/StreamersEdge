@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.10.7](https://github.com/PBSA/StreamersEdge/compare/v0.10.6...v0.10.7) (2020-02-20)
+
+
+### Bug Fixes
+
+* ppy password should be min 12 characters long ([#237](https://github.com/PBSA/StreamersEdge/issues/237)) ([57f14de](https://github.com/PBSA/StreamersEdge/commit/57f14de))
+* twitchUsername unique constraint violation ([#238](https://github.com/PBSA/StreamersEdge/issues/238)) ([1fe3607](https://github.com/PBSA/StreamersEdge/commit/1fe3607))
+* users.map is not a function ([#236](https://github.com/PBSA/StreamersEdge/issues/236)) ([25f6d63](https://github.com/PBSA/StreamersEdge/commit/25f6d63))
+* winners.map is not a function, changes in payments job for 1 winner ([#235](https://github.com/PBSA/StreamersEdge/issues/235)) ([38a1c08](https://github.com/PBSA/StreamersEdge/commit/38a1c08))
+
+
+### Features
+
+* strm-1033: allow multiple peerplays endpoints in config ([#239](https://github.com/PBSA/StreamersEdge/issues/239)) ([839e39e](https://github.com/PBSA/StreamersEdge/commit/839e39e))
+
+
+
 ### [0.10.6](https://github.com/PBSA/StreamersEdge/compare/v0.10.5...v0.10.6) (2020-02-14)
 
 

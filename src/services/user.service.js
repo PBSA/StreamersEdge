@@ -268,7 +268,7 @@ class UserService {
     // copy over properties from updateObject to the User
     Object.assign(User, updateObject);
 
-    if(User.pubgUsername && User.twitchId) {
+    if(User.pubgUsername && User.twitchId && User.twitchUserName !== '') {
       await this.changeUserType(User, userType.gamer);
     }
 

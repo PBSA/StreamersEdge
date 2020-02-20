@@ -49,19 +49,16 @@ class PaymentsJob {
     }
   }
 
-  async payToWinners(challenge, winners) {
-    const users = await this.userRepository.findByPkList(winners.map(({userId}) => userId));
+  async payToWinners(challenge, winner) {
+    const user = await this.userRepository.findByPk(winner.userId);
     
-    const joined = await this.joinedUsersRepository.model.findOne({
+    const joined = await this.joinedUsersRepository.model.findAll({
       where: {challengeId: challenge.id}
     });
 
     const totalReward = joined.reduce((acc, {ppyAmount}) => acc + ppyAmount, 0.0);
-    const winnerReward = totalReward / users.length;
-    const fee = challenge.ppyAmount - totalReward;
 
-    await Promise.all(users.map((user) => this.sendPPY('challengeReward', challenge, user, winnerReward)));
-    await this.peerplaysRepository.sendPPYFromReceiverAccount(this.config.peerplays.feeReceiver, fee);
+    await this.sendPPY('challengeReward', challenge, user, totalReward);
 
     challenge.status = challengeConstants.status.paid;
     await challenge.save();
