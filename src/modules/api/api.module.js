@@ -59,6 +59,7 @@ class ApiModule {
    * @param {TransactionController} opts.transactionController
    * @param {GameController} opts.gameController
    * @param {NotificationsController} opts.notificationsController
+   * @param {JobsController} opts.jobsController
    */
   constructor(opts) {
     this.config = opts.config;
@@ -82,6 +83,7 @@ class ApiModule {
     this.adminController = opts.adminController;
     this.gameController = opts.gameController;
     this.notificationsController = opts.notificationsController;
+    this.jobsController = opts.jobsController;
 
     this.userRepository = opts.userRepository;
   }
@@ -174,7 +176,8 @@ class ApiModule {
       this.transactionController,
       this.adminController,
       this.gameController,
-      this.notificationsController
+      this.notificationsController,
+      this.jobsController
     ].forEach((controller) => controller.getRoutes(this.app).forEach((route) => {
       this.addRestHandler(...route);
     }));
