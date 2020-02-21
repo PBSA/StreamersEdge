@@ -29,7 +29,7 @@ class TwitchStreamConnection extends BaseConnection {
         }
 
         if (res.statusCode !== 200) {
-          fail('Unknown error');
+          fail('Twitch: Unknown error');
           return;
         }
 

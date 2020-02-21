@@ -76,7 +76,7 @@ class PeerplaysConnection extends BaseConnection {
         }
 
         if (res.statusCode !== 200) {
-          fail('Unknown error');
+          fail('Peerplays: Unknown error');
           return;
         }
 
