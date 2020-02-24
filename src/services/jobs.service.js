@@ -90,9 +90,9 @@ class JobsService {
           }catch(e) {
             console.error(e);
           }
+          
+          continue;
         }
-
-        continue;
       }
 
       const user = await this.userRepository.model.findOne({
