@@ -13,11 +13,13 @@ class MailService {
     this.smtpConnection = opts.smtpConnection;
   }
 
-  async sendMailAfterRegistration(email, uniqueLink) {
+  async sendMailAfterRegistration(username, email, uniqueLink) {
     const sourceHTML = fs.readFileSync(`${__dirname}/templates/welcome.handlebars`).toString();
     const templateHTML = Handlebars.compile(sourceHTML);
     const url = `${this.config.frontendCallbackUrl}/confirm-email/${uniqueLink}`;
-    const resultHtml = templateHTML({url});
+    const contact = 'mailto:support@streamersedge.com';
+    const terms = `${this.config.frontendUrl}/terms`;
+    const resultHtml = templateHTML({username, url, contact, terms});
 
     const options = {
       to: email,
@@ -28,11 +30,13 @@ class MailService {
     await this.smtpConnection.sendMail(options);
   }
 
-  async sendMailResetPassword(email, uniqueLink) {
+  async sendMailResetPassword(username, email, uniqueLink) {
     const sourceHTML = fs.readFileSync(`${__dirname}/templates/reset-password.handlebars`).toString();
     const templateHTML = Handlebars.compile(sourceHTML);
     const url = `${this.config.frontendCallbackUrl}/reset-password/${uniqueLink}`;
-    const resultHtml = templateHTML({url});
+    const contact = 'mailto:support@streamersedge.com';
+    const terms = `${this.config.frontendUrl}/terms`;
+    const resultHtml = templateHTML({username, url, contact, terms});
 
     const options = {
       to: email,
@@ -43,11 +47,13 @@ class MailService {
     await this.smtpConnection.sendMail(options);
   }
 
-  async sendMailForChangeEmail(email, uniqueLink) {
+  async sendMailForChangeEmail(username, email, uniqueLink) {
     const sourceHTML = fs.readFileSync(`${__dirname}/templates/change-email.handlebars`).toString();
     const templateHTML = Handlebars.compile(sourceHTML);
+    const contact = 'mailto:support@streamersedge.com';
+    const terms = `${this.config.frontendUrl}/terms`;
     const url = `${this.config.frontendCallbackUrl}/change-email/${uniqueLink}`;
-    const resultHtml = templateHTML({url});
+    const resultHtml = templateHTML({username, url, contact, terms});
 
     const options = {
       to: email,
