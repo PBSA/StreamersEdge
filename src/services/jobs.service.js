@@ -1,8 +1,9 @@
-const challengeConstants = require('../../../constants/challenge');
+const challengeConstants = require('../constants/challenge');
+const txConstants = require('../constants/transaction');
 const moment = require('moment');
 const eachLimit = require('async/eachLimit');
 
-class GamesJob {
+class JobsService {
 
   /**
    * @param {UserRepository} opts.userRepository
@@ -16,6 +17,10 @@ class GamesJob {
    * @param {LeagueOfLegendsService} opts.leagueOfLegendsService
    * @param {DbConnection} opts.dbConnection
    * @param {WebPushConnection} opts.webPushConnection
+   * @param {PaymentService} opts.paymentService
+   * @param {PeerplaysRepository} opts.peerplaysRepository
+   * @param {TransactionRepository} opts.transactionRepository
+   * @param {Config} opts.config
    */
   constructor(opts) {
     this.userRepository = opts.userRepository;
@@ -29,16 +34,25 @@ class GamesJob {
     this.leagueOfLegendsService = opts.leagueOfLegendsService;
     this.dbConnection = opts.dbConnection;
     this.webPushConnection = opts.webPushConnection;
+    this.paymentService = opts.paymentService;
+    this.peerplaysRepository = opts.peerplaysRepository;
+    this.transactionRepository = opts.transactionRepository;
+    this.config = opts.config;
+
+    this.asyncLimit = 8;
 
     this.resolveChallenge = this.resolveChallenge.bind(this);
     this.getPubgMatchesForUser = this.getPubgMatchesForUser.bind(this);
-
-    this.asyncLimit = 8;
+    this.processChallenge = this.processChallenge.bind(this);
   }
 
-  async runJob() {
+  async runGamesJob() {
     // update list of twitch streams
-    await this.streamRepository.populateTwitchStreams();
+    try{
+      await this.streamRepository.populateTwitchStreams();
+    }catch(e) {
+      console.error(e);
+    }
     
     // get all unresolved challenges
     let challenges = await this.challengeRepository.findWaitToResolve();
@@ -48,7 +62,11 @@ class GamesJob {
 
       if (!stream || !stream.isLive) {
         if (moment(challenge.timeToStart).add(5, 'minutes').diff(moment()) < 0) {
-          await this.challengeRepository.refundChallenge(challenge);
+          try{
+            await this.challengeRepository.refundChallenge(challenge);
+          }catch(e) {
+            console.error(e);
+          }
         }
 
         continue;
@@ -65,8 +83,15 @@ class GamesJob {
     for (const challenge of challenges) {
       const stream = await this.streamRepository.getStreamForUser(challenge.userId);
 
-      if ((!stream || !stream.isLive) && moment(challenge.timeToStart).add(1, 'hour').diff(moment()) < 0) {
-        await this.challengeRepository.refundChallenge(challenge);
+      if ((!stream || !stream.isLive)) {
+        if(moment(challenge.timeToStart).add(1, 'hour').diff(moment()) < 0) {
+          try{
+            await this.challengeRepository.refundChallenge(challenge);
+          }catch(e) {
+            console.error(e);
+          }
+        }
+
         continue;
       }
 
@@ -94,6 +119,7 @@ class GamesJob {
     if (game === 'pubg') {
       const matchIds = (await this.getPubgMatchesForUser(user.pubgUsername))
         .map(({id}) => id);
+
       await eachLimit(matchIds, this.asyncLimit, (id, cb) => this.pubgService.addGame(id).then(cb));
     } else if (game === 'leagueOfLegends') {
       const realm = user.leagueOfLegendsRealm;
@@ -107,11 +133,13 @@ class GamesJob {
     try {
       return await this.pubgApiRepository.getMatchesForUser(pubgUsername);
     } catch (err) {
+      console.error(err);
+
       if (err.status && err.status === 404) {
         return [];
       }
 
-      throw err;
+      return [];
     }
   }
 
@@ -221,6 +249,61 @@ class GamesJob {
       } catch (err) {} // ignore any errors
     }
   }
+
+  async runPaymentsJob() {
+    const challenges = await this.challengeRepository.model.findAll({
+      where: {
+        status: challengeConstants.status.resolved
+      }
+    });
+
+    await Promise.all(challenges.map(this.processChallenge));
+  }
+
+  async processChallenge(challenge) {
+    const winners = await this.challengeWinnersRepository.getForChallenge(challenge.id);
+
+    if (winners.length !== 0) {
+      await this.payToWinners(challenge, winners[0]);
+    } else {
+      await this.challengeRepository.refundChallenge(challenge);
+    }
+  }
+
+  async payToWinners(challenge, winner) {
+    const user = await this.userRepository.findByPk(winner.userId);
+    
+    const joined = await this.joinedUsersRepository.model.findAll({
+      where: {challengeId: challenge.id}
+    });
+
+    const totalReward = joined.reduce((acc, {ppyAmount}) => acc + ppyAmount, 0.0);
+
+    await this.sendPPY('challengeReward', challenge, user, totalReward);
+
+    challenge.status = challengeConstants.status.paid;
+    await challenge.save();
+  }
+
+  async sendPPY(txType, challenge, user, ppyAmount) {
+    const tx = await this.peerplaysRepository.sendPPYFromReceiverAccount(user.peerplaysAccountId, ppyAmount);
+
+    await this.transactionRepository.create({
+      txId: tx.id,
+      blockNum: tx.block_num,
+      trxNum: tx.trx_num,
+      ppyAmountValue: ppyAmount,
+      type: txConstants.types[txType],
+      userId: user.id,
+      challengeId: challenge.id,
+      peerplaysFromId: this.config.peerplays.paymentReceiver,
+      peerplaysToId: user.peerplaysAccountId
+    });
+  }
+
+  async runPayoutsJob() {
+    await this.paymentService.processPendingRedemptions();
+  }
 }
 
-module.exports = GamesJob;
+module.exports = JobsService;
