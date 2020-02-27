@@ -260,7 +260,7 @@ class UserService {
     if (newEmail && newEmail !== User.email) {
       // whenever the email address is changed issue a new verification token and send a verification email
       const {token} = await this.verificationTokenRepository.createToken(User.id, newEmail);
-      await this.mailService.sendMailForChangeEmail(newEmail, token);
+      await this.mailService.sendMailForChangeEmail(User.username, newEmail, token);
       // delete the email property as we want to change the email only after it has been verified
       delete updateObject.email;
     }
@@ -378,7 +378,7 @@ class UserService {
     });
     const {token} = await this.verificationTokenRepository.createToken(User.id, email);
 
-    await this.mailService.sendMailAfterRegistration(email, token);
+    await this.mailService.sendMailAfterRegistration(username, email, token);
 
     await this.peerplaysRepository.createPeerplaysAccount(peerplaysAccountUsername,ownerKey, activeKey);
 
@@ -445,7 +445,7 @@ class UserService {
     }
 
     const {token} = await this.resetTokenRepository.createToken(User.id);
-    await this.mailService.sendMailResetPassword(email, token);
+    await this.mailService.sendMailResetPassword(User.username, email, token);
     return true;
   }
 
