@@ -50,7 +50,9 @@ class PaymentService {
     }
 
     return await Promise.all(order.purchase_units.map(async (unit) => {
-      return this.processPurchaseUnit(User.id, User.peerplaysAccountId, orderId, unit);
+      return await Promise.all(unit.payments.captures.map(async (capture) => {
+        return this.processPurchaseUnit(User.id, User.peerplaysAccountId, orderId, capture);
+      }));
     }));
   }
 
@@ -133,6 +135,9 @@ class PaymentService {
     await payout.save();
   }
 
+  async createPaymentUrl(amount, currency) {
+    return this.paypalRepository.getApprovalUrl(amount, currency);
+  }
 }
 
 module.exports = PaymentService;

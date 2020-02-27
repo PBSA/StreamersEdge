@@ -2,6 +2,7 @@ const Joi = require('./abstract/joi.form');
 const BaseValidator = require('./abstract/base.validator');
 const ValidateError = require('../../../errors/validate.error');
 const {statuses} = require('../../../constants/payment');
+const transactionConstants = require('../../../constants/transaction');
 
 class PaymentValidator extends BaseValidator {
 
@@ -13,6 +14,7 @@ class PaymentValidator extends BaseValidator {
 
     this.paymentRepository = opts.paymentRepository;
     this.validatePurchase = this.validatePurchase.bind(this);
+    this.createPayment = this.createPayment.bind(this);
   }
 
   validatePurchase() {
@@ -34,6 +36,15 @@ class PaymentValidator extends BaseValidator {
 
       return orderId;
     });
+  }
+
+  createPayment() {
+    const bodySchema = {
+      amount: Joi.number().required(),
+      currency: Joi.string().valid(transactionConstants.currencies).required()
+    };
+
+    return this.validate(null, bodySchema, (req,query,body) => body);
   }
 
 }
