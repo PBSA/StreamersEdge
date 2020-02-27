@@ -15,10 +15,13 @@ class PaypalConnectionMock {
   client() {
     return {
       execute: (request) => {
-        const orderId = request.path.match(/\/([A-z0-9]+)\?/)[1];
-        return constants.modules.api.payments.payPalOrders[orderId];
+        return constants.modules.api.payments.payPalOrders[request];
       }
     };
+  }
+
+  captureOrder(request) {
+    return this.client().execute(request);
   }
 
   disconnect() {

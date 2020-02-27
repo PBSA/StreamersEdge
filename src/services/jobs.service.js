@@ -279,7 +279,9 @@ class JobsService {
 
     const totalReward = joined.reduce((acc, {ppyAmount}) => acc + ppyAmount, 0.0);
 
-    await this.sendPPY('challengeReward', challenge, user, totalReward);
+    if(totalReward > 0) {
+      await this.sendPPY('challengeReward', challenge, user, totalReward);
+    }
 
     challenge.status = challengeConstants.status.paid;
     await challenge.save();
