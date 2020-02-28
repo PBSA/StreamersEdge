@@ -115,7 +115,8 @@ class ApiModule {
       }
 
       const SessionStore = new SequelizeStore({
-        db: this.dbConnection.sequelize
+        db: this.dbConnection.sequelize,
+        modelKey: 'Sessions'
       });
 
       this.app.use(session({
