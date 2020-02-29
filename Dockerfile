@@ -1,18 +1,20 @@
-FROM node:10.16
+FROM node:12
 
-WORKDIR /app
+WORKDIR /streamersedge
 
-ARG node_env='production'
+ARG node_env=''
 ENV NODE_ENV=$node_env
 
-COPY ./package.json /app/package.json
+COPY ./package*.json /streamersedge
 
 RUN npm install --silent
 
-COPY ./src /app/src
-COPY ./config /app/config
-COPY ./migrations /app/migrations
+COPY . .
 
-RUN git clone https://github.com/vishnubob/wait-for-it.git
+COPY docker-entrypoint.sh /
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+EXPOSE 3000
 
 CMD ["npm", "run", "start"]
