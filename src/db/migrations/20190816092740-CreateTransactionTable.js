@@ -9,10 +9,11 @@ const fields = {
   txId: {type: DataTypes.STRING, unique: true},
   blockNum: {type: DataTypes.INTEGER},
   trxNum: {type: DataTypes.INTEGER},
-  ppyAmountValue: {type: DataTypes.INTEGER},
-  type: {type: DataTypes.ENUM(['challengeCreation', 'donate'])},
+  ppyAmountValue: {type: DataTypes.DOUBLE},
+  type: {type: DataTypes.ENUM(['challengeRefund', 'challengeReward', 'challengeDonate', 'donate', 'redeem'])},
   peerplaysFromId: {type: DataTypes.STRING},
-  peerplaysToId: {type: DataTypes.STRING}
+  peerplaysToId: {type: DataTypes.STRING},
+  receiverUserId: {type: DataTypes.INTEGER}
 };
 
 module.exports = {

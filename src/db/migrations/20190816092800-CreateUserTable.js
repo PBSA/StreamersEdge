@@ -1,8 +1,6 @@
 'use strict';
 
 const MigrationUtil = require('../../utils/migtation.util');
-const profileConstants = require('../../constants/profile');
-const invitationConstants = require('../../constants/invitation');
 const DataTypes = require('sequelize/lib/data-types');
 
 const fields = {
@@ -13,33 +11,35 @@ const fields = {
   password: {type: DataTypes.STRING},
   avatar: {type: DataTypes.STRING},
   twitchId: {type: DataTypes.STRING, unique: true, allowNull: true,},
-  twitchUserName: {type: DataTypes.STRING, unique: true,},
+  twitchUserName: {type: DataTypes.STRING, unique: true, allowNull: true, defaultValue: null,},
   googleId: {type: DataTypes.STRING, unique: true, allowNull: true,},
   facebookId: {type: DataTypes.STRING, unique: true, allowNull: true,},
   googleName: {type: DataTypes.STRING,},
   youtube: {type: DataTypes.STRING, defaultValue: '',},
   facebook: {type: DataTypes.STRING, defaultValue: '',},
+  facebookLink: {type: DataTypes.STRING, allowNull: true},
   twitch: {type: DataTypes.STRING, defaultValue: '',},
   peerplaysAccountName: {type: DataTypes.STRING, defaultValue: '',},
   peerplaysAccountId: {type: DataTypes.STRING, defaultValue: '',},
+  peerplaysMasterPassword: {type: DataTypes.STRING, defaultValue: '',},
   bitcoinAddress: {type: DataTypes.STRING, defaultValue: '',},
   notifications: {type: DataTypes.BOOLEAN, defaultValue: true,},
-  invitations: {type: DataTypes.ENUM(...Object.keys(invitationConstants.invitationStatus)),
-    defaultValue: invitationConstants.invitationStatus.all,
-  },
-  userType: {type: DataTypes.ENUM(Object.keys(profileConstants.userType).
-    map((key) => profileConstants.userType[key])),
-  },
-  applicationType: {type: DataTypes.ENUM, values: profileConstants.applicationType,},
+  userType: {type: DataTypes.ENUM(['gamer', 'viewer', 'sponsor', 'whitelist', 'admin']), allowNull: false, defaultValue: 'viewer',},
+  applicationType: {type: DataTypes.ENUM(['mac', 'windows', 'web', 'electron', 'mobile', 'ios'])},
   pushNotificationId: {type: DataTypes.STRING,},
   status: {
-    type: DataTypes.ENUM(Object.keys(profileConstants.status).
-    map((key) => profileConstants.status[key])),
-    defaultValue: profileConstants.status.active,
+    type: DataTypes.ENUM(['banned', 'active']),
+    defaultValue: 'active'
   },
   steamId: {type: DataTypes.STRING,},
+  timeFormat: {type: DataTypes.ENUM(['12h', '24h']), allowNull: false, defaultValue: '12h',},
   pubgUsername: {type: DataTypes.STRING,},
-  pubgId: {type: DataTypes.STRING,}
+  pubgId: {type: DataTypes.STRING,},
+  leagueOfLegendsAccountId: {type: DataTypes.STRING, allowNull: true,},
+  leagueOfLegendsRealm: {type: DataTypes.STRING, allowNull: true,},
+  paypalEmail: {type: DataTypes.STRING, defaultValue: '',},
+  paypalAccountId: {type: DataTypes.STRING, defaultValue: '',},
+  challengeSubscribeData: {type: DataTypes.JSON,},
 };
 
 module.exports = {
@@ -48,7 +48,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-
     return queryInterface.dropTable('users');
   },
 };
