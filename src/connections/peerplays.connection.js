@@ -122,6 +122,10 @@ class PeerplaysConnection extends BaseConnection {
     });
   }
 
+  async getLastIrreversibleBlock(){
+    return this.dbAPI.exec('get_dynamic_global_properties',[]).then((result) => result['last_irreversible_block_num']);
+  }
+
   disconnect() {
   }
 
