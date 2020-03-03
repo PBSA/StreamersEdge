@@ -1,18 +1,17 @@
 'use strict';
-const challengeConstants = require('../../constants/challenge');
+
 const MigrationUtil = require('../../utils/migtation.util');
 const DataTypes = require('sequelize/lib/data-types');
 
 const fields = {
   ...MigrationUtil.genericRows(),
   ...MigrationUtil.createForeignFields(['userId']),
+  status: {type: DataTypes.ENUM(['open', 'live', 'resolved', 'paid'])},
   name: {type: DataTypes.STRING, allowNull: false},
-  startDate: {type: DataTypes.DATE, allowNull: true},
-  endDate: {type: DataTypes.DATE, allowNull: true},
+  timeToStart: {type: DataTypes.DATE, allowNull: true},
   game: {type: DataTypes.STRING, allowNull: false},
-  accessRule: {type: DataTypes.ENUM(...Object.keys(challengeConstants.accessRules)), allowNull: false},
-  ppyAmount: {type: DataTypes.BIGINT, allowNull: false},
-  conditionsText: {type: DataTypes.TEXT, allowNull: true}
+  conditionsText: {type: DataTypes.TEXT, allowNull: true},
+  streamLink: {type: DataTypes.STRING, allowNull: true},
 };
 
 module.exports = {

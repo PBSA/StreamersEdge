@@ -13,9 +13,10 @@ const fields = {
     'vulgarity-on-stream',
     'sexist-comments-on-stream',
     'offends-my-religious-sentiments',
-    'offensive-profile-pic'
+    'offensive-profile-pic',
+    'other'
   ])},
-  description: {type: DataTypes.STRING},
+  description: {type: DataTypes.STRING(1000)},
   videoUrl: {type: DataTypes.STRING},
 };
 
