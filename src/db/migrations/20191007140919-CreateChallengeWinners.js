@@ -6,8 +6,13 @@ const fields = {
     ...MigrationUtil.createForeignFields(['challengeId', 'userId']),
 };
 module.exports = {
-  up: (queryInterface) => {
-   return queryInterface.createTable('challenge-winners', fields);
+  up: async (queryInterface) => {
+    await queryInterface.createTable('challenge-winners', fields);
+
+    await queryInterface.addConstraint('challenge-winners', ['userId', 'challengeId'], {
+      type: 'unique',
+      name: 'challenge_winners_unique_constraint'
+    });
   },
 
   down: (queryInterface) => {
