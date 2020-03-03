@@ -33,7 +33,7 @@
   "twitchUrl":"https://api.twitch.tv/helix/streams",
   "mailer": {
     "host": "MAILER_HOST",
-    "port": MAILER_PORT,
+    "port": "MAILER_PORT",
     "secure": true,
     "auth": {
       "user": "MAILER_USER",
@@ -85,8 +85,8 @@
     "schemes": ["https"]
   },
   "challenge": {
-    "joinFee": CHALLENGE_JOIN_FEE,
-    "userRewardPercent": CHALLENGE_USER_REWARD_PERCENT,
-    "userRedeemPercent": CHALLENGE_USER_REDEEM_PERCENT
+    "joinFee": "CHALLENGE_JOIN_FEE",
+    "userRewardPercent": "CHALLENGE_USER_REWARD_PERCENT",
+    "userRedeemPercent": "CHALLENGE_USER_REDEEM_PERCENT"
   }
 }
