@@ -99,9 +99,9 @@ class PaymentService {
   }
 
   async getConfirmedRedemptions(redemptions) {
-    await Promise.all(redemptions.map(async(redemption) => {
+    for (let redemption of redemptions) {
       redemption['transactionConfirmed'] = await this.isTransactionConfirmed(redemption.transactionId);
-    }));
+    }
 
     return redemptions.filter((redemption) => redemption.transactionConfirmed);
   }
