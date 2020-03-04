@@ -1,5 +1,6 @@
 const RestError = require('../../../errors/rest.error');
 const ValidateError = require('./../../../errors/validate.error');
+const path = require('path');
 
 /**
  * @swagger
@@ -308,15 +309,15 @@ class ProfileController {
 
   async deleteAvatarFromCDN(user) {
     if (user.avatar && user.avatar.startsWith(this.config.cdnUrl)) {
-      await this.fileService.delete(user.avatar.slice(this.config.cdnUrl.length));
+      await this.fileService.delete(path.basename(user.avatar));
     }
   }
 
   async uploadAvatar(user, data, req, res) {
     try {
       const location = await this.fileService.saveImage(req, res);
-      const patchedUser = await this.userService.patchProfile(user, {avatar: location});
       await this.deleteAvatarFromCDN(user);
+      const patchedUser = await this.userService.patchProfile(user, {avatar: location});
 
       return patchedUser;
     } catch (err) {
