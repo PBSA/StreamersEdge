@@ -37,6 +37,7 @@ class JobsService {
     this.paymentService = opts.paymentService;
     this.peerplaysRepository = opts.peerplaysRepository;
     this.transactionRepository = opts.transactionRepository;
+    this.mailService = opts.mailService;
     this.config = opts.config;
 
     this.asyncLimit = 8;
@@ -244,7 +245,9 @@ class JobsService {
 
     if (user.challengeSubscribeData && user.notifications) {
       try {
-        return await this.webPushConnection.sendNotification(user.challengeSubscribeData, notification);
+        await this.webPushConnection.sendNotification(user.challengeSubscribeData, notification);
+
+        return await this.mailService.sendWinnerMail(user.username, user.email, challenge.id, challenge.name);
       // eslint-disable-next-line no-empty
       } catch (err) {} // ignore any errors
     }
