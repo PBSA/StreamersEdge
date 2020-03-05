@@ -24,6 +24,7 @@ class PaymentService {
     this.paypalRedemptionRepository = opts.paypalRedemptionRepository;
     this.paypalConnection = opts.paypalConnection;
     this.dbConnection = opts.dbConnection;
+    this.transactionRepository = opts.transactionRepository;
   }
 
   async processPayment(User, orderId) {
@@ -93,6 +94,18 @@ class PaymentService {
     return payment.save();
   }
 
+  async isTransactionConfirmed(trxId) {
+    return this.transactionRepository.isTransactionConfirmed(trxId);
+  }
+
+  async getConfirmedRedemptions(redemptions) {
+    for (let redemption of redemptions) {
+      redemption['transactionConfirmed'] = await this.isTransactionConfirmed(redemption.transactionId);
+    }
+
+    return redemptions.filter((redemption) => redemption.transactionConfirmed);
+  }
+
   async processPendingRedemptions() {
     const PaypalRedemption = this.paypalRedemptionRepository.model;
     const PaypalPayout = this.paypalPayoutRepository.model;
@@ -100,9 +113,11 @@ class PaymentService {
     const sequelize = this.dbConnection.getConnection();
 
     const result = await sequelize.transaction(async (transaction) => {
-      const redemptions = await PaypalRedemption.findAll({
+      let redemptions = await PaypalRedemption.findAll({
         where: {paypalPayoutId: {[Op.eq]: null}}
       }, {transaction, raw: true});
+
+      redemptions = await this.getConfirmedRedemptions(redemptions);
 
       if (redemptions.length === 0) {
         return;

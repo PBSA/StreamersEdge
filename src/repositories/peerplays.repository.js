@@ -127,6 +127,38 @@ class PeerplaysRepository {
     return this.sendPPY(accountId, amount, this.config.peerplays.paymentReceiver, this.receiverPKey);
   }
 
+  async isTransactionConfirmed(transactionNum, blockNum, peerplaysFromId, peerplaysToId, ppyAmount) {
+    let lastIrrverisbleBlock;
+
+    try{
+      lastIrrverisbleBlock = await this.peerplaysConnection.getLastIrreversibleBlock();
+    }catch(err) {
+      console.error(err);
+      return false;
+    }
+
+    if(blockNum > lastIrrverisbleBlock) {
+      return false;
+    }
+
+    let transaction;
+
+    try {
+      transaction = await this.peerplaysConnection.dbAPI.exec('get_transaction',[blockNum, transactionNum]);
+    }catch(err) {
+      console.error(err);
+      return false;
+    }
+
+    const operation = transaction.operations[0];
+
+    return operation[0] === 0 &&
+      operation[1].from === peerplaysFromId &&
+      operation[1].to === peerplaysToId &&
+      new BigNumber(operation[1].amount.amount)
+        .shiftedBy(-1 * this.peerplaysConnection.asset.precision).integerValue().toNumber().toFixed(2) === ppyAmount.toFixed(2);
+  }
+
 }
 
 module.exports = PeerplaysRepository;
