@@ -69,7 +69,7 @@ class MailService {
     const templateHTML = Handlebars.compile(sourceHTML);
     const contact = 'mailto:support@streamersedge.com';
     const terms = `${this.config.frontendUrl}/terms`;
-    const url = `${this.config.frontend}/challenge/${challengeId}`;
+    const url = `${this.config.frontendUrl}/challenge/${challengeId}`;
     const resultHtml = templateHTML({username, url, contact, terms, challengeName});
 
     const options = {
