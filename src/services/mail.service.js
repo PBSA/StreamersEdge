@@ -64,6 +64,23 @@ class MailService {
     await this.smtpConnection.sendMail(options);
   }
 
+  async sendGamerMail(username, email, userId) {
+    const sourceHTML = fs.readFileSync(`${__dirname}/templates/gamer.handlebars`).toString();
+    const templateHTML = Handlebars.compile(sourceHTML);
+    const contact = 'mailto:support@streamersedge.com';
+    const terms = `${this.config.frontendUrl}/terms`;
+    const url = `${this.config.frontendUrl}/alerts/${userId}`;
+    const resultHtml = templateHTML({username, url, contact, terms});
+
+    const options = {
+      to: email,
+      from: this.config.mailer.sender,
+      subject: 'Congratulations, You have unlocked Challenge Creation on StreamersEdge!',
+      html: resultHtml
+    };
+    await this.smtpConnection.sendMail(options);
+  }
+
   async sendWinnerMail(username, email, challengeId, challengeName) {
     const sourceHTML = fs.readFileSync(`${__dirname}/templates/winner.handlebars`).toString();
     const templateHTML = Handlebars.compile(sourceHTML);

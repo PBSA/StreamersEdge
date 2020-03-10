@@ -243,6 +243,14 @@ class UserService {
       await this.challengeRepository.refundChallengesCreatedByUser(user);
     }
 
+    if(user.userType !== userType.gamer && newType === userType.gamer && user.email) {
+      try{
+        await this.mailService.sendGamerMail(user.username,user.email, user.id);
+      }catch(err) {//ignore the error
+        console.log(err);
+      }
+    }
+
     user.userType = newType;
     await user.save();
     return user;
