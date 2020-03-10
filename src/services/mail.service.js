@@ -81,6 +81,23 @@ class MailService {
     await this.smtpConnection.sendMail(options);
   }
 
+  async sendWinnerMail(username, email, challengeId, challengeName) {
+    const sourceHTML = fs.readFileSync(`${__dirname}/templates/winner.handlebars`).toString();
+    const templateHTML = Handlebars.compile(sourceHTML);
+    const contact = 'mailto:support@streamersedge.com';
+    const terms = `${this.config.frontendUrl}/terms`;
+    const url = `${this.config.frontendUrl}/challenge/${challengeId}`;
+    const resultHtml = templateHTML({username, url, contact, terms, challengeName});
+
+    const options = {
+      to: email,
+      from: this.config.mailer.sender,
+      subject: 'Congratulations, You Won!',
+      html: resultHtml
+    };
+    await this.smtpConnection.sendMail(options);
+  }
+
 }
 
 module.exports = MailService;
