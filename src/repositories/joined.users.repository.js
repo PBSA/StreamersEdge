@@ -53,7 +53,7 @@ class JoinedUsersRepository extends BasePostgresRepository {
       },
       include: [{
         model: UserModel,
-        attributes: ['username']
+        attributes: ['username', 'avatar']
       }],
       attributes:['ppyAmount','createdAt']
     });

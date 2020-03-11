@@ -74,7 +74,20 @@ const challengeConstants = require('../../../constants/challenge');
  *        properties:
  *          result:
  *            $ref: '#/definitions/Challenge'
- *
+ *  ChallengeByUserResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/ChallengeByUser'
+ *  DonationHistoryResponse:
+ *    allOf:
+ *      - $ref: '#/definitions/SuccessResponse'
+ *      - type: object
+ *        properties:
+ *          result:
+ *            $ref: '#/definitions/JoinedUserMinimum'
  *
  */
 
@@ -327,9 +340,9 @@ class ChallengesController {
              *        type: string
              *    responses:
              *      200:
-             *        description: Get list of all challenge
+             *        description: Get list of all challenge by user id
              *        schema:
-             *          $ref: '#/definitions/ChallengeResponse'
+             *          $ref: '#/definitions/ChallengeByUserResponse'
              *      400:
              *        description: Error form validation
              *        schema:
@@ -343,6 +356,42 @@ class ChallengesController {
         'get', '/api/v1/challengesbyuser/:userId',
         this.challengeValidator.getAllChallengesForUser,
         this.getAllChallengesForUser.bind(this)
+      ],
+
+      /**
+             * @swagger
+             *
+             * /donationhistory/{challengeId}:
+             *  get:
+             *    description: Get all donations to a challenge
+             *    produces:
+             *      - application/json
+             *    tags:
+             *     - Donation History
+             *    parameters:
+             *      - name: challengeId
+             *        description: challengeId of the challenge for which donation history has to be returned
+             *        in: path
+             *        required: true
+             *        type: string
+             *    responses:
+             *      200:
+             *        description: List of all donations
+             *        schema:
+             *          $ref: '#/definitions/DonationHistoryResponse'
+             *      400:
+             *        description: Error form validation
+             *        schema:
+             *          $ref: '#/definitions/ValidateError'
+             *      401:
+             *        description: Error user unauthorized
+             *        schema:
+             *          $ref: '#/definitions/UnauthorizedError'
+             */
+      [
+        'get', '/api/v1/donationhistory/:challengeId',
+        this.challengeValidator.getAllDonations,
+        this.getAllDonations.bind(this)
       ],
 
       /**
@@ -505,6 +554,10 @@ class ChallengesController {
   async getJoinedUsersForChallenge(challenge) {
     challenge.joinedUsers = await this.joinedUsersRepository.getJoinedUsersForChallenge(challenge.id);
     return challenge;
+  }
+
+  async getAllDonations(user, challengeId) {
+    return await this.joinedUsersRepository.getJoinedUsersForChallenge(challengeId);
   }
 
   async getWonChallenges(user, userId) {

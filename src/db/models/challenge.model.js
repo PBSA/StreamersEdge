@@ -148,6 +148,29 @@ class ChallengeModel extends Model {
    *                  type: number
    *                user:
    *                  $ref: '#/definitions/User'
+   *
+   *  ChallengeByUser:
+   *    allOf:
+   *      - $ref: '#/definitions/ChallengeNew'
+   *      - type: object
+   *        properties:
+   *          id:
+   *            type: number
+   *          createdAt:
+   *            type: string
+   *            format: date
+   *          updatedAt:
+   *            type: string
+   *            format: date
+   *          status:
+   *            type: string
+   *          userId:
+   *            type: string
+   *          joinedUsers:
+   *            type: array
+   *            items:
+   *              $ref: '#/definitions/JoinedUserMinimum'
+   *
    *  TransactionObject:
    *    type: object
    *    required:
