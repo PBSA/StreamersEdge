@@ -12,6 +12,29 @@ const {Model} = Sequelize;
 
 class JoinedUsers extends Model {
 
+  /**
+   *
+   * @swagger
+   *
+   * definitions:
+   *  JoinedUserMinimum:
+   *   type: object
+   *   properties:
+   *    ppyAmount:
+   *      type: number
+   *    createdAt:
+   *      type: string
+   *      format: date-time
+   *    user:
+   *      type: object
+   *      properties:
+   *        username:
+   *          type: string
+   *        avatar:
+   *          type: string
+   *
+   */
+
   getPublic() {
     return {
       id: this.id,
