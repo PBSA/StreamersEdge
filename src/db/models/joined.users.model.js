@@ -28,6 +28,8 @@ class JoinedUsers extends Model {
    *    user:
    *      type: object
    *      properties:
+   *        id:
+   *          type: integer
    *        username:
    *          type: string
    *        avatar:
