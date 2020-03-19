@@ -22,6 +22,7 @@ class PeerplaysConnection extends BaseConnection {
     this.dbAPI = null;
     this.asset = null;
     this.apiInstance = null;
+    this.timer = null;
 
     const urls = this.config.peerplays.peerplaysWS.split(',');
     this.wsConnectionManager = new ConnectionManager({urls});
@@ -35,6 +36,11 @@ class PeerplaysConnection extends BaseConnection {
     switch (status) {
       case 'closed':
       case 'error':
+        if(this.timer) {
+          clearInterval(this.timer);
+          this.timer = null;
+        }
+
         logger.error('peerplays connection failed, trying to reconnect');
         this.connect();
         break;
@@ -53,9 +59,7 @@ class PeerplaysConnection extends BaseConnection {
   }
 
   async connect() {
-    if (!this.endpoints) {
-      this.endpoints = await this.wsConnectionManager.sortNodesByLatency();
-    }
+    this.endpoints = await this.wsConnectionManager.sortNodesByLatency();
 
     if (!this.endpoints || this.endpoints.length === 0) {
       throw new Error('no valid peerplays urls');
@@ -81,6 +85,15 @@ class PeerplaysConnection extends BaseConnection {
     this.networkAPI = this.apiInstance.network_api();
     [this.asset] = await this.dbAPI.exec('get_assets', [[this.config.peerplays.sendAssetId]]);
     this.TransactionBuilder = TransactionBuilder;
+
+    this.timer = setInterval(() => this.doHealthCheck(),10000);
+  }
+
+  doHealthCheck() {
+    this.dbAPI.exec('get_global_properties',[])
+      .catch((err)=> {
+        logger.error(`error in health check, reason: ${err.message}`);
+      });
   }
 
   async request(form) {
