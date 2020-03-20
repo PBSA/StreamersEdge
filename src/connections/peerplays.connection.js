@@ -10,6 +10,13 @@ const logger = getLogger();
 
 const BaseConnection = require('./abstracts/base.connection');
 
+const HEALTHCHECK_INTERVAL = 1000 * 10;
+const MAX_RETRY_TIMEOUT = 1000 * 60;
+
+function getRetryTimeout(attempt) {
+  return Math.min(Math.pow(2.0, attempt + 1.0), MAX_RETRY_TIMEOUT) * 1000.0;
+}
+
 class PeerplaysConnection extends BaseConnection {
 
   /**
@@ -22,40 +29,18 @@ class PeerplaysConnection extends BaseConnection {
     this.dbAPI = null;
     this.asset = null;
     this.apiInstance = null;
-    this.timer = null;
+    this.reconnectAttempt = 0;
 
     const urls = this.config.peerplays.peerplaysWS.split(',');
     this.wsConnectionManager = new ConnectionManager({urls});
   }
-
-  apiStatusCallback(apiInstance, status) {
-    if (apiInstance !== this.apiInstance) {
-      return;
-    }
-
-    switch (status) {
-      case 'closed':
-      case 'error':
-        if(this.timer) {
-          clearInterval(this.timer);
-          this.timer = null;
-        }
-
-        logger.error('peerplays connection failed, trying to reconnect');
-        this.connect();
-        break;
-      default:
-        break;
-    }
-  }
-
-  async connectToPeerplays(endpoint) {
-    logger.info(`connecting to peerplays endpoint "${endpoint}"`);
-    const apiInstance = Apis.instance(endpoint, true);
-    apiInstance.setRpcConnectionStatusCallback((status) => this.apiStatusCallback(apiInstance, status));
-    await apiInstance.init_promise;
-    this.apiInstance = apiInstance;
-    logger.info('peerplays connection successful');
+  
+  doHealthcheck() {
+    this.dbAPI.exec('get_global_properties', [])
+      .then(() => {
+        setTimeout(() => this.doHealthcheck(), HEALTHCHECK_INTERVAL);
+      })
+      .catch(() => this.connect());
   }
 
   async connect() {
@@ -65,35 +50,29 @@ class PeerplaysConnection extends BaseConnection {
       throw new Error('no valid peerplays urls');
     }
 
-    let nextUrlIndex = 0;
+    const endpoint = this.endpoints[this.reconnectAttempt % this.endpoints.length];
+    logger.info(`connecting to peerplays endpoint "${endpoint}"`);
+    const apiInstance = Apis.instance(endpoint, true);
 
-    while (nextUrlIndex < this.endpoints.length) {
-      try {
-        await this.connectToPeerplays(this.endpoints[nextUrlIndex]);
-        break;
-      } catch (err) {
-        logger.info(`peerplays connection failed, reason: ${err.message}`);
-        nextUrlIndex++;
-      }
+    try {
+      await apiInstance.init_promise;
+    } catch (err) {
+      const timeout = getRetryTimeout(this.reconnectAttempt++);
+      logger.info(`peerplays connection failed, reason: ${err.message}, retrying in ${timeout / 1000.0} seconds`);
+      setTimeout(() => this.connect(), timeout);
+      return;
     }
 
-    if (nextUrlIndex >= this.endpoints.length) {
-      throw new Error('failed to connect to peerplays endpoint');
-    }
+    this.reconnectAttempt = 0;
 
+    this.apiInstance = apiInstance;
     this.dbAPI = this.apiInstance.db_api();
     this.networkAPI = this.apiInstance.network_api();
     [this.asset] = await this.dbAPI.exec('get_assets', [[this.config.peerplays.sendAssetId]]);
     this.TransactionBuilder = TransactionBuilder;
-
-    this.timer = setInterval(() => this.doHealthCheck(),10000);
-  }
-
-  doHealthCheck() {
-    this.dbAPI.exec('get_global_properties',[])
-      .catch((err)=> {
-        logger.error(`error in health check, reason: ${err.message}`);
-      });
+    
+    this.doHealthcheck();
+    logger.info('peerplays connection successful');
   }
 
   async request(form) {
