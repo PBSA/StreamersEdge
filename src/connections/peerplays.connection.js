@@ -34,7 +34,7 @@ class PeerplaysConnection extends BaseConnection {
     const urls = this.config.peerplays.peerplaysWS.split(',');
     this.wsConnectionManager = new ConnectionManager({urls});
   }
-
+  
   doHealthcheck() {
     this.dbAPI.exec('get_global_properties', [])
       .then(() => {
@@ -44,9 +44,7 @@ class PeerplaysConnection extends BaseConnection {
   }
 
   async connect() {
-    if (!this.endpoints) {
-      this.endpoints = await this.wsConnectionManager.sortNodesByLatency();
-    }
+    this.endpoints = await this.wsConnectionManager.sortNodesByLatency();
 
     if (!this.endpoints || this.endpoints.length === 0) {
       throw new Error('no valid peerplays urls');
@@ -72,9 +70,8 @@ class PeerplaysConnection extends BaseConnection {
     this.networkAPI = this.apiInstance.network_api();
     [this.asset] = await this.dbAPI.exec('get_assets', [[this.config.peerplays.sendAssetId]]);
     this.TransactionBuilder = TransactionBuilder;
-   
+    
     this.doHealthcheck();
-
     logger.info('peerplays connection successful');
   }
 
