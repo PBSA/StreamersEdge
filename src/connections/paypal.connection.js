@@ -131,6 +131,35 @@ class PaypalConnection {
     };
   }
 
+  async getApprovalUrl(amount, currency) {
+    let request = new paypal.orders.OrdersCreateRequest();
+    request.requestBody({
+      intent: 'CAPTURE',
+      purchase_units: [
+        {
+          amount: {
+            currency_code: currency,
+            value: amount
+          }
+        }
+      ],
+      application_context: {
+        return_url:`${this.config.frontendCallbackUrl}/paypal-return`,
+        cancel_url:`${this.config.frontendCallbackUrl}/paypal-cancel`
+      }
+    });
+
+    return (await this.client().execute(request)).result.links.find((link) => link.rel === 'approve').href;
+  }
+
+  async captureOrder(orderId) {
+    let request = new paypal.orders.OrdersCaptureRequest(orderId);
+    request.requestBody({});
+    // Call API with your client and get a response for your call
+    let response = await this.client().execute(request);
+    return response;
+  }
+
   disconnect() {
   }
 }

@@ -21,9 +21,35 @@ class PeerplaysConnection extends BaseConnection {
     this.config = opts.config;
     this.dbAPI = null;
     this.asset = null;
+    this.apiInstance = null;
 
     const urls = this.config.peerplays.peerplaysWS.split(',');
     this.wsConnectionManager = new ConnectionManager({urls});
+  }
+
+  apiStatusCallback(apiInstance, status) {
+    if (apiInstance !== this.apiInstance) {
+      return;
+    }
+
+    switch (status) {
+      case 'closed':
+      case 'error':
+        logger.error('peerplays connection failed, trying to reconnect');
+        this.connect();
+        break;
+      default:
+        break;
+    }
+  }
+
+  async connectToPeerplays(endpoint) {
+    logger.info(`connecting to peerplays endpoint "${endpoint}"`);
+    const apiInstance = Apis.instance(endpoint, true);
+    apiInstance.setRpcConnectionStatusCallback((status) => this.apiStatusCallback(apiInstance, status));
+    await apiInstance.init_promise;
+    this.apiInstance = apiInstance;
+    logger.info('peerplays connection successful');
   }
 
   async connect() {
@@ -38,24 +64,21 @@ class PeerplaysConnection extends BaseConnection {
     let nextUrlIndex = 0;
 
     while (nextUrlIndex < this.endpoints.length) {
-      const endpoint = this.endpoints[nextUrlIndex];
-      logger.info(`connecting to peerplays endpoint "${endpoint}"`);
-
       try {
-        await Apis.instance(endpoint, true).init_promise;
+        await this.connectToPeerplays(this.endpoints[nextUrlIndex]);
+        break;
       } catch (err) {
-        logger.info('peerplays connection failed, trying next endpoint');
+        logger.info(`peerplays connection failed, reason: ${err.message}`);
         nextUrlIndex++;
-        continue;
       }
-
-      break;
     }
 
-    logger.info('peerplays connection successful');
+    if (nextUrlIndex >= this.endpoints.length) {
+      throw new Error('failed to connect to peerplays endpoint');
+    }
 
-    this.dbAPI = Apis.instance().db_api();
-    this.networkAPI = Apis.instance().network_api();
+    this.dbAPI = this.apiInstance.db_api();
+    this.networkAPI = this.apiInstance.network_api();
     [this.asset] = await this.dbAPI.exec('get_assets', [[this.config.peerplays.sendAssetId]]);
     this.TransactionBuilder = TransactionBuilder;
   }

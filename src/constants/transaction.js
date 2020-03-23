@@ -5,5 +5,6 @@ module.exports = {
     challengeReward: 'challengeReward',
     donate: 'donate',
     redeem: 'redeem'
-  }
+  },
+  currencies: ['USD']
 };
