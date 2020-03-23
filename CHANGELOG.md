@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.11.2](https://github.com/PBSA/StreamersEdge/compare/v0.11.1...v0.11.2) (2020-03-23)
+
+
+### Bug Fixes
+
+* resolve challenge even if stream is not live ([0a698e4](https://github.com/PBSA/StreamersEdge/commit/0a698e4))
+* strm-1033: handle peerplays connection errors ([#243](https://github.com/PBSA/StreamersEdge/issues/243)) ([202369b](https://github.com/PBSA/StreamersEdge/commit/202369b))
+* strm-1084 create payment url and capture payment in backend ([#244](https://github.com/PBSA/StreamersEdge/issues/244)) ([f2612f2](https://github.com/PBSA/StreamersEdge/commit/f2612f2))
+
+
+
 ### [0.11.1](https://github.com/PBSA/StreamersEdge/compare/v0.11.0...v0.11.1) (2020-02-27)
 
 
