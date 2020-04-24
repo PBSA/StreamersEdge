@@ -47,6 +47,8 @@ class PeerplaysConnection extends BaseConnection {
     this.endpoints = await this.wsConnectionManager.sortNodesByLatency();
 
     if (!this.endpoints || this.endpoints.length === 0) {
+      const timeout = getRetryTimeout(this.reconnectAttempt++);
+      setTimeout(() => this.connect(), timeout);
       throw new Error('no valid peerplays urls');
     }
 
