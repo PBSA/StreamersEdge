@@ -10,8 +10,8 @@ const logger = getLogger();
 
 const BaseConnection = require('./abstracts/base.connection');
 
-const HEALTHCHECK_INTERVAL = 1000 * 10;
-const MAX_RETRY_TIMEOUT = 1000 * 60;
+const HEALTHCHECK_INTERVAL = 1000 * 10; //milliseconds
+const MAX_RETRY_TIMEOUT = 60; //seconds
 
 function getRetryTimeout(attempt) {
   return Math.min(Math.pow(2.0, attempt + 1.0), MAX_RETRY_TIMEOUT) * 1000.0;
