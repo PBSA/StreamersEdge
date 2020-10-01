@@ -42,7 +42,7 @@
     "async-await-error-handling": "^0.5.2",
     "awilix": "^4.2.1",
     "aws-sdk": "^2.493.0",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "bignumber.js": "^9.0.0",
     "body-parser": "^1.18.3",
     "config": "^3.2.0",
