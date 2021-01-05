@@ -198,6 +198,7 @@ deployToDev:
     - bash deploy/deployToDev.sh
   only:
     - develop
+  when: manual
 
 deployToQAPR:
   stage: deploy
